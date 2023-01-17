@@ -1,0 +1,216 @@
+{
+  "id": "1",
+  "uuid": "0814dcdf-eeca-40c8-980f-e81e9f73e840",
+  "published": true,
+  "draft": false,
+  "ownerUuid": "9a49313a-20c2-417d-b993-ea29cfc22e3e",
+  "template": false,
+  "dateCreated": "2022-12-04T22:40:07.081Z",
+  "dateModified": "2022-12-04T22:40:59.062Z",
+  "props": {
+    "srs": [{ "code": "4326", "name": "GCS WGS 1984" }],
+    "name": "simple_survey",
+    "cycles": { "0": { "dateStart": "2022-12-04" } },
+    "labels": { "en": "Simple Survey" },
+    "languages": ["en"]
+  },
+  "authGroups": [
+    {
+      "uuid": "c370560c-88e6-4fe4-8bde-b2e0282b96f9",
+      "name": "surveyAdmin",
+      "surveyUuid": "0814dcdf-eeca-40c8-980f-e81e9f73e840",
+      "permissions": [
+        "permissionsEdit",
+        "surveyEdit",
+        "recordView",
+        "recordCreate",
+        "recordEdit",
+        "recordCleanse",
+        "recordAnalyse",
+        "userEdit",
+        "userInvite"
+      ],
+      "recordSteps": { "1": "all", "2": "all", "3": "all" }
+    },
+    {
+      "uuid": "e2659fa6-359a-4541-9d3a-f95973d1da45",
+      "name": "surveyEditor",
+      "surveyUuid": "0814dcdf-eeca-40c8-980f-e81e9f73e840",
+      "permissions": [
+        "surveyEdit",
+        "recordView",
+        "recordCreate",
+        "recordEdit",
+        "recordCleanse",
+        "recordAnalyse"
+      ],
+      "recordSteps": { "1": "all", "2": "all", "3": "all" }
+    },
+    {
+      "uuid": "888568b8-2a50-4b5d-9ae5-322ac0125caf",
+      "name": "dataAnalyst",
+      "surveyUuid": "0814dcdf-eeca-40c8-980f-e81e9f73e840",
+      "permissions": [
+        "recordView",
+        "recordCreate",
+        "recordEdit",
+        "recordCleanse",
+        "recordAnalyse"
+      ],
+      "recordSteps": { "1": "all", "2": "all", "3": "all" }
+    },
+    {
+      "uuid": "49237bc1-bd99-4ee3-83da-ff02ef9fd567",
+      "name": "dataCleanser",
+      "surveyUuid": "0814dcdf-eeca-40c8-980f-e81e9f73e840",
+      "permissions": [
+        "recordView",
+        "recordCreate",
+        "recordEdit",
+        "recordCleanse"
+      ],
+      "recordSteps": { "1": "all", "2": "all" }
+    },
+    {
+      "uuid": "c3da0eef-170a-481c-a339-03cb4770aaaf",
+      "name": "dataEditor",
+      "surveyUuid": "0814dcdf-eeca-40c8-980f-e81e9f73e840",
+      "permissions": ["recordView", "recordCreate", "recordEdit"],
+      "recordSteps": { "1": "own" }
+    }
+  ],
+  "validation": null,
+  "nodeDefs": {
+    "21ade531-7697-45e6-99b4-e2db199b0622": {
+      "id": "1",
+      "uuid": "21ade531-7697-45e6-99b4-e2db199b0622",
+      "parentUuid": null,
+      "type": "entity",
+      "deleted": false,
+      "analysis": false,
+      "virtual": false,
+      "dateCreated": "2022-12-04T22:40:07.081Z",
+      "dateModified": "2022-12-04T22:40:59.062Z",
+      "propsAdvanced": {},
+      "meta": { "h": [] },
+      "published": true,
+      "props": {
+        "name": "cluster",
+        "cycles": ["0"],
+        "labels": { "en": "Cluster" },
+        "layout": {
+          "0": {
+            "pageUuid": "d21d93e4-e820-4e63-851a-663e22f4dfd3",
+            "renderType": "form",
+            "layoutChildren": [
+              {
+                "h": 1,
+                "i": "d1ce191d-9a7d-4cf5-bab0-9686b2e7311b",
+                "w": 1,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "h": 1,
+                "i": "6627604e-c87d-45c4-acb7-52c633a0a2e6",
+                "w": 1,
+                "x": 0,
+                "y": 1
+              },
+              {
+                "h": 1,
+                "i": "0749323c-f9cd-4dff-8a0b-7315ee7ab3f3",
+                "w": 1,
+                "x": 0,
+                "y": 2
+              }
+            ]
+          }
+        },
+        "multiple": false
+      }
+    },
+    "d1ce191d-9a7d-4cf5-bab0-9686b2e7311b": {
+      "id": "2",
+      "uuid": "d1ce191d-9a7d-4cf5-bab0-9686b2e7311b",
+      "parentUuid": "21ade531-7697-45e6-99b4-e2db199b0622",
+      "type": "integer",
+      "deleted": false,
+      "analysis": false,
+      "virtual": false,
+      "dateCreated": "2022-12-04T22:40:16.700Z",
+      "dateModified": "2022-12-04T22:40:29.611Z",
+      "propsAdvanced": {},
+      "meta": { "h": ["21ade531-7697-45e6-99b4-e2db199b0622"] },
+      "published": true,
+      "props": {
+        "key": true,
+        "name": "cluster_id",
+        "cycles": ["0"],
+        "labels": { "en": "Cluster ID" }
+      }
+    },
+    "6627604e-c87d-45c4-acb7-52c633a0a2e6": {
+      "id": "3",
+      "uuid": "6627604e-c87d-45c4-acb7-52c633a0a2e6",
+      "parentUuid": "21ade531-7697-45e6-99b4-e2db199b0622",
+      "type": "boolean",
+      "deleted": false,
+      "analysis": false,
+      "virtual": false,
+      "dateCreated": "2022-12-04T22:40:43.969Z",
+      "dateModified": "2022-12-04T22:40:43.969Z",
+      "propsAdvanced": {},
+      "meta": { "h": ["21ade531-7697-45e6-99b4-e2db199b0622"] },
+      "published": true,
+      "props": {
+        "name": "cluster_accessible",
+        "cycles": ["0"],
+        "labels": { "en": "Accessible" }
+      }
+    },
+    "0749323c-f9cd-4dff-8a0b-7315ee7ab3f3": {
+      "id": "4",
+      "uuid": "0749323c-f9cd-4dff-8a0b-7315ee7ab3f3",
+      "parentUuid": "21ade531-7697-45e6-99b4-e2db199b0622",
+      "type": "text",
+      "deleted": false,
+      "analysis": false,
+      "virtual": false,
+      "dateCreated": "2022-12-04T22:40:59.062Z",
+      "dateModified": "2022-12-04T22:40:59.062Z",
+      "propsAdvanced": {},
+      "meta": { "h": ["21ade531-7697-45e6-99b4-e2db199b0622"] },
+      "published": true,
+      "props": {
+        "name": "cluster_remarks",
+        "cycles": ["0"],
+        "labels": { "en": "Remarks" }
+      }
+    }
+  },
+  "nodeDefsIndex": {
+    "childDefUuidPresenceByParentUuid": {
+      "null": { "21ade531-7697-45e6-99b4-e2db199b0622": true },
+      "21ade531-7697-45e6-99b4-e2db199b0622": {
+        "d1ce191d-9a7d-4cf5-bab0-9686b2e7311b": true,
+        "6627604e-c87d-45c4-acb7-52c633a0a2e6": true,
+        "0749323c-f9cd-4dff-8a0b-7315ee7ab3f3": true
+      }
+    }
+  },
+  "categories": {},
+  "taxonomies": [],
+  "dependencyGraph": {
+    "applicable": {},
+    "defaultValues": {},
+    "formula": {},
+    "validations": {}
+  },
+  "refData": {
+    "categoryItemUuidIndex": {},
+    "categoryItemIndex": {},
+    "taxonUuidIndex": {},
+    "taxonIndex": {}
+  }
+}
