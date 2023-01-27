@@ -2,14 +2,16 @@ import { useCallback } from "react";
 import { View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 
-import { useNodeRendererLocalState } from "../../nodeLocalState";
+import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
 
 const booleanValues = [true, false];
 
 export const NodeBooleanComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  const { value, validation, updateNodeValue } = useNodeRendererLocalState({
+  console.log(`rendering NodeBooleanComponent for ${nodeDef.props.name}`);
+
+  const { value, validation, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
 

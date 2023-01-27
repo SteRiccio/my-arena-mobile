@@ -3,6 +3,7 @@ import { TextInput as RNPTextInput } from "react-native-paper";
 
 export const TextInput = (props) => {
   const {
+    editable,
     keyboardType,
     label: labelKey,
     placeholder: placeholderKey,
@@ -13,6 +14,7 @@ export const TextInput = (props) => {
 
   return (
     <RNPTextInput
+      editable={editable}
       keyboardType={keyboardType}
       mode="outlined"
       label={labelKey}

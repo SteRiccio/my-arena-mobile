@@ -1,12 +1,14 @@
 import { useCallback } from "react";
 
 import { TextInput } from "../../../../components";
-import { useNodeRendererLocalState } from "../../nodeLocalState";
+import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
 
 export const NodeTextComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  const { value, validation, updateNodeValue } = useNodeRendererLocalState({
+  console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
+
+  const { value, validation, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
 
@@ -14,8 +16,11 @@ export const NodeTextComponent = (props) => {
     updateNodeValue(text);
   }, []);
 
+  const editable = !nodeDef.props.readOnly;
+
   return (
     <TextInput
+      editable={editable}
       style={[{ alignSelf: "stretch" }]}
       onChange={onChange}
       value={value}

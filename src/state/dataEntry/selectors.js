@@ -1,7 +1,12 @@
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 
-import { Records, Surveys } from "@openforis/arena-core";
+import {
+  Objects,
+  Records,
+  RecordValidations,
+  Surveys,
+} from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
 
@@ -29,38 +34,49 @@ const selectRecordSingleNodeUuid = createSelector(
   }
 );
 
-const selectRecordNodePointerInfo = createSelector(
+const selectRecordNodePointerValidation = createSelector(
   [
     selectRecord,
-    (_, nodeParentUuid) => nodeParentUuid,
+    (_state, nodeParentUuid) => nodeParentUuid,
     (_state, _nodeParentUuid, nodeDefUuid) => nodeDefUuid,
   ],
   (record, nodeParentUuid, nodeDefUuid) => {
-    const parentNode = Records.getNodeByUuid(nodeParentUuid)(record);
-    const node = Records.getChild(parentNode, nodeDefUuid)(record);
-    const validation = record.validation?.fields?.[node?.uuid];
+    const nodeParent = Records.getNodeByUuid(nodeParentUuid)(record);
+    const node = Records.getChild(nodeParent, nodeDefUuid)(record);
+    if (!node) return undefined;
 
-    const validationChildrenCountKey = Records.getValidationChildrenCountKey({
-      nodeParentUuid,
-      nodeDefChildUuid: nodeDefUuid,
-    });
-    const validationChildrenCount =
-      record?.validation?.[validationChildrenCountKey];
-
-    return { node, validation, validationChildrenCount };
+    const validation = RecordValidations.getValidationNode({
+      nodeUuid: node.uuid,
+    })(record.validation);
+    return validation;
   }
 );
 
-const selectRecordNodeInfo = createSelector(
-  [selectRecord, (_, nodeUuid) => nodeUuid],
-  (record, nodeUuid) => {
-    const node = Records.getNodeByUuid(nodeUuid)(record);
-    const validation = record.validation[nodeUuid];
+const selectRecordNodePointerValidationChildrenCount = createSelector(
+  [
+    selectRecord,
+    (_state, nodeParentUuid) => nodeParentUuid,
+    (_state, _nodeParentUuid, nodeDefUuid) => nodeDefUuid,
+  ],
+  (record, nodeParentUuid, nodeDefUuid) => {
+    const validationChildrenCount =
+      RecordValidations.getValidationChildrenCount({
+        nodeParentUuid,
+        nodeDefChildUuid: nodeDefUuid,
+      })(record.validation);
+    return validationChildrenCount;
+  }
+);
 
-    return {
-      node,
-      validation,
-    };
+const selectRecordAttributeInfo = createSelector(
+  [selectRecord, (_state, nodeUuid) => nodeUuid],
+  (record, nodeUuid) => {
+    const attribute = Records.getNodeByUuid(nodeUuid)(record);
+    const value = attribute?.value;
+    const validation = RecordValidations.getValidationNode({ nodeUuid })(
+      record.validation
+    );
+    return { value, validation };
   }
 );
 
@@ -82,21 +98,39 @@ const selectVisibleChildDefs = createSelector(
 
 export const DataEntrySelectors = {
   selectRecord,
-  selectRecordRootNodeUuid,
-  selectRecordSingleNodeUuid,
-  selectRecordNodeInfo,
 
   useRecordRootNodeUuid: () => useSelector(selectRecordRootNodeUuid),
-  useRecordNodePointerInfo: ({ parentNodeUuid, nodeDefUuid }) =>
-    useSelector((state) =>
-      selectRecordNodePointerInfo(state, parentNodeUuid, nodeDefUuid)
-    ),
+
   useRecordSingleNodeUuid: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector((state) =>
       selectRecordSingleNodeUuid(state, parentNodeUuid, nodeDefUuid)
     ),
   useRecordEntityVisibleChildDefs: ({ nodeDef }) =>
     useSelector((state) => selectVisibleChildDefs(state, nodeDef)),
-  useRecordNodeInfo: ({ nodeUuid }) =>
-    useSelector((state) => selectRecordNodeInfo(state, nodeUuid)),
+
+  useRecordNodePointerValidation: ({ parentNodeUuid, nodeDefUuid }) =>
+    useSelector(
+      (state) =>
+        selectRecordNodePointerValidation(state, parentNodeUuid, nodeDefUuid),
+      Objects.isEqual
+    ),
+  useRecordNodePointerValidationChildrenCount: ({
+    parentNodeUuid,
+    nodeDefUuid,
+  }) =>
+    useSelector(
+      (state) =>
+        selectRecordNodePointerValidationChildrenCount(
+          state,
+          parentNodeUuid,
+          nodeDefUuid
+        ),
+      Objects.isEqual
+    ),
+
+  useRecordAttributeInfo: ({ nodeUuid }) =>
+    useSelector(
+      (state) => selectRecordAttributeInfo(state, nodeUuid),
+      Objects.isEqual
+    ),
 };

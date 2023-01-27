@@ -4,19 +4,22 @@ import { useDispatch } from "react-redux";
 import { DataEntryActions } from "../../state/dataEntry/actions";
 import { DataEntrySelectors } from "../../state/dataEntry/selectors";
 
-export const useNodeRendererLocalState = ({ nodeUuid }) => {
+export const useNodeComponentLocalState = ({ nodeUuid }) => {
   const dispatch = useDispatch();
-  const { node, validation } = DataEntrySelectors.useRecordNodeInfo({
-    nodeUuid,
-  });
+
+  const { value: nodeValue, validation } =
+    DataEntrySelectors.useRecordAttributeInfo({
+      nodeUuid,
+    });
+
   const [state, setState] = useState({ value: null });
   const { value } = state;
 
   useEffect(() => {
-    if (!Objects.isEqual(value, node.value)) {
-      setState((statePrev) => ({ ...statePrev, value: node.value }));
+    if (!Objects.isEqual(value, nodeValue)) {
+      setState((statePrev) => ({ ...statePrev, value: nodeValue }));
     }
-  }, [node.value]);
+  }, [nodeValue]);
 
   const updateNodeValue = useCallback(
     (valueUpdated) => {

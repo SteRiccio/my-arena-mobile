@@ -1,11 +1,14 @@
+import { Objects } from "@openforis/arena-core";
 import { useCallback } from "react";
 import { TextInput } from "../../../../components";
-import { useNodeRendererLocalState } from "../../nodeLocalState";
+import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
 
 export const NodeNumericComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  const { value, validation, updateNodeValue } = useNodeRendererLocalState({
+  console.log(`rendering NodeNumericComponent for ${nodeDef.props.name}`);
+
+  const { value, validation, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
 
@@ -13,5 +16,15 @@ export const NodeNumericComponent = (props) => {
     updateNodeValue(text);
   }, []);
 
-  return <TextInput keyboardType="numeric" onChange={onChange} value={value} />;
+  const editable = !nodeDef.props.readOnly;
+  const textValue = Objects.isEmpty(value) ? null : String(value);
+
+  return (
+    <TextInput
+      editable={editable}
+      keyboardType="numeric"
+      onChange={onChange}
+      value={textValue}
+    />
+  );
 };

@@ -6,6 +6,8 @@ import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch
 export const NodeComponentSwitch = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
+  console.log(`rendering NodeComponentSwitch for ${nodeDef.props.name}`);
+
   if (NodeDefs.isEntity(nodeDef)) {
     return <NodeEntityFormComponent nodeDef={nodeDef} nodeUuid={nodeUuid} />;
   }
