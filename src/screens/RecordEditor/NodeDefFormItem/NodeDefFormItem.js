@@ -8,6 +8,7 @@ import { Text } from "../../../components";
 import { NodeValidationIcon } from "../NodeValidationIcon/NodeValidationIcon";
 import styles from "./styles.js";
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
+import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -15,6 +16,13 @@ export const NodeDefFormItem = (props) => {
   console.log(`Rendering form item ${nodeDef.props.name}`);
 
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+
+  const visible = DataEntrySelectors.useRecordNodePointerVisibility({
+    parentNodeUuid,
+    nodeDefUuid: nodeDef.uuid,
+  });
+
+  if (!visible) return null;
 
   return (
     <View style={styles.externalContainer}>

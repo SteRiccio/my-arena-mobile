@@ -4,7 +4,7 @@ import { SegmentedButtons } from "react-native-paper";
 
 import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
 
-const booleanValues = [true, false];
+const booleanValues = ["true", "false"];
 
 export const NodeBooleanComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
@@ -29,7 +29,7 @@ export const NodeBooleanComponent = (props) => {
         onValueChange={onChange}
         buttons={booleanValues.map((val) => ({
           value: val,
-          label: String(val),
+          label: val,
         }))}
       />
     </View>

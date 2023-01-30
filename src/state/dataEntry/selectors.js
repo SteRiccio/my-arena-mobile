@@ -2,6 +2,8 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 
 import {
+  NodeDefs,
+  Nodes,
   Objects,
   Records,
   RecordValidations,
@@ -15,6 +17,11 @@ const selectRecord = (state) => state.dataEntry.currentRecord;
 const selectRecordRootNodeUuid = createSelector(
   [selectRecord],
   (record) => Records.getRoot(record)?.uuid
+);
+
+const selectRecordCycle = createSelector(
+  [selectRecord],
+  (record) => record.cycle
 );
 
 const selectRecordSingleNodeUuid = createSelector(
@@ -68,6 +75,27 @@ const selectRecordNodePointerValidationChildrenCount = createSelector(
   }
 );
 
+const selectRecordNodePointerVisibility = createSelector(
+  [
+    SurveySelectors.selectCurrentSurvey,
+    selectRecord,
+    (_state, nodeParentUuid) => nodeParentUuid,
+    (_state, _nodeParentUuid, nodeDefUuid) => nodeDefUuid,
+  ],
+  (survey, record, nodeParentUuid, nodeDefUuid) => {
+    const parentNode = Records.getNodeByUuid(nodeParentUuid)(record);
+    const applicable = Nodes.isChildApplicable(parentNode, nodeDefUuid);
+    const nodeDefChild = Surveys.getNodeDefByUuid({
+      survey,
+      uuid: nodeDefUuid,
+    });
+    const cycle = record.cycle;
+    const hiddenWhenNotRelevant =
+      NodeDefs.isHiddenWhenNotRelevant(cycle)(nodeDefChild);
+    return applicable || !hiddenWhenNotRelevant;
+  }
+);
+
 const selectRecordAttributeInfo = createSelector(
   [selectRecord, (_state, nodeUuid) => nodeUuid],
   (record, nodeUuid) => {
@@ -76,7 +104,8 @@ const selectRecordAttributeInfo = createSelector(
     const validation = RecordValidations.getValidationNode({ nodeUuid })(
       record.validation
     );
-    return { value, validation };
+    const applicable = Records.isNodeApplicable({ record, node: attribute });
+    return { applicable, value, validation };
   }
 );
 
@@ -99,12 +128,15 @@ const selectVisibleChildDefs = createSelector(
 export const DataEntrySelectors = {
   selectRecord,
 
+  useRecordCycle: () => useSelector(selectRecordCycle),
+
   useRecordRootNodeUuid: () => useSelector(selectRecordRootNodeUuid),
 
   useRecordSingleNodeUuid: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector((state) =>
       selectRecordSingleNodeUuid(state, parentNodeUuid, nodeDefUuid)
     ),
+
   useRecordEntityVisibleChildDefs: ({ nodeDef }) =>
     useSelector((state) => selectVisibleChildDefs(state, nodeDef)),
 
@@ -114,6 +146,7 @@ export const DataEntrySelectors = {
         selectRecordNodePointerValidation(state, parentNodeUuid, nodeDefUuid),
       Objects.isEqual
     ),
+
   useRecordNodePointerValidationChildrenCount: ({
     parentNodeUuid,
     nodeDefUuid,
@@ -126,6 +159,11 @@ export const DataEntrySelectors = {
           nodeDefUuid
         ),
       Objects.isEqual
+    ),
+
+  useRecordNodePointerVisibility: ({ parentNodeUuid, nodeDefUuid }) =>
+    useSelector((state) =>
+      selectRecordNodePointerVisibility(state, parentNodeUuid, nodeDefUuid)
     ),
 
   useRecordAttributeInfo: ({ nodeUuid }) =>

@@ -1,29 +1,32 @@
-import { Objects } from "@openforis/arena-core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+
 import { DataEntryActions } from "../../state/dataEntry/actions";
 import { DataEntrySelectors } from "../../state/dataEntry/selectors";
 
 export const useNodeComponentLocalState = ({ nodeUuid }) => {
   const dispatch = useDispatch();
 
-  const { value: nodeValue, validation } =
-    DataEntrySelectors.useRecordAttributeInfo({
-      nodeUuid,
-    });
+  const {
+    applicable,
+    value: nodeValue,
+    validation: nodeValidation,
+  } = DataEntrySelectors.useRecordAttributeInfo({
+    nodeUuid,
+  });
 
-  const [state, setState] = useState({ value: null });
-  const { value } = state;
+  // const [state, setState] = useState({ value: null });
+  // const { value, validation } = state;
 
-  useEffect(() => {
-    if (!Objects.isEqual(value, nodeValue)) {
-      setState((statePrev) => ({ ...statePrev, value: nodeValue }));
-    }
-  }, [nodeValue]);
+  // useEffect(() => {
+  //   if (!Objects.isEqual(value, nodeValue)) {
+  //     setState((statePrev) => ({ ...statePrev, value: nodeValue }));
+  //   }
+  // }, [nodeValue]);
 
   const updateNodeValue = useCallback(
     (valueUpdated) => {
-      setState((statePrev) => ({ ...statePrev, value: valueUpdated }));
+      // setState((statePrev) => ({ ...statePrev, value: valueUpdated }));
 
       dispatch(
         DataEntryActions.updateCurrentRecordAttribute({
@@ -36,8 +39,9 @@ export const useNodeComponentLocalState = ({ nodeUuid }) => {
   );
 
   return {
-    value,
-    validation,
+    applicable,
+    value: nodeValue,
+    validation: nodeValidation,
     updateNodeValue,
   };
 };

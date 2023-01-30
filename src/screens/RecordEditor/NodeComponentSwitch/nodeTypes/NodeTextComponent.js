@@ -8,7 +8,7 @@ export const NodeTextComponent = (props) => {
 
   console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
 
-  const { value, validation, updateNodeValue } = useNodeComponentLocalState({
+  const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
 
@@ -21,7 +21,12 @@ export const NodeTextComponent = (props) => {
   return (
     <TextInput
       editable={editable}
-      style={[{ alignSelf: "stretch" }]}
+      style={[
+        {
+          alignSelf: "stretch",
+          ...(applicable ? {} : { backgroundColor: "lightgray" }),
+        },
+      ]}
       onChange={onChange}
       value={value}
     />
