@@ -1,3 +1,4 @@
+import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 
 import {
@@ -13,20 +14,23 @@ import { SurveySelectors } from "../survey/selectors";
 
 const selectRecord = (state) => state.dataEntry.currentRecord;
 
-const selectRecordRootNodeUuid = (state) => {
-  const record = selectRecord(state);
-  return Records.getRoot(record)?.uuid;
-};
+const selectRecordRootNodeUuid = createSelector(
+  [selectRecord],
+  (record) => Records.getRoot(record)?.uuid
+);
 
-const selectRecordCycle = (state) => {
-  const record = selectRecord(state);
-  return record.cycle;
-};
+const selectRecordCycle = createSelector(
+  [selectRecord],
+  (record) => record.cycle
+);
 
-const selectRecordSingleNodeUuid =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
-    const record = selectRecord(state);
+const selectRecordSingleNodeUuid = createSelector(
+  [
+    selectRecord,
+    (_, parentNodeUuid) => parentNodeUuid,
+    (_state, _parentNodeUuid, nodeDefUuid) => nodeDefUuid,
+  ],
+  (record, parentNodeUuid, nodeDefUuid) => {
     if (parentNodeUuid) {
       const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
       const node = Records.getChild(parentNode, nodeDefUuid)(record);
@@ -34,13 +38,17 @@ const selectRecordSingleNodeUuid =
     }
     const root = Records.getRoot(record);
     return root?.uuid;
-  };
+  }
+);
 
-const selectRecordNodePointerValidation =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
-    const record = selectRecord(state);
-    const nodeParent = Records.getNodeByUuid(parentNodeUuid)(record);
+const selectRecordNodePointerValidation = createSelector(
+  [
+    selectRecord,
+    (_state, nodeParentUuid) => nodeParentUuid,
+    (_state, _nodeParentUuid, nodeDefUuid) => nodeDefUuid,
+  ],
+  (record, nodeParentUuid, nodeDefUuid) => {
+    const nodeParent = Records.getNodeByUuid(nodeParentUuid)(record);
     const node = Records.getChild(nodeParent, nodeDefUuid)(record);
     if (!node) return undefined;
 
@@ -48,27 +56,34 @@ const selectRecordNodePointerValidation =
       nodeUuid: node.uuid,
     })(record.validation);
     return validation;
-  };
+  }
+);
 
-const selectRecordNodePointerValidationChildrenCount =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
-    const record = selectRecord(state);
+const selectRecordNodePointerValidationChildrenCount = createSelector(
+  [
+    selectRecord,
+    (_state, nodeParentUuid) => nodeParentUuid,
+    (_state, _nodeParentUuid, nodeDefUuid) => nodeDefUuid,
+  ],
+  (record, nodeParentUuid, nodeDefUuid) => {
     const validationChildrenCount =
       RecordValidations.getValidationChildrenCount({
-        nodeParentUuid: parentNodeUuid,
+        nodeParentUuid,
         nodeDefChildUuid: nodeDefUuid,
       })(record.validation);
     return validationChildrenCount;
-  };
+  }
+);
 
-const selectRecordNodePointerVisibility =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
-    const survey = SurveySelectors.selectCurrentSurvey(state);
-    const record = selectRecord(state);
-
-    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+const selectRecordNodePointerVisibility = createSelector(
+  [
+    SurveySelectors.selectCurrentSurvey,
+    selectRecord,
+    (_state, nodeParentUuid) => nodeParentUuid,
+    (_state, _nodeParentUuid, nodeDefUuid) => nodeDefUuid,
+  ],
+  (survey, record, nodeParentUuid, nodeDefUuid) => {
+    const parentNode = Records.getNodeByUuid(nodeParentUuid)(record);
     const applicable = Nodes.isChildApplicable(parentNode, nodeDefUuid);
     const nodeDefChild = Surveys.getNodeDefByUuid({
       survey,
@@ -78,12 +93,12 @@ const selectRecordNodePointerVisibility =
     const hiddenWhenNotRelevant =
       NodeDefs.isHiddenWhenNotRelevant(cycle)(nodeDefChild);
     return applicable || !hiddenWhenNotRelevant;
-  };
+  }
+);
 
-const selectRecordAttributeInfo =
-  (state) =>
-  ({ nodeUuid }) => {
-    const record = selectRecord(state);
+const selectRecordAttributeInfo = createSelector(
+  [selectRecord, (_state, nodeUuid) => nodeUuid],
+  (record, nodeUuid) => {
     const attribute = Records.getNodeByUuid(nodeUuid)(record);
     const value = attribute?.value;
     const validation = RecordValidations.getValidationNode({ nodeUuid })(
@@ -91,19 +106,24 @@ const selectRecordAttributeInfo =
     );
     const applicable = Records.isNodeApplicable({ record, node: attribute });
     return { applicable, value, validation };
-  };
+  }
+);
 
-const selectVisibleChildDefs =
-  (state) =>
-  ({ nodeDef }) => {
-    const survey = SurveySelectors.selectCurrentSurvey(state);
+const selectVisibleChildDefs = createSelector(
+  [
+    SurveySelectors.selectCurrentSurvey,
+    // selectCurrentRecord,
+    (_state, nodeDef) => nodeDef,
+  ],
+  (survey, nodeDef) => {
     const childDefs = Surveys.getNodeDefChildren({
       survey,
       nodeDef,
       includeAnalysis: false,
     });
     return childDefs;
-  };
+  }
+);
 
 export const DataEntrySelectors = {
   selectRecord,
@@ -114,22 +134,16 @@ export const DataEntrySelectors = {
 
   useRecordSingleNodeUuid: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector((state) =>
-      selectRecordSingleNodeUuid(state)({ parentNodeUuid, nodeDefUuid })
+      selectRecordSingleNodeUuid(state, parentNodeUuid, nodeDefUuid)
     ),
 
   useRecordEntityVisibleChildDefs: ({ nodeDef }) =>
-    useSelector(
-      (state) => selectVisibleChildDefs(state)({ nodeDef }),
-      Objects.isEqual
-    ),
+    useSelector((state) => selectVisibleChildDefs(state, nodeDef)),
 
   useRecordNodePointerValidation: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector(
       (state) =>
-        selectRecordNodePointerValidation(state)({
-          parentNodeUuid,
-          nodeDefUuid,
-        }),
+        selectRecordNodePointerValidation(state, parentNodeUuid, nodeDefUuid),
       Objects.isEqual
     ),
 
@@ -139,21 +153,22 @@ export const DataEntrySelectors = {
   }) =>
     useSelector(
       (state) =>
-        selectRecordNodePointerValidationChildrenCount(state)({
+        selectRecordNodePointerValidationChildrenCount(
+          state,
           parentNodeUuid,
-          nodeDefUuid,
-        }),
+          nodeDefUuid
+        ),
       Objects.isEqual
     ),
 
   useRecordNodePointerVisibility: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector((state) =>
-      selectRecordNodePointerVisibility(state)({ parentNodeUuid, nodeDefUuid })
+      selectRecordNodePointerVisibility(state, parentNodeUuid, nodeDefUuid)
     ),
 
   useRecordAttributeInfo: ({ nodeUuid }) =>
     useSelector(
-      (state) => selectRecordAttributeInfo(state)({ nodeUuid }),
+      (state) => selectRecordAttributeInfo(state, nodeUuid),
       Objects.isEqual
     ),
 };
