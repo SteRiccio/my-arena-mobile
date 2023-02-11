@@ -7,15 +7,16 @@ export const NodeCodeSingleRadioComponent = (props) => {
 
   return (
     <RadioButton.Group onValueChange={onChange} value={value}>
-      {items.map((item) => (
-        <HView>
+      <HView>
+        {items.map((item) => (
           <RadioButton.Item
+            key={item.uuid}
             label={item.props.labels["en"]}
             disabled={!editable}
             value={item.uuid}
           />
-        </HView>
-      ))}
+        ))}
+      </HView>
     </RadioButton.Group>
   );
 };

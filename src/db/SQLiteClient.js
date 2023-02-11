@@ -47,6 +47,12 @@ export default class SQLiteClient {
     });
   }
 
+  async transaction(callback) {
+    return new Promise((resolve, reject) => {
+      this.privateDb.transaction(callback, reject, resolve);
+    });
+  }
+
   async one(sql, args) {
     const rows = await this.executeSql(sql, args);
     return rows.length === 1 ? rows.item(0) : null;
