@@ -4,6 +4,7 @@ import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
+import { RecordService } from "../../service/recordService";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 
@@ -20,6 +21,10 @@ const createNewRecord =
       survey,
       record,
     });
+
+    record.surveyId = survey.id;
+
+    await RecordService.insertRecord(record);
 
     dispatch({ type: CURRENT_RECORD_SET, record: recordInitialized });
 
@@ -42,6 +47,8 @@ const updateCurrentRecordAttribute =
       record,
       node: nodeUpdated,
     });
+
+    await RecordService.updateRecord(record);
 
     dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   };
