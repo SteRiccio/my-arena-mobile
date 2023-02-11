@@ -1,3 +1,4 @@
+import { NodeDefType, Objects } from "@openforis/arena-core";
 import { useCallback } from "react";
 
 import { TextInput } from "../../../../components";
@@ -17,10 +18,15 @@ export const NodeTextComponent = (props) => {
   }, []);
 
   const editable = !nodeDef.props.readOnly;
+  const isNumeric = [NodeDefType.decimal, NodeDefType.integer].includes(
+    nodeDef.type
+  );
+  const textValue = Objects.isEmpty(value) ? null : String(value);
 
   return (
     <TextInput
       editable={editable}
+      keyboardType={isNumeric ? "numeric" : undefined}
       style={[
         {
           alignSelf: "stretch",
@@ -28,7 +34,7 @@ export const NodeTextComponent = (props) => {
         },
       ]}
       onChange={onChange}
-      value={value}
+      value={textValue}
     />
   );
 };

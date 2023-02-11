@@ -6,13 +6,14 @@ import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { Text } from "../../../components";
 
 import { NodeBooleanComponent } from "./nodeTypes/NodeBooleanComponent";
-import { NodeNumericComponent } from "./nodeTypes/NodeNumericComponent";
+import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
 import { NodeTextComponent } from "./nodeTypes/NodeTextComponent";
 
 const nodeDefComponentByType = {
   [NodeDefType.boolean]: NodeBooleanComponent,
-  [NodeDefType.decimal]: NodeNumericComponent,
-  [NodeDefType.integer]: NodeNumericComponent,
+  [NodeDefType.code]: NodeCodeComponent,
+  [NodeDefType.decimal]: NodeTextComponent,
+  [NodeDefType.integer]: NodeTextComponent,
   [NodeDefType.text]: NodeTextComponent,
 };
 
