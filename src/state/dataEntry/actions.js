@@ -7,6 +7,7 @@ import { DataEntrySelectors } from "./selectors";
 import { RecordService } from "../../service/recordService";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
+const ENTITY_IN_PAGE_SET = "ENTITY_IN_PAGE_SET";
 
 const createNewRecord =
   ({ navigation }) =>
@@ -53,9 +54,15 @@ const updateCurrentRecordAttribute =
     dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   };
 
+const selectEntityInPage = ({ pageUuid, entityUuid }) => {
+  dispatch({ type: ENTITY_IN_PAGE_SET, pageUuid, entityUuid });
+};
+
 export const DataEntryActions = {
   CURRENT_RECORD_SET,
+  ENTITY_IN_PAGE_SET,
 
   createNewRecord,
   updateCurrentRecordAttribute,
+  selectEntityInPage,
 };

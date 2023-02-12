@@ -7,6 +7,13 @@ const actionHandlers = {
     ...state,
     currentRecord: action.record,
   }),
+  [DataEntryActions.ENTITY_IN_PAGE_SET]: ({ state, action }) => ({
+    ...state,
+    selectedEntityUuidByPageUuid: {
+      ...state.selectedEntityUuidByPageUuid,
+      [action.pageUuid]: action.entityUuid,
+    },
+  }),
 };
 
 export const DataEntryReducer = StoreUtils.exportReducer({

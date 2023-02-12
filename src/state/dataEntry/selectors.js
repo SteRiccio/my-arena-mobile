@@ -27,14 +27,28 @@ const selectRecordSingleNodeUuid =
   (state) =>
   ({ parentNodeUuid, nodeDefUuid }) => {
     const record = selectRecord(state);
-    if (parentNodeUuid) {
-      const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
-      const node = Records.getChild(parentNode, nodeDefUuid)(record);
-      return node?.uuid;
-    }
-    const root = Records.getRoot(record);
-    return root?.uuid;
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+    const node = Records.getChild(parentNode, nodeDefUuid)(record);
+    return node?.uuid;
   };
+
+const selectRecordEntitiesUuidsAndKeyValues =
+  (state) =>
+  ({ parentNodeUuid, nodeDefUuid }) => {
+    const record = selectRecord(state);
+    const survey = selectCurrentSurvey(state);
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+    const entities = Records.getChildren(parentNode, nodeDefUuid)(record);
+    return entities.map((entity) => ({
+      uuid: entity.uuid,
+      keyValues: Records.getEntityKeyValues({ survey, record, entity }),
+    }));
+  };
+
+const selectEntityUuidByPageUuid =
+  (state) =>
+  ({ pageUuid }) =>
+    state.selectedEntityUuidByPageUuid[pageUuid];
 
 const selectRecordNodePointerValidation =
   (state) =>
@@ -156,4 +170,17 @@ export const DataEntrySelectors = {
       (state) => selectRecordAttributeInfo(state)({ nodeUuid }),
       Objects.isEqual
     ),
+
+  useRecordEntitiesUuidsAndKeyValues: ({ parentNodeUuid, nodeDefUuid }) =>
+    useSelector(
+      (state) =>
+        selectRecordEntitiesUuidsAndKeyValues(state)({
+          parentNodeUuid,
+          nodeDefUuid,
+        }),
+      Objects.isEqual
+    ),
+
+  useRecordSelectedEntityUuid: ({ pageUuid }) =>
+    useSelector((state) => selectEntityUuidByPageUuid(state)({ pageUuid })),
 };

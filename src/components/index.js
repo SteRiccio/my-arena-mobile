@@ -1,3 +1,4 @@
+export { Dropdown } from "./Dropdown";
 export { HView } from "./HView";
 export { Text } from "./Text";
 export { TextInput } from "./TextInput";
