@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
-import { Button } from "react-native-paper";
 import { useDispatch } from "react-redux";
+
+import { Button, VView } from "../components";
+import { screens } from "../navigation/AppStack";
 import { SurveyService } from "../service/surveyService";
 
 import { DataEntryActions } from "../state/dataEntry/actions";
@@ -25,5 +27,14 @@ export const HomeScreen = (props) => {
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };
 
-  return <Button onPress={onNewRecordPress}>New Record</Button>;
+  const onRecordsListPress = () => {
+    navigation.navigate(screens.recordsList.key);
+  };
+
+  return (
+    <VView>
+      <Button onPress={onRecordsListPress}>Records List</Button>
+      <Button onPress={onNewRecordPress}>New Record</Button>
+    </VView>
+  );
 };

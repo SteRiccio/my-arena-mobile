@@ -5,6 +5,7 @@ import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { RecordService } from "../../service/recordService";
+import { screens } from "../../navigation/AppStack";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const ENTITY_IN_PAGE_SET = "ENTITY_IN_PAGE_SET";
@@ -14,22 +15,22 @@ const createNewRecord =
   async (dispatch, getState) => {
     const state = getState();
     const survey = state.survey.currentSurvey;
-    const record = RecordFactory.createInstance({
+    const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
       user: {},
     });
-    const { record: recordInitialized } = await RecordUpdater.createRootEntity({
+    const { record } = await RecordUpdater.createRootEntity({
       survey,
-      record,
+      record: recordEmpty,
     });
 
     record.surveyId = survey.id;
 
-    await RecordService.insertRecord(record);
+    await RecordService.insertRecord({ survey, record });
 
-    dispatch({ type: CURRENT_RECORD_SET, record: recordInitialized });
+    dispatch({ type: CURRENT_RECORD_SET, record });
 
-    navigation.navigate("RecordEditor");
+    navigation.navigate(screens.recordEditor.key);
   };
 
 const updateCurrentRecordAttribute =
@@ -49,7 +50,7 @@ const updateCurrentRecordAttribute =
       node: nodeUpdated,
     });
 
-    await RecordService.updateRecord(record);
+    await RecordService.updateRecord({ survey, record });
 
     dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   };

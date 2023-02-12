@@ -1,3 +1,5 @@
+export { Button } from "./Button";
+export { DataTable } from "./DataTable";
 export { Dropdown } from "./Dropdown";
 export { HView } from "./HView";
 export { Text } from "./Text";

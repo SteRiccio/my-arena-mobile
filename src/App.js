@@ -7,8 +7,8 @@ import { View } from "react-native";
 import { AppStack } from "navigation/AppStack";
 import { rootReducer } from "state/reducers";
 import { DowngradeError, initialize } from "./db";
+import { Text } from "./components";
 import styles from "./appStyles";
-import { Text } from "react-native-paper";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
@@ -41,14 +41,14 @@ const App = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Initializing application...</Text>
+        <Text textKey="Initializing application..." />
       </View>
     );
   }
   if (errorMessage) {
     return (
       <View style={styles.container}>
-        <Text>{`Error: ${errorMessage}`}</Text>
+        <Text textKey={`Error: ${errorMessage}`} />
       </View>
     );
   }
