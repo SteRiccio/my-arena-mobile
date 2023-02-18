@@ -1,9 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { Appbar } from "react-native-paper";
 import MenuDrawer from "react-native-side-drawer";
+import { useDispatch } from "react-redux";
 
 import { CloseIconButton } from "../../components";
+import { DataEntryActions } from "../../state/dataEntry/actions";
+import { DataEntrySelectors } from "../../state/dataEntry/selectors";
 import { PagesTree } from "./PagesTree";
 import { RecordPageForm } from "./RecordPageForm";
 
@@ -21,45 +23,33 @@ const styles = StyleSheet.create({
   },
 });
 
-export const RecordEditor = (props) => {
-  const [state, setState] = useState({ open: false });
-
-  const { open } = state;
-
-  const toggleOpen = () => {
-    setState({ open: !open });
-  };
+export const RecordEditor = () => {
+  const dispatch = useDispatch();
+  const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
 
   const drawerContent = useCallback(() => {
-    if (!open) return null;
+    if (!pageSelectorOpen) return null;
     return (
       <View style={styles.animatedBox}>
-        <CloseIconButton onPress={toggleOpen} />
+        <CloseIconButton
+          onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
+        />
         <PagesTree />
       </View>
     );
-  }, [open]);
+  }, [pageSelectorOpen]);
 
   return (
-    <>
-      <Appbar.Header>
-        <Appbar.Action icon="menu" onPress={toggleOpen} />
-        <Appbar.BackAction onPress={() => {}} />
-        <Appbar.Content title="<Entity>" />
-        <Appbar.Action icon="magnify" onPress={() => {}} />
-      </Appbar.Header>
-
-      <MenuDrawer
-        open={open}
-        position="left"
-        drawerContent={drawerContent()}
-        drawerPercentage={45}
-        animationTime={250}
-        overlay={true}
-        opacity={0.4}
-      >
-        <RecordPageForm />
-      </MenuDrawer>
-    </>
+    <MenuDrawer
+      open={open}
+      position="left"
+      drawerContent={drawerContent()}
+      drawerPercentage={45}
+      animationTime={250}
+      overlay={true}
+      opacity={0.4}
+    >
+      <RecordPageForm />
+    </MenuDrawer>
   );
 };

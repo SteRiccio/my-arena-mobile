@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import { Button, VView } from "../components";
-import { screens } from "../navigation/AppStack";
+import { screens } from "../navigation/screens";
 import { SurveyService } from "../service/surveyService";
 
 import { DataEntryActions } from "../state/dataEntry/actions";

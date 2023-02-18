@@ -5,19 +5,20 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeScreen } from "../screens/HomeScreen";
 import { RecordEditor } from "../screens/RecordEditor/RecordEditor";
 import { RecordsList } from "../screens/RecordsList";
+import { SettingsScreen } from "../screens/SettingsScreen";
+import { AppBar } from "./AppBar";
+import { screens } from "./screens";
 
 const Stack = createNativeStackNavigator();
-
-export const screens = {
-  home: { key: "home", title: "My Arena Mobile" },
-  recordsList: { key: "recordsList", title: "Records List" },
-  recordEditor: { key: "recordEditor", title: "Record Editor" },
-};
 
 export const AppStack = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          header: (props) => <AppBar {...props} />,
+        }}
+      >
         <Stack.Screen
           name={screens.home.key}
           component={HomeScreen}
@@ -28,11 +29,15 @@ export const AppStack = () => {
           options={{ title: screens.recordsList.title }}
           component={RecordsList}
         />
-
         <Stack.Screen
           name={screens.recordEditor.key}
           options={{ title: screens.recordEditor.title }}
           component={RecordEditor}
+        />
+        <Stack.Screen
+          name={screens.settings.key}
+          options={{ title: screens.settings.title }}
+          component={SettingsScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

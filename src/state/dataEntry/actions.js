@@ -5,7 +5,7 @@ import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { RecordService } from "../../service/recordService";
-import { screens } from "../../navigation/AppStack";
+import { screens } from "../../navigation/screens";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const ENTITY_IN_PAGE_SET = "ENTITY_IN_PAGE_SET";
@@ -59,6 +59,12 @@ const selectEntityInPage = ({ pageUuid, entityUuid }) => {
   dispatch({ type: ENTITY_IN_PAGE_SET, pageUuid, entityUuid });
 };
 
+const toggleRecordPageMenuOpen = (dispatch, getState) => {
+  const state = getState();
+  const open = DataEntrySelectors.selectRecordPageSelectorMenuOpen(state);
+  dispatch({ type: PAGE_SELECTOR_MENU_OPEN_SET, open: !open });
+};
+
 export const DataEntryActions = {
   CURRENT_RECORD_SET,
   ENTITY_IN_PAGE_SET,
@@ -66,4 +72,5 @@ export const DataEntryActions = {
   createNewRecord,
   updateCurrentRecordAttribute,
   selectEntityInPage,
+  toggleRecordPageMenuOpen,
 };

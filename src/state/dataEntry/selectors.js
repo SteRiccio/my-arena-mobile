@@ -11,7 +11,11 @@ import {
 
 import { SurveySelectors } from "../survey/selectors";
 
-const selectRecord = (state) => state.dataEntry.currentRecord;
+const getDataEntryState = (state) => state.dataEntry;
+
+const selectRecord = (state) => getDataEntryState(state).currentRecord;
+
+const selectIsEditingRecord = (state) => !!selectRecord(state);
 
 const selectRecordRootNodeUuid = (state) => {
   const record = selectRecord(state);
@@ -119,8 +123,14 @@ const selectVisibleChildDefs =
     return childDefs;
   };
 
+// record page
+const selectRecordPageSelectorMenuOpen = (state) =>
+  getDataEntryState(state).recordPageSelectorMenuOpen;
+
 export const DataEntrySelectors = {
   selectRecord,
+
+  useIsEditingRecord: () => useSelector(selectIsEditingRecord),
 
   useRecordCycle: () => useSelector(selectRecordCycle),
 
@@ -183,4 +193,9 @@ export const DataEntrySelectors = {
 
   useRecordSelectedEntityUuid: ({ pageUuid }) =>
     useSelector((state) => selectEntityUuidByPageUuid(state)({ pageUuid })),
+
+  // page selector
+  selectRecordPageSelectorMenuOpen,
+  useIsRecordPageSelectorMenuOpen: () =>
+    useSelector((state) => selectRecordPageSelectorMenuOpen(state)),
 };
