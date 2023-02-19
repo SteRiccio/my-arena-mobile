@@ -1,60 +1,55 @@
-import { useEffect, useState } from "react";
-import { View } from "react-native";
-import { RadioButton } from "react-native-paper";
+import { useCallback, useEffect, useState } from "react";
 
-import { HView, Text, TextInput, VView } from "../../components";
+import { VView } from "../../components";
 import { SettingsService } from "../../service/settingsService";
-
-const defaultServerUrl = "https://openforis-arena.org";
+import { CredentialPreference } from "./CredentialsPreference";
+import { ServerUrlPreference } from "./ServerUrlPreference";
 
 export const SettingsScreen = () => {
   const [settings, setSettings] = useState({});
+  // const { serverUrl } = settings;
+  // const [credentials, setCredentials] = useState({});
+
+  // const fetchCredentials = useCallback(async () => {
+  //   setCredentials(await SettingsService.getCredentials());
+  // }, []);
 
   useEffect(() => {
     const fetchSettings = async () => {
-      setSettings(await SettingsService.getSettings());
+      setSettings(await SettingsService.fetchSettings());
+      // await fetchCredentials();
     };
     fetchSettings();
   }, []);
 
-  const onSettingsUpdate = async (settingsUpdateFn) => {
-    const settingsUpdated = settingsUpdateFn(settings);
-    setSettings(settingsUpdated);
-    await SettingsService.setSettings(settingsUpdated);
-  };
+  // useEffect(() => {
+  //   fetchCredentials();
+  // }, [serverUrl]);
 
-  const onServerUrlTypeChange = async (type) => {
-    await onSettingsUpdate((settings) => ({
-      ...settings,
-      serverUrlType: type,
-      serverUrl: type === "default" ? defaultServerUrl : serverUrl,
-    }));
-  };
+  const updateSettings = useCallback(
+    async (settingsUpdateFn) => {
+      const settingsUpdated = settingsUpdateFn(settings);
+      setSettings(settingsUpdated);
+      await SettingsService.saveSettings(settingsUpdated);
+    },
+    [settings]
+  );
 
-  const onServerUrlChange = async (serverUrlUpdated) => {
-    await onSettingsUpdate((settings) => ({
-      ...settings,
-      serverUrl: serverUrlUpdated.trim(),
-    }));
-  };
-
-  const { serverUrl, serverUrlType } = settings;
+  // const updateCredentials = useCallback(
+  //   async (username, password) =>
+  //     SettingsService.setCredentials(serverUrl, username, password),
+  //   [serverUrl]
+  // );
 
   return (
     <VView>
-      <RadioButton.Group
-        onValueChange={onServerUrlTypeChange}
-        value={serverUrlType}
-      >
-        <HView>
-          <RadioButton.Item label="Default" value="default" />
-          <RadioButton.Item label="Custom" value="custom" />
-        </HView>
-      </RadioButton.Group>
-      <TextInput
-        editable={serverUrlType === "custom"}
-        value={serverUrl}
-        onChange={onServerUrlChange}
+      <ServerUrlPreference
+        settings={settings}
+        updateSettings={updateSettings}
+      />
+      <CredentialPreference
+        settings={settings}
+        updateSettings={updateSettings}
       />
     </VView>
   );

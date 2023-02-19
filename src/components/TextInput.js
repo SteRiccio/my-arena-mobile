@@ -8,6 +8,7 @@ export const TextInput = (props) => {
     label: labelKey,
     placeholder: placeholderKey,
     onChange,
+    secureTextEntry,
     style,
     value,
   } = props;
@@ -20,6 +21,7 @@ export const TextInput = (props) => {
       label={labelKey}
       onChangeText={onChange}
       placeholder={placeholderKey}
+      secureTextEntry={secureTextEntry}
       style={style}
       value={value}
     />

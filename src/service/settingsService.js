@@ -1,19 +1,42 @@
+import * as Keychain from "react-native-keychain";
+
 import { AsyncStorageUtils } from "./asyncStorage/AsyncStorageUtils";
 import { asyncStorageKeys } from "./asyncStorage/asyncStorageKeys";
 
+const defaultServerUrl = "https://openforis-arena.org";
+
 const defaultSettings = {
   serverUrlType: "default",
-  serverUrl: "https://openforis-arena.org",
+  serverUrl: defaultServerUrl,
 };
 
-const getSettings = async () =>
-  (await AsyncStorageUtils.getItem(asyncStorageKeys.settings)) ||
-  defaultSettings;
+let INSTANCE = null;
 
-const setSettings = async (settings) =>
-  AsyncStorageUtils.setItem(asyncStorageKeys.settings, settings);
+const fetchSettings = async () => {
+  const settings =
+    INSTANCE ||
+    (await AsyncStorageUtils.getItem(asyncStorageKeys.settings)) ||
+    defaultSettings;
+  INSTANCE = settings;
+  return settings;
+};
+
+const saveSettings = async (settings) => {
+  await AsyncStorageUtils.setItem(asyncStorageKeys.settings, settings);
+  INSTANCE = settings;
+};
+
+const getCredentials = async (server) =>
+  Keychain.getInternetCredentials(server);
+
+const setCredentials = async (server, email, password) =>
+  Keychain.setInternetCredentials(server, email, password);
 
 export const SettingsService = {
-  getSettings,
-  setSettings,
+  defaultServerUrl,
+  fetchSettings,
+  saveSettings,
+
+  getCredentials,
+  setCredentials,
 };
