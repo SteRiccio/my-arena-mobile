@@ -1,8 +1,10 @@
 import { RecordRepository } from "./repository/recordRepository";
 
-const { fetchRecords, insertRecord, updateRecord } = RecordRepository;
+const { fetchRecord, fetchRecords, insertRecord, updateRecord } =
+  RecordRepository;
 
 export const RecordService = {
+  fetchRecord,
   fetchRecords,
   insertRecord,
   updateRecord,

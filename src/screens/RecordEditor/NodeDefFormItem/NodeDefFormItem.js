@@ -6,9 +6,9 @@ import { SurveySelectors } from "../../../state/survey/selectors";
 import { Text } from "../../../components";
 
 import { NodeValidationIcon } from "../NodeValidationIcon/NodeValidationIcon";
-import styles from "./styles.js";
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
+import styles from "./styles.js";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid } = props;

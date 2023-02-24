@@ -1,4 +1,4 @@
-import { Records } from "@openforis/arena-core";
+import { Objects, Records, Surveys } from "@openforis/arena-core";
 import { dbClient } from "../../db";
 
 const SUPPORTED_KEYS = 5;
@@ -24,14 +24,29 @@ const getPlaceholders = (count) =>
     .map(() => "?")
     .join(", ");
 
-const fetchRecords = async ({ surveyId }) => {
+const fetchRecord = async ({ survey, recordId }) => {
+  const { id: surveyId } = survey;
+  const row = await dbClient.one(
+    `SELECT id, uuid, ${keysColumns.join(
+      ", "
+    )}, date_created, date_modified, content
+    FROM record
+    WHERE survey_id = ? AND id = ?`,
+    [surveyId, recordId]
+  );
+  return rowToRecord({ survey })(row);
+};
+
+const fetchRecords = async ({ survey }) => {
+  const { id: surveyId } = survey;
+
   const rows = await dbClient.many(
-    `SELECT uuid, ${keysColumns.join(", ")}, date_created, date_modified
+    `SELECT id, uuid, ${keysColumns.join(", ")}, date_created, date_modified
     FROM record
     WHERE survey_id = ?`,
     [surveyId]
   );
-  return rows;
+  return rows.map(rowToRecord({ survey }));
 };
 
 const insertRecord = async ({ survey, record }) => {
@@ -63,7 +78,28 @@ const updateRecord = async ({ survey, record }) => {
   );
 };
 
+const rowToRecord = ({ survey }) => {
+  const rootDef = Surveys.getNodeDefRoot({ survey });
+  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
+
+  return (row) => {
+    if (row.content) {
+      return JSON.parse(row.content);
+    }
+    keysColumns.forEach((keyCol, index) => {
+      const keyValue = row[keyCol];
+      const keyDef = keyDefs[index];
+      if (keyDef) {
+        row[keyDef.props.name] = keyValue;
+      }
+      delete row[keyCol];
+    });
+    return Objects.camelize(row);
+  };
+};
+
 export const RecordRepository = {
+  fetchRecord,
   fetchRecords,
   insertRecord,
   updateRecord,

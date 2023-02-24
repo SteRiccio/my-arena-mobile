@@ -1,39 +1,64 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { NodeDefs, Surveys } from "@openforis/arena-core";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Objects, Surveys } from "@openforis/arena-core";
 
-import { DataTable } from "../../components";
+import { Button, DataTable, VView } from "../../components";
 import { SurveySelectors } from "../../state/survey/selectors";
 import { RecordService } from "../../service/recordService";
+import { DataEntryActions } from "../../state/dataEntry/actions";
+import { useDispatch } from "react-redux";
 
-export const RecordsList = () => {
+export const RecordsList = (props) => {
+  const { navigation } = props;
+  const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
-  const rootDef = Surveys.getNodeDefRoot({ survey });
-  const rootDefKeys = useMemo(
-    () => Surveys.getNodeDefKeys({ survey, nodeDef: rootDef }),
-    [survey, rootDef]
-  );
+
+  const rootDefKeys = useMemo(() => {
+    if (!survey) return [];
+    const rootDef = Surveys.getNodeDefRoot({ survey });
+    return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
+  }, [survey]);
 
   const [state, setState] = useState({ records: [], loading: true });
   const { records } = state;
 
-  const loadRecords = async () => {
-    const _records = await RecordService.fetchRecords({ surveyId: survey.id });
-    console.log("records", _records);
-  };
+  const loadRecords = useCallback(async () => {
+    const _records = await RecordService.fetchRecords({ survey });
+    setState((statePrev) => ({
+      ...statePrev,
+      records: _records,
+      loading: false,
+    }));
+  }, [survey]);
 
   useEffect(() => {
+    if (!survey) return;
     loadRecords();
+  }, [survey]);
+
+  const onNewRecordPress = () => {
+    dispatch(DataEntryActions.createNewRecord({ navigation }));
+  };
+
+  const onRowPress = useCallback((row) => {
+    dispatch(
+      DataEntryActions.fetchAndEditRecord({ navigation, recordId: row.id })
+    );
   }, []);
 
   return (
-    <DataTable
-      columns={[
-        ...rootDefKeys.map((keyDef) => ({
-          key: keyDef.props.name,
-          header: keyDef.props.name,
-        })),
-      ]}
-      rows={records.map((record) => record)}
-    />
+    <VView>
+      <Button onPress={onNewRecordPress}>New Record</Button>
+      <DataTable
+        columns={[
+          ...rootDefKeys.map((keyDef) => ({
+            key: Objects.camelize(keyDef.props.name),
+            header: keyDef.props.name,
+          })),
+          { key: "dateCreated", header: "Created on" },
+        ]}
+        rows={records.map((record) => ({ key: record.uuid, ...record }))}
+        onRowPress={onRowPress}
+      />
+    </VView>
   );
 };

@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 
 import { DataEntryActions } from "../state/dataEntry/actions";
 import { DataEntrySelectors } from "../state/dataEntry/selectors";
-import { screens } from "./screens";
+import { screenKeys } from "./screens";
 
 export const AppBar = (props) => {
   const { back, navigation } = props;
@@ -24,7 +24,7 @@ export const AppBar = (props) => {
       <RNPAppbar.Action icon="magnify" onPress={() => {}} />
       <RNPAppbar.Action
         icon="menu"
-        onPress={() => navigation.navigate(screens.settings.key)}
+        onPress={() => navigation.navigate(screenKeys.settings)}
       />
     </RNPAppbar.Header>
   );

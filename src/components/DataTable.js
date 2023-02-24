@@ -1,7 +1,7 @@
 import { DataTable as RNPDataTable } from "react-native-paper";
 
 export const DataTable = (props) => {
-  const { columns, rows } = props;
+  const { columns, rows, onRowPress } = props;
 
   return (
     <RNPDataTable>
@@ -13,7 +13,7 @@ export const DataTable = (props) => {
         ))}
       </RNPDataTable.Header>
       {rows.map((row) => (
-        <RNPDataTable.Row key={row.key}>
+        <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
           {columns.map((column) => (
             <RNPDataTable.Cell>{row[column.key]}</RNPDataTable.Cell>
           ))}

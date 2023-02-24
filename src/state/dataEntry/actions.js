@@ -5,7 +5,7 @@ import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { RecordService } from "../../service/recordService";
-import { screens } from "../../navigation/screens";
+import { screenKeys } from "../../navigation/screens";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const ENTITY_IN_PAGE_SET = "ENTITY_IN_PAGE_SET";
@@ -14,7 +14,7 @@ const createNewRecord =
   ({ navigation }) =>
   async (dispatch, getState) => {
     const state = getState();
-    const survey = state.survey.currentSurvey;
+    const survey = SurveySelectors.selectCurrentSurvey(state);
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
       user: {},
@@ -28,9 +28,23 @@ const createNewRecord =
 
     await RecordService.insertRecord({ survey, record });
 
-    dispatch({ type: CURRENT_RECORD_SET, record });
+    dispatch(editRecord({ navigation, record }));
+  };
 
-    navigation.navigate(screens.recordEditor.key);
+const editRecord =
+  ({ navigation, record }) =>
+  (dispatch) => {
+    dispatch({ type: CURRENT_RECORD_SET, record });
+    navigation.navigate(screenKeys.recordEditor);
+  };
+
+const fetchAndEditRecord =
+  ({ navigation, recordId }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = await RecordService.fetchRecord({ survey, recordId });
+    dispatch(editRecord({ navigation, record }));
   };
 
 const updateCurrentRecordAttribute =
@@ -70,6 +84,7 @@ export const DataEntryActions = {
   ENTITY_IN_PAGE_SET,
 
   createNewRecord,
+  fetchAndEditRecord,
   updateCurrentRecordAttribute,
   selectEntityInPage,
   toggleRecordPageMenuOpen,

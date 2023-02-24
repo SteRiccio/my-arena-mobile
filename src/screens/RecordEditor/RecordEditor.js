@@ -41,7 +41,7 @@ export const RecordEditor = () => {
 
   return (
     <MenuDrawer
-      open={open}
+      open={pageSelectorOpen}
       position="left"
       drawerContent={drawerContent()}
       drawerPercentage={45}
