@@ -11,7 +11,7 @@ export const MultipleEntityComponent = (props) => {
 
   const dispatch = useDispatch();
   const cycle = DataEntrySelectors.useRecordCycle();
-  const pageUuid = NodeDefs.getLayoutProps(cycle).pageUuid;
+  const pageUuid = NodeDefs.getLayoutProps(cycle)(nodeDef).pageUuid;
   const selectedEntityUuid = DataEntrySelectors.useRecordSelectedEntityUuid({
     pageUuid,
   });

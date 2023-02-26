@@ -1,15 +1,23 @@
 import { NodeDefs } from "@openforis/arena-core";
 
-import { NodeEntityFormComponent } from "./nodeTypes/NodeEntityFormComponent";
+import { Text } from "../../../components";
+import { NodeSingleEntityComponent } from "./nodeTypes/NodeSingleEntityComponent";
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
 
 export const NodeComponentSwitch = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
-  console.log(`rendering NodeComponentSwitch for ${nodeDef.props.name}`);
+  if (__DEV__) {
+    console.log(`rendering NodeComponentSwitch for ${nodeDef.props.name}`);
+  }
 
-  if (NodeDefs.isEntity(nodeDef)) {
-    return <NodeEntityFormComponent nodeDef={nodeDef} nodeUuid={nodeUuid} />;
+  if (NodeDefs.isSingleEntity(nodeDef)) {
+    return (
+      <NodeSingleEntityComponent
+        nodeDef={nodeDef}
+        parentNodeUuid={parentNodeUuid}
+      />
+    );
   }
 
   if (NodeDefs.isSingle(nodeDef) && NodeDefs.isAttribute(nodeDef)) {
