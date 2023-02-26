@@ -1,7 +1,11 @@
 import { dbClient } from "../../db";
+import LZString from "lz-string";
 import demoSurvey from "../simple_survey.json";
 
 const insertSurvey = async (survey) => {
+  const surveyJson = JSON.stringify(survey);
+  const content = LZString.compressToBase64(surveyJson);
+
   await dbClient.executeSql(
     "INSERT INTO survey (server_url, uuid, name, label, content, date_created, date_modified) VALUES (?, ?, ?, ?, ?, ?, ?)",
     [
@@ -9,7 +13,7 @@ const insertSurvey = async (survey) => {
       survey.uuid,
       survey.props.name,
       survey.props.labels?.["en"],
-      JSON.stringify(survey),
+      content,
       survey.dateCreated,
       survey.dateModified,
     ]
@@ -21,7 +25,9 @@ const fetchSurveyById = async (id) => {
     "SELECT content FROM survey WHERE id = ?",
     [id]
   );
-  const survey = JSON.parse(surveyContentRow.content);
+  const content = surveyContentRow.content;
+  const surveyJsonString = LZString.decompressFromBase64(content);
+  const survey = JSON.parse(surveyJsonString);
   survey.id = id;
   return survey;
 };
