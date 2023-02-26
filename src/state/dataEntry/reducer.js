@@ -14,6 +14,10 @@ const actionHandlers = {
       [action.pageUuid]: action.entityUuid,
     },
   }),
+  [DataEntryActions.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
+    ...state,
+    recordPageSelectorMenuOpen: action.open,
+  }),
 };
 
 export const DataEntryReducer = StoreUtils.exportReducer({
