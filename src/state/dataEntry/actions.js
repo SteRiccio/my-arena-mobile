@@ -5,10 +5,11 @@ import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { RecordService } from "../../service/recordService";
-import { screenKeys } from "../../navigation/screens";
+import { screenKeys } from "../../navigation/screenKeys";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const ENTITY_IN_PAGE_SET = "ENTITY_IN_PAGE_SET";
+const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 
 const createNewRecord =
   ({ navigation }) =>
@@ -19,14 +20,14 @@ const createNewRecord =
       surveyUuid: survey.uuid,
       user: {},
     });
-    const { record } = await RecordUpdater.createRootEntity({
+    let { record } = await RecordUpdater.createRootEntity({
       survey,
       record: recordEmpty,
     });
 
     record.surveyId = survey.id;
 
-    await RecordService.insertRecord({ survey, record });
+    record = await RecordService.insertRecord({ survey, record });
 
     dispatch(editRecord({ navigation, record }));
   };
@@ -82,6 +83,7 @@ const toggleRecordPageMenuOpen = (dispatch, getState) => {
 export const DataEntryActions = {
   CURRENT_RECORD_SET,
   ENTITY_IN_PAGE_SET,
+  PAGE_SELECTOR_MENU_OPEN_SET,
 
   createNewRecord,
   fetchAndEditRecord,
