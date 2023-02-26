@@ -52,7 +52,7 @@ const fetchRecords = async ({ survey }) => {
 const insertRecord = async ({ survey, record }) => {
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
 
-  await dbClient.executeSql(
+  const { insertId } = await dbClient.executeSql(
     `INSERT INTO record (uuid, survey_id, ${keysColumns.join(
       ", "
     )}, content, date_created, date_modified)
@@ -66,6 +66,8 @@ const insertRecord = async ({ survey, record }) => {
       record.dateModified || Date.now(),
     ]
   );
+  record.id = insertId;
+  return record;
 };
 
 const updateRecord = async ({ survey, record }) => {
