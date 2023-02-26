@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 
 import { DataEntryActions } from "../state/dataEntry/actions";
 import { DataEntrySelectors } from "../state/dataEntry/selectors";
-import { screenKeys } from "./screens";
+import { screenKeys } from "./screenKeys";
 
 export const AppBar = (props) => {
   const { back, navigation } = props;

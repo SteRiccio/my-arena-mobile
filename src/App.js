@@ -26,7 +26,7 @@ const App = () => {
         await initialize();
         console.log("App initialized");
       } catch (err) {
-        console.log("===error", err);
+        console.error("===error", err);
         const errorMessage =
           err instanceof DowngradeError
             ? "Downgrade error"

@@ -4,15 +4,7 @@ import { RecordsList } from "../screens/RecordsList";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { SurveysListLocal } from "../screens/SurveysListLocal";
 import { SurveysListRemote } from "../screens/SurveysListRemote";
-
-export const screenKeys = {
-  home: "home",
-  recordsList: "recordsList",
-  recordEditor: "recordEditor",
-  surveysListLocal: "surveysListLocal",
-  surveysListRemote: "surveysListRemote",
-  settings: "settings",
-};
+import { screenKeys } from "./screenKeys";
 
 export const screens = {
   [screenKeys.home]: { title: "My Arena Mobile", component: HomeScreen },

@@ -59,9 +59,10 @@ const selectRecordNodePointerValidation =
   ({ parentNodeUuid, nodeDefUuid }) => {
     const record = selectRecord(state);
     const nodeParent = Records.getNodeByUuid(parentNodeUuid)(record);
-    const node = Records.getChild(nodeParent, nodeDefUuid)(record);
-    if (!node) return undefined;
+    const nodes = Records.getChildren(nodeParent, nodeDefUuid)(record);
+    if (nodes.length === 0) return undefined;
 
+    const node = nodes[0];
     const validation = RecordValidations.getValidationNode({
       nodeUuid: node.uuid,
     })(record.validation);
@@ -114,12 +115,14 @@ const selectRecordAttributeInfo =
 const selectVisibleChildDefs =
   (state) =>
   ({ nodeDef }) => {
+    const cycle = selectRecordCycle(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const childDefs = Surveys.getNodeDefChildren({
       survey,
       nodeDef,
       includeAnalysis: false,
-    });
+    }) // only child defs in same page
+      .filter((childDef) => !NodeDefs.getLayoutProps(cycle)(childDef).pageUuid);
     return childDefs;
   };
 

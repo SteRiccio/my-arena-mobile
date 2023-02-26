@@ -20,7 +20,9 @@ export const CredentialPreference = (props) => {
   );
 
   const onLogin = useCallback(async () => {
-    console.log(await AuthService.login(email, password));
+    if (__DEV__) {
+      console.log(await AuthService.login(email, password));
+    }
   }, [email, password]);
 
   return (

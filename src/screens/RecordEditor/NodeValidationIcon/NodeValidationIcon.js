@@ -5,14 +5,16 @@ import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 export const NodeValidationIcon = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
+  const nodeDefUuid = nodeDef.uuid;
+
   const validation = DataEntrySelectors.useRecordNodePointerValidation({
     parentNodeUuid,
-    nodeDefUuid: nodeDef?.uuid,
+    nodeDefUuid,
   });
   const validationChildrenCount =
     DataEntrySelectors.useRecordNodePointerValidationChildrenCount({
       parentNodeUuid,
-      nodeDefUuid: nodeDef?.uuid,
+      nodeDefUuid,
     });
 
   if (!validation && !validationChildrenCount) return null;
@@ -23,5 +25,6 @@ export const NodeValidationIcon = (props) => {
   if (validation && !validation?.valid && NodeDefs.isSingle(nodeDef)) {
     return <WarningIconButton />;
   }
+
   return null;
 };

@@ -13,8 +13,9 @@ import styles from "./styles.js";
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
-  console.log(`Rendering form item ${nodeDef.props.name}`);
-
+  if (__DEV__) {
+    console.log(`Rendering form item ${nodeDef.props.name}`);
+  }
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const visible = DataEntrySelectors.useRecordNodePointerVisibility({

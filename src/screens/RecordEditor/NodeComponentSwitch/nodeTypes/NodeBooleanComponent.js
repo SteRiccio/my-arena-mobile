@@ -9,8 +9,9 @@ const booleanValues = ["true", "false"];
 export const NodeBooleanComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  console.log(`rendering NodeBooleanComponent for ${nodeDef.props.name}`);
-
+  if (__DEV__) {
+    console.log(`rendering NodeBooleanComponent for ${nodeDef.props.name}`);
+  }
   const { value, validation, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });

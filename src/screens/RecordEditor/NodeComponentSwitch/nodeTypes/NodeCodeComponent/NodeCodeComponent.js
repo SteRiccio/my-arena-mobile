@@ -10,8 +10,9 @@ import { NodeCodeSingleRadioComponent } from "./NodeCodeSingleRadioComponent";
 export const NodeCodeComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  console.log(`rendering NodeCodeComponent for ${nodeDef.props.name}`);
-
+  if (__DEV__) {
+    console.log(`rendering NodeCodeComponent for ${nodeDef.props.name}`);
+  }
   const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });

@@ -1,25 +1,19 @@
-import { View } from "react-native";
-
 import { NodeDefFormItem } from "../../NodeDefFormItem";
 import { DataEntrySelectors } from "../../../../state/dataEntry/selectors";
+import { VView } from "../../../../components";
 
 export const NodeEntityFormComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  console.log("rendering NodeDefEntityForm");
-
+  if (__DEV__) {
+    console.log("rendering NodeDefEntityForm");
+  }
   const childrenDefs = DataEntrySelectors.useRecordEntityVisibleChildDefs({
     nodeDef,
   });
 
   return (
-    <View
-      style={[
-        {
-          flexDirection: "column",
-        },
-      ]}
-    >
+    <VView>
       {childrenDefs.map((childDef) => (
         <NodeDefFormItem
           key={childDef.uuid}
@@ -27,6 +21,6 @@ export const NodeEntityFormComponent = (props) => {
           parentNodeUuid={nodeUuid}
         />
       ))}
-    </View>
+    </VView>
   );
 };

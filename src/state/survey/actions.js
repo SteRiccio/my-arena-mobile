@@ -1,4 +1,4 @@
-import { screenKeys } from "../../navigation/screens";
+import { screenKeys } from "../../navigation/screenKeys";
 import { SurveyService } from "../../service/surveyService";
 
 const CURRENT_SURVEY_SET = "CURRENT_SURVEY_SET";

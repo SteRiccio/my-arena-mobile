@@ -39,7 +39,8 @@ export default class SQLiteClient {
           tx.executeSql(
             sql,
             args,
-            (_, { rows }) => resolve(rows),
+            (_, { rows, insertId, rowsAffected }) =>
+              resolve({ rows, insertId, rowsAffected }),
             (_, err) => reject(err)
           ),
         reject
@@ -54,12 +55,12 @@ export default class SQLiteClient {
   }
 
   async one(sql, args) {
-    const rows = await this.executeSql(sql, args);
+    const { rows } = await this.executeSql(sql, args);
     return rows.length === 1 ? rows.item(0) : null;
   }
 
   async many(sql, args) {
-    const rows = await this.executeSql(sql, args);
+    const { rows } = await this.executeSql(sql, args);
     return rows._array;
   }
 
@@ -78,8 +79,8 @@ export default class SQLiteClient {
       this.privateDb = SQLite.openDatabase(this.name);
 
       // MIGRATIONS
-      const resultSet = await this.executeSql("PRAGMA user_version");
-      const version = resultSet.item(0).user_version;
+      const { rows } = await this.executeSql("PRAGMA user_version");
+      const version = rows.item(0).user_version;
       const nextVersion = this.migrations.length;
       if (version > nextVersion) {
         throw new DowngradeError();

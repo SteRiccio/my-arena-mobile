@@ -22,7 +22,11 @@ export const migration_001_base = async (client) => {
         key5            TEXT,
         content         TEXT          NOT NULL,
         date_created    TIMESTAMP     NOT NULL,
-        date_modified   TIMESTAMP     NOT NULL
+        date_modified   TIMESTAMP     NOT NULL,
+
+        CONSTRAINT fk_survey_id
+          FOREIGN KEY (survey_id)
+          REFERENCES survey (id)
     );`);
   });
 };

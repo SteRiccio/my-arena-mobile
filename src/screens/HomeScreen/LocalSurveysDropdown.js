@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { Dropdown } from "../../components";
-import { screenKeys } from "../../navigation/screens";
+import { screenKeys } from "../../navigation/screenKeys";
 import { SurveyService } from "../../service/surveyService";
 import { SurveyActions } from "../../state/survey/actions";
 

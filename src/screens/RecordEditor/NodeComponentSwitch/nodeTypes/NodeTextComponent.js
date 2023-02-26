@@ -7,8 +7,9 @@ import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
 export const NodeTextComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
-
+  if (__DEV__) {
+    console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
+  }
   const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
