@@ -6,7 +6,10 @@ import { screenKeys } from "../../navigation/screenKeys";
 import { SurveyService } from "../../service/surveyService";
 import { SurveyActions } from "../../state/survey/actions";
 
-const importSurveyOption = "--- Import survey from server ---";
+const importSurveyItem = {
+  value: "___IMPORT_SURVEY____",
+  label: "--- Import survey from server ---",
+};
 
 export const LocalSurveysDropdown = (props) => {
   const { navigation } = props;
@@ -14,38 +17,45 @@ export const LocalSurveysDropdown = (props) => {
   const dispatch = useDispatch();
 
   const [state, setState] = useState({
-    options: [],
+    items: [],
     surveySummaries: [],
     loading: true,
   });
-  const { options, surveySummaries } = state;
+  const { items, surveySummaries } = state;
 
   useEffect(() => {
     const initialize = async () => {
       const surveySummaries = await SurveyService.fetchSurveySummariesLocal();
-      const options = surveySummaries.map(
-        (surveySummary) => surveySummary.name
-      );
-      options.push(importSurveyOption);
-      setState((statePrev) => ({ ...statePrev, surveySummaries, options }));
+      const _items = surveySummaries.map((surveySummary) => ({
+        value: surveySummary.uuid,
+        label: surveySummary.name,
+      }));
+      _items.push(importSurveyItem);
+      setState((statePrev) => ({
+        ...statePrev,
+        surveySummaries,
+        items: _items,
+      }));
     };
     initialize();
   }, []);
 
-  const onSelect = useCallback(
-    async (selectedIndex) => {
-      if (selectedIndex < surveySummaries.length) {
-        const surveySummary = surveySummaries[selectedIndex];
+  const onChange = useCallback(
+    async (val) => {
+      if (val === importSurveyItem.value) {
+        navigation.navigate(screenKeys.surveysListRemote);
+      } else {
+        const surveySummary = surveySummaries.find(
+          (surveySummary) => surveySummary.uuid === val
+        );
         const surveyId = surveySummary.id;
         dispatch(
           SurveyActions.fetchAndSetCurrentSurvey({ surveyId, navigation })
         );
-      } else {
-        navigation.navigate(screenKeys.surveysListRemote);
       }
     },
     [surveySummaries, navigation]
   );
 
-  return <Dropdown options={options} onSelect={onSelect} />;
+  return <Dropdown items={items} onChange={onChange} />;
 };

@@ -15,7 +15,9 @@ export const DataTable = (props) => {
       {rows.map((row) => (
         <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
           {columns.map((column) => (
-            <RNPDataTable.Cell>{row[column.key]}</RNPDataTable.Cell>
+            <RNPDataTable.Cell key={column.key}>
+              {row[column.key]}
+            </RNPDataTable.Cell>
           ))}
         </RNPDataTable.Row>
       ))}

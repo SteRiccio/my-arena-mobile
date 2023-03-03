@@ -1,8 +1,26 @@
-import React from "react";
-import ModalDropdown from "react-native-modal-dropdown";
+import React, { useCallback, useState } from "react";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export const Dropdown = (props) => {
-  const { onSelect, options } = props;
+  const { items, onChange, value } = props;
 
-  return <ModalDropdown onSelect={onSelect} options={options} />;
+  const [open, setOpen] = useState(false);
+
+  const setValue = useCallback(
+    async (callback) => {
+      const val = callback(value);
+      await onChange(val);
+    },
+    [onChange, value]
+  );
+
+  return (
+    <DropDownPicker
+      items={items}
+      open={open}
+      setOpen={setOpen}
+      value={value}
+      setValue={setValue}
+    />
+  );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { VView } from "../../components";
+import { HView, Text, VView } from "../../components";
 import { LocalSurveysDropdown } from "./LocalSurveysDropdown";
 
 export const HomeScreen = (props) => {
@@ -8,7 +8,11 @@ export const HomeScreen = (props) => {
 
   return (
     <VView>
-      <LocalSurveysDropdown navigation={navigation} />
+      <Text variant="displayLarge" textKey="My Arena Mobile" />
+      <HView>
+        <Text textKey="Current survey:" />
+        <LocalSurveysDropdown navigation={navigation} />
+      </HView>
     </VView>
   );
 };

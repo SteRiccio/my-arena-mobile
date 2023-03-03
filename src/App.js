@@ -3,7 +3,12 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { View } from "react-native";
-
+import {
+  DarkTheme,
+  DefaultTheme,
+  Provider as PaperProvider,
+  ThemeProvider,
+} from "react-native-paper";
 import { AppStack } from "navigation/AppStack";
 import { rootReducer } from "state/reducers";
 import { DowngradeError, initialize } from "./db";
@@ -18,6 +23,7 @@ const App = () => {
     errorMessage: null,
   });
   const { loading, errorMessage } = state;
+  const nightMode = true;
 
   useEffect(() => {
     const execute = async () => {
@@ -53,9 +59,13 @@ const App = () => {
     );
   }
   return (
-    <Provider store={store}>
-      <AppStack />
-    </Provider>
+    <PaperProvider theme={nightMode ? DarkTheme : DefaultTheme}>
+      <ThemeProvider theme={nightMode ? DarkTheme : DefaultTheme}>
+        <Provider store={store}>
+          <AppStack />
+        </Provider>
+      </ThemeProvider>
+    </PaperProvider>
   );
 };
 
