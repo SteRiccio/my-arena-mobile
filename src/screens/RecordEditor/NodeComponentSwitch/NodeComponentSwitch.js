@@ -1,7 +1,9 @@
 import { NodeDefs } from "@openforis/arena-core";
 
 import { Text } from "../../../components";
+import { NodeMultipleEntityPreviewComponent } from "./nodeTypes/NodeMultipleEntityPreviewComponent";
 import { NodeSingleEntityComponent } from "./nodeTypes/NodeSingleEntityComponent";
+
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
 
 export const NodeComponentSwitch = (props) => {
@@ -14,6 +16,15 @@ export const NodeComponentSwitch = (props) => {
   if (NodeDefs.isSingleEntity(nodeDef)) {
     return (
       <NodeSingleEntityComponent
+        nodeDef={nodeDef}
+        parentNodeUuid={parentNodeUuid}
+      />
+    );
+  }
+
+  if (NodeDefs.isMultipleEntity(nodeDef)) {
+    return (
+      <NodeMultipleEntityPreviewComponent
         nodeDef={nodeDef}
         parentNodeUuid={parentNodeUuid}
       />

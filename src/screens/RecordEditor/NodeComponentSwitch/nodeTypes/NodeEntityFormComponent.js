@@ -3,7 +3,7 @@ import { DataEntrySelectors } from "../../../../state/dataEntry/selectors";
 import { VView } from "../../../../components";
 
 export const NodeEntityFormComponent = (props) => {
-  const { nodeDef, nodeUuid } = props;
+  const { nodeDef, parentNodeUuid } = props;
 
   if (__DEV__) {
     console.log("rendering NodeDefEntityForm");
@@ -18,7 +18,7 @@ export const NodeEntityFormComponent = (props) => {
         <NodeDefFormItem
           key={childDef.uuid}
           nodeDef={childDef}
-          parentNodeUuid={nodeUuid}
+          parentNodeUuid={parentNodeUuid}
         />
       ))}
     </VView>

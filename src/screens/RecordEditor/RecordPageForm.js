@@ -1,22 +1,28 @@
-import { Surveys } from "@openforis/arena-core";
-
-import { SurveySelectors } from "../../state/survey/selectors";
-import { DataEntrySelectors } from "../../state/dataEntry/selectors";
-import { NodeEntityFormComponent } from "./NodeComponentSwitch/nodeTypes/NodeEntityFormComponent";
 import { ScrollView } from "react-native";
 
+import { NodeDefs } from "@openforis/arena-core";
+
+import { DataEntrySelectors } from "../../state/dataEntry/selectors";
+import { NodeEntityFormComponent } from "./NodeComponentSwitch/nodeTypes/NodeEntityFormComponent";
+import { NodeMultipleEntityComponent } from "./NodeMultipleEntityComponent";
+
 export const RecordPageForm = () => {
+  const { nodeDef, node } = DataEntrySelectors.useCurrentPageNode();
+
   if (__DEV__) {
-    console.log("rendering RecordPageForm");
+    console.log(`rendering RecordPageForm of ${nodeDef?.props?.name}`);
   }
 
-  const survey = SurveySelectors.useCurrentSurvey();
-  const nodeDef = Surveys.getNodeDefRoot({ survey });
-  const nodeUuid = DataEntrySelectors.useRecordRootNodeUuid();
-
-  return (
-    <ScrollView>
-      <NodeEntityFormComponent nodeDef={nodeDef} nodeUuid={nodeUuid} />
-    </ScrollView>
-  );
+  if (NodeDefs.isSingle(nodeDef)) {
+    return (
+      <ScrollView>
+        <NodeEntityFormComponent
+          nodeDef={nodeDef}
+          parentNodeUuid={node?.uuid}
+        />
+      </ScrollView>
+    );
+  } else {
+    return <NodeMultipleEntityComponent />;
+  }
 };

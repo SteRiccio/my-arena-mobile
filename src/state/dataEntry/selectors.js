@@ -40,7 +40,7 @@ const selectRecordEntitiesUuidsAndKeyValues =
   (state) =>
   ({ parentNodeUuid, nodeDefUuid }) => {
     const record = selectRecord(state);
-    const survey = selectCurrentSurvey(state);
+    const survey = SurveySelectors.selectCurrentSurvey(state);
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
     const entities = Records.getChildren(parentNode, nodeDefUuid)(record);
     return entities.map((entity) => ({
@@ -48,11 +48,6 @@ const selectRecordEntitiesUuidsAndKeyValues =
       keyValues: Records.getEntityKeyValues({ survey, record, entity }),
     }));
   };
-
-const selectEntityUuidByPageUuid =
-  (state) =>
-  ({ pageUuid }) =>
-    state.selectedEntityUuidByPageUuid[pageUuid];
 
 const selectRecordNodePointerValidation =
   (state) =>
@@ -126,12 +121,33 @@ const selectVisibleChildDefs =
     return childDefs;
   };
 
+const selectCurrentPageNode = (state) => {
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const record = selectRecord(state);
+  const { parentNodeUuid, nodeDefUuid, nodeUuid } =
+    getDataEntryState(state).recordCurrentPageNode || {};
+
+  if (!parentNodeUuid) {
+    return {
+      parentNode: null,
+      nodeDef: Surveys.getNodeDefRoot({ survey }),
+      node: Records.getRoot(record),
+    };
+  }
+  const nodeDef = Surveys.getNodeDefByUuid({ survey, uuid: nodeDefUuid });
+  const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+  const node = nodeUuid ? Records.getNodeByUuid(nodeUuid)(record) : null;
+
+  return { parentNode, nodeDef, node };
+};
+
 // record page
 const selectRecordPageSelectorMenuOpen = (state) =>
   getDataEntryState(state).recordPageSelectorMenuOpen;
 
 export const DataEntrySelectors = {
   selectRecord,
+  selectCurrentPageNode,
 
   useIsEditingRecord: () => useSelector(selectIsEditingRecord),
 
@@ -194,8 +210,8 @@ export const DataEntrySelectors = {
       Objects.isEqual
     ),
 
-  useRecordSelectedEntityUuid: ({ pageUuid }) =>
-    useSelector((state) => selectEntityUuidByPageUuid(state)({ pageUuid })),
+  useCurrentPageNode: () =>
+    useSelector((state) => selectCurrentPageNode(state), Objects.isEqual),
 
   // page selector
   selectRecordPageSelectorMenuOpen,

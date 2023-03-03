@@ -1,6 +1,12 @@
 import "react-native-get-random-values";
 
-import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
+import {
+  NodeDefs,
+  RecordFactory,
+  Records,
+  RecordUpdater,
+  Surveys,
+} from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
@@ -8,8 +14,8 @@ import { RecordService } from "../../service/recordService";
 import { screenKeys } from "../../navigation/screenKeys";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
-const ENTITY_IN_PAGE_SET = "ENTITY_IN_PAGE_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
+const CURRENT_PAGE_NODE_SET = "CURRENT_PAGE_NODE_SET";
 
 const createNewRecord =
   ({ navigation }) =>
@@ -31,6 +37,33 @@ const createNewRecord =
 
     dispatch(editRecord({ navigation, record }));
   };
+
+const addNewEntity = async (dispatch, getState) => {
+  const state = getState();
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const record = DataEntrySelectors.selectRecord(state);
+  const { parentNode, nodeDef } =
+    DataEntrySelectors.selectCurrentPageNode(state);
+
+  const { record: recordUpdated, nodes: nodesCreated } =
+    await RecordUpdater.createNodeAndDescendants({
+      survey,
+      record,
+      parentNode: parentNode || Records.getRoot(record),
+      nodeDef,
+    });
+  const nodeCreated = Object.values(nodesCreated).find(
+    (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
+  );
+
+  dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
+  dispatch(
+    selectCurrentPageNode({
+      nodeDefUuid: nodeDef.uuid,
+      nodeUuid: nodeCreated.uuid,
+    })
+  );
+};
 
 const editRecord =
   ({ navigation, record }) =>
@@ -70,9 +103,61 @@ const updateCurrentRecordAttribute =
     dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   };
 
-const selectEntityInPage = ({ pageUuid, entityUuid }) => {
-  dispatch({ type: ENTITY_IN_PAGE_SET, pageUuid, entityUuid });
-};
+const selectCurrentPageNode =
+  ({ nodeDefUuid, nodeUuid = null }) =>
+  (dispatch, getState) => {
+    const state = getState();
+    const { nodeDef: prevNodeDef, parentNode: prevParentNode } =
+      DataEntrySelectors.selectCurrentPageNode(state);
+
+    if (prevNodeDef.uuid === nodeDefUuid && !nodeUuid) {
+      return;
+    }
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = DataEntrySelectors.selectRecord(state);
+    const nodeDef = Surveys.getNodeDefByUuid({ survey, uuid: nodeDefUuid });
+
+    let nextParentNode, nextNode;
+    if (prevNodeDef.uuid === nodeDefUuid) {
+      nextParentNode = prevParentNode;
+      nextNode = nodeUuid ? Records.getNodeByUuid(nodeUuid)(record) : null;
+    } else if (
+      Surveys.isNodeDefAncestor({
+        nodeDefAncestor: nodeDef,
+        nodeDefDescendant: prevNodeDef,
+      })
+    ) {
+      nextNode = Records.getAncestor({
+        record,
+        ancestorDefUuid: nodeDefUuid,
+        node: prevParentNode,
+      });
+      nextParentNode = Records.getParent(nextNode)(record);
+    } else {
+      const parentNodeDef = Surveys.getNodeDefParent({ survey, nodeDef });
+
+      const root = Records.getRoot(record);
+
+      nextParentNode =
+        parentNodeDef.uuid === prevParentNode?.nodeDefUuid
+          ? prevParentNode
+          : NodeDefs.isRoot(parentNodeDef)
+          ? root
+          : Records.getDescendant({
+              record,
+              node: prevParentNode || root,
+              nodeDefDescendant: parentNodeDef,
+            });
+      nextNode = nodeUuid ? Records.getNodeByUuid(nodeUuid)(record) : null;
+    }
+
+    dispatch({
+      type: CURRENT_PAGE_NODE_SET,
+      nodeDefUuid,
+      parentNodeUuid: nextParentNode?.uuid,
+      nodeUuid: nextNode?.uuid,
+    });
+  };
 
 const toggleRecordPageMenuOpen = (dispatch, getState) => {
   const state = getState();
@@ -82,12 +167,13 @@ const toggleRecordPageMenuOpen = (dispatch, getState) => {
 
 export const DataEntryActions = {
   CURRENT_RECORD_SET,
-  ENTITY_IN_PAGE_SET,
+  CURRENT_PAGE_NODE_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
 
   createNewRecord,
+  addNewEntity,
   fetchAndEditRecord,
   updateCurrentRecordAttribute,
-  selectEntityInPage,
+  selectCurrentPageNode,
   toggleRecordPageMenuOpen,
 };
