@@ -8,6 +8,7 @@ export const TextInput = (props) => {
     label: labelKey,
     placeholder: placeholderKey,
     onChange,
+    onPressIn,
     secureTextEntry,
     style,
     value,
@@ -20,6 +21,7 @@ export const TextInput = (props) => {
       mode="outlined"
       label={labelKey}
       onChangeText={onChange}
+      onPressIn={onPressIn}
       placeholder={placeholderKey}
       secureTextEntry={secureTextEntry}
       style={style}

@@ -8,10 +8,12 @@ import { Text } from "../../../components";
 import { NodeBooleanComponent } from "./nodeTypes/NodeBooleanComponent";
 import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
 import { NodeTextComponent } from "./nodeTypes/NodeTextComponent";
+import { NodeDateComponent } from "./nodeTypes/NodeDateComponent";
 
 const nodeDefComponentByType = {
   [NodeDefType.boolean]: NodeBooleanComponent,
   [NodeDefType.code]: NodeCodeComponent,
+  [NodeDefType.date]: NodeDateComponent,
   [NodeDefType.decimal]: NodeTextComponent,
   [NodeDefType.integer]: NodeTextComponent,
   [NodeDefType.text]: NodeTextComponent,
