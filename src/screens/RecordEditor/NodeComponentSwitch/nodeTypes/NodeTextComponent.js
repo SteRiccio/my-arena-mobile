@@ -22,7 +22,7 @@ export const NodeTextComponent = (props) => {
   const isNumeric = [NodeDefType.decimal, NodeDefType.integer].includes(
     nodeDef.type
   );
-  const textValue = Objects.isEmpty(value) ? null : String(value);
+  const textValue = Objects.isEmpty(value) ? "" : String(value);
 
   return (
     <TextInput
