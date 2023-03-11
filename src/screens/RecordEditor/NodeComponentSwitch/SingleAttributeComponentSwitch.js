@@ -9,6 +9,7 @@ import { NodeBooleanComponent } from "./nodeTypes/NodeBooleanComponent";
 import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
 import { NodeTextComponent } from "./nodeTypes/NodeTextComponent";
 import { NodeDateComponent } from "./nodeTypes/NodeDateComponent";
+import { NodeTimeComponent } from "./nodeTypes/NodeTimeComponent";
 
 const nodeDefComponentByType = {
   [NodeDefType.boolean]: NodeBooleanComponent,
@@ -17,6 +18,7 @@ const nodeDefComponentByType = {
   [NodeDefType.decimal]: NodeTextComponent,
   [NodeDefType.integer]: NodeTextComponent,
   [NodeDefType.text]: NodeTextComponent,
+  [NodeDefType.time]: NodeTimeComponent,
 };
 
 export const SingleAttributeComponentSwitch = (props) => {

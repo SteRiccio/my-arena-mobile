@@ -5,6 +5,7 @@ export { Dropdown } from "./Dropdown";
 export { HView } from "./HView";
 export { Text } from "./Text";
 export { TextInput } from "./TextInput";
+export { TimePicker } from "./TimePicker";
 export { VView } from "./VView";
 export { CloseIconButton } from "./CloseIconButton";
 export { WarningIconButton } from "./WarningIconButton";

@@ -5,7 +5,7 @@ import { Button } from "./Button";
 import { HView } from "./HView";
 import { TextInput } from "./TextInput";
 
-export const DatePicker = (props) => {
+export const TimePicker = (props) => {
   const { value, onChange: onChangeProp } = props;
 
   const [show, setShow] = useState(false);
@@ -15,7 +15,7 @@ export const DatePicker = (props) => {
     onChangeProp(selectedDate);
   };
 
-  const showDatePicker = () => {
+  const showTimePicker = () => {
     setShow(true);
   };
 
@@ -24,12 +24,13 @@ export const DatePicker = (props) => {
       <TextInput
         editable={false}
         value={`${value?.toLocaleString()}`}
-        onPressIn={showDatePicker}
+        onPressIn={showTimePicker}
       />
-      <Button title="Show Date Picker" onPress={showDatePicker} />
+      <Button title="Show Time Picker" onPress={showTimePicker} />
       {show && (
         <DateTimePicker
-          mode="date"
+          is24Hour
+          mode="time"
           onChange={onChange}
           value={value || new Date()}
         />

@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { Dates, Objects } from "@openforis/arena-core";
 
-import { DatePicker } from "../../../../components";
 import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
+import { TimePicker } from "../../../../components";
 
-export const NodeDateComponent = (props) => {
+export const NodeTimeComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
   if (__DEV__) {
@@ -15,12 +15,12 @@ export const NodeDateComponent = (props) => {
   });
 
   const onChange = useCallback((date) => {
-    const dateNodeValue = Dates.convertDate({
+    const timeNodeValue = Dates.convertDate({
       dateStr: date.toISOString(),
       formatFrom: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-      formatTo: "yyyy-MM-dd",
+      formatTo: "HH:mm",
     });
-    updateNodeValue(dateNodeValue);
+    updateNodeValue(timeNodeValue);
   }, []);
 
   const editable = !nodeDef.props.readOnly;
@@ -28,6 +28,6 @@ export const NodeDateComponent = (props) => {
   const dateValue = Objects.isEmpty(value) ? null : new Date(value);
 
   return (
-    <DatePicker editable={editable} onChange={onChange} value={dateValue} />
+    <TimePicker editable={editable} onChange={onChange} value={dateValue} />
   );
 };
