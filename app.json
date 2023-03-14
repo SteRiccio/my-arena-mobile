@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MyArenaMobile",
-    "slug": "MyArenaMobile",
+    "slug": "my-arena-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -27,6 +29,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "012cdbda-2ceb-4767-923c-f7be51666f1d"
+      }
+    },
+    "owner": "stericcio"
   }
 }
