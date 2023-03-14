@@ -25,13 +25,12 @@ export const NodeDefFormItem = (props) => {
 
   if (!visible) return null;
 
+  const labelOrName = nodeDef.props.labels?.[lang] || nodeDef.props.name;
+
   return (
     <View style={styles.externalContainer}>
       <View style={styles.nodeDefLabelContainer}>
-        <Text
-          style={styles.nodeDefLabel}
-          textKey={nodeDef.props.labels[lang] || nodeDef.props.name}
-        />
+        <Text style={styles.nodeDefLabel} textKey={labelOrName} />
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
       </View>
       <View style={styles.internalContainer}>

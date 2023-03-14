@@ -1,17 +1,13 @@
 import axios from "axios";
 
+import { Strings } from "@openforis/arena-core";
+
 const config = { withCredentials: true };
-
-const removePrefix = (prefix) => (text) =>
-  text.startsWith(prefix) ? text.substring(prefix.length) : text;
-
-const removeSuffix = (suffix) => (text) =>
-  text.endsWith(suffix) ? text.substring(0, text.length - suffix.length) : text;
 
 const getUrl = ({ serverUrl, uri }) => {
   const parts = [];
-  parts.push(removeSuffix("/")(serverUrl));
-  parts.push(removePrefix("/")(uri));
+  parts.push(Strings.removeSuffix("/")(serverUrl));
+  parts.push(Strings.removePrefix("/")(uri));
   return parts.join("/");
 };
 

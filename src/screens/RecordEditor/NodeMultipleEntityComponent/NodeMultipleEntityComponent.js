@@ -36,10 +36,10 @@ export const NodeMultipleEntityComponent = () => {
       <HView>
         <Text textKey={`Current ${nodeDefLabel}:`} />
         <EntityDropdown />
-        <Button icon="plus" onPress={onNewPress}>
-          New {nodeDefLabel}
-        </Button>
       </HView>
+      <Button icon="plus" onPress={onNewPress}>
+        New {nodeDefLabel}
+      </Button>
       {selectedEntityUuid && (
         <NodeEntityFormComponent
           nodeDef={nodeDef}

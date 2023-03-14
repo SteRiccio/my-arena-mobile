@@ -1,13 +1,11 @@
-import { Objects } from "@openforis/arena-core";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+
+import { Strings } from "@openforis/arena-core";
 
 import { Dropdown } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-
-const defaultIfEmpty = (defaultValue) => (text) =>
-  Objects.isEmpty(text) ? defaultValue : text;
 
 export const EntityDropdown = () => {
   const dispatch = useDispatch();
@@ -33,7 +31,7 @@ export const EntityDropdown = () => {
   const dropdownItems = entitiesUuidsAndKeyValues.map(
     ({ uuid, keyValues }) => ({
       value: uuid,
-      label: defaultIfEmpty("--- EMPTY ---")(keyValues.join(" - ")),
+      label: Strings.defaultIfEmpty("--- EMPTY ---")(keyValues.join(" - ")),
     })
   );
 
