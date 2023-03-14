@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { DateFormats, Dates } from "@openforis/arena-core";
 
 import { Button } from "./Button";
 import { HView } from "./HView";
@@ -23,10 +24,10 @@ export const TimePicker = (props) => {
     <HView>
       <TextInput
         editable={false}
-        value={`${value?.toLocaleString()}`}
+        value={Dates.format(value, DateFormats.timeStorage)}
         onPressIn={showTimePicker}
       />
-      <Button title="Show Time Picker" onPress={showTimePicker} />
+      <Button icon="clock" title="Show Time Picker" onPress={showTimePicker} />
       {show && (
         <DateTimePicker
           is24Hour

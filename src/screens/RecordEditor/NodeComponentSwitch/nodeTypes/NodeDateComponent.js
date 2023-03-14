@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Dates, Objects } from "@openforis/arena-core";
+import { DateFormats, Dates, Objects } from "@openforis/arena-core";
 
 import { DatePicker } from "../../../../components";
 import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
@@ -15,17 +15,15 @@ export const NodeDateComponent = (props) => {
   });
 
   const onChange = useCallback((date) => {
-    const dateNodeValue = Dates.convertDate({
-      dateStr: date.toISOString(),
-      formatFrom: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-      formatTo: "yyyy-MM-dd",
-    });
+    const dateNodeValue = Dates.format(date, DateFormats.dateStorage);
     updateNodeValue(dateNodeValue);
   }, []);
 
   const editable = !nodeDef.props.readOnly;
 
-  const dateValue = Objects.isEmpty(value) ? null : new Date(value);
+  const dateValue = Objects.isEmpty(value)
+    ? null
+    : Dates.parse(value, DateFormats.dateStorage);
 
   return (
     <DatePicker editable={editable} onChange={onChange} value={dateValue} />

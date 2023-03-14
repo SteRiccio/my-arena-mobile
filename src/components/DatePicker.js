@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { DateFormats, Dates } from "@openforis/arena-core";
 
 import { Button } from "./Button";
 import { HView } from "./HView";
@@ -23,10 +24,14 @@ export const DatePicker = (props) => {
     <HView>
       <TextInput
         editable={false}
-        value={`${value?.toLocaleString()}`}
+        value={Dates.format(value, DateFormats.dateDisplay)}
         onPressIn={showDatePicker}
       />
-      <Button title="Show Date Picker" onPress={showDatePicker} />
+      <Button
+        icon="calendar"
+        title="Show Date Picker"
+        onPress={showDatePicker}
+      />
       {show && (
         <DateTimePicker
           mode="date"
