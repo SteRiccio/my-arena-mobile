@@ -4,23 +4,10 @@ import TreeView from "react-native-final-tree-view";
 
 import { NodeDefs, Surveys } from "@openforis/arena-core";
 
-import { Button } from "../../components";
+import { Button, HView, Text } from "../../components";
 import { SurveySelectors } from "../../state/survey/selectors";
 import { DataEntrySelectors } from "../../state/dataEntry/selectors";
 import { DataEntryActions } from "../../state/dataEntry/actions";
-
-const getAncestorMultipleEntityDef = (nodeDef) => (survey) => {
-  let currentParentDef = Surveys.getNodeDefParent({ survey, nodeDef });
-  while (currentParentDef && NodeDefs.isSingle(currentParentDef)) {
-    currentParentDef = Surveys.getNodeDefParent({
-      survey,
-      nodeDef: currentParentDef,
-    });
-  }
-  return currentParentDef
-    ? currentParentDef
-    : Surveys.getNodeDefRoot({ survey });
-};
 
 const buildData = ({ survey, cycle, currentPageNode }) => {
   const createTreeItem = (nodeDef) => ({
@@ -28,6 +15,8 @@ const buildData = ({ survey, cycle, currentPageNode }) => {
     name: nodeDef.props.name,
     children: [],
   });
+
+  const currentNodeDef = currentPageNode.nodeDef;
 
   const rootDef = Surveys.getNodeDefRoot({ survey });
 
@@ -44,11 +33,10 @@ const buildData = ({ survey, cycle, currentPageNode }) => {
       includeAnalysis: false,
     }).forEach((childDef) => {
       if (
-        currentPageNode.nodeDef.uuid === childDef.uuid ||
+        currentNodeDef.uuid === childDef.uuid ||
         (NodeDefs.isEntity(childDef) &&
-          (NodeDefs.isSingle(childDef) ||
-            getAncestorMultipleEntityDef(childDef)(survey).uuid ===
-              currentPageNode.nodeDef.uuid))
+          Surveys.getNodeDefParent({ survey, nodeDef: childDef }) ===
+            currentNodeDef)
       ) {
         const treeItem = createTreeItem(childDef);
         parentTreeItem.children.push(treeItem);
@@ -83,16 +71,17 @@ const NodeRenderer = ({ node, level, isExpanded, hasChildrenNodes }) => {
   }, [node]);
 
   return (
-    <Button
-      contentStyle={{
+    <HView
+      style={{
         marginLeft: 25 * level,
         fontSize: 18,
       }}
-      mode="text"
-      onPress={hasChildrenNodes ? undefined : onPress}
     >
-      {getIndicator({ isExpanded, hasChildrenNodes })} {node.name}
-    </Button>
+      <Text textKey={getIndicator({ isExpanded, hasChildrenNodes })} />
+      <Button mode="text" onPress={onPress}>
+        {node.name}
+      </Button>
+    </HView>
   );
 };
 
@@ -100,11 +89,29 @@ export const PagesTree = () => {
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = DataEntrySelectors.useRecordCycle();
   const currentPageNode = DataEntrySelectors.useCurrentPageNode();
+  const currentNodeDef = currentPageNode.nodeDef;
 
   const data = useMemo(
     () => buildData({ survey, cycle, currentPageNode }),
     [survey, cycle]
   );
 
-  return <TreeView data={data} renderNode={NodeRenderer} />;
+  const isNodeExpanded = (nodeDefUuid) => {
+    const nodeDef = Surveys.getNodeDefByUuid({ survey, uuid: nodeDefUuid });
+    return (
+      nodeDef === currentNodeDef ||
+      Surveys.isNodeDefAncestor({
+        nodeDefAncestor: nodeDef,
+        nodeDefDescendant: currentNodeDef,
+      })
+    );
+  };
+
+  return (
+    <TreeView
+      data={data}
+      isNodeExpanded={isNodeExpanded}
+      renderNode={NodeRenderer}
+    />
+  );
 };

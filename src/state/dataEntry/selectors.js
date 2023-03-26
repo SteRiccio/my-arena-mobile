@@ -149,6 +149,8 @@ export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageNode,
 
+  useRecord: () => useSelector(selectRecord),
+
   useIsEditingRecord: () => useSelector(selectIsEditingRecord),
 
   useRecordCycle: () => useSelector(selectRecordCycle),

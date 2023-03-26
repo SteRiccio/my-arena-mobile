@@ -42,19 +42,27 @@ const addNewEntity = async (dispatch, getState) => {
   const state = getState();
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = DataEntrySelectors.selectRecord(state);
-  const { parentNode, nodeDef } =
+  const { parentNode: currentParentNode, nodeDef } =
     DataEntrySelectors.selectCurrentPageNode(state);
+
+  const parentNode = currentParentNode || Records.getRoot(record);
 
   const { record: recordUpdated, nodes: nodesCreated } =
     await RecordUpdater.createNodeAndDescendants({
       survey,
       record,
-      parentNode: parentNode || Records.getRoot(record),
+      parentNode,
       nodeDef,
     });
+
   const nodeCreated = Object.values(nodesCreated).find(
     (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
   );
+
+  await RecordService.updateRecord({
+    survey,
+    record: recordUpdated,
+  });
 
   dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   dispatch(
@@ -107,10 +115,13 @@ const selectCurrentPageNode =
   ({ nodeDefUuid, nodeUuid = null }) =>
   (dispatch, getState) => {
     const state = getState();
-    const { nodeDef: prevNodeDef, parentNode: prevParentNode } =
-      DataEntrySelectors.selectCurrentPageNode(state);
+    const {
+      nodeDef: prevNodeDef,
+      parentNode: prevParentNode,
+      node: prevNode,
+    } = DataEntrySelectors.selectCurrentPageNode(state);
 
-    if (prevNodeDef.uuid === nodeDefUuid && !nodeUuid) {
+    if (prevNodeDef.uuid === nodeDefUuid && nodeUuid === prevNode?.uuid) {
       return;
     }
     const survey = SurveySelectors.selectCurrentSurvey(state);
