@@ -1,6 +1,7 @@
 import { SurveyRepository } from "./repository/surveyRepository";
 import { API } from "./api";
 import { SettingsService } from "./settingsService";
+import demoSurvey from "./simple_survey.json";
 
 const getServerUrl = async () =>
   (await SettingsService.fetchSettings()).serverUrl;
@@ -42,6 +43,10 @@ const fetchSurveyRemoteById = async ({ id, cycle }) => {
   return survey;
 };
 
+const importDemoSurvey = async () => {
+  await insertSurvey(demoSurvey);
+};
+
 const importSurveyRemote = async ({ id, cycle }) => {
   const survey = await fetchSurveyRemoteById({ id, cycle });
   await insertSurvey(survey);
@@ -52,6 +57,7 @@ export const SurveyService = {
   fetchSurveySummariesLocal,
   fetchSurveySummariesRemote,
   fetchSurveyById,
+  importDemoSurvey,
   importSurveyRemote,
   fetchCategoryItems,
   insertSurvey,

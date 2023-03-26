@@ -1,4 +1,5 @@
 import { HomeScreen } from "../screens/HomeScreen";
+import { LoginScreen } from "../screens/LoginScreen";
 import { RecordEditor } from "../screens/RecordEditor/RecordEditor";
 import { RecordsList } from "../screens/RecordsList";
 import { SettingsScreen } from "../screens/SettingsScreen";
@@ -8,6 +9,7 @@ import { screenKeys } from "./screenKeys";
 
 export const screens = {
   [screenKeys.home]: { title: "My Arena Mobile", component: HomeScreen },
+  [screenKeys.login]: { title: "Login", component: LoginScreen },
   [screenKeys.recordsList]: { title: "Records List", component: RecordsList },
   [screenKeys.recordEditor]: {
     title: "Record Editor",

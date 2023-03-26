@@ -4,9 +4,10 @@ import { SettingsService } from "./settingsService";
 const getServerUrl = async () =>
   (await SettingsService.fetchSettings()).serverUrl;
 
-const login = async (email, password) => {
+const login = async ({ serverUrl: serverUrlParam, email, password }) => {
+  const serverUrl = serverUrlParam ? serverUrlParam : await getServerUrl();
   try {
-    const res = await API.post(await getServerUrl(), "/auth/login", {
+    const res = await API.post(serverUrl, "/auth/login", {
       email,
       password,
     });

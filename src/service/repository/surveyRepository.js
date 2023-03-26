@@ -1,6 +1,5 @@
 import { dbClient } from "../../db";
 import LZString from "lz-string";
-import demoSurvey from "../simple_survey.json";
 
 const insertSurvey = async (survey) => {
   const surveyJson = JSON.stringify(survey);
@@ -33,13 +32,6 @@ const fetchSurveyById = async (id) => {
 };
 
 const fetchSurveySummaries = async () => {
-  const surveysCountItem = await dbClient.one("SELECT COUNT(*) FROM survey");
-  const surveysCount = Object.values(surveysCountItem)[0];
-
-  if (surveysCount === 0) {
-    await insertSurvey(demoSurvey);
-    return [demoSurvey];
-  }
   const surveys = await dbClient.many(
     "SELECT id, server_url, uuid, name, label FROM survey"
   );

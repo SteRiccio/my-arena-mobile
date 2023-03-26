@@ -9,11 +9,14 @@ import {
   Provider as PaperProvider,
   ThemeProvider,
 } from "react-native-paper";
+
 import { AppStack } from "navigation/AppStack";
 import { rootReducer } from "state/reducers";
-import { DowngradeError, initialize } from "./db";
+import { DowngradeError, initialize as initializeDb } from "./db";
 import { Text } from "./components";
 import styles from "./appStyles";
+import { SurveyService } from "./service/surveyService";
+import { AppMessageDialog } from "./appComponents/AppMessageDialog";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
@@ -26,10 +29,17 @@ const App = () => {
   const nightMode = true;
 
   useEffect(() => {
-    const execute = async () => {
+    const initialize = async () => {
       console.log("Initializing app");
       try {
-        await initialize();
+        await initializeDb();
+
+        // initialize local surveys
+        const surveySummaries = await SurveyService.fetchSurveySummariesLocal();
+        if (surveySummaries.length === 0) {
+          await SurveyService.importDemoSurvey();
+        }
+
         console.log("App initialized");
       } catch (err) {
         console.error("===error", err);
@@ -41,7 +51,7 @@ const App = () => {
       }
       setState((statePrev) => ({ ...statePrev, loading: false }));
     };
-    execute();
+    initialize();
   }, []);
 
   if (loading) {
@@ -63,6 +73,7 @@ const App = () => {
       <ThemeProvider theme={nightMode ? DarkTheme : DefaultTheme}>
         <Provider store={store}>
           <AppStack />
+          <AppMessageDialog />
         </Provider>
       </ThemeProvider>
     </PaperProvider>

@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 
 import { VView } from "../../components";
 import { SettingsService } from "../../service/settingsService";
-import { CredentialPreference } from "./CredentialsPreference";
-import { ServerUrlPreference } from "./ServerUrlPreference";
 
 export const SettingsScreen = () => {
   const [settings, setSettings] = useState({});
@@ -35,22 +33,5 @@ export const SettingsScreen = () => {
     [settings]
   );
 
-  // const updateCredentials = useCallback(
-  //   async (username, password) =>
-  //     SettingsService.setCredentials(serverUrl, username, password),
-  //   [serverUrl]
-  // );
-
-  return (
-    <VView>
-      <ServerUrlPreference
-        settings={settings}
-        updateSettings={updateSettings}
-      />
-      <CredentialPreference
-        settings={settings}
-        updateSettings={updateSettings}
-      />
-    </VView>
-  );
+  return <VView></VView>;
 };
