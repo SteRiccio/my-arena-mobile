@@ -1,12 +1,37 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 
-import { Button, HView, Text, TextInput, VView } from "../../../../components";
-import { SurveySelectors } from "../../../../state/survey/selectors";
-import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
-import { SrsDropdown } from "../../SrsDropdown";
+import { Objects, PointFactory, Points } from "@openforis/arena-core";
+
+import {
+  Button,
+  HView,
+  Text,
+  TextInput,
+  VView,
+} from "../../../../../components";
+import { SurveySelectors } from "../../../../../state/survey/selectors";
+import { useNodeComponentLocalState } from "../../../nodeComponentLocalState";
+import { SrsDropdown } from "../../../SrsDropdown";
+import { AccuracyProgressBar } from "./AccuracyProgressBar";
 import styles from "./nodeCoordinateComponentStyles";
-import { PointFactory, Points, SRSs } from "@openforis/arena-core";
+
+const accuracyThreshold = 4;
+
+const locationToValue = ({ location, srsTo }) => {
+  const { coords } = location;
+  const { latitude, longitude, accuracy } = coords;
+
+  const pointLatLong = PointFactory.createInstance({
+    x: longitude,
+    y: latitude,
+    srs: "4326",
+  });
+  const point = Points.transform(pointLatLong, srsTo);
+  const { x, y } = point;
+
+  return { x, y, srsId: srsTo, accuracy };
+};
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
@@ -82,20 +107,12 @@ export const NodeCoordinateComponent = (props) => {
           distanceInterval: 10,
         },
         (location) => {
-          const { coords } = location;
-          const pointLatLong = PointFactory.createInstance({
-            x: coords.longitude,
-            y: coords.latitude,
-            srs: "4326",
-          });
-          const point = Points.transform(pointLatLong, srsId);
+          const valueNext = locationToValue({ location, srsTo: srsId });
 
-          onValueChange({
-            x: point.x,
-            y: point.y,
-            srsId: point.srs,
-            accuracy: coords.accuracy,
-          });
+          onValueChange(valueNext);
+          if (valueNext.accuracy <= accuracyThreshold) {
+            stopGps();
+          }
         }
       );
       setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
@@ -143,6 +160,12 @@ export const NodeCoordinateComponent = (props) => {
         <Text textKey="Accuracy" />
         <Text textKey={accuracy} />
       </HView>
+      {watchingLocation && (
+        <AccuracyProgressBar
+          accuracy={accuracy}
+          accuracyThreshold={accuracyThreshold}
+        />
+      )}
       {!watchingLocation && (
         <Button onPress={onStartGpsPress}>Start GPS</Button>
       )}
