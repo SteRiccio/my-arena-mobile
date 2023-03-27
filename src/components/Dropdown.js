@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 
 export const Dropdown = (props) => {
-  const { items, onChange, value } = props;
+  const { disabled, items, onChange, value } = props;
 
   const [open, setOpen] = useState(false);
 
@@ -16,11 +16,13 @@ export const Dropdown = (props) => {
 
   return (
     <DropDownPicker
+      disabled={disabled}
       items={items}
       open={open}
       setOpen={setOpen}
       value={value}
       setValue={setValue}
+      listMode="SCROLLVIEW"
     />
   );
 };

@@ -15,7 +15,7 @@ export const RecordPageForm = () => {
 
   if (NodeDefs.isSingle(nodeDef)) {
     return (
-      <ScrollView>
+      <ScrollView nestedScrollEnabled>
         <NodeEntityFormComponent
           nodeDef={nodeDef}
           parentNodeUuid={node?.uuid}

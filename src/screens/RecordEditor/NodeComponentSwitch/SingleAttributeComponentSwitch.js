@@ -10,10 +10,12 @@ import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
 import { NodeTextComponent } from "./nodeTypes/NodeTextComponent";
 import { NodeDateComponent } from "./nodeTypes/NodeDateComponent";
 import { NodeTimeComponent } from "./nodeTypes/NodeTimeComponent";
+import { NodeCoordinateComponent } from "./nodeTypes/NodeCoordinateComponent";
 
 const nodeDefComponentByType = {
   [NodeDefType.boolean]: NodeBooleanComponent,
   [NodeDefType.code]: NodeCodeComponent,
+  [NodeDefType.coordinate]: NodeCoordinateComponent,
   [NodeDefType.date]: NodeDateComponent,
   [NodeDefType.decimal]: NodeTextComponent,
   [NodeDefType.integer]: NodeTextComponent,
