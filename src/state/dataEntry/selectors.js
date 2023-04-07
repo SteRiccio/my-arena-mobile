@@ -121,24 +121,25 @@ const selectVisibleChildDefs =
     return childDefs;
   };
 
-const selectCurrentPageNode = (state) => {
+const selectCurrentPageEntity = (state) => {
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = selectRecord(state);
-  const { parentNodeUuid, nodeDefUuid, nodeUuid } =
-    getDataEntryState(state).recordCurrentPageNode || {};
 
-  if (!parentNodeUuid) {
+  const { parentEntityUuid, entityDefUuid, entityUuid } =
+    getDataEntryState(state).recordCurrentPageEntity || {};
+
+  if (!parentEntityUuid) {
     return {
-      parentNode: null,
-      nodeDef: Surveys.getNodeDefRoot({ survey }),
-      node: Records.getRoot(record),
+      parentEntity: null,
+      entityDef: Surveys.getNodeDefRoot({ survey }),
+      entity: Records.getRoot(record),
     };
   }
-  const nodeDef = Surveys.getNodeDefByUuid({ survey, uuid: nodeDefUuid });
-  const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
-  const node = nodeUuid ? Records.getNodeByUuid(nodeUuid)(record) : null;
+  const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
+  const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
+  const entity = entityUuid ? Records.getNodeByUuid(entityUuid)(record) : null;
 
-  return { parentNode, nodeDef, node };
+  return { parentEntity, entityDef, entity };
 };
 
 // record page
@@ -147,7 +148,7 @@ const selectRecordPageSelectorMenuOpen = (state) =>
 
 export const DataEntrySelectors = {
   selectRecord,
-  selectCurrentPageNode,
+  selectCurrentPageEntity,
 
   useRecord: () => useSelector(selectRecord),
 
@@ -212,8 +213,8 @@ export const DataEntrySelectors = {
       Objects.isEqual
     ),
 
-  useCurrentPageNode: () =>
-    useSelector((state) => selectCurrentPageNode(state), Objects.isEqual),
+  useCurrentPageEntity: () =>
+    useSelector((state) => selectCurrentPageEntity(state), Objects.isEqual),
 
   // page selector
   selectRecordPageSelectorMenuOpen,

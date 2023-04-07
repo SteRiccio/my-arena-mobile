@@ -7,18 +7,18 @@ import { NodeEntityFormComponent } from "./NodeComponentSwitch/nodeTypes/NodeEnt
 import { NodeMultipleEntityComponent } from "./NodeMultipleEntityComponent";
 
 export const RecordPageForm = () => {
-  const { nodeDef, node } = DataEntrySelectors.useCurrentPageNode();
+  const { entityDef, entity } = DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
-    console.log(`rendering RecordPageForm of ${nodeDef?.props?.name}`);
+    console.log(`rendering RecordPageForm of ${NodeDefs.getName(entityDef)}`);
   }
 
-  if (NodeDefs.isSingle(nodeDef)) {
+  if (NodeDefs.isSingle(entityDef)) {
     return (
       <ScrollView nestedScrollEnabled>
         <NodeEntityFormComponent
-          nodeDef={nodeDef}
-          parentNodeUuid={node?.uuid}
+          nodeDef={entityDef}
+          parentNodeUuid={entity?.uuid}
         />
       </ScrollView>
     );

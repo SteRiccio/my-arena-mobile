@@ -9,23 +9,23 @@ import { EntityDropdown } from "./EntityDropdown";
 
 export const NodeMultipleEntityComponentOld = () => {
   const dispatch = useDispatch();
-  const { nodeDef, node } = DataEntrySelectors.useCurrentPageNode();
-  const nodeUuid = node?.uuid;
+  const { entityDef, entity } = DataEntrySelectors.useCurrentPageEntity();
+  const entityUuid = entity?.uuid;
 
   const [selectedEntityUuid, setSelectedEntityUuid] = useState(null);
 
   useEffect(() => {
-    if (nodeUuid && selectedEntityUuid) {
+    if (entityUuid && selectedEntityUuid) {
       // unmount form component
       setSelectedEntityUuid(null);
       // then mount it with new selected entity uuid
-      setTimeout(() => setSelectedEntityUuid(nodeUuid), 200);
+      setTimeout(() => setSelectedEntityUuid(entityUuid), 200);
     } else {
-      setSelectedEntityUuid(nodeUuid);
+      setSelectedEntityUuid(entityUuid);
     }
-  }, [nodeUuid]);
+  }, [entityUuid]);
 
-  const nodeDefLabel = nodeDef.props.name;
+  const nodeDefLabel = entityDef.props.name;
 
   const onNewPress = () => {
     dispatch(DataEntryActions.addNewEntity);
@@ -42,7 +42,7 @@ export const NodeMultipleEntityComponentOld = () => {
       </Button>
       {selectedEntityUuid && (
         <NodeEntityFormComponent
-          nodeDef={nodeDef}
+          nodeDef={entityDef}
           parentNodeUuid={selectedEntityUuid}
         />
       )}

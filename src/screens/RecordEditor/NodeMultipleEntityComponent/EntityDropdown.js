@@ -9,21 +9,22 @@ import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 
 export const EntityDropdown = () => {
   const dispatch = useDispatch();
-  const { nodeDef, parentNode, node } = DataEntrySelectors.useCurrentPageNode();
+  const { entityDef, parentEntity, entity } =
+    DataEntrySelectors.useCurrentPageEntity();
 
-  const selectedEntityUuid = node?.uuid;
+  const selectedEntityUuid = entity?.uuid;
 
   const entitiesUuidsAndKeyValues =
     DataEntrySelectors.useRecordEntitiesUuidsAndKeyValues({
-      parentNodeUuid: parentNode.uuid,
-      nodeDefUuid: nodeDef.uuid,
+      parentNodeUuid: parentEntity.uuid,
+      nodeDefUuid: entityDef.uuid,
     });
 
   const onChange = useCallback((entityUuid) => {
     dispatch(
-      DataEntryActions.selectCurrentPageNode({
-        nodeDefUuid: nodeDef.uuid,
-        nodeUuid: entityUuid,
+      DataEntryActions.selectCurrentPageEntity({
+        entityDefUuid: entityDef.uuid,
+        entityUuid,
       })
     );
   }, []);

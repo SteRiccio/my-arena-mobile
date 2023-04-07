@@ -18,21 +18,22 @@ const EMPTY_VALUE = "---EMPTY---";
 export const NodeMultipleEntityComponent = () => {
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
-  const { nodeDef, node, parentNode } = DataEntrySelectors.useCurrentPageNode();
+  const { entityDef, entity, parentEntity } =
+    DataEntrySelectors.useCurrentPageEntity();
 
   console.log(
-    "Rendering NodeMultipleEntityComponent for " + NodeDefs.getName(nodeDef)
+    "Rendering NodeMultipleEntityComponent for " + NodeDefs.getName(entityDef)
   );
 
-  const nodeUuid = node?.uuid;
+  const nodeUuid = entity?.uuid;
 
   const survey = SurveySelectors.useCurrentSurvey();
-  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef });
+  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
   const record = DataEntrySelectors.useRecord();
 
-  const entities = Records.getChildren(parentNode, nodeDef.uuid)(record);
+  const entities = Records.getChildren(parentEntity, entityDef.uuid)(record);
 
-  const nodeDefLabel = NodeDefs.getLabelOrName(nodeDef, lang);
+  const nodeDefLabel = NodeDefs.getLabelOrName(entityDef, lang);
 
   const onNewPress = () => {
     dispatch(DataEntryActions.addNewEntity);
@@ -40,16 +41,16 @@ export const NodeMultipleEntityComponent = () => {
 
   const onRowPress = useCallback(({ uuid }) => {
     dispatch(
-      DataEntryActions.selectCurrentPageNode({
-        nodeDefUuid: nodeDef.uuid,
-        nodeUuid: uuid,
+      DataEntryActions.selectCurrentPageEntity({
+        entityDefUuid: entityDef.uuid,
+        entityUuid: uuid,
       })
     );
   }, []);
 
   if (nodeUuid) {
     return (
-      <NodeEntityFormComponent nodeDef={nodeDef} parentNodeUuid={nodeUuid} />
+      <NodeEntityFormComponent nodeDef={entityDef} parentNodeUuid={nodeUuid} />
     );
   }
 

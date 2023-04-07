@@ -1,11 +1,25 @@
 import { View } from "react-native";
 
 export const HView = (props) => {
-  const { children, ...otherProps } = props;
+  const { children, style, ...otherProps } = props;
 
   return (
-    <View style={[{ flexDirection: "row" }]} {...otherProps}>
+    <View
+      style={[
+        {
+          display: "flex",
+          flexDirection: "row",
+          gap: 4,
+        },
+        style,
+      ]}
+      {...otherProps}
+    >
       {children}
     </View>
   );
+};
+
+HView.defaultProps = {
+  style: {},
 };

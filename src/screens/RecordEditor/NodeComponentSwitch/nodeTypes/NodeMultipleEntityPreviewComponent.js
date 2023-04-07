@@ -18,8 +18,8 @@ export const NodeMultipleEntityPreviewComponent = (props) => {
         label="Edit"
         onPress={() =>
           dispatch(
-            DataEntryActions.selectCurrentPageNode({
-              nodeDefUuid: nodeDef.uuid,
+            DataEntryActions.selectCurrentPageEntity({
+              entityDefUuid: nodeDef.uuid,
             })
           )
         }

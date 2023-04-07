@@ -7,15 +7,15 @@ const actionHandlers = {
     ...state,
     currentRecord: action.record,
   }),
-  [DataEntryActions.CURRENT_PAGE_NODE_SET]: ({ state, action }) => {
-    const { parentNodeUuid, nodeDefUuid, nodeUuid } = action;
+  [DataEntryActions.CURRENT_PAGE_ENTITY_SET]: ({ state, action }) => {
+    const { parentEntityUuid, entityDefUuid, entityUuid } = action;
 
     return {
       ...state,
-      recordCurrentPageNode: {
-        parentNodeUuid,
-        nodeDefUuid,
-        nodeUuid,
+      recordCurrentPageEntity: {
+        parentEntityUuid,
+        entityDefUuid,
+        entityUuid,
       },
     };
   },
