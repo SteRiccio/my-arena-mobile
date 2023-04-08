@@ -86,7 +86,9 @@ const rowToRecord = ({ survey }) => {
 
   return (row) => {
     if (row.content) {
-      return JSON.parse(row.content);
+      const contentParsed = JSON.parse(row.content);
+      contentParsed.id = row.id;
+      return contentParsed;
     }
     keysColumns.forEach((keyCol, index) => {
       const keyValue = row[keyCol];

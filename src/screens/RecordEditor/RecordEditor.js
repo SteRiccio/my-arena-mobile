@@ -3,9 +3,10 @@ import { StyleSheet, View } from "react-native";
 import MenuDrawer from "react-native-side-drawer";
 import { useDispatch } from "react-redux";
 
-import { CloseIconButton } from "../../components";
+import { CloseIconButton, VView } from "../../components";
 import { DataEntryActions } from "../../state/dataEntry/actions";
 import { DataEntrySelectors } from "../../state/dataEntry/selectors";
+import { Breadcrumbs } from "./Breadcrumbs";
 import { PagesTree } from "./PagesTree";
 import { RecordPageForm } from "./RecordPageForm";
 
@@ -49,7 +50,10 @@ export const RecordEditor = () => {
       overlay={true}
       opacity={0.4}
     >
-      <RecordPageForm />
+      <VView>
+        <Breadcrumbs />
+        <RecordPageForm />
+      </VView>
     </MenuDrawer>
   );
 };

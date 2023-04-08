@@ -46,7 +46,7 @@ export const NodeMultipleEntityComponent = () => {
         entityUuid: uuid,
       })
     );
-  }, []);
+  }, [entityDef]);
 
   if (nodeUuid) {
     return (

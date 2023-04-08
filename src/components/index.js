@@ -4,6 +4,8 @@ export { DataTable } from "./DataTable";
 export { DatePicker } from "./DatePicker";
 export { Dropdown } from "./Dropdown";
 export { HView } from "./HView";
+export { Icon } from "./Icon";
+export { IconButton } from "./IconButton";
 export { ProgressBar } from "./ProgressBar";
 export { Snackbar } from "./Snackbar";
 export { Text } from "./Text";

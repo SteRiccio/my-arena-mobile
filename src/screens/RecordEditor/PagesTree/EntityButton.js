@@ -13,7 +13,7 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
   const onPress = useCallback(() => {
     dispatch(DataEntryActions.selectCurrentPageEntity({ entityDefUuid }));
     dispatch(DataEntryActions.toggleRecordPageMenuOpen);
-  }, [treeNode]);
+  }, [entityDefUuid, treeNode]);
 
   return (
     <TouchableOpacity onPress={onPress}>
