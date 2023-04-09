@@ -39,14 +39,17 @@ export const NodeMultipleEntityComponent = () => {
     dispatch(DataEntryActions.addNewEntity);
   };
 
-  const onRowPress = useCallback(({ uuid }) => {
-    dispatch(
-      DataEntryActions.selectCurrentPageEntity({
-        entityDefUuid: entityDef.uuid,
-        entityUuid: uuid,
-      })
-    );
-  }, [entityDef]);
+  const onRowPress = useCallback(
+    ({ uuid }) => {
+      dispatch(
+        DataEntryActions.selectCurrentPageEntity({
+          entityDefUuid: entityDef.uuid,
+          entityUuid: uuid,
+        })
+      );
+    },
+    [entityDef]
+  );
 
   if (nodeUuid) {
     return (
@@ -61,6 +64,7 @@ export const NodeMultipleEntityComponent = () => {
       entity,
     });
     return {
+      key: entity.uuid,
       uuid: entity.uuid,
       ...keyDefs.reduce((acc, keyDef, index) => {
         const keyNode = keyNodes[index];

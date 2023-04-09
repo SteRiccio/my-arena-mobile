@@ -1,5 +1,6 @@
 export { MessageDialog } from "./MessageDialog";
 export { Button } from "./Button";
+export { Checkbox } from "./Checkbox";
 export { DataTable } from "./DataTable";
 export { DatePicker } from "./DatePicker";
 export { Dropdown } from "./Dropdown";

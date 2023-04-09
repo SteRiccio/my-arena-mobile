@@ -1,15 +1,21 @@
 import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
 
 import { SurveySelectors } from "../../../state/survey/selectors";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { Button, HView, Icon } from "../../../components";
+import { Button, HView, Icon, IconButton } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
+import { screenKeys } from "../../../navigation/screenKeys";
+
+const Separator = () => <Icon source="greater-than" size={10} />;
 
 export const Breadcrumbs = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
@@ -52,25 +58,27 @@ export const Breadcrumbs = () => {
     return _items;
   }, [actualEntity]);
 
-  const onItemPress = (item) => {
-    dispatch(
-      DataEntryActions.selectCurrentPageEntity({
-        entityDefUuid: item.uuid,
-      })
-    );
+  const onHomePress = () => navigation.navigate(screenKeys.recordsList);
+
+  const onItemPress = ({ uuid }) => {
+    dispatch(DataEntryActions.selectCurrentPageEntity({ entityDefUuid: uuid }));
   };
 
   return (
-    <HView>
+    <HView style={{ alignItems: "center", gap: 10 }}>
+      <IconButton icon="home" onPress={onHomePress} />
+
+      <Separator />
+
       {items.map((item, index) => (
-        <HView style={{ alignItems: "center", gap: 10 }}>
+        <>
           <Button
             mode="text"
             textKey={item.name}
             onPress={() => onItemPress(item)}
           />
-          {index < items.length - 1 && <Icon source="greater-than" size={10} />}
-        </HView>
+          {index < items.length - 1 && <Separator />}
+        </>
       ))}
     </HView>
   );
