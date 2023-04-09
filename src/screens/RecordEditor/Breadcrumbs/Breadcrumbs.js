@@ -71,14 +71,14 @@ export const Breadcrumbs = () => {
       <Separator />
 
       {items.map((item, index) => (
-        <>
+        <HView key={item.uuid}>
           <Button
             mode="text"
             textKey={item.name}
             onPress={() => onItemPress(item)}
           />
           {index < items.length - 1 && <Separator />}
-        </>
+        </HView>
       ))}
     </HView>
   );

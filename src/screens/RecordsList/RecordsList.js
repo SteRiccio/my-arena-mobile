@@ -1,11 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Objects, Surveys } from "@openforis/arena-core";
+import { useDispatch } from "react-redux";
+
+import {
+  DateFormats,
+  Dates,
+  NodeDefs,
+  NodeValueFormatter,
+  Objects,
+  Surveys,
+} from "@openforis/arena-core";
 
 import { Button, DataTable, VView } from "../../components";
 import { SurveySelectors } from "../../state/survey/selectors";
 import { RecordService } from "../../service/recordService";
 import { DataEntryActions } from "../../state/dataEntry/actions";
-import { useDispatch } from "react-redux";
 
 export const RecordsList = (props) => {
   const { navigation } = props;
@@ -45,18 +53,44 @@ export const RecordsList = (props) => {
     );
   }, []);
 
+  const recordToRow = (record) => {
+    const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
+      const recordKeyProp = Objects.camelize(new String(keyDef.props.name));
+      acc[recordKeyProp] = NodeValueFormatter.format({
+        survey,
+        nodeDef: keyDef,
+        value: record[recordKeyProp],
+      });
+      return acc;
+    }, {});
+
+    return {
+      ...record,
+      key: record.uuid,
+      ...valuesByKey,
+      dateCreated: Dates.format(
+        record.dateCreated,
+        DateFormats.datetimeDisplay
+      ),
+      dateModified: Dates.format(
+        record.dateModified,
+        DateFormats.datetimeDisplay
+      ),
+    };
+  };
+
   return (
     <VView>
       <Button onPress={onNewRecordPress}>New Record</Button>
       <DataTable
         columns={[
           ...rootDefKeys.map((keyDef) => ({
-            key: Objects.camelize(keyDef.props.name),
-            header: keyDef.props.name,
+            key: Objects.camelize(new String(keyDef.props.name)),
+            header: NodeDefs.getName(keyDef),
           })),
           { key: "dateCreated", header: "Created on" },
         ]}
-        rows={records.map((record) => ({ key: record.uuid, ...record }))}
+        rows={records.map(recordToRow)}
         onRowPress={onRowPress}
       />
     </VView>

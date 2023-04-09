@@ -85,20 +85,20 @@ const rowToRecord = ({ survey }) => {
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
 
   return (row) => {
-    if (row.content) {
-      const contentParsed = JSON.parse(row.content);
-      contentParsed.id = row.id;
-      return contentParsed;
-    }
+    let result = row.content
+      ? JSON.parse(row.content)
+      : Objects.camelize(row, { skip: ["content"] });
+
+    result.id = row.id;
     keysColumns.forEach((keyCol, index) => {
-      const keyValue = row[keyCol];
+      const keyValue = JSON.parse(row[keyCol]);
       const keyDef = keyDefs[index];
       if (keyDef) {
-        row[keyDef.props.name] = keyValue;
+        result[Objects.camelize(new String(keyDef.props.name))] = keyValue;
       }
-      delete row[keyCol];
+      delete result[keyCol];
     });
-    return Objects.camelize(row);
+    return result;
   };
 };
 

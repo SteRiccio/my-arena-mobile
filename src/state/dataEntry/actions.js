@@ -106,7 +106,7 @@ const updateCurrentRecordAttribute =
       node: nodeUpdated,
     });
 
-    await RecordService.updateRecord({ survey, record });
+    await RecordService.updateRecord({ survey, record: recordUpdated });
 
     dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   };
