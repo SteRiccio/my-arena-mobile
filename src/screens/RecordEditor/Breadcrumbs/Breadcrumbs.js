@@ -71,7 +71,7 @@ export const Breadcrumbs = () => {
       <Separator />
 
       {items.map((item, index) => (
-        <HView key={item.uuid}>
+        <HView key={item.uuid} style={{ alignItems: "center", gap: 10 }}>
           <Button
             mode="text"
             textKey={item.name}
