@@ -7,6 +7,7 @@ import { CloseIconButton, VView } from "../../components";
 import { DataEntryActions } from "../../state/dataEntry/actions";
 import { DataEntrySelectors } from "../../state/dataEntry/selectors";
 import { Breadcrumbs } from "./Breadcrumbs";
+import { NodePageNavigationBar } from "./NodePageNavigationBar";
 import { PagesTree } from "./PagesTree";
 import { RecordPageForm } from "./RecordPageForm";
 
@@ -53,6 +54,7 @@ export const RecordEditor = () => {
       <VView>
         <Breadcrumbs />
         <RecordPageForm />
+        <NodePageNavigationBar />
       </VView>
     </MenuDrawer>
   );

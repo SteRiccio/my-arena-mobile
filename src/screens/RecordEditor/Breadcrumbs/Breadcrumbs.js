@@ -56,7 +56,7 @@ export const Breadcrumbs = () => {
       currentEntity = parent;
     }
     return _items;
-  }, [actualEntity]);
+  }, [entityDef, actualEntity]);
 
   const onHomePress = () => navigation.navigate(screenKeys.recordsList);
 
