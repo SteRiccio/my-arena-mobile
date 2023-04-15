@@ -1,4 +1,6 @@
-import { View } from "react-native";
+import React from "react";
+
+import { View } from "./View";
 
 export const HView = (props) => {
   const { children, style, ...otherProps } = props;

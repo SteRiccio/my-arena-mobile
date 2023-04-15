@@ -10,13 +10,13 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 
-import { AppStack } from "navigation/AppStack";
-import { rootReducer } from "state/reducers";
+import { AppStack } from "./navigation/AppStack";
+import { rootReducer } from "./state/reducers";
 import { DowngradeError, initialize as initializeDb } from "./db";
 import { Text } from "./components";
-import styles from "./appStyles";
 import { SurveyService } from "./service/surveyService";
 import { AppMessageDialog } from "./appComponents/AppMessageDialog";
+import styles from "./appStyles";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 

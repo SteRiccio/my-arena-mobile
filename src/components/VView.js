@@ -1,5 +1,6 @@
 import React from "react";
-import { View } from "react-native";
+
+import { View } from "./View";
 
 export const VView = (props) => {
   const { children, style, ...otherProps } = props;

@@ -51,7 +51,7 @@ export const RecordEditor = () => {
       overlay={true}
       opacity={0.4}
     >
-      <VView>
+      <VView style={{ flex: 1 }}>
         <Breadcrumbs />
         <RecordPageForm />
         <NodePageNavigationBar />
