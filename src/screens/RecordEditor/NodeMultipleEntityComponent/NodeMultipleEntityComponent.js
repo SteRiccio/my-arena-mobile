@@ -21,9 +21,11 @@ export const NodeMultipleEntityComponent = () => {
   const { entityDef, entity, parentEntity } =
     DataEntrySelectors.useCurrentPageEntity();
 
-  console.log(
-    "Rendering NodeMultipleEntityComponent for " + NodeDefs.getName(entityDef)
-  );
+  if (__DEV__) {
+    console.log(
+      "Rendering NodeMultipleEntityComponent for " + NodeDefs.getName(entityDef)
+    );
+  }
 
   const nodeUuid = entity?.uuid;
 
@@ -56,6 +58,10 @@ export const NodeMultipleEntityComponent = () => {
       <NodeEntityFormComponent nodeDef={entityDef} parentNodeUuid={nodeUuid} />
     );
   }
+
+  const onDeleteSelectedNodeUuids = useCallback((nodeUuids) => {
+    dispatch(DataEntryActions.deleteNodes(nodeUuids));
+  });
 
   const entityToRow = (entity) => {
     const keyNodes = Records.getEntityKeyNodes({
@@ -97,6 +103,7 @@ export const NodeMultipleEntityComponent = () => {
         ]}
         rows={rows}
         onRowPress={onRowPress}
+        onDeleteSelectedRowIds={onDeleteSelectedNodeUuids}
       />
     </VView>
   );

@@ -59,10 +59,7 @@ const addNewEntity = async (dispatch, getState) => {
     (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
   );
 
-  await RecordService.updateRecord({
-    survey,
-    record: recordUpdated,
-  });
+  await RecordService.updateRecord({ survey, record: recordUpdated });
 
   dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   dispatch(
@@ -71,6 +68,25 @@ const addNewEntity = async (dispatch, getState) => {
       entityUuid: nodeCreated.uuid,
     })
   );
+};
+
+const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
+  const state = getState();
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const record = DataEntrySelectors.selectRecord(state);
+
+  const nodes = nodeUuids.map((nodeUuid) =>
+    Records.getNodeByUuid(nodeUuid)(record)
+  );
+  const { record: recordUpdated } = await RecordUpdater.deleteNodes({
+    survey,
+    record,
+    nodes,
+  });
+
+  await RecordService.updateRecord({ survey, record: recordUpdated });
+
+  dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
 };
 
 const editRecord =
@@ -193,6 +209,7 @@ export const DataEntryActions = {
 
   createNewRecord,
   addNewEntity,
+  deleteNodes,
   fetchAndEditRecord,
   updateCurrentRecordAttribute,
   selectCurrentPageEntity,
