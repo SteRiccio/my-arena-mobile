@@ -12,6 +12,7 @@ export const NodeTextComponent = (props) => {
   }
   const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
+    updateDelay: 1000,
   });
 
   const onChange = useCallback((text) => {
