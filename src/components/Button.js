@@ -3,7 +3,7 @@ import { Button as RNButton } from "react-native-paper";
 
 export const Button = (props) => {
   const { children, textKey, ...otherProps } = props;
-  
+
   return (
     <RNButton {...otherProps}>
       {textKey}

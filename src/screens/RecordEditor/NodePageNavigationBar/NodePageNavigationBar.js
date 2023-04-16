@@ -2,16 +2,17 @@ import React, { useCallback } from "react";
 
 import { NodeDefs, Nodes, Surveys } from "@openforis/arena-core";
 
+import { useKeyboardIsVisible } from "../../../hooks";
 import { HView } from "../../../components";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { SurveySelectors } from "../../../state/survey/selectors";
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
-import { useKeyboardIsVisible } from "./useKeyboardIsVisible";
 import styles from "./styles";
+import { View } from "../../../components/View";
 
 export const NodePageNavigationBar = () => {
-  const survey = SurveySelectors.useCurrentSurvey();
   const keyboardVisible = useKeyboardIsVisible();
+  const survey = SurveySelectors.useCurrentSurvey();
 
   const { parentEntity, entityDef, entity } =
     DataEntrySelectors.useCurrentPageEntity();
@@ -29,6 +30,9 @@ export const NodePageNavigationBar = () => {
 
   const getNextOrPrevSiblingEntityDef = useCallback(
     ({ offset }) => {
+      if (!parentEntityDef) {
+        return null;
+      }
       const siblingEntityDefs = Surveys.getNodeDefChildren({
         survey,
         nodeDef: parentEntityDef,
@@ -49,11 +53,12 @@ export const NodePageNavigationBar = () => {
     [entityDef, parentEntityDef, survey]
   );
 
-  const getNextEntityDef = () => {
+  const getNextEntityDef = useCallback(() => {
     if (NodeDefs.isMultiple(entityDef) && !entity) {
       return null;
     }
     const actualEntity = entity || parentEntity;
+
     const childrenEntityDefs = Surveys.getNodeDefChildren({
       survey,
       nodeDef: entityDef,
@@ -69,11 +74,11 @@ export const NodePageNavigationBar = () => {
     }
 
     return getNextOrPrevSiblingEntityDef({ offset: 1 });
-  };
+  }, [survey, entityDef, entity, parentEntity]);
 
   const nextEntityDef = getNextEntityDef();
 
-  const getPrevEntityDef = () => {
+  const getPrevEntityDef = useCallback(() => {
     if (!parentEntityDef) {
       return null;
     }
@@ -84,7 +89,7 @@ export const NodePageNavigationBar = () => {
       return entityDef;
     }
     return getNextOrPrevSiblingEntityDef({ offset: -1 });
-  };
+  }, [survey, entityDef, entity]);
 
   const prevEntityDef = getPrevEntityDef();
 
@@ -94,24 +99,26 @@ export const NodePageNavigationBar = () => {
 
   return (
     <HView style={styles.container}>
-      {prevEntityDef && (
-        <NodePageNavigationButton
-          icon={
-            prevEntityDef === entityDef
-              ? "format-list-bulleted"
-              : "chevron-left"
-          }
-          entityDef={prevEntityDef}
-          style={{ alignSelf: "flex-start" }}
-        />
-      )}
-      {nextEntityDef && nextEntityDef !== prevEntityDef && (
-        <NodePageNavigationButton
-          icon="chevron-right"
-          entityDef={nextEntityDef}
-          style={{ alignSelf: "flex-end" }}
-        />
-      )}
+      <View>
+        {prevEntityDef && (
+          <NodePageNavigationButton
+            icon={
+              prevEntityDef === entityDef
+                ? "format-list-bulleted"
+                : "chevron-left"
+            }
+            entityDef={prevEntityDef}
+          />
+        )}
+      </View>
+      <View>
+        {nextEntityDef && nextEntityDef !== prevEntityDef && (
+          <NodePageNavigationButton
+            icon="chevron-right"
+            entityDef={nextEntityDef}
+          />
+        )}
+      </View>
     </HView>
   );
 };

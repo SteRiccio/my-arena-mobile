@@ -1,11 +1,11 @@
-import { Button } from "./Button";
+import { IconButton } from "./IconButton";
 
 export const WarningIconButton = (props) => {
   const { children, ...otherProps } = props;
 
   return (
-    <Button icon="alert" {...otherProps}>
+    <IconButton icon="alert" mode="contained" {...otherProps}>
       {children}
-    </Button>
+    </IconButton>
   );
 };

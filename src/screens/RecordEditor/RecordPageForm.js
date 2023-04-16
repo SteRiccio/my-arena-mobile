@@ -15,7 +15,11 @@ export const RecordPageForm = () => {
 
   if (NodeDefs.isSingle(entityDef)) {
     return (
-      <ScrollView nestedScrollEnabled style={{ flex: 1, marginBottom: 50 }}>
+      <ScrollView
+        nestedScrollEnabled
+        style={{ flex: 1, marginBottom: 50 }}
+        persistentScrollbar
+      >
         <NodeEntityFormComponent
           nodeDef={entityDef}
           parentNodeUuid={entity?.uuid}
