@@ -5,7 +5,7 @@ const insertSurvey = async (survey) => {
   const surveyJson = JSON.stringify(survey);
   const content = LZString.compressToBase64(surveyJson);
 
-  await dbClient.executeSql(
+  const { insertId } = await dbClient.executeSql(
     "INSERT INTO survey (server_url, uuid, name, label, content, date_created, date_modified) VALUES (?, ?, ?, ?, ?, ?, ?)",
     [
       survey.serverUrl || "localhost",
@@ -17,6 +17,8 @@ const insertSurvey = async (survey) => {
       survey.dateModified,
     ]
   );
+  survey.id = insertId;
+  return survey;
 };
 
 const fetchSurveyById = async (id) => {

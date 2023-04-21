@@ -11,6 +11,7 @@ const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
 export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
   const dispatch = useDispatch();
   const dirtyRef = useRef(false);
+  const debouncedUpdateRef = useRef(null);
 
   const {
     applicable,
@@ -51,20 +52,18 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
 
         setState((statePrev) => ({ ...statePrev, value: valueUpdated }));
 
-        dispatch(
-          StoreUtils.cancelDebouncedAction(getNodeUpdateActionKey({ nodeUuid }))
+        debouncedUpdateRef?.current?.cancel();
+
+        debouncedUpdateRef.current = StoreUtils.debounceAction(
+          DataEntryActions.updateCurrentRecordAttribute({
+            uuid: nodeUuid,
+            value: valueUpdated,
+          }),
+          getNodeUpdateActionKey({ nodeUuid }),
+          updateDelay
         );
 
-        dispatch(
-          StoreUtils.debounceAction(
-            DataEntryActions.updateCurrentRecordAttribute({
-              uuid: nodeUuid,
-              value: valueUpdated,
-            }),
-            getNodeUpdateActionKey({ nodeUuid }),
-            updateDelay
-          )
-        );
+        dispatch(debouncedUpdateRef.current);
       } else {
         dispatch(
           DataEntryActions.updateCurrentRecordAttribute({

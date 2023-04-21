@@ -1,3 +1,5 @@
+import debounce from "lodash.debounce";
+
 const applyReducerFunction = ({ actionHandlers, action, state = {} }) => {
   const actionHandler = actionHandlers[action.type];
   return actionHandler ? actionHandler({ state, action }) : state;
@@ -9,8 +11,7 @@ const exportReducer =
     applyReducerFunction({ actionHandlers, action, state });
 
 export const debounceAction = (action, key, time = 500) => {
-  action.meta = { debounce: { time, key } };
-  return action;
+  return debounce(action, time);
 };
 
 export const cancelDebouncedAction = (key) => ({

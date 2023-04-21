@@ -49,8 +49,7 @@ const importDemoSurvey = async () => {
 
 const importSurveyRemote = async ({ id, cycle }) => {
   const survey = await fetchSurveyRemoteById({ id, cycle });
-  await insertSurvey(survey);
-  return survey;
+  return insertSurvey(survey);
 };
 
 export const SurveyService = {

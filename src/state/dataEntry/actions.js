@@ -75,13 +75,10 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = DataEntrySelectors.selectRecord(state);
 
-  const nodes = nodeUuids.map((nodeUuid) =>
-    Records.getNodeByUuid(nodeUuid)(record)
-  );
   const { record: recordUpdated } = await RecordUpdater.deleteNodes({
     survey,
     record,
-    nodes,
+    nodeUuids,
   });
 
   await RecordService.updateRecord({ survey, record: recordUpdated });
