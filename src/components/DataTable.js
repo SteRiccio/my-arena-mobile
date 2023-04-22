@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DataTable as RNPDataTable } from "react-native-paper";
 import { Banner } from "react-native-paper";
 
@@ -18,6 +18,13 @@ export const DataTable = (props) => {
   const [state, setState] = useState({ selectedRowIds: [] });
 
   const { selectedRowIds } = state;
+
+  useEffect(() => {
+    setState((statePrev) => ({
+      ...statePrev,
+      selectedRowIds: [],
+    }));
+  }, [rows]);
 
   const onRowSelect = useCallback(
     (row) => {

@@ -12,6 +12,7 @@ import { Button, DataTable, VView } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { SurveySelectors } from "../../../state/survey/selectors";
+import { ConfirmActions } from "../../../state/confirm/actions";
 
 const EMPTY_VALUE = "---EMPTY---";
 
@@ -52,7 +53,14 @@ export const NodeMultipleEntityListComponent = () => {
   );
 
   const onDeleteSelectedNodeUuids = useCallback((nodeUuids) => {
-    dispatch(DataEntryActions.deleteNodes(nodeUuids));
+    dispatch(
+      ConfirmActions.show({
+        messageKey: "Delete the selected items?",
+        onConfirm: () => {
+          dispatch(DataEntryActions.deleteNodes(nodeUuids));
+        },
+      })
+    );
   });
 
   const entityToRow = (entity) => {

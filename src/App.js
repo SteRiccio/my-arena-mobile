@@ -16,6 +16,7 @@ import { DowngradeError, initialize as initializeDb } from "./db";
 import { Text } from "./components";
 import { SurveyService } from "./service/surveyService";
 import { AppMessageDialog } from "./appComponents/AppMessageDialog";
+import { AppConfirmDialog } from "./appComponents/AppConfirmDialog";
 import styles from "./appStyles";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
@@ -74,6 +75,7 @@ const App = () => {
         <Provider store={store}>
           <AppStack />
           <AppMessageDialog />
+          <AppConfirmDialog />
         </Provider>
       </ThemeProvider>
     </PaperProvider>
