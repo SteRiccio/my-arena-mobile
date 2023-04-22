@@ -1,3 +1,4 @@
+import { NodeDefs } from "@openforis/arena-core";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -9,8 +10,7 @@ import { EntityDropdown } from "./EntityDropdown";
 
 export const NodeMultipleEntityComponentOld = () => {
   const dispatch = useDispatch();
-  const { entityDef, entity } = DataEntrySelectors.useCurrentPageEntity();
-  const entityUuid = entity?.uuid;
+  const { entityDef, entityUuid } = DataEntrySelectors.useCurrentPageEntity();
 
   const [selectedEntityUuid, setSelectedEntityUuid] = useState(null);
 
@@ -25,7 +25,7 @@ export const NodeMultipleEntityComponentOld = () => {
     }
   }, [entityUuid]);
 
-  const nodeDefLabel = entityDef.props.name;
+  const nodeDefLabel = NodeDefs.getName(entityDef);
 
   const onNewPress = () => {
     dispatch(DataEntryActions.addNewEntity);

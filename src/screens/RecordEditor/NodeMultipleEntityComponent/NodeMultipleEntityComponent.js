@@ -5,7 +5,7 @@ import { NodeEntityFormComponent } from "../NodeComponentSwitch/nodeTypes/NodeEn
 import { NodeMultipleEntityListComponent } from "./NodeMultipleEntityListComponent";
 
 export const NodeMultipleEntityComponent = () => {
-  const { entityDef, entity } = DataEntrySelectors.useCurrentPageEntity();
+  const { entityDef, entityUuid } = DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
     console.log(
@@ -13,11 +13,11 @@ export const NodeMultipleEntityComponent = () => {
     );
   }
 
-  if (entity) {
+  if (entityUuid) {
     return (
       <NodeEntityFormComponent
         nodeDef={entityDef}
-        parentNodeUuid={entity.uuid}
+        parentNodeUuid={entityUuid}
       />
     );
   }

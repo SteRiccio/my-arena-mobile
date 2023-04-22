@@ -10,9 +10,7 @@ export const NodeEntityFormComponent = (props) => {
   if (__DEV__) {
     console.log(`rendering NodeDefEntityForm for ${NodeDefs.getName(nodeDef)}`);
   }
-  const childrenDefs = DataEntrySelectors.useRecordEntityVisibleChildDefs({
-    nodeDef,
-  });
+  const childrenDefs = DataEntrySelectors.useRecordEntityChildDefs({ nodeDef });
 
   return (
     <VView>

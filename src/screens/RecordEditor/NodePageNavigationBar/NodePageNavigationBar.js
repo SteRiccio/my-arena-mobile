@@ -1,20 +1,20 @@
 import React, { useCallback } from "react";
 
-import { NodeDefs, Nodes, Surveys } from "@openforis/arena-core";
+import { NodeDefs, Nodes, Records, Surveys } from "@openforis/arena-core";
 
 import { useKeyboardIsVisible } from "../../../hooks";
-import { HView } from "../../../components";
+import { HView, View } from "../../../components";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { SurveySelectors } from "../../../state/survey/selectors";
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
 import styles from "./styles";
-import { View } from "../../../components/View";
 
 export const NodePageNavigationBar = () => {
   const keyboardVisible = useKeyboardIsVisible();
   const survey = SurveySelectors.useCurrentSurvey();
+  const record = DataEntrySelectors.useRecord();
 
-  const { parentEntity, entityDef, entity } =
+  const { parentEntityUuid, entityDef, entityUuid } =
     DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
@@ -45,7 +45,7 @@ export const NodePageNavigationBar = () => {
       if (siblingEntityDef) {
         return siblingEntityDef;
       }
-      if (entity) {
+      if (entityUuid) {
         return entityDef;
       }
       return parentEntityDef;
@@ -54,10 +54,11 @@ export const NodePageNavigationBar = () => {
   );
 
   const getNextEntityDef = useCallback(() => {
-    if (NodeDefs.isMultiple(entityDef) && !entity) {
+    if (NodeDefs.isMultiple(entityDef) && !entityUuid) {
       return null;
     }
-    const actualEntity = entity || parentEntity;
+    const actualEntityUuid = entityUuid || parentEntityUuid;
+    const actualEntity = Records.getNodeByUuid(actualEntityUuid)(record);
 
     const childrenEntityDefs = Surveys.getNodeDefChildren({
       survey,
@@ -74,7 +75,14 @@ export const NodePageNavigationBar = () => {
     }
 
     return getNextOrPrevSiblingEntityDef({ offset: 1 });
-  }, [survey, entityDef, entity, parentEntity]);
+  }, [
+    survey,
+    entityDef,
+    entityUuid,
+    parentEntityUuid,
+    record,
+    getNextOrPrevSiblingEntityDef,
+  ]);
 
   const nextEntityDef = getNextEntityDef();
 
@@ -82,14 +90,14 @@ export const NodePageNavigationBar = () => {
     if (!parentEntityDef) {
       return null;
     }
-    if (NodeDefs.isMultiple(entityDef) && !entity) {
+    if (NodeDefs.isMultiple(entityDef) && !entityUuid) {
       return parentEntityDef;
     }
-    if (parentEntityDef && entity) {
+    if (parentEntityDef && entityUuid) {
       return entityDef;
     }
     return getNextOrPrevSiblingEntityDef({ offset: -1 });
-  }, [survey, entityDef, entity]);
+  }, [survey, entityDef, entityUuid, getNextOrPrevSiblingEntityDef]);
 
   const prevEntityDef = getPrevEntityDef();
 

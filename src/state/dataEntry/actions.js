@@ -42,10 +42,12 @@ const addNewEntity = async (dispatch, getState) => {
   const state = getState();
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = DataEntrySelectors.selectRecord(state);
-  const { parentEntity: currentParentNode, entityDef: nodeDef } =
+  const { parentEntityUuid: currentParentNodeUuid, entityDef: nodeDef } =
     DataEntrySelectors.selectCurrentPageEntity(state);
 
-  const parentNode = currentParentNode || Records.getRoot(record);
+  const parentNode = currentParentNodeUuid
+    ? Records.getNodeByUuid(currentParentNodeUuid)(record)
+    : Records.getRoot(record);
 
   const { record: recordUpdated, nodes: nodesCreated } =
     await RecordUpdater.createNodeAndDescendants({
@@ -130,38 +132,40 @@ const selectCurrentPageEntity =
     const state = getState();
     const {
       entityDef: prevEntityDef,
-      parentEntity: prevParentEntity,
-      entity: prevEntity,
+      parentEntityUuid: prevParentEntityUuid,
+      entityUuid: prevEntityUuid,
     } = DataEntrySelectors.selectCurrentPageEntity(state);
 
     if (
       entityDefUuid === prevEntityDef?.uuid &&
-      entityUuid === prevEntity?.uuid
+      entityUuid === prevEntityUuid
     ) {
       return;
     }
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
     const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
+    const prevParentEntity = prevParentEntityUuid
+      ? Records.getNodeByUuid(prevParentEntityUuid)(record)
+      : null;
 
-    let nextParentEntity, nextEntity;
+    let nextParentEntityUuid, nextEntityUuid;
     if (prevEntityDef.uuid === entityDefUuid) {
-      nextParentEntity = prevParentEntity;
-      nextEntity = entityUuid
-        ? Records.getNodeByUuid(entityUuid)(record)
-        : null;
+      nextParentEntityUuid = prevParentEntityUuid;
+      nextEntityUuid = entityUuid;
     } else if (
       Surveys.isNodeDefAncestor({
         nodeDefAncestor: entityDef,
         nodeDefDescendant: prevEntityDef,
       })
     ) {
-      nextEntity = Records.getAncestor({
+      const nextEntity = Records.getAncestor({
         record,
         ancestorDefUuid: entityDefUuid,
         node: prevParentEntity,
       });
-      nextParentEntity = Records.getParent(nextEntity)(record);
+      nextEntityUuid = nextEntity?.uuid;
+      nextParentEntityUuid = nextEntity?.parentUuid;
     } else {
       const parentEntityDef = Surveys.getNodeDefParent({
         survey,
@@ -170,26 +174,24 @@ const selectCurrentPageEntity =
 
       const root = Records.getRoot(record);
 
-      nextParentEntity =
+      nextParentEntityUuid =
         parentEntityDef.uuid === prevParentEntity?.nodeDefUuid
-          ? prevParentEntity
+          ? prevParentEntityUuid
           : NodeDefs.isRoot(parentEntityDef)
-          ? root
+          ? root?.uuid
           : Records.getDescendant({
               record,
               node: prevParentEntity || root,
               nodeDefDescendant: parentEntityDef,
-            });
-      nextEntity = entityUuid
-        ? Records.getNodeByUuid(entityUuid)(record)
-        : null;
+            })?.uuid;
+      nextEntityUuid = entityUuid;
     }
 
     dispatch({
       type: CURRENT_PAGE_ENTITY_SET,
       entityDefUuid,
-      parentEntityUuid: nextParentEntity?.uuid,
-      entityUuid: nextEntity?.uuid,
+      parentEntityUuid: nextParentEntityUuid,
+      entityUuid: nextEntityUuid,
     });
   };
 

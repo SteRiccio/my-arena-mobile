@@ -19,7 +19,8 @@ const EMPTY_VALUE = "---EMPTY---";
 export const NodeMultipleEntityListComponent = () => {
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
-  const { entityDef, parentEntity } = DataEntrySelectors.useCurrentPageEntity();
+  const { entityDef, parentEntityUuid } =
+    DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
     console.log(
@@ -31,7 +32,7 @@ export const NodeMultipleEntityListComponent = () => {
   const survey = SurveySelectors.useCurrentSurvey();
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
   const record = DataEntrySelectors.useRecord();
-
+  const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
   const entities = Records.getChildren(parentEntity, entityDef.uuid)(record);
 
   const nodeDefLabel = NodeDefs.getLabelOrName(entityDef, lang);

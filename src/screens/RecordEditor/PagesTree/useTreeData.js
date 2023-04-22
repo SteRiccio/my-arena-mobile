@@ -1,18 +1,20 @@
-import { NodeDefs, Nodes, Surveys } from "@openforis/arena-core";
+import { NodeDefs, Nodes, Records, Surveys } from "@openforis/arena-core";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { SurveySelectors } from "../../../state/survey/selectors";
 
 export const useTreeData = () => {
   const survey = SurveySelectors.useCurrentSurvey();
+  const record = DataEntrySelectors.useRecord();
   // const cycle = DataEntrySelectors.useRecordCycle();
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
   const {
     entityDef: currentEntityDef,
-    entity,
-    parentEntity,
+    entityUuid,
+    parentEntityUuid,
   } = currentPageEntity;
 
-  const actualEntity = entity || parentEntity;
+  const actualEntityUuid = entityUuid || parentEntityUuid;
+  const actualEntity = Records.getNodeByUuid(actualEntityUuid)(record);
 
   const createTreeItem = (nodeDef) => ({
     id: nodeDef.uuid,

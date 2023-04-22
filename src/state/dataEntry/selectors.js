@@ -107,7 +107,7 @@ const selectRecordAttributeInfo =
     return { applicable, value, validation };
   };
 
-const selectVisibleChildDefs =
+const selectChildDefs =
   (state) =>
   ({ nodeDef }) => {
     const cycle = selectRecordCycle(state);
@@ -130,16 +130,14 @@ const selectCurrentPageEntity = (state) => {
 
   if (!parentEntityUuid) {
     return {
-      parentEntity: null,
+      parentEntityUuid: null,
       entityDef: Surveys.getNodeDefRoot({ survey }),
-      entity: Records.getRoot(record),
+      entityUuid: Records.getRoot(record).uuid,
     };
   }
   const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
-  const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
-  const entity = entityUuid ? Records.getNodeByUuid(entityUuid)(record) : null;
 
-  return { parentEntity, entityDef, entity };
+  return { parentEntityUuid, entityDef, entityUuid };
 };
 
 // record page
@@ -163,9 +161,9 @@ export const DataEntrySelectors = {
       selectRecordSingleNodeUuid(state)({ parentNodeUuid, nodeDefUuid })
     ),
 
-  useRecordEntityVisibleChildDefs: ({ nodeDef }) =>
+  useRecordEntityChildDefs: ({ nodeDef }) =>
     useSelector(
-      (state) => selectVisibleChildDefs(state)({ nodeDef }),
+      (state) => selectChildDefs(state)({ nodeDef }),
       Objects.isEqual
     ),
 

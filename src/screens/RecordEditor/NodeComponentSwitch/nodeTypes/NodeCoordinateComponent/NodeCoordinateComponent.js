@@ -126,33 +126,33 @@ export const NodeCoordinateComponent = (props) => {
 
   return (
     <VView>
-      <HView>
+      <HView style={styles.formItem}>
         <Text textKey="X" />
         <TextInput
           editable={editable}
           keyboardType="numeric"
           style={[
-            styles.textInput,
+            styles.numericTextInput,
             ...(applicable ? [] : [styles.textInputNotApplicable]),
           ]}
           onChange={onChangeX}
           value={xTextValue}
         />
       </HView>
-      <HView>
+      <HView style={styles.formItem}>
         <Text textKey="Y" />
         <TextInput
           editable={editable}
           keyboardType="numeric"
           style={[
-            styles.textInput,
+            styles.numericTextInput,
             ...(applicable ? [] : [styles.textInputNotApplicable]),
           ]}
           onChange={onChangeY}
           value={yTextValue}
         />
       </HView>
-      <HView>
+      <HView style={styles.formItem}>
         <Text textKey="SRS" />
         <SrsDropdown onChange={onChangeSrs} value={srsId} />
       </HView>

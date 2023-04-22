@@ -19,19 +19,19 @@ export const Breadcrumbs = () => {
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
-  const { entity, parentEntity, entityDef } = currentPageEntity;
-  const actualEntity = entity || parentEntity;
+  const { entityUuid, parentEntityUuid, entityDef } = currentPageEntity;
+  const actualEntityUuid = entityUuid || parentEntityUuid;
 
   const items = useMemo(() => {
-    if (!actualEntity) return [];
+    if (!actualEntityUuid) return [];
 
     const _items = [];
 
-    if (parentEntity && !entity) {
+    if (parentEntityUuid && !entityUuid) {
       _items.push({ uuid: entityDef.uuid, name: NodeDefs.getName(entityDef) });
     }
 
-    let currentEntity = actualEntity;
+    let currentEntity = Records.getNodeByUuid(actualEntityUuid)(record);
 
     while (currentEntity) {
       const parent = Records.getParent(currentEntity)(record);
@@ -56,7 +56,7 @@ export const Breadcrumbs = () => {
       currentEntity = parent;
     }
     return _items;
-  }, [entityDef, actualEntity]);
+  }, [entityDef, actualEntityUuid]);
 
   const onHomePress = () => navigation.navigate(screenKeys.recordsList);
 

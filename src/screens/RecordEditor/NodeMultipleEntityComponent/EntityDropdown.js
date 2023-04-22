@@ -9,14 +9,14 @@ import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 
 export const EntityDropdown = () => {
   const dispatch = useDispatch();
-  const { entityDef, parentEntity, entity } =
+  const { entityDef, parentEntityUuid, entityUuid } =
     DataEntrySelectors.useCurrentPageEntity();
 
-  const selectedEntityUuid = entity?.uuid;
+  const selectedEntityUuid = entityUuid;
 
   const entitiesUuidsAndKeyValues =
     DataEntrySelectors.useRecordEntitiesUuidsAndKeyValues({
-      parentNodeUuid: parentEntity.uuid,
+      parentNodeUuid: parentEntityUuid,
       nodeDefUuid: entityDef.uuid,
     });
 
