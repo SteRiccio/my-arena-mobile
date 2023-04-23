@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Animated, View } from "react-native";
+import React from "react";
+import { View } from "react-native";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { SurveySelectors } from "../../../state/survey/selectors";
 
-import { Text } from "../../../components";
+import { Fade, Text } from "../../../components";
 
 import { NodeValidationIcon } from "../NodeValidationIcon/NodeValidationIcon";
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
@@ -26,16 +26,6 @@ export const NodeDefFormItem = (props) => {
     parentNodeUuid,
     nodeDefUuid: nodeDef.uuid,
   });
-
-  const initialOpacity = visible ? 1 : 0;
-  const [fadeAnim] = useState(new Animated.Value(initialOpacity));
-
-  React.useEffect(() => {
-    if (!alwaysVisible) {
-      const toValue = visible ? 1 : 0;
-      Animated.timing(fadeAnim, { toValue, duration: 1000 }).start();
-    }
-  }, [alwaysVisible, visible]);
 
   const labelOrName = nodeDef.props.labels?.[lang] || nodeDef.props.name;
 
@@ -60,9 +50,5 @@ export const NodeDefFormItem = (props) => {
     return internalComponent;
   }
 
-  return (
-    <Animated.View style={{ opacity: fadeAnim }}>
-      {internalComponent}
-    </Animated.View>
-  );
+  return <Fade visible={visible}>{internalComponent}</Fade>;
 };

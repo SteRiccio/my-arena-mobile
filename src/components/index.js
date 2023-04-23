@@ -4,6 +4,7 @@ export { Checkbox } from "./Checkbox";
 export { DataTable } from "./DataTable";
 export { DatePicker } from "./DatePicker";
 export { Dropdown } from "./Dropdown";
+export { Fade } from "./Fade";
 export { HView } from "./HView";
 export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
