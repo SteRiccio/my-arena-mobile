@@ -9,6 +9,7 @@ import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { Button, HView, Icon, IconButton } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
 import { screenKeys } from "../../../navigation/screenKeys";
+import styles from "./styles";
 
 const Separator = () => <Icon source="greater-than" size={10} />;
 
@@ -65,17 +66,18 @@ export const Breadcrumbs = () => {
   };
 
   return (
-    <HView style={{ alignItems: "center", gap: 10 }}>
+    <HView style={styles.container}>
       <IconButton icon="home" onPress={onHomePress} />
 
       <Separator />
 
       {items.map((item, index) => (
-        <HView key={item.uuid} style={{ alignItems: "center", gap: 10 }}>
+        <HView key={item.uuid} style={styles.item}>
           <Button
             mode="text"
             textKey={item.name}
             onPress={() => onItemPress(item)}
+            style={styles.itemButton}
           />
           {index < items.length - 1 && <Separator />}
         </HView>

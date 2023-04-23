@@ -1,15 +1,18 @@
 import React, { useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import { NodeDefs, Nodes, Records, Surveys } from "@openforis/arena-core";
 
 import { useKeyboardIsVisible } from "../../../hooks";
-import { HView, View } from "../../../components";
+import { Button, HView, View } from "../../../components";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { SurveySelectors } from "../../../state/survey/selectors";
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
 import styles from "./styles";
+import { screenKeys } from "../../../navigation/screenKeys";
 
 export const NodePageNavigationBar = () => {
+  const navigation = useNavigation();
   const keyboardVisible = useKeyboardIsVisible();
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
@@ -108,6 +111,13 @@ export const NodePageNavigationBar = () => {
   return (
     <HView style={styles.container}>
       <View>
+        {NodeDefs.isRoot(entityDef) && (
+          <Button
+            icon="format-list-bulleted"
+            textKey="List of records"
+            onPress={() => navigation.navigate(screenKeys.recordsList)}
+          />
+        )}
         {prevEntityDef && (
           <NodePageNavigationButton
             icon={

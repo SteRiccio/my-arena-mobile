@@ -4,12 +4,14 @@ import { useDispatch } from "react-redux";
 
 import { DataEntryActions } from "../state/dataEntry/actions";
 import { DataEntrySelectors } from "../state/dataEntry/selectors";
+import { SurveySelectors } from "../state/survey/selectors";
 import { screenKeys } from "./screenKeys";
 
 export const AppBar = (props) => {
   const { back, navigation } = props;
 
   const dispatch = useDispatch();
+  const survey = SurveySelectors.useCurrentSurvey();
   const editingRecord = DataEntrySelectors.useIsEditingRecord();
 
   const [state, setState] = useState({ menuVisible: false });
@@ -32,13 +34,15 @@ export const AppBar = (props) => {
           />
         )}
         {back && <RNPAppbar.BackAction onPress={navigation.goBack} />}
-        <RNPAppbar.Content title="My Arena Mobile" />
+        <RNPAppbar.Content title={survey?.props.name} />
         <RNPAppbar.Action icon="magnify" onPress={() => {}} />
 
         <Menu
           visible={menuVisible}
           onDismiss={toggleMenu}
-          anchor={<RNPAppbar.Action icon="menu" onPress={toggleMenu} />}
+          anchor={
+            <RNPAppbar.Action icon="dots-vertical" onPress={toggleMenu} />
+          }
         >
           <Menu.Item
             onPress={() => {
