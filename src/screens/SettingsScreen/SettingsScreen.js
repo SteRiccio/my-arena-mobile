@@ -1,9 +1,25 @@
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { HView, Switch, Text, VView } from "../../components";
+import { HView, Switch, Text, TextInput, VView } from "../../components";
 import { SettingsActions } from "../../state/settings/actions";
 import { SettingsSelectors } from "../../state/settings/selectors";
+
+const propertyTypes = {
+  boolean: "boolean",
+  numeric: "numeric",
+};
+
+const properties = {
+  animationsEnabled: {
+    type: propertyTypes.boolean,
+    labelKey: "Animations enabled",
+  },
+  gpsAccuracyThreshold: {
+    type: propertyTypes.numeric,
+    labelKey: "GPS accuracy threshold",
+  },
+};
 
 export const SettingsScreen = () => {
   const dispatch = useDispatch();
@@ -13,7 +29,6 @@ export const SettingsScreen = () => {
   const [state, setState] = useState({ settings: settingsStored });
 
   const { settings } = state;
-  const { animationsEnabled } = settings;
 
   // const { serverUrl } = settings;
   // const [credentials, setCredentials] = useState({});
@@ -35,20 +50,46 @@ export const SettingsScreen = () => {
     [settings]
   );
 
+  const onPropValueChange =
+    ({ key }) =>
+    (value) =>
+      updateSettings((settingsPrev) => ({
+        ...settingsPrev,
+        [key]: value,
+      }));
+
   return (
     <VView>
-      <HView style={{ justifyContent: "space-between", alignItems: "center" }}>
-        <Text textKey="Animations" />
-        <Switch
-          value={animationsEnabled}
-          onChange={(val) =>
-            updateSettings((settingsPrev) => ({
-              ...settingsPrev,
-              animationsEnabled: val,
-            }))
-          }
-        />
-      </HView>
+      {Object.entries(properties).map(([key, prop]) => {
+        const { type, labelKey } = prop;
+        switch (type) {
+          case propertyTypes.boolean:
+            return (
+              <HView
+                style={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text textKey={labelKey} />
+                <Switch
+                  value={settings[key]}
+                  onChange={onPropValueChange({ key })}
+                />
+              </HView>
+            );
+          case propertyTypes.numeric:
+            return (
+              <VView>
+                <Text textKey={labelKey} />
+                <TextInput
+                  value={settings[key]}
+                  onChange={onPropValueChange({ key })}
+                />
+              </VView>
+            );
+        }
+      })}
     </VView>
   );
 };

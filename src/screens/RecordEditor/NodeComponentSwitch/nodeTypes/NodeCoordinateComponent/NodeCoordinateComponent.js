@@ -15,8 +15,7 @@ import { useNodeComponentLocalState } from "../../../nodeComponentLocalState";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
 import styles from "./nodeCoordinateComponentStyles";
-
-const accuracyThreshold = 4;
+import { SettingsSelectors } from "../../../../../state/settings/selectors";
 
 const locationToValue = ({ location, srsTo }) => {
   const { coords } = location;
@@ -39,6 +38,9 @@ export const NodeCoordinateComponent = (props) => {
   if (__DEV__) {
     console.log(`rendering NodeCoordinateComponent for ${nodeDef.props.name}`);
   }
+
+  const settings = SettingsSelectors.useSettings();
+  const { gpsAccuracyThreshold } = settings;
 
   const [state, setState] = useState({
     watchingLocation: false,
@@ -110,7 +112,7 @@ export const NodeCoordinateComponent = (props) => {
           const valueNext = locationToValue({ location, srsTo: srsId });
 
           onValueChange(valueNext);
-          if (valueNext.accuracy <= accuracyThreshold) {
+          if (valueNext.accuracy <= gpsAccuracyThreshold) {
             stopGps();
           }
         }
@@ -163,7 +165,7 @@ export const NodeCoordinateComponent = (props) => {
       {watchingLocation && (
         <AccuracyProgressBar
           accuracy={accuracy}
-          accuracyThreshold={accuracyThreshold}
+          accuracyThreshold={gpsAccuracyThreshold}
         />
       )}
       {!watchingLocation && (
