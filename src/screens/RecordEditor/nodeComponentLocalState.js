@@ -23,7 +23,7 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
 
   const [state, setState] = useState({
     value: undefined,
-    validation: null,
+    validation: nodeValidation,
   });
   const { value, validation } = state;
 
@@ -40,7 +40,11 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
         // component is dirty (value being updated by the user): do not update UI using node value
       } else {
         dirtyRef.current = false;
-        setState((statePrev) => ({ ...statePrev, value: nodeValue }));
+        setState((statePrev) => ({
+          ...statePrev,
+          value: nodeValue,
+          validation: nodeValidation,
+        }));
       }
     }
   }, [nodeValue, updateDelay]);
@@ -50,7 +54,11 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
       if (updateDelay) {
         dirtyRef.current = true;
 
-        setState((statePrev) => ({ ...statePrev, value: valueUpdated }));
+        setState((statePrev) => ({
+          ...statePrev,
+          value: valueUpdated,
+          validation: null,
+        }));
 
         debouncedUpdateRef?.current?.cancel();
 
@@ -79,7 +87,7 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
   return {
     applicable,
     value: updateDelay ? value : nodeValue,
-    validation: nodeValidation,
+    validation: updateDelay ? validation : nodeValidation,
     updateNodeValue,
   };
 };

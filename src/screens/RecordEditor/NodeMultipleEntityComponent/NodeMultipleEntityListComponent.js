@@ -105,6 +105,7 @@ export const NodeMultipleEntityListComponent = () => {
         rows={rows}
         onRowPress={onRowPress}
         onDeleteSelectedRowIds={onDeleteSelectedNodeUuids}
+        selectable
       />
     </VView>
   );

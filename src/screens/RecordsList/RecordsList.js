@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 import {
   DateFormats,
@@ -11,12 +12,13 @@ import {
 } from "@openforis/arena-core";
 
 import { Button, DataTable, VView } from "../../components";
+import { useNavigationFocus } from "../../hooks";
 import { SurveySelectors } from "../../state/survey/selectors";
 import { RecordService } from "../../service/recordService";
 import { DataEntryActions } from "../../state/dataEntry/actions";
 
-export const RecordsList = (props) => {
-  const { navigation } = props;
+export const RecordsList = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
 
@@ -37,6 +39,9 @@ export const RecordsList = (props) => {
       loading: false,
     }));
   }, [survey]);
+
+  // reload records on navigation focus (e.g. going back to records list screen)
+  useNavigationFocus({ onFocus: loadRecords });
 
   useEffect(() => {
     if (!survey) return;

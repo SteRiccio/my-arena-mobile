@@ -13,6 +13,7 @@ export const DataTable = (props) => {
     onRowPress,
     onSelectionChange,
     onDeleteSelectedRowIds,
+    selectable,
   } = props;
 
   const [state, setState] = useState({ selectedRowIds: [] });
@@ -66,7 +67,7 @@ export const DataTable = (props) => {
               {column.header}
             </RNPDataTable.Title>
           ))}
-          <RNPDataTable.Title style={{ flex: 0.3 }} />
+          {selectable && <RNPDataTable.Title style={{ flex: 0.3 }} />}
         </RNPDataTable.Header>
         {rows.map((row) => (
           <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
@@ -75,15 +76,21 @@ export const DataTable = (props) => {
                 {row[column.key]}
               </RNPDataTable.Cell>
             ))}
-            <RNPDataTable.Cell style={{ flex: 0.3 }}>
-              <Checkbox
-                checked={selectedRowIds.includes(row.key)}
-                onPress={() => onRowSelect(row)}
-              />
-            </RNPDataTable.Cell>
+            {selectable && (
+              <RNPDataTable.Cell style={{ flex: 0.3 }}>
+                <Checkbox
+                  checked={selectedRowIds.includes(row.key)}
+                  onPress={() => onRowSelect(row)}
+                />
+              </RNPDataTable.Cell>
+            )}
           </RNPDataTable.Row>
         ))}
       </RNPDataTable>
     </>
   );
+};
+
+DataTable.defaultProps = {
+  selectable: false,
 };
