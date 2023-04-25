@@ -10,6 +10,7 @@ export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
 export { ProgressBar } from "./ProgressBar";
 export { Snackbar } from "./Snackbar";
+export { Switch } from "./Switch";
 export { Text } from "./Text";
 export { TextInput } from "./TextInput";
 export { TimePicker } from "./TimePicker";

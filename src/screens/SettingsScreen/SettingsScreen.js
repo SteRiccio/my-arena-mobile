@@ -1,24 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
 
-import { VView } from "../../components";
-import { SettingsService } from "../../service/settingsService";
+import { HView, Switch, Text, VView } from "../../components";
+import { SettingsActions } from "../../state/settings/actions";
+import { SettingsSelectors } from "../../state/settings/selectors";
 
 export const SettingsScreen = () => {
-  const [settings, setSettings] = useState({});
+  const dispatch = useDispatch();
+
+  const settingsStored = SettingsSelectors.useSettings();
+
+  const [state, setState] = useState({ settings: settingsStored });
+
+  const { settings } = state;
+  const { animationsEnabled } = settings;
+
   // const { serverUrl } = settings;
   // const [credentials, setCredentials] = useState({});
 
   // const fetchCredentials = useCallback(async () => {
   //   setCredentials(await SettingsService.getCredentials());
   // }, []);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      setSettings(await SettingsService.fetchSettings());
-      // await fetchCredentials();
-    };
-    fetchSettings();
-  }, []);
 
   // useEffect(() => {
   //   fetchCredentials();
@@ -27,11 +29,26 @@ export const SettingsScreen = () => {
   const updateSettings = useCallback(
     async (settingsUpdateFn) => {
       const settingsUpdated = settingsUpdateFn(settings);
-      setSettings(settingsUpdated);
-      await SettingsService.saveSettings(settingsUpdated);
+      dispatch(SettingsActions.updateSettings(settingsUpdated));
+      setState({ settings: settingsUpdated });
     },
     [settings]
   );
 
-  return <VView></VView>;
+  return (
+    <VView>
+      <HView style={{ justifyContent: "space-between", alignItems: "center" }}>
+        <Text textKey="Animations" />
+        <Switch
+          value={animationsEnabled}
+          onChange={(val) =>
+            updateSettings((settingsPrev) => ({
+              ...settingsPrev,
+              animationsEnabled: val,
+            }))
+          }
+        />
+      </HView>
+    </VView>
+  );
 };

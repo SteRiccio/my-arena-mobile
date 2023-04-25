@@ -5,6 +5,7 @@ import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { SurveySelectors } from "../../../state/survey/selectors";
+import { SettingsSelectors } from "../../../state/settings/selectors";
 
 import { Fade, Text } from "../../../components";
 
@@ -18,6 +19,7 @@ export const NodeDefFormItem = (props) => {
   if (__DEV__) {
     console.log(`Rendering form item ${nodeDef.props.name}`);
   }
+  const settings = SettingsSelectors.useSettings();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const alwaysVisible = Objects.isEmpty(NodeDefs.getApplicable(nodeDef));
@@ -50,5 +52,9 @@ export const NodeDefFormItem = (props) => {
     return internalComponent;
   }
 
-  return <Fade visible={visible}>{internalComponent}</Fade>;
+  if (settings.animationsEnabled) {
+    return <Fade visible={visible}>{internalComponent}</Fade>;
+  }
+
+  return visible ? internalComponent : null;
 };

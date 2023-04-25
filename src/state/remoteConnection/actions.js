@@ -1,6 +1,7 @@
 import { AuthService } from "../../service/authService";
 import { SettingsService } from "../../service/settingsService";
 import { MessageActions } from "../message/actions";
+import { SettingsActions } from "../settings/actions";
 
 const LOGGED_IN = "LOGGED_IN";
 const LOGGED_OUT = "LOGGED_OUT";
@@ -19,7 +20,7 @@ const login =
     if (user) {
       const settings = await SettingsService.fetchSettings();
       const settingsUpdated = { ...settings, serverUrl, email, password };
-      await SettingsService.saveSettings(settingsUpdated);
+      dispatch(SettingsActions.updateSettings(settingsUpdated));
 
       dispatch(MessageActions.setMessage({ content: "Login successful!" }));
       dispatch({ type: LOGGED_IN, user });
