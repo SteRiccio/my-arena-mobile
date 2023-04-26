@@ -43,11 +43,6 @@ export const RecordsList = () => {
   // reload records on navigation focus (e.g. going back to records list screen)
   useNavigationFocus({ onFocus: loadRecords });
 
-  useEffect(() => {
-    if (!survey) return;
-    loadRecords();
-  }, [survey]);
-
   const onNewRecordPress = () => {
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };

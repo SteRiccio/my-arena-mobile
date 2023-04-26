@@ -6,9 +6,7 @@ import { ConfirmActions } from "./actions";
 export const useConfirmDialog = () => {
   const dispatch = useDispatch();
 
-  const { isOpen, messageKey, messageParams } = useSelector(
-    (state) => state.confirm
-  );
+  const confirmState = useSelector((state) => state.confirm);
 
   const confirm = useCallback(() => {
     dispatch(ConfirmActions.confirm());
@@ -19,10 +17,8 @@ export const useConfirmDialog = () => {
   }, [dispatch]);
 
   return {
-    isOpen,
+    ...confirmState,
     confirm,
     cancel,
-    messageKey,
-    messageParams,
   };
 };

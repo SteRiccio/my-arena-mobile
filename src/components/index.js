@@ -8,6 +8,7 @@ export { Fade } from "./Fade";
 export { HView } from "./HView";
 export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
+export { Loader } from "./Loader";
 export { ProgressBar } from "./ProgressBar";
 export { Snackbar } from "./Snackbar";
 export { Switch } from "./Switch";

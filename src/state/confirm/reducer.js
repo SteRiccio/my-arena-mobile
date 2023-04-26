@@ -1,7 +1,12 @@
 import { StoreUtils } from "../storeUtils";
 import { ConfirmActions } from "./actions";
 
-const initialState = { isOpen: false };
+const initialState = {
+  isOpen: false,
+  titleKey: "Confirm",
+  cancelButtonTextKey: "Cancel",
+  confirmButtonTextKey: "Confirm",
+};
 
 const actionHandlers = {
   [ConfirmActions.CONFIRM_SHOW]: ({ state, action }) => ({
