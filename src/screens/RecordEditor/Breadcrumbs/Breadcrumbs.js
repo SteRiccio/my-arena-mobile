@@ -18,6 +18,7 @@ export const Breadcrumbs = () => {
   const navigation = useNavigation();
 
   const survey = SurveySelectors.useCurrentSurvey();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const record = DataEntrySelectors.useRecord();
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
   const { entityUuid, parentEntityUuid, entityDef } = currentPageEntity;
@@ -41,7 +42,7 @@ export const Breadcrumbs = () => {
         survey,
         uuid: currentEntity.nodeDefUuid,
       });
-      let itemName = NodeDefs.getName(currentEntityDef);
+      let itemName = NodeDefs.getLabelOrName(currentEntityDef, lang);
 
       if (NodeDefs.isMultiple(currentEntityDef) && parent) {
         const siblings = Records.getChildren(

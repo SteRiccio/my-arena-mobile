@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
@@ -11,7 +11,7 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { Button, DataTable, VView } from "../../components";
+import { Button, DataTable, Loader, VView } from "../../components";
 import { useNavigationFocus } from "../../hooks";
 import { SurveySelectors } from "../../state/survey/selectors";
 import { RecordService } from "../../service/recordService";
@@ -29,7 +29,7 @@ export const RecordsList = () => {
   }, [survey]);
 
   const [state, setState] = useState({ records: [], loading: true });
-  const { records } = state;
+  const { records, loading } = state;
 
   const loadRecords = useCallback(async () => {
     const _records = await RecordService.fetchRecords({ survey });
@@ -78,6 +78,10 @@ export const RecordsList = () => {
       ),
     };
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <VView>

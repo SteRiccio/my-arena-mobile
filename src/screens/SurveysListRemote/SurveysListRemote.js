@@ -22,7 +22,6 @@ export const SurveysListRemote = () => {
   const { surveys, loading, errorKey } = state;
 
   const loadSurveys = async () => {
-    console.log("----loading surveys");
     const data = await SurveyService.fetchSurveySummariesRemote();
     const { surveys: _surveys, errorKey } = data;
     if (errorKey) {

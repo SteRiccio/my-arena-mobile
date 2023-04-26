@@ -130,9 +130,9 @@ const selectCurrentPageEntity = (state) => {
 
   if (!parentEntityUuid) {
     return {
-      parentEntityUuid: null,
+      parentEntityUuid: Records.getRoot(record).uuid,
       entityDef: Surveys.getNodeDefRoot({ survey }),
-      entityUuid: Records.getRoot(record).uuid,
+      entityUuid: null,
     };
   }
   const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
