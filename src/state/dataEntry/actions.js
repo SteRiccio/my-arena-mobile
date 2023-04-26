@@ -174,16 +174,15 @@ const selectCurrentPageEntity =
 
       const root = Records.getRoot(record);
 
-      nextParentEntityUuid =
-        parentEntityDef.uuid === prevParentEntity?.nodeDefUuid
-          ? prevParentEntityUuid
-          : NodeDefs.isRoot(parentEntityDef)
-          ? root?.uuid
-          : Records.getDescendant({
-              record,
-              node: prevParentEntity || root,
-              nodeDefDescendant: parentEntityDef,
-            })?.uuid;
+      nextParentEntityUuid = NodeDefs.isRoot(parentEntityDef)
+        ? root?.uuid
+        : parentEntityDef.uuid === prevParentEntity?.nodeDefUuid
+        ? prevParentEntityUuid
+        : Records.getDescendant({
+            record,
+            node: prevParentEntity || root,
+            nodeDefDescendant: parentEntityDef,
+          })?.uuid;
       nextEntityUuid = entityUuid;
     }
 
