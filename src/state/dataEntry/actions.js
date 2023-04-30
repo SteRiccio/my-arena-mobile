@@ -1,17 +1,12 @@
 import "react-native-get-random-values";
 
-import {
-  NodeDefs,
-  RecordFactory,
-  Records,
-  RecordUpdater,
-  Surveys,
-} from "@openforis/arena-core";
+import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { RecordService } from "../../service/recordService";
 import { screenKeys } from "../../navigation/screenKeys";
+import { RecordPageNavigator } from "./recordPageNavigator";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
@@ -130,67 +125,25 @@ const selectCurrentPageEntity =
   ({ entityDefUuid, entityUuid = null }) =>
   (dispatch, getState) => {
     const state = getState();
-    const {
-      entityDef: prevEntityDef,
-      parentEntityUuid: prevParentEntityUuid,
-      entityUuid: prevEntityUuid,
-    } = DataEntrySelectors.selectCurrentPageEntity(state);
-
-    if (
-      entityDefUuid === prevEntityDef?.uuid &&
-      entityUuid === prevEntityUuid
-    ) {
-      return;
-    }
+    const currentPageEntity = DataEntrySelectors.selectCurrentPageEntity(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
-    const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
-    const prevParentEntity = prevParentEntityUuid
-      ? Records.getNodeByUuid(prevParentEntityUuid)(record)
-      : null;
 
-    let nextParentEntityUuid, nextEntityUuid;
-    if (prevEntityDef.uuid === entityDefUuid) {
-      nextParentEntityUuid = prevParentEntityUuid;
-      nextEntityUuid = entityUuid;
-    } else if (
-      Surveys.isNodeDefAncestor({
-        nodeDefAncestor: entityDef,
-        nodeDefDescendant: prevEntityDef,
-      })
-    ) {
-      const nextEntity = Records.getAncestor({
-        record,
-        ancestorDefUuid: entityDefUuid,
-        node: prevParentEntity,
-      });
-      nextEntityUuid = nextEntity?.uuid;
-      nextParentEntityUuid = nextEntity?.parentUuid;
-    } else {
-      const parentEntityDef = Surveys.getNodeDefParent({
-        survey,
-        nodeDef: entityDef,
-      });
+    const nextPageEntity = RecordPageNavigator.determinePageEntity({
+      survey,
+      record,
+      currentPageEntity,
+      entityDefUuid,
+      entityUuid,
+    });
 
-      const root = Records.getRoot(record);
-
-      nextParentEntityUuid = NodeDefs.isRoot(parentEntityDef)
-        ? root?.uuid
-        : parentEntityDef.uuid === prevParentEntity?.nodeDefUuid
-        ? prevParentEntityUuid
-        : Records.getDescendant({
-            record,
-            node: prevParentEntity || root,
-            nodeDefDescendant: parentEntityDef,
-          })?.uuid;
-      nextEntityUuid = entityUuid;
-    }
+    if (!nextPageEntity) return;
 
     dispatch({
       type: CURRENT_PAGE_ENTITY_SET,
       entityDefUuid,
-      parentEntityUuid: nextParentEntityUuid,
-      entityUuid: nextEntityUuid,
+      parentEntityUuid: nextPageEntity.parentEntityUuid,
+      entityUuid: nextPageEntity.entityUuid,
     });
   };
 
