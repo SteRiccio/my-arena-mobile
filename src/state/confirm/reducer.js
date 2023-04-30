@@ -10,7 +10,6 @@ const initialState = {
 
 const actionHandlers = {
   [ConfirmActions.CONFIRM_SHOW]: ({ state, action }) => ({
-    ...state,
     ...action.payload,
     isOpen: true,
   }),

@@ -16,6 +16,7 @@ import { useNavigationFocus } from "../../hooks";
 import { SurveySelectors } from "../../state/survey/selectors";
 import { RecordService } from "../../service/recordService";
 import { DataEntryActions } from "../../state/dataEntry/actions";
+import { ConfirmActions } from "../../state/confirm/actions";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -52,6 +53,22 @@ export const RecordsList = () => {
       DataEntryActions.fetchAndEditRecord({ navigation, recordId: row.id })
     );
   }, []);
+
+  const onDeleteSelectedRowIds = useCallback(
+    (recordUuids) => {
+      dispatch(
+        ConfirmActions.show({
+          titleKey: "Delete records",
+          messageKey: "Delete the selected records?",
+          onConfirm: async () => {
+            await dispatch(DataEntryActions.deleteRecords(recordUuids));
+            await loadRecords();
+          },
+        })
+      );
+    },
+    [navigation]
+  );
 
   const recordToRow = (record) => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
@@ -96,6 +113,8 @@ export const RecordsList = () => {
         ]}
         rows={records.map(recordToRow)}
         onRowPress={onRowPress}
+        onDeleteSelectedRowIds={onDeleteSelectedRowIds}
+        selectable
       />
     </VView>
   );

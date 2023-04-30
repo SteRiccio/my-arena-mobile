@@ -80,6 +80,13 @@ const updateRecord = async ({ survey, record }) => {
   );
 };
 
+const deleteRecords = async ({ surveyId, recordUuids }) => {
+  return dbClient.executeSql(
+    `DELETE FROM record WHERE survey_id = ? AND uuid IN ("${recordUuids.toString()}")`,
+    [surveyId]
+  );
+};
+
 const rowToRecord = ({ survey }) => {
   const rootDef = Surveys.getNodeDefRoot({ survey });
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
@@ -107,4 +114,5 @@ export const RecordRepository = {
   fetchRecords,
   insertRecord,
   updateRecord,
+  deleteRecords,
 };

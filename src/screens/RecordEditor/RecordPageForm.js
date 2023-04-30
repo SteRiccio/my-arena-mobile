@@ -1,5 +1,3 @@
-import { ScrollView } from "react-native";
-
 import { NodeDefs } from "@openforis/arena-core";
 
 import { DataEntrySelectors } from "../../state/dataEntry/selectors";
@@ -15,16 +13,10 @@ export const RecordPageForm = () => {
 
   if (NodeDefs.isRoot(entityDef) || NodeDefs.isSingle(entityDef)) {
     return (
-      <ScrollView
-        nestedScrollEnabled
-        style={{ flex: 1, marginBottom: 50 }}
-        persistentScrollbar
-      >
-        <NodeEntityFormComponent
-          nodeDef={entityDef}
-          parentNodeUuid={entityUuid}
-        />
-      </ScrollView>
+      <NodeEntityFormComponent
+        nodeDef={entityDef}
+        parentNodeUuid={entityUuid}
+      />
     );
   } else {
     return <NodeMultipleEntityComponent />;

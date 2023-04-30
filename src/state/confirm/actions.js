@@ -3,13 +3,13 @@ const CONFIRM_HIDE = "CONFIRM_HIDE";
 
 const show =
   ({
-    titleKey,
-    cancelButtonTextKey,
-    confirmButtonTextKey,
+    titleKey = "Confirm",
+    cancelButtonTextKey = "Cancel",
+    confirmButtonTextKey = "Confirm",
     messageKey,
-    messageParams,
+    messageParams = {},
     onConfirm,
-    onCancel,
+    onCancel = undefined,
   }) =>
   (dispatch) => {
     dispatch({

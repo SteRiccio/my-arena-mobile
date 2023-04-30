@@ -83,6 +83,13 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
   dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
 };
 
+const deleteRecords = (recordUuids) => async (_dispatch, getState) => {
+  const state = getState();
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+
+  await RecordService.deleteRecords({ surveyId: survey.id, recordUuids });
+};
+
 const editRecord =
   ({ navigation, record }) =>
   (dispatch) => {
@@ -161,6 +168,7 @@ export const DataEntryActions = {
   createNewRecord,
   addNewEntity,
   deleteNodes,
+  deleteRecords,
   fetchAndEditRecord,
   updateCurrentRecordAttribute,
   selectCurrentPageEntity,
