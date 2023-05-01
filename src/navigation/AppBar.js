@@ -35,7 +35,6 @@ export const AppBar = (props) => {
         )}
         {back && <RNPAppbar.BackAction onPress={navigation.goBack} />}
         <RNPAppbar.Content title={survey?.props.name} />
-        <RNPAppbar.Action icon="magnify" onPress={() => {}} />
 
         <Menu
           visible={menuVisible}
@@ -50,6 +49,14 @@ export const AppBar = (props) => {
               toggleMenu();
             }}
             title="Login"
+          />
+          <Divider />
+          <Menu.Item
+            onPress={() => {
+              navigation.navigate(screenKeys.surveysListLocal);
+              toggleMenu();
+            }}
+            title="Surveys"
           />
           <Divider />
           <Menu.Item

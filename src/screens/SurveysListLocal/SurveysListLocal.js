@@ -1,23 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { DataTable, VView } from "../../components";
 import { SurveyService } from "../../service/surveyService";
+import { useNavigationFocus } from "../../hooks";
+import { ConfirmActions } from "../../state/confirm/actions";
+import { SurveyActions } from "../../state/survey/actions";
 
 export const SurveysListLocal = () => {
+  const dispatch = useDispatch();
   const [state, setState] = useState({ surveys: [], loading: true });
   const { surveys } = state;
 
   const loadSurveys = async () => {
     const _surveys = await SurveyService.fetchSurveySummariesLocal();
+
     setState((statePrev) => ({
       ...statePrev,
-      surveys: _surveys,
+      surveys: _surveys.map((survey) => ({ ...survey, key: survey.id })),
       loading: false,
     }));
   };
 
-  useEffect(() => {
-    loadSurveys();
+  useNavigationFocus({ onFocus: loadSurveys });
+
+  const onDeleteSelectedRowIds = useCallback((surveyIds) => {
+    dispatch(
+      ConfirmActions.show({
+        titleKey: "Delete surveys",
+        messageKey: "Delete the selected surveys?",
+        onConfirm: async () => {
+          await dispatch(SurveyActions.deleteSurveys(surveyIds));
+          await loadSurveys();
+        },
+      })
+    );
   }, []);
 
   return (
@@ -29,7 +46,9 @@ export const SurveysListLocal = () => {
             header: "Name",
           },
         ]}
+        onDeleteSelectedRowIds={onDeleteSelectedRowIds}
         rows={surveys.map((survey) => survey)}
+        selectable
       />
     </VView>
   );

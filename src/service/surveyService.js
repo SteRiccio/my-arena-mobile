@@ -12,6 +12,7 @@ const {
   fetchSurveySummaries: fetchSurveySummariesLocal,
   fetchSurveyById,
   insertSurvey,
+  deleteSurveys,
 } = SurveyRepository;
 
 const fetchCategoryItems = ({
@@ -74,4 +75,5 @@ export const SurveyService = {
   importSurveyRemote,
   fetchCategoryItems,
   insertSurvey,
+  deleteSurveys,
 };

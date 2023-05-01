@@ -27,10 +27,15 @@ const importSurveyRemote =
     dispatch(setCurrentSurvey({ survey, navigation }));
   };
 
+const deleteSurveys = (surveyIds) => async (_dispatch, getState) => {
+  await SurveyService.deleteSurveys(surveyIds);
+};
+
 export const SurveyActions = {
   CURRENT_SURVEY_SET,
 
   setCurrentSurvey,
   fetchAndSetCurrentSurvey,
   importSurveyRemote,
+  deleteSurveys,
 };

@@ -67,7 +67,7 @@ export const RecordsList = () => {
         })
       );
     },
-    [navigation]
+    []
   );
 
   const recordToRow = (record) => {

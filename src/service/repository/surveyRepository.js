@@ -40,8 +40,15 @@ const fetchSurveySummaries = async () => {
   return surveys;
 };
 
+const deleteSurveys = async (surveyIds) => {
+  await dbClient.executeSql(
+    `DELETE FROM survey WHERE id IN ("${surveyIds.toString()}")`
+  );
+};
+
 export const SurveyRepository = {
   fetchSurveyById,
   fetchSurveySummaries,
   insertSurvey,
+  deleteSurveys,
 };
