@@ -63,7 +63,7 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
         debouncedUpdateRef?.current?.cancel();
 
         debouncedUpdateRef.current = StoreUtils.debounceAction(
-          DataEntryActions.updateCurrentRecordAttribute({
+          DataEntryActions.updateAttribute({
             uuid: nodeUuid,
             value: valueUpdated,
           }),
@@ -74,7 +74,7 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
         dispatch(debouncedUpdateRef.current);
       } else {
         dispatch(
-          DataEntryActions.updateCurrentRecordAttribute({
+          DataEntryActions.updateAttribute({
             uuid: nodeUuid,
             value: valueUpdated,
           })

@@ -2,7 +2,7 @@ import { NodeDefType, Objects } from "@openforis/arena-core";
 import { useCallback } from "react";
 
 import { TextInput } from "../../../../components";
-import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
+import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 
 export const NodeTextComponent = (props) => {
   const { nodeDef, nodeUuid } = props;

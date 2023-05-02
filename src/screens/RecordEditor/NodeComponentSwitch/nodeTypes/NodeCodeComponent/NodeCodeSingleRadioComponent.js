@@ -1,23 +1,19 @@
 import React from "react";
 import { RadioButton } from "react-native-paper";
 
-import { CategoryItems } from "@openforis/arena-core";
-
 import { HView } from "../../../../../components";
-import { SurveySelectors } from "../../../../../state/survey/selectors";
+import styles from "./styles";
 
 export const NodeCodeSingleRadioComponent = (props) => {
-  const { editable, items, onChange, value } = props;
-
-  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const { editable, itemLabelFunction, items, onChange, value } = props;
 
   return (
     <RadioButton.Group onValueChange={onChange} value={value}>
-      <HView>
+      <HView style={styles.container}>
         {items.map((item) => (
           <RadioButton.Item
             key={item.uuid}
-            label={CategoryItems.getLabelOrCode(item, lang)}
+            label={itemLabelFunction(item)}
             disabled={!editable}
             value={item.uuid}
           />

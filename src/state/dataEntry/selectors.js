@@ -107,6 +107,15 @@ const selectRecordAttributeInfo =
     return { applicable, value, validation };
   };
 
+const selectRecordChildNodes =
+  (state) =>
+  ({ parentEntityUuid, nodeDef }) => {
+    const record = selectRecord(state);
+    const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
+    const nodes = Records.getChildren(parentEntity, nodeDef.uuid)(record);
+    return { nodes };
+  };
+
 const selectChildDefs =
   (state) =>
   ({ nodeDef }) => {
@@ -198,6 +207,16 @@ export const DataEntrySelectors = {
   useRecordAttributeInfo: ({ nodeUuid }) =>
     useSelector(
       (state) => selectRecordAttributeInfo(state)({ nodeUuid }),
+      Objects.isEqual
+    ),
+
+  useRecordChildNodes: ({ parentEntityUuid, nodeDef }) =>
+    useSelector(
+      (state) =>
+        selectRecordChildNodes(state)({
+          parentEntityUuid,
+          nodeDef,
+        }),
       Objects.isEqual
     ),
 

@@ -37,6 +37,7 @@ export const SingleAttributeComponentSwitch = (props) => {
     React.createElement(component, {
       nodeDef,
       nodeUuid,
+      parentNodeUuid,
     })
   ) : (
     <Text textKey={`Type not supported (${nodeDef.type})`} />

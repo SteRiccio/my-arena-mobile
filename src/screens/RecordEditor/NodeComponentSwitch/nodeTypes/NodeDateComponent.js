@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { DateFormats, Dates, Objects } from "@openforis/arena-core";
 
 import { DatePicker } from "../../../../components";
-import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
+import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 
 export const NodeDateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;

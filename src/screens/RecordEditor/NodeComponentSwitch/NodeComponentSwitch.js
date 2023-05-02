@@ -1,10 +1,11 @@
-import { NodeDefs } from "@openforis/arena-core";
+import { NodeDefType, NodeDefs } from "@openforis/arena-core";
 
 import { Text } from "../../../components";
 import { NodeMultipleEntityPreviewComponent } from "./nodeTypes/NodeMultipleEntityPreviewComponent";
 import { NodeSingleEntityComponent } from "./nodeTypes/NodeSingleEntityComponent";
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
+import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
 
 export const NodeComponentSwitch = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -37,6 +38,12 @@ export const NodeComponentSwitch = (props) => {
         nodeDef={nodeDef}
         parentNodeUuid={parentNodeUuid}
       />
+    );
+  }
+
+  if (NodeDefs.isMultiple(nodeDef) && nodeDef.type === NodeDefType.code) {
+    return (
+      <NodeCodeComponent nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
     );
   }
 

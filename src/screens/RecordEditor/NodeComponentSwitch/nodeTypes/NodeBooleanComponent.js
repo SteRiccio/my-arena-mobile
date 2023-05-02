@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 
-import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
+import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 
 const booleanValues = ["true", "false"];
 

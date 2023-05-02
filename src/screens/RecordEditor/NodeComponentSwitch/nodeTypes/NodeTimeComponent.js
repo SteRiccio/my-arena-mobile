@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { DateFormats, Dates, Objects } from "@openforis/arena-core";
 
-import { useNodeComponentLocalState } from "../../nodeComponentLocalState";
+import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 import { TimePicker } from "../../../../components";
 
 export const NodeTimeComponent = (props) => {

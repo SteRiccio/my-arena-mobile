@@ -1,6 +1,11 @@
 import "react-native-get-random-values";
 
-import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
+import {
+  NodeFactory,
+  RecordFactory,
+  Records,
+  RecordUpdater,
+} from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
@@ -106,7 +111,7 @@ const fetchAndEditRecord =
     dispatch(editRecord({ navigation, record }));
   };
 
-const updateCurrentRecordAttribute =
+const updateAttribute =
   ({ uuid, value }) =>
   async (dispatch, getState) => {
     const state = getState();
@@ -126,6 +131,38 @@ const updateCurrentRecordAttribute =
     await RecordService.updateRecord({ survey, record: recordUpdated });
 
     dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
+  };
+
+const addNewAttribute =
+  ({ nodeDef, parentNodeUuid, value }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = DataEntrySelectors.selectRecord(state);
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+
+    const { record: recordUpdated, nodes: nodesCreated } =
+      await RecordUpdater.createNodeAndDescendants({
+        survey,
+        record,
+        parentNode,
+        nodeDef,
+      });
+
+    const nodeCreated = Object.values(nodesCreated).find(
+      (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
+    );
+    const nodeUpdated = { ...nodeCreated, value };
+
+    const { record: recordUpdated2 } = await RecordUpdater.updateNode({
+      survey,
+      record: recordUpdated,
+      node: nodeUpdated,
+    });
+
+    await RecordService.updateRecord({ survey, record: recordUpdated2 });
+
+    dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated2 });
   };
 
 const selectCurrentPageEntity =
@@ -167,10 +204,11 @@ export const DataEntryActions = {
 
   createNewRecord,
   addNewEntity,
+  addNewAttribute,
   deleteNodes,
   deleteRecords,
   fetchAndEditRecord,
-  updateCurrentRecordAttribute,
+  updateAttribute,
   selectCurrentPageEntity,
   toggleRecordPageMenuOpen,
 };

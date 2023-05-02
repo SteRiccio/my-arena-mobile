@@ -10,12 +10,12 @@ import {
   TextInput,
   VView,
 } from "../../../../../components";
+import { SettingsSelectors } from "../../../../../state/settings/selectors";
 import { SurveySelectors } from "../../../../../state/survey/selectors";
-import { useNodeComponentLocalState } from "../../../nodeComponentLocalState";
 import { SrsDropdown } from "../../../SrsDropdown";
+import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
 import styles from "./nodeCoordinateComponentStyles";
-import { SettingsSelectors } from "../../../../../state/settings/selectors";
 
 const locationToValue = ({ location, srsTo }) => {
   const { coords } = location;

@@ -2,9 +2,14 @@ import React from "react";
 import { Checkbox as RNPCheckbox } from "react-native-paper";
 
 export const Checkbox = (props) => {
-  const { checked, ...otherProps } = props;
+  const { checked, label, onPress, ...otherProps } = props;
 
   return (
-    <RNPCheckbox {...otherProps} status={checked ? "checked" : "unchecked"} />
+    <RNPCheckbox.Item
+      {...otherProps}
+      label={label}
+      onPress={onPress}
+      status={checked ? "checked" : "unchecked"}
+    />
   );
 };
