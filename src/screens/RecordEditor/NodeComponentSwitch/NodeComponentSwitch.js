@@ -1,11 +1,11 @@
 import { NodeDefType, NodeDefs } from "@openforis/arena-core";
 
-import { Text } from "components";
+import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
 import { NodeMultipleEntityPreviewComponent } from "./nodeTypes/NodeMultipleEntityPreviewComponent";
 import { NodeSingleEntityComponent } from "./nodeTypes/NodeSingleEntityComponent";
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
-import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
+import { MultipleAttributeComponentWrapper } from "./MultipleAttributeComponentWrapper";
 
 export const NodeComponentSwitch = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -14,16 +14,15 @@ export const NodeComponentSwitch = (props) => {
     console.log(`rendering NodeComponentSwitch for ${nodeDef.props.name}`);
   }
 
-  if (NodeDefs.isSingleEntity(nodeDef)) {
-    return (
-      <NodeSingleEntityComponent
-        nodeDef={nodeDef}
-        parentNodeUuid={parentNodeUuid}
-      />
-    );
-  }
-
-  if (NodeDefs.isMultipleEntity(nodeDef)) {
+  if (NodeDefs.isEntity(nodeDef)) {
+    if (NodeDefs.isSingle(nodeDef)) {
+      return (
+        <NodeSingleEntityComponent
+          nodeDef={nodeDef}
+          parentNodeUuid={parentNodeUuid}
+        />
+      );
+    }
     return (
       <NodeMultipleEntityPreviewComponent
         nodeDef={nodeDef}
@@ -32,7 +31,7 @@ export const NodeComponentSwitch = (props) => {
     );
   }
 
-  if (NodeDefs.isSingle(nodeDef) && NodeDefs.isAttribute(nodeDef)) {
+  if (NodeDefs.isSingle(nodeDef)) {
     return (
       <SingleAttributeComponentSwitch
         nodeDef={nodeDef}
@@ -41,15 +40,16 @@ export const NodeComponentSwitch = (props) => {
     );
   }
 
-  if (NodeDefs.isMultiple(nodeDef) && nodeDef.type === NodeDefType.code) {
+  if (nodeDef.type === NodeDefType.code) {
     return (
       <NodeCodeComponent nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
     );
   }
 
   return (
-    <Text
-      textKey={`Multiple nodes not supported (${nodeDef.props.name} - ${nodeDef.type})`}
+    <MultipleAttributeComponentWrapper
+      nodeDef={nodeDef}
+      parentNodeUuid={parentNodeUuid}
     />
   );
 };

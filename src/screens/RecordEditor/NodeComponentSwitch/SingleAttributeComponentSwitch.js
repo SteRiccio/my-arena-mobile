@@ -24,14 +24,16 @@ const nodeDefComponentByType = {
 };
 
 export const SingleAttributeComponentSwitch = (props) => {
-  const { nodeDef, parentNodeUuid } = props;
+  const { nodeDef, nodeUuid: nodeUuidProp, parentNodeUuid } = props;
 
   const component = nodeDefComponentByType[nodeDef.type];
 
-  const nodeUuid = DataEntrySelectors.useRecordSingleNodeUuid({
-    parentNodeUuid,
-    nodeDefUuid: nodeDef.uuid,
+  const { nodes } = DataEntrySelectors.useRecordChildNodes({
+    parentEntityUuid: parentNodeUuid,
+    nodeDef,
   });
+
+  const nodeUuid = nodeUuidProp ? nodeUuidProp : nodes[0]?.uuid;
 
   return component ? (
     React.createElement(component, {

@@ -130,7 +130,7 @@ const updateAttribute =
   };
 
 const addNewAttribute =
-  ({ nodeDef, parentNodeUuid, value }) =>
+  ({ nodeDef, parentNodeUuid, value = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
