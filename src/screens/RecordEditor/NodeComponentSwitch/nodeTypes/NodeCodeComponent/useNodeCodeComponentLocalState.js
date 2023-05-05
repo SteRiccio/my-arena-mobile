@@ -1,9 +1,11 @@
-import { NodeDefs, NodeValues } from "@openforis/arena-core";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 
-import { DataEntryActions } from "../../../../../state/dataEntry/actions";
-import { DataEntrySelectors } from "../../../../../state/dataEntry/selectors";
+import { CategoryItems, NodeDefs, NodeValues } from "@openforis/arena-core";
+
+import { SurveyService } from "service/surveyService";
+
+import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 
 export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const dispatch = useDispatch();
@@ -12,6 +14,43 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
     parentEntityUuid: parentNodeUuid,
     nodeDef,
   });
+
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+
+  const survey = SurveySelectors.useCurrentSurvey();
+
+  const items = useMemo(
+    () =>
+      SurveyService.fetchCategoryItems({
+        survey,
+        categoryUuid: nodeDef.props.categoryUuid,
+        parentItemUuid: null,
+      }),
+    [survey, nodeDef]
+  );
+
+  const selectedItems = useMemo(
+    () =>
+      items.filter((item) =>
+        nodes.some((node) => NodeValues.getItemUuid(node) === item.uuid)
+      ),
+    [items, nodes]
+  );
+
+  const selectedItemUuid =
+    selectedItems.length === 1 ? selectedItems[0].uuid : null;
+
+  const itemLabelFunction = useCallback(
+    (item) => {
+      const label = CategoryItems.getLabelOrCode(item, lang);
+      const code = CategoryItems.getCode(item);
+      if (label === code) {
+        return code;
+      }
+      return `${label} (${code})`;
+    },
+    [nodeDef]
+  );
 
   const onItemAdd = useCallback(
     (itemUuid) => {
@@ -57,9 +96,25 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
     [nodeDef, nodes]
   );
 
+  const onSingleValueChange = useCallback(
+    (itemUuid) => {
+      if (selectedItemUuid) {
+        onItemRemove(selectedItemUuid);
+      }
+      if (itemUuid) {
+        onItemAdd(itemUuid);
+      }
+    },
+    [onItemAdd, onItemRemove, selectedItemUuid]
+  );
+
   return {
-    nodes,
+    items,
+    itemLabelFunction,
     onItemAdd,
     onItemRemove,
+    onSingleValueChange,
+    selectedItems,
+    selectedItemUuid,
   };
 };

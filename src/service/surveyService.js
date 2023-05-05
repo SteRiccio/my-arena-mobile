@@ -2,6 +2,7 @@ import { SurveyRepository } from "./repository/surveyRepository";
 import { API } from "./api";
 import { SettingsService } from "./settingsService";
 import demoSurvey from "./simple_survey.json";
+import { Surveys } from "@openforis/arena-core";
 
 const getServerUrl = async () =>
   (await SettingsService.fetchSettings()).serverUrl;
@@ -20,14 +21,13 @@ const fetchCategoryItems = ({
   categoryUuid,
   parentItemUuid = null,
 }) => {
-  const itemUuids = Object.values(
-    survey?.refData?.categoryItemUuidIndex?.[categoryUuid]?.[
-      parentItemUuid || "null"
-    ] || {}
-  );
-  return itemUuids.map(
-    (itemUuid) => survey?.refData?.categoryItemIndex?.[itemUuid]
-  );
+  const items = Surveys.getCategoryItems({
+    survey,
+    categoryUuid,
+    parentItemUuid,
+  });
+  items.sort((itemA, itemB) => itemA.props.index - itemB.props.index);
+  return items;
 };
 
 const fetchSurveySummariesRemote = async () => {
