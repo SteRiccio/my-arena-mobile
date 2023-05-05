@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { DataTable, VView } from "../../components";
-import { SurveyService } from "../../service/surveyService";
-import { useNavigationFocus } from "../../hooks";
-import { ConfirmActions } from "../../state/confirm/actions";
-import { SurveyActions } from "../../state/survey/actions";
+import { DataTable, VView } from "components";
+import { SurveyService } from "service";
+import { useNavigationFocus } from "hooks";
+import { ConfirmActions, SurveyActions } from "state";
 
 export const SurveysListLocal = () => {
   const dispatch = useDispatch();

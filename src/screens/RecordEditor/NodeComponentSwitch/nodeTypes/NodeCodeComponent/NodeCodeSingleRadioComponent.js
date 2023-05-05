@@ -1,7 +1,7 @@
 import React from "react";
 import { RadioButton } from "react-native-paper";
 
-import { HView } from "../../../../../components";
+import { HView } from "components";
 import styles from "./styles";
 
 export const NodeCodeSingleRadioComponent = (props) => {

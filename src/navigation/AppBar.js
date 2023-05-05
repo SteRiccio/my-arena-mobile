@@ -2,10 +2,8 @@ import { useCallback, useState } from "react";
 import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
-import { DataEntryActions } from "../state/dataEntry/actions";
-import { DataEntrySelectors } from "../state/dataEntry/selectors";
-import { SurveySelectors } from "../state/survey/selectors";
-import { screenKeys } from "./screenKeys";
+import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
+import { screenKeys } from "screens";
 
 export const AppBar = (props) => {
   const { back, navigation } = props;

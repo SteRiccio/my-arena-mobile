@@ -3,15 +3,8 @@ import * as Location from "expo-location";
 
 import { Objects, PointFactory, Points } from "@openforis/arena-core";
 
-import {
-  Button,
-  HView,
-  Text,
-  TextInput,
-  VView,
-} from "../../../../../components";
-import { SettingsSelectors } from "../../../../../state/settings/selectors";
-import { SurveySelectors } from "../../../../../state/survey/selectors";
+import { Button, HView, Text, TextInput, VView } from "components";
+import { SettingsSelectors, SurveySelectors } from "state";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";

@@ -1,6 +1,6 @@
 import { NodeDefs } from "@openforis/arena-core";
 
-import { DataEntrySelectors } from "../../state/dataEntry/selectors";
+import { DataEntrySelectors } from "state";
 import { NodeEntityFormComponent } from "./NodeComponentSwitch/nodeTypes/NodeEntityFormComponent";
 import { NodeMultipleEntityComponent } from "./NodeMultipleEntityComponent";
 

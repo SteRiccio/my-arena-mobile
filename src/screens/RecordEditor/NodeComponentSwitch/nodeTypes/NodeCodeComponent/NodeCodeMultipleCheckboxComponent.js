@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 
-import { Checkbox, HView } from "../../../../../components";
+import { Checkbox, HView } from "components";
 
 import styles from "./styles";
 

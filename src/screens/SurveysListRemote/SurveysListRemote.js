@@ -1,13 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { DataTable, Loader, Text, VView } from "../../components";
-import { screenKeys } from "../../navigation/screenKeys";
-import { SurveyService } from "../../service/surveyService";
-import { ConfirmActions } from "../../state/confirm/actions";
-import { SurveyActions } from "../../state/survey/actions";
-import { useNavigationFocus } from "../../hooks";
+import { DataTable, Loader, Text, VView } from "components";
+import { screenKeys } from "../screenKeys";
+import { SurveyService } from "service";
+import { ConfirmActions, SurveyActions } from "state";
+import { useNavigationFocus } from "hooks";
 
 export const SurveysListRemote = () => {
   const navigation = useNavigation();

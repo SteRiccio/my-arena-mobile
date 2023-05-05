@@ -1,6 +1,6 @@
 import { NodeDefType, NodeDefs } from "@openforis/arena-core";
 
-import { Text } from "../../../components";
+import { Text } from "components";
 import { NodeMultipleEntityPreviewComponent } from "./nodeTypes/NodeMultipleEntityPreviewComponent";
 import { NodeSingleEntityComponent } from "./nodeTypes/NodeSingleEntityComponent";
 

@@ -3,14 +3,13 @@ import { View } from "react-native";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { SurveySelectors } from "../../../state/survey/selectors";
-import { SettingsSelectors } from "../../../state/settings/selectors";
+import { DataEntrySelectors, SettingsSelectors, SurveySelectors } from "state";
 
-import { Fade, Text } from "../../../components";
+import { Fade, Text } from "components";
 
 import { NodeValidationIcon } from "../NodeValidationIcon/NodeValidationIcon";
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
+
 import styles from "./styles.js";
 
 export const NodeDefFormItem = (props) => {

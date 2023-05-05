@@ -1,6 +1,7 @@
 import { NodeDefs } from "@openforis/arena-core";
-import { WarningIconButton } from "../../../components/WarningIconButton";
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
+
+import { WarningIconButton } from "components";
+import { DataEntrySelectors } from "state";
 
 export const NodeValidationIcon = (props) => {
   const { nodeDef, parentNodeUuid } = props;

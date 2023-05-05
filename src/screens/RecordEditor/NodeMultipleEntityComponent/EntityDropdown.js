@@ -3,9 +3,8 @@ import { useDispatch } from "react-redux";
 
 import { Strings } from "@openforis/arena-core";
 
-import { Dropdown } from "../../../components";
-import { DataEntryActions } from "../../../state/dataEntry/actions";
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
+import { Dropdown } from "components";
+import { DataEntryActions, DataEntrySelectors } from "state";
 
 export const EntityDropdown = () => {
   const dispatch = useDispatch();

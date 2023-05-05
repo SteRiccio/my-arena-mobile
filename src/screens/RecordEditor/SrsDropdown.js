@@ -1,7 +1,7 @@
 import React from "react";
 
-import { Dropdown } from "../../components";
-import { SurveySelectors } from "../../state/survey/selectors";
+import { Dropdown } from "components";
+import { SurveySelectors } from "state";
 
 export const SrsDropdown = (props) => {
   const { onChange, value } = props;

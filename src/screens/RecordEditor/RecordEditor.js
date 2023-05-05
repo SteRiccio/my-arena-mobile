@@ -3,9 +3,8 @@ import { StyleSheet, View } from "react-native";
 import MenuDrawer from "react-native-side-drawer";
 import { useDispatch } from "react-redux";
 
-import { CloseIconButton, VView } from "../../components";
-import { DataEntryActions } from "../../state/dataEntry/actions";
-import { DataEntrySelectors } from "../../state/dataEntry/selectors";
+import { CloseIconButton, VView } from "components";
+import { DataEntryActions, DataEntrySelectors } from "state";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { NodePageNavigationBar } from "./NodePageNavigationBar";
 import { PagesTree } from "./PagesTree";

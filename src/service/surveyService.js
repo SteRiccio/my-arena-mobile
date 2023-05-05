@@ -1,8 +1,9 @@
+import { Surveys } from "@openforis/arena-core";
+
 import { SurveyRepository } from "./repository/surveyRepository";
 import { API } from "./api";
 import { SettingsService } from "./settingsService";
 import demoSurvey from "./simple_survey.json";
-import { Surveys } from "@openforis/arena-core";
 
 const getServerUrl = async () =>
   (await SettingsService.fetchSettings()).serverUrl;

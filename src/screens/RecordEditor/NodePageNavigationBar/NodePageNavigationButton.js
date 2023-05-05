@@ -3,9 +3,8 @@ import { useDispatch } from "react-redux";
 
 import { NodeDefs } from "@openforis/arena-core";
 
-import { Button } from "../../../components";
-import { DataEntryActions } from "../../../state/dataEntry/actions";
-import { SurveySelectors } from "../../../state/survey/selectors";
+import { Button } from "components";
+import { DataEntryActions, SurveySelectors } from "state";
 
 export const NodePageNavigationButton = (props) => {
   const { entityDef, icon, style } = props;

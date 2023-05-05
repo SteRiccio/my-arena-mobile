@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { Dropdown } from "../../components";
-import { screenKeys } from "../../navigation/screenKeys";
-import { SurveyService } from "../../service/surveyService";
-import { SurveyActions } from "../../state/survey/actions";
+import { Dropdown } from "components";
+import { screenKeys } from "../screenKeys";
+import { SurveyService } from "service";
+import { SurveyActions } from "state";
 
 const importSurveyItem = {
   value: "___IMPORT_SURVEY____",

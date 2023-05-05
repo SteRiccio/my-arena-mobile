@@ -1,10 +1,12 @@
-import { HomeScreen } from "../screens/HomeScreen";
-import { LoginScreen } from "../screens/LoginScreen";
-import { RecordEditor } from "../screens/RecordEditor/RecordEditor";
-import { RecordsList } from "../screens/RecordsList";
-import { SettingsScreen } from "../screens/SettingsScreen";
-import { SurveysListLocal } from "../screens/SurveysListLocal";
-import { SurveysListRemote } from "../screens/SurveysListRemote";
+import {
+  HomeScreen,
+  LoginScreen,
+  RecordEditor,
+  RecordsList,
+  SettingsScreen,
+  SurveysListLocal,
+  SurveysListRemote,
+} from "screens";
 import { screenKeys } from "./screenKeys";
 
 export const screens = {

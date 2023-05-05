@@ -1,5 +1,6 @@
 import { Objects, Records, Surveys } from "@openforis/arena-core";
-import { dbClient } from "../../db";
+
+import { dbClient } from "db";
 
 const SUPPORTED_KEYS = 5;
 const keysColumns = Array.from(Array(SUPPORTED_KEYS).keys()).map(

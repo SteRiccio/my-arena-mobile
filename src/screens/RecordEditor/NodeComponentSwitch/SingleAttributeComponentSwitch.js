@@ -1,9 +1,9 @@
 import React from "react";
 import { NodeDefType } from "@openforis/arena-core";
 
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
+import { DataEntrySelectors } from "state";
 
-import { Text } from "../../../components";
+import { Text } from "components";
 
 import { NodeBooleanComponent } from "./nodeTypes/NodeBooleanComponent";
 import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";

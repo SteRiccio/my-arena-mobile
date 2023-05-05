@@ -1,5 +1,5 @@
-import { AuthService } from "../../service/authService";
-import { SettingsService } from "../../service/settingsService";
+import { AuthService, SettingsService } from "service";
+
 import { MessageActions } from "../message/actions";
 import { SettingsActions } from "../settings/actions";
 

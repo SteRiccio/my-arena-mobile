@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { RadioButton } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
-import { Button, HView, TextInput, VView } from "../../components";
-import { FieldSet } from "../../components/FieldSet";
-import { SettingsService } from "../../service/settingsService";
-import { RemoteConnectionActions } from "../../state/remoteConnection/actions";
+import { Button, FieldSet, HView, TextInput, VView } from "components";
+import { SettingsService } from "service";
+import { RemoteConnectionActions } from "state";
 
 const serverUrlTypes = {
   default: "default",

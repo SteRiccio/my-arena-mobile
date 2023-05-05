@@ -8,7 +8,7 @@ import { SurveySelectors } from "../../../state/survey/selectors";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
 import { Button, HView, Icon, IconButton } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
-import { screenKeys } from "../../../navigation/screenKeys";
+import { screenKeys } from "../../screenKeys";
 import styles from "./styles";
 
 const Separator = () => <Icon source="greater-than" size={10} />;

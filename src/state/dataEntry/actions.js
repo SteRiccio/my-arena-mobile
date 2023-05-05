@@ -1,16 +1,12 @@
 import "react-native-get-random-values";
 
-import {
-  NodeFactory,
-  RecordFactory,
-  Records,
-  RecordUpdater,
-} from "@openforis/arena-core";
+import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
+
+import { RecordService } from "service/recordService";
+import { screenKeys } from "screens/screenKeys";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
-import { RecordService } from "../../service/recordService";
-import { screenKeys } from "../../navigation/screenKeys";
 import { RecordPageNavigator } from "./recordPageNavigator";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";

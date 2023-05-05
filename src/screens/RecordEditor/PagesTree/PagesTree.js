@@ -1,6 +1,7 @@
 import TreeView from "react-native-final-tree-view";
 
-import { HView } from "../../../components";
+import { HView } from "components";
+
 import { EntityButton } from "./EntityButton";
 import { Indicator } from "./Indicator";
 import { useTreeData } from "./useTreeData";

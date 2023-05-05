@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Text, VView } from "../../components";
+import { Text, VView } from "components";
 import { LocalSurveysDropdown } from "./LocalSurveysDropdown";
 
 export const HomeScreen = (props) => {

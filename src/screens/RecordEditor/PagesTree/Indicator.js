@@ -1,4 +1,4 @@
-import { Text } from "../../../components";
+import { Text } from "components";
 
 export const Indicator = (props) => {
   const { isExpanded, hasChildrenNodes } = props;

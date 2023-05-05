@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { HView, Switch, Text, TextInput, VView } from "../../components";
-import { SettingsActions } from "../../state/settings/actions";
-import { SettingsSelectors } from "../../state/settings/selectors";
+import { HView, Switch, Text, TextInput, VView } from "components";
+import { SettingsActions, SettingsSelectors } from "state";
 
 const propertyTypes = {
   boolean: "boolean",

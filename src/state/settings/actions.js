@@ -1,4 +1,4 @@
-import { SettingsService } from "../../service/settingsService";
+import { SettingsService } from "service";
 
 const SETTINGS_SET = "SETTINGS_SET";
 

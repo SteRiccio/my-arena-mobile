@@ -1,5 +1,6 @@
-import { dbClient } from "../../db";
 import LZString from "lz-string";
+
+import { dbClient } from "db";
 
 const insertSurvey = async (survey) => {
   const surveyJson = JSON.stringify(survey);

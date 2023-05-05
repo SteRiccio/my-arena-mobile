@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Text, View } from "./components";
 
 import { DowngradeError, initialize as initializeDb } from "./db";
-import { SurveyService } from "./service/surveyService";
-import { SettingsActions } from "./state/settings/actions";
+import { SurveyService } from "service";
+import { SettingsActions } from "state";
+
+import { Text, View } from "./components";
 
 import styles from "./appStyles";
 

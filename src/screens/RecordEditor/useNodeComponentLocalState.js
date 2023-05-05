@@ -2,9 +2,7 @@ import { Objects } from "@openforis/arena-core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { DataEntryActions } from "../../state/dataEntry/actions";
-import { DataEntrySelectors } from "../../state/dataEntry/selectors";
-import { StoreUtils } from "../../state/storeUtils";
+import { DataEntryActions, DataEntrySelectors, StoreUtils } from "state";
 
 const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
 

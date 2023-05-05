@@ -1,5 +1,5 @@
-import { FieldSet } from "../../../../components/FieldSet";
-import { DataEntrySelectors } from "../../../../state/dataEntry/selectors";
+import { FieldSet } from "components";
+import { DataEntrySelectors } from "state";
 import { NodeEntityFormComponent } from "./NodeEntityFormComponent";
 
 export const NodeSingleEntityComponent = (props) => {

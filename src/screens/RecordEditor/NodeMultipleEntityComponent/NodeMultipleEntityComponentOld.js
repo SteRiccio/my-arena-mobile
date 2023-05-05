@@ -2,9 +2,8 @@ import { NodeDefs } from "@openforis/arena-core";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { Button, HView, Text, VView } from "../../../components";
-import { DataEntryActions } from "../../../state/dataEntry/actions";
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
+import { Button, HView, Text, VView } from "components";
+import { DataEntryActions, DataEntrySelectors } from "state";
 import { NodeEntityFormComponent } from "../NodeComponentSwitch/nodeTypes/NodeEntityFormComponent";
 import { EntityDropdown } from "./EntityDropdown";
 

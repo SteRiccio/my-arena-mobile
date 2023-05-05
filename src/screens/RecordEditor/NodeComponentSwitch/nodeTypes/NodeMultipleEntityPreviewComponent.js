@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
-import { Button, Text, VView } from "../../../../components";
-import { DataEntryActions } from "../../../../state/dataEntry/actions";
+
+import { Button, Text, VView } from "components";
+import { DataEntryActions } from "state";
 
 export const NodeMultipleEntityPreviewComponent = (props) => {
   const { nodeDef } = props;

@@ -3,13 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 
 import { NodeDefs, Nodes, Records, Surveys } from "@openforis/arena-core";
 
-import { useKeyboardIsVisible } from "../../../hooks";
-import { Button, HView, View } from "../../../components";
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { SurveySelectors } from "../../../state/survey/selectors";
+import { useKeyboardIsVisible } from "hooks";
+import { Button, HView, View } from "components";
+import { DataEntrySelectors, SurveySelectors } from "state";
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
+import { screenKeys } from "../../screenKeys";
+
 import styles from "./styles";
-import { screenKeys } from "../../../navigation/screenKeys";
 
 export const NodePageNavigationBar = () => {
   const navigation = useNavigation();

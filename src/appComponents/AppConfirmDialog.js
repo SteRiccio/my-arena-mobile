@@ -1,9 +1,9 @@
 import React from "react";
 import { Dialog, Portal } from "react-native-paper";
 
-import { useConfirmDialog } from "../state/confirm/useConfirmDialog";
+import { useConfirmDialog } from "state/confirm/useConfirmDialog";
 
-import { Button, Text } from "../components";
+import { Button, Text } from "components";
 
 export const AppConfirmDialog = () => {
   const {

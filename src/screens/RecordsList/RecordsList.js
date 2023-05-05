@@ -11,12 +11,10 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { Button, DataTable, Loader, VView } from "../../components";
-import { useNavigationFocus } from "../../hooks";
-import { SurveySelectors } from "../../state/survey/selectors";
-import { RecordService } from "../../service/recordService";
-import { DataEntryActions } from "../../state/dataEntry/actions";
-import { ConfirmActions } from "../../state/confirm/actions";
+import { Button, DataTable, Loader, VView } from "components";
+import { useNavigationFocus } from "hooks";
+import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
+import { RecordService } from "service";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -54,21 +52,18 @@ export const RecordsList = () => {
     );
   }, []);
 
-  const onDeleteSelectedRowIds = useCallback(
-    (recordUuids) => {
-      dispatch(
-        ConfirmActions.show({
-          titleKey: "Delete records",
-          messageKey: "Delete the selected records?",
-          onConfirm: async () => {
-            await dispatch(DataEntryActions.deleteRecords(recordUuids));
-            await loadRecords();
-          },
-        })
-      );
-    },
-    []
-  );
+  const onDeleteSelectedRowIds = useCallback((recordUuids) => {
+    dispatch(
+      ConfirmActions.show({
+        titleKey: "Delete records",
+        messageKey: "Delete the selected records?",
+        onConfirm: async () => {
+          await dispatch(DataEntryActions.deleteRecords(recordUuids));
+          await loadRecords();
+        },
+      })
+    );
+  }, []);
 
   const recordToRow = (record) => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {

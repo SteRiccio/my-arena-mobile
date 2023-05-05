@@ -1,5 +1,7 @@
 import { View } from "react-native";
+
 import { Text } from "../Text";
+
 import styles from "./styles";
 
 export const FieldSet = (props) => {

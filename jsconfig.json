@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "appComponents/*": ["appComponents/*"],
+      "components/*": ["components/*"],
+      "db/*": ["db/*"],
+      "hooks/*": ["hooks/*"],
+      "model/*": ["model/*"],
+      "navigation/*": ["navigation/*"],
+      "screens/*": ["screens/*"],
+      "service/*": ["service/*"],
+      "state/*": ["state/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

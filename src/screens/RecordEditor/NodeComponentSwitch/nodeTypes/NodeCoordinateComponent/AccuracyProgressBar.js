@@ -1,4 +1,4 @@
-import { ProgressBar } from "../../../../../components";
+import { ProgressBar } from "components";
 
 const calculateProgress = ({ accuracy, accuracyThreshold }) => {
   if (accuracy <= accuracyThreshold) return { progress: 1, color: "green" };

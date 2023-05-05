@@ -1,6 +1,5 @@
 import { NodeDefs, Nodes, Records, Surveys } from "@openforis/arena-core";
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { SurveySelectors } from "../../../state/survey/selectors";
+import { DataEntrySelectors, SurveySelectors } from "state";
 
 export const useTreeData = () => {
   const survey = SurveySelectors.useCurrentSurvey();

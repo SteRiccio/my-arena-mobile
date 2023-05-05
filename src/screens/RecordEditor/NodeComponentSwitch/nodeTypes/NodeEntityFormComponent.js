@@ -2,9 +2,10 @@ import { ScrollView } from "react-native";
 
 import { NodeDefs } from "@openforis/arena-core";
 
+import { DataEntrySelectors } from "state";
+import { VView } from "components";
+
 import { NodeDefFormItem } from "../../NodeDefFormItem";
-import { DataEntrySelectors } from "../../../../state/dataEntry/selectors";
-import { VView } from "../../../../components";
 
 export const NodeEntityFormComponent = (props) => {
   const { nodeDef, parentNodeUuid } = props;

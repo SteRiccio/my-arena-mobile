@@ -2,8 +2,8 @@ import { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 
-import { Text } from "../../../components";
-import { DataEntryActions } from "../../../state/dataEntry/actions";
+import { Text } from "components";
+import { DataEntryActions } from "state";
 
 export const EntityButton = ({ treeNode, isCurrentEntity }) => {
   const { id: entityDefUuid, name: entityDefLabel } = treeNode;

@@ -8,11 +8,13 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { Button, DataTable, VView } from "../../../components";
-import { DataEntryActions } from "../../../state/dataEntry/actions";
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { SurveySelectors } from "../../../state/survey/selectors";
-import { ConfirmActions } from "../../../state/confirm/actions";
+import { Button, DataTable, VView } from "components";
+import {
+  ConfirmActions,
+  DataEntryActions,
+  DataEntrySelectors,
+  SurveySelectors,
+} from "state";
 
 const EMPTY_VALUE = "---EMPTY---";
 
