@@ -5,7 +5,7 @@ import { TextInput } from "../../../../components";
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 
 export const NodeTextComponent = (props) => {
-  const { nodeDef, nodeUuid } = props;
+  const { nodeDef, nodeUuid, style } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
@@ -34,6 +34,7 @@ export const NodeTextComponent = (props) => {
           alignSelf: "stretch",
           ...(applicable ? {} : { backgroundColor: "lightgray" }),
         },
+        style,
       ]}
       onChange={onChange}
       value={textValue}

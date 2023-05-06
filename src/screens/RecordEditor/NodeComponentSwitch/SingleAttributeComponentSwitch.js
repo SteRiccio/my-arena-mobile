@@ -24,7 +24,7 @@ const nodeDefComponentByType = {
 };
 
 export const SingleAttributeComponentSwitch = (props) => {
-  const { nodeDef, nodeUuid: nodeUuidProp, parentNodeUuid } = props;
+  const { nodeDef, nodeUuid: nodeUuidProp, parentNodeUuid, style } = props;
 
   const component = nodeDefComponentByType[nodeDef.type];
 
@@ -40,6 +40,7 @@ export const SingleAttributeComponentSwitch = (props) => {
       nodeDef,
       nodeUuid,
       parentNodeUuid,
+      style,
     })
   ) : (
     <Text textKey={`Type not supported (${nodeDef.type})`} />
