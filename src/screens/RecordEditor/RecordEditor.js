@@ -10,19 +10,7 @@ import { NodePageNavigationBar } from "./NodePageNavigationBar";
 import { PagesTree } from "./PagesTree";
 import { RecordPageForm } from "./RecordPageForm";
 
-const styles = StyleSheet.create({
-  animatedBox: {
-    flex: 1,
-    backgroundColor: "#38C8EC",
-    padding: 10,
-  },
-  body: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F04812",
-  },
-});
+import styles from "./styles.js";
 
 export const RecordEditor = () => {
   const dispatch = useDispatch();
@@ -45,12 +33,12 @@ export const RecordEditor = () => {
       open={pageSelectorOpen}
       position="left"
       drawerContent={drawerContent()}
-      drawerPercentage={45}
+      drawerPercentage={75}
       animationTime={250}
       overlay={true}
       opacity={0.4}
     >
-      <VView style={{ flex: 1 }}>
+      <VView style={styles.internalContainer}>
         <Breadcrumbs />
         <RecordPageForm />
         <NodePageNavigationBar />

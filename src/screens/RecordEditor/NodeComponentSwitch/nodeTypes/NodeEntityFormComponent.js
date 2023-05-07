@@ -18,7 +18,7 @@ export const NodeEntityFormComponent = (props) => {
   return (
     <ScrollView
       nestedScrollEnabled
-      style={{ flex: 1, marginBottom: 50 }}
+      style={{ flex: 1, marginBottom: 50, padding: 10 }}
       persistentScrollbar
     >
       <VView>
