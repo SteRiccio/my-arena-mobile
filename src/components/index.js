@@ -1,4 +1,4 @@
-export { MessageDialog } from "./MessageDialog";
+export { Autocomplete } from "./Autocomplete";
 export { Button } from "./Button";
 export { Checkbox } from "./Checkbox";
 export { DataTable } from "./DataTable";
@@ -10,6 +10,8 @@ export { HView } from "./HView";
 export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
 export { Loader } from "./Loader";
+export { MessageDialog } from "./MessageDialog";
+export { MultiSelect } from "./MultiSelect";
 export { ProgressBar } from "./ProgressBar";
 export { Snackbar } from "./Snackbar";
 export { Switch } from "./Switch";

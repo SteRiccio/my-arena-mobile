@@ -42,6 +42,8 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
 
   const itemLabelFunction = useCallback(
     (item) => {
+      if (!item) return "";
+
       const label = CategoryItems.getLabelOrCode(item, lang);
       const code = CategoryItems.getCode(item);
       if (label === code) {
