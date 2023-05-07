@@ -93,13 +93,11 @@ export const NodePageNavigationBar = () => {
     if (!parentEntityDef) {
       return null;
     }
-    if (NodeDefs.isMultiple(entityDef) && !entityUuid) {
-      return parentEntityDef;
-    }
-    if (parentEntityDef && entityUuid) {
+    if (NodeDefs.isMultiple(entityDef) && entityUuid) {
       return entityDef;
     }
-    return getNextOrPrevSiblingEntityDef({ offset: -1 });
+    const next = getNextOrPrevSiblingEntityDef({ offset: -1 });
+    return next === entityDef ? parentEntityDef : next;
   }, [survey, entityDef, entityUuid, getNextOrPrevSiblingEntityDef]);
 
   const prevEntityDef = getPrevEntityDef();

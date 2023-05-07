@@ -24,13 +24,18 @@ export const Breadcrumbs = () => {
   const { entityUuid, parentEntityUuid, entityDef } = currentPageEntity;
   const actualEntityUuid = entityUuid || parentEntityUuid;
 
+  const itemLabelFunction = (nodeDef) => NodeDefs.getLabelOrName(nodeDef, lang);
+
   const items = useMemo(() => {
     if (!actualEntityUuid) return [];
 
     const _items = [];
 
     if (parentEntityUuid && !entityUuid) {
-      _items.push({ uuid: entityDef.uuid, name: NodeDefs.getName(entityDef) });
+      _items.push({
+        uuid: entityDef.uuid,
+        name: itemLabelFunction(entityDef),
+      });
     }
 
     let currentEntity = Records.getNodeByUuid(actualEntityUuid)(record);
@@ -42,7 +47,7 @@ export const Breadcrumbs = () => {
         survey,
         uuid: currentEntity.nodeDefUuid,
       });
-      let itemName = NodeDefs.getLabelOrName(currentEntityDef, lang);
+      let itemName = itemLabelFunction(currentEntityDef);
 
       if (NodeDefs.isMultiple(currentEntityDef) && parent) {
         const siblings = Records.getChildren(
@@ -75,10 +80,11 @@ export const Breadcrumbs = () => {
       {items.map((item, index) => (
         <HView key={item.uuid} style={styles.item}>
           <Button
+            labelStyle={styles.itemButtonLabel}
             mode="text"
-            textKey={item.name}
             onPress={() => onItemPress(item)}
             style={styles.itemButton}
+            textKey={item.name}
           />
           {index < items.length - 1 && <Separator />}
         </HView>

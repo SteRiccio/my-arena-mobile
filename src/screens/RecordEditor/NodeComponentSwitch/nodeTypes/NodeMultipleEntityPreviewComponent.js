@@ -1,7 +1,9 @@
 import { useDispatch } from "react-redux";
 
+import { NodeDefs } from "@openforis/arena-core";
+
 import { Button, Text, VView } from "components";
-import { DataEntryActions } from "state";
+import { DataEntryActions, SurveySelectors } from "state";
 
 export const NodeMultipleEntityPreviewComponent = (props) => {
   const { nodeDef } = props;
@@ -11,12 +13,13 @@ export const NodeMultipleEntityPreviewComponent = (props) => {
   }
 
   const dispatch = useDispatch();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   return (
     <VView>
       <Text>Items: {0}</Text>
       <Button
-        label="Edit"
+        textKey={`Edit ${NodeDefs.getLabelOrName(nodeDef, lang)}`}
         onPress={() =>
           dispatch(
             DataEntryActions.selectCurrentPageEntity({
