@@ -100,14 +100,16 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
 
   const onSingleValueChange = useCallback(
     (itemUuid) => {
-      if (selectedItemUuid) {
-        onItemRemove(selectedItemUuid);
-      }
-      if (itemUuid) {
-        onItemAdd(itemUuid);
-      }
+      const node = nodes[0];
+      const value = NodeValues.newCodeValue({ itemUuid });
+      dispatch(
+        DataEntryActions.updateAttribute({
+          uuid: node.uuid,
+          value,
+        })
+      );
     },
-    [onItemAdd, onItemRemove, selectedItemUuid]
+    [nodes]
   );
 
   return {
