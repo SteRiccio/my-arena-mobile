@@ -6,7 +6,7 @@ import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { screenKeys } from "screens";
 
 export const AppBar = (props) => {
-  const { back, navigation } = props;
+  const { back, navigation, options } = props;
 
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
@@ -15,6 +15,11 @@ export const AppBar = (props) => {
   const [state, setState] = useState({ menuVisible: false });
 
   const { menuVisible } = state;
+
+  const title =
+    options.surveyNameAsTitle && editingRecord && survey
+      ? survey.props.name
+      : options.title;
 
   const toggleMenu = useCallback(
     () =>
@@ -32,7 +37,7 @@ export const AppBar = (props) => {
           />
         )}
         {back && <RNPAppbar.BackAction onPress={navigation.goBack} />}
-        <RNPAppbar.Content title={survey?.props.name} />
+        <RNPAppbar.Content title={title} />
 
         <Menu
           visible={menuVisible}

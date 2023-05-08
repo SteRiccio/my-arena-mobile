@@ -52,6 +52,7 @@ export const SurveysListRemote = () => {
   useNavigationFocus({ onFocus: loadSurveys });
 
   const onRowPress = useCallback((surveySummary) => {
+    setState((statePrev) => ({ ...statePrev, loading: true }));
     const surveyId = surveySummary.id;
     dispatch(SurveyActions.importSurveyRemote({ surveyId, navigation }));
   }, []);

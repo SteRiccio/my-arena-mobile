@@ -15,14 +15,17 @@ export const AppStack = () => {
           header: (props) => <AppBar {...props} />,
         }}
       >
-        {Object.keys(screens).map((key) => (
-          <Stack.Screen
-            key={key}
-            name={key}
-            component={screens[key].component}
-            options={{ title: screens[key].title }}
-          />
-        ))}
+        {Object.entries(screens).map(([key, screen]) => {
+          const { component, title, surveyNameAsTitle } = screen;
+          return (
+            <Stack.Screen
+              key={key}
+              name={key}
+              component={component}
+              options={{ title, surveyNameAsTitle }}
+            />
+          );
+        })}
       </Stack.Navigator>
     </NavigationContainer>
   );

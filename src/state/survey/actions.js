@@ -31,10 +31,12 @@ const importSurveyRemote =
       cycle,
     });
     dispatch(setCurrentSurvey({ survey, navigation }));
+    dispatch(fetchAndSetLocalSurveys());
   };
 
-const deleteSurveys = (surveyIds) => async (_dispatch, getState) => {
+const deleteSurveys = (surveyIds) => async (dispatch) => {
   await SurveyService.deleteSurveys(surveyIds);
+  dispatch(fetchAndSetLocalSurveys());
 };
 
 export const SurveyActions = {

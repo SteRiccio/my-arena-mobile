@@ -15,6 +15,7 @@ export const screens = {
   [screenKeys.recordsList]: { title: "Records List", component: RecordsList },
   [screenKeys.recordEditor]: {
     title: "Record Editor",
+    surveyNameAsTitle: true,
     component: RecordEditor,
   },
   [screenKeys.surveysListLocal]: {

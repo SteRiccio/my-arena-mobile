@@ -8,9 +8,9 @@ export const HomeScreen = (props) => {
 
   return (
     <VView>
-      <Text variant="displayLarge" textKey="My Arena Mobile" />
+      <Text variant="displayMedium" textKey="My Arena Mobile" />
       <VView>
-        <Text textKey="Current survey:" />
+        <Text variant="headlineMedium" textKey="Current survey:" />
         <LocalSurveysDropdown navigation={navigation} />
       </VView>
     </VView>
