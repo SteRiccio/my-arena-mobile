@@ -11,6 +11,7 @@ import { NodeTextComponent } from "./nodeTypes/NodeTextComponent";
 import { NodeDateComponent } from "./nodeTypes/NodeDateComponent";
 import { NodeTimeComponent } from "./nodeTypes/NodeTimeComponent";
 import { NodeCoordinateComponent } from "./nodeTypes/NodeCoordinateComponent";
+import { NodeTaxonComponent } from "./nodeTypes/NodeTaxonComponent";
 
 const nodeDefComponentByType = {
   [NodeDefType.boolean]: NodeBooleanComponent,
@@ -19,6 +20,7 @@ const nodeDefComponentByType = {
   [NodeDefType.date]: NodeDateComponent,
   [NodeDefType.decimal]: NodeTextComponent,
   [NodeDefType.integer]: NodeTextComponent,
+  [NodeDefType.taxon]: NodeTaxonComponent,
   [NodeDefType.text]: NodeTextComponent,
   [NodeDefType.time]: NodeTimeComponent,
 };
