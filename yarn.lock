@@ -8906,7 +8906,7 @@ prompts@^2.3.2, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@15.8.1, prop-types@^15.7.2:
+prop-types@*, prop-types@15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -9198,13 +9198,6 @@ react-native-keychain@^8.1.1:
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-8.1.1.tgz#3bb5e37946b964a7bcf7df2fe470dd244e01a340"
   integrity sha512-8fxgeHKwGcL657eAYpdBTkDIxNhbIHI+kyyO0Yac2dgVAN184JoIwQcW2z6snahwDaCObQOu0biLFHnsH+4KSg==
-
-react-native-multiple-select@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/react-native-multiple-select/-/react-native-multiple-select-0.5.12.tgz#be9204f49bc1bb734c40422a89acc173959bcd70"
-  integrity sha512-lFw0u798/2qHr4TwDdxMtReRtsNOCC2SWPzWHRGKE4XcBiUll0hHhke7iqQg4xJdfo46C/h69f1ZXphDOjZY3A==
-  dependencies:
-    prop-types "^15.7.2"
 
 react-native-paper-autocomplete@^0.11.7:
   version "0.11.7"
@@ -9552,7 +9545,7 @@ requires-port@^1.0.0:
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==
 
-reselect@^4.0.0, reselect@^4.1.7:
+reselect@^4.0.0:
   version "4.1.7"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.1.7.tgz#56480d9ff3d3188970ee2b76527bd94a95567a42"
   integrity sha512-Zu1xbUt3/OPwsXL46hvOOoQrap2azE7ZQbokq61BQfiXvhewsKDwhMeZjTX9sX0nvw1t/U5Audyn1I9P/m9z0A==

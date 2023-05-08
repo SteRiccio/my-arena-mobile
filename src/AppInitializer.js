@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 
 import { DowngradeError, initialize as initializeDb } from "./db";
 import { SurveyService } from "service";
-import { SettingsActions } from "state";
+import { SettingsActions, SurveyActions } from "state";
 
 import { Text, View } from "./components";
 
@@ -33,6 +33,8 @@ export const AppInitializer = (props) => {
         if (surveySummaries.length === 0) {
           await SurveyService.importDemoSurvey();
         }
+
+        await dispatch(SurveyActions.fetchAndSetLocalSurveys());
 
         console.log("App initialized");
       } catch (err) {

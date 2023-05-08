@@ -11,7 +11,6 @@ export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
 export { Loader } from "./Loader";
 export { MessageDialog } from "./MessageDialog";
-export { MultiSelect } from "./MultiSelect";
 export { ProgressBar } from "./ProgressBar";
 export { Snackbar } from "./Snackbar";
 export { Switch } from "./Switch";

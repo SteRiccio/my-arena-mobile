@@ -28,7 +28,6 @@
     "react-native-final-tree-view": "^3.0.0",
     "react-native-get-random-values": "^1.8.0",
     "react-native-keychain": "^8.1.1",
-    "react-native-multiple-select": "^0.5.12",
     "react-native-paper": "5.2.0",
     "react-native-paper-autocomplete": "^0.11.7",
     "react-native-reanimated": "~2.12.0",
@@ -39,7 +38,6 @@
     "react-redux": "^8.0.5",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
-    "reselect": "^4.1.7",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
