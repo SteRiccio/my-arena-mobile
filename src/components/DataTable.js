@@ -67,7 +67,7 @@ export const DataTable = (props) => {
               {column.header}
             </RNPDataTable.Title>
           ))}
-          {selectable && <RNPDataTable.Title style={{ flex: 0.3 }} />}
+          {selectable && <RNPDataTable.Title />}
         </RNPDataTable.Header>
         {rows.map((row) => (
           <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
@@ -77,7 +77,7 @@ export const DataTable = (props) => {
               </RNPDataTable.Cell>
             ))}
             {selectable && (
-              <RNPDataTable.Cell style={{ flex: 0.3 }}>
+              <RNPDataTable.Cell>
                 <Checkbox
                   checked={selectedRowIds.includes(row.key)}
                   onPress={() => onRowSelect(row)}

@@ -20,6 +20,7 @@ export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const rootDefKeys = useMemo(() => {
     if (!survey) return [];
@@ -67,11 +68,14 @@ export const RecordsList = () => {
 
   const recordToRow = (record) => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
-      const recordKeyProp = Objects.camelize(new String(keyDef.props.name));
+      const recordKeyProp = Objects.camelize(keyDef.props.name);
+      const value = record[recordKeyProp];
       acc[recordKeyProp] = NodeValueFormatter.format({
         survey,
         nodeDef: keyDef,
-        value: record[recordKeyProp],
+        value,
+        showLabel: true,
+        lang,
       });
       return acc;
     }, {});
@@ -101,8 +105,8 @@ export const RecordsList = () => {
       <DataTable
         columns={[
           ...rootDefKeys.map((keyDef) => ({
-            key: Objects.camelize(new String(keyDef.props.name)),
-            header: NodeDefs.getName(keyDef),
+            key: Objects.camelize(keyDef.props.name),
+            header: NodeDefs.getLabelOrName(keyDef, lang),
           })),
           { key: "dateCreated", header: "Created on" },
         ]}

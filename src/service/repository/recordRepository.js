@@ -102,7 +102,7 @@ const rowToRecord = ({ survey }) => {
       const keyValue = JSON.parse(row[keyCol]);
       const keyDef = keyDefs[index];
       if (keyDef) {
-        result[Objects.camelize(new String(keyDef.props.name))] = keyValue;
+        result[Objects.camelize(keyDef.props.name)] = keyValue;
       }
       delete result[keyCol];
     });
