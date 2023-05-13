@@ -1,11 +1,12 @@
-import { Button } from "./Button";
+import { IconButton } from "./IconButton";
 
 export const CloseIconButton = (props) => {
   const { children, ...otherProps } = props;
 
   return (
-    <Button icon="close" {...otherProps}>
+    <IconButton icon="close" {...otherProps}>
       {children}
-    </Button>
+    </IconButton>
   );
 };
+

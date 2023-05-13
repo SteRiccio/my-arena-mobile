@@ -3,27 +3,36 @@ import { View } from "react-native";
 import MenuDrawer from "react-native-side-drawer";
 import { useDispatch } from "react-redux";
 
-import { CloseIconButton, VView } from "components";
-import { DataEntryActions, DataEntrySelectors } from "state";
+import { CloseIconButton, HView, Text, VView } from "components";
+import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { NodePageNavigationBar } from "./NodePageNavigationBar";
-import { PagesTree } from "./PagesTree";
+import { PagesNavigationTree } from "./PagesNavigationTree";
 import { RecordPageForm } from "./RecordPageForm";
 
 import styles from "./styles.js";
 
 export const RecordEditor = () => {
   const dispatch = useDispatch();
+  const survey = SurveySelectors.useCurrentSurvey();
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
 
   const drawerContent = useCallback(() => {
     if (!pageSelectorOpen) return null;
     return (
-      <View style={styles.animatedBox}>
-        <CloseIconButton
-          onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
-        />
-        <PagesTree />
+      <View style={styles.pagesNavigatorContainer}>
+        <HView>
+          <Text
+            variant="headlineMedium"
+            style={styles.titleText}
+            textKey={survey.props.name}
+          />
+          <CloseIconButton
+            onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
+            style={styles.closeButton}
+          />
+        </HView>
+        <PagesNavigationTree />
       </View>
     );
   }, [pageSelectorOpen]);
@@ -35,7 +44,7 @@ export const RecordEditor = () => {
       drawerContent={drawerContent()}
       drawerPercentage={75}
       animationTime={250}
-      overlay={true}
+      overlay
       opacity={0.4}
     >
       <VView style={styles.internalContainer}>

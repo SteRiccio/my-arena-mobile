@@ -5,6 +5,7 @@ import { HView } from "components";
 import { EntityButton } from "./EntityButton";
 import { Indicator } from "./Indicator";
 import { useTreeData } from "./useTreeData";
+import { ScrollView } from "react-native";
 
 const TreeNodeRenderer = ({
   node: treeNode,
@@ -29,14 +30,16 @@ const TreeNodeRenderer = ({
   );
 };
 
-export const PagesTree = () => {
+export const PagesNavigationTree = () => {
   const data = useTreeData();
 
   return (
-    <TreeView
-      data={data}
-      initialExpanded={true}
-      renderNode={TreeNodeRenderer}
-    />
+    <ScrollView showsVerticalScrollIndicator style={{ flex: 1 }}>
+      <TreeView
+        data={data}
+        initialExpanded={true}
+        renderNode={TreeNodeRenderer}
+      />
+    </ScrollView>
   );
 };
