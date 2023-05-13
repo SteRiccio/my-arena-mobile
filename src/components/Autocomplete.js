@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import {
   Autocomplete as RNPAutocomplete,
   AutocompleteScrollView,
@@ -9,6 +9,7 @@ export const Autocomplete = (props) => {
     itemKeyExtractor,
     itemLabelExtractor,
     items,
+    onFocus,
     onSelectedItemsChange,
     selectedItems,
     multiple,
@@ -33,7 +34,7 @@ export const Autocomplete = (props) => {
   );
 
   return (
-    <AutocompleteScrollView>
+    <AutocompleteScrollView onTouchStart={onFocus}>
       <RNPAutocomplete
         getOptionLabel={getOptionLabel}
         getOptionValue={itemKeyExtractor}

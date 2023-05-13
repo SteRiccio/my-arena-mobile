@@ -26,7 +26,13 @@ const nodeDefComponentByType = {
 };
 
 export const SingleAttributeComponentSwitch = (props) => {
-  const { nodeDef, nodeUuid: nodeUuidProp, parentNodeUuid, style } = props;
+  const {
+    nodeDef,
+    nodeUuid: nodeUuidProp,
+    onFocus,
+    parentNodeUuid,
+    style,
+  } = props;
 
   const component = nodeDefComponentByType[nodeDef.type];
 
@@ -41,6 +47,7 @@ export const SingleAttributeComponentSwitch = (props) => {
     React.createElement(component, {
       nodeDef,
       nodeUuid,
+      onFocus,
       parentNodeUuid,
       style,
     })

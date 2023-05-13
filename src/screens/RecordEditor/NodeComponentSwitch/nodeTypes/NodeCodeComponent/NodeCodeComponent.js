@@ -8,7 +8,7 @@ import { NodeCodeAutocompleteComponent } from "./NodeCodeAutocompleteComponent";
 const MAX_VISIBLE_ITEMS = 10;
 
 export const NodeCodeComponent = (props) => {
-  const { parentNodeUuid, nodeDef } = props;
+  const { parentNodeUuid, nodeDef, onFocus } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeCodeComponent for ${NodeDefs.getName(nodeDef)}`);
@@ -35,6 +35,7 @@ export const NodeCodeComponent = (props) => {
         editable={editable}
         itemLabelFunction={itemLabelFunction}
         items={items}
+        onFocus={onFocus}
         onItemAdd={onItemAdd}
         onItemRemove={onItemRemove}
         onSingleValueChange={onSingleValueChange}

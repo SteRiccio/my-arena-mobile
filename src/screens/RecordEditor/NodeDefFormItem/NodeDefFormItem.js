@@ -13,7 +13,7 @@ import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch"
 import styles from "./styles.js";
 
 export const NodeDefFormItem = (props) => {
-  const { nodeDef, parentNodeUuid } = props;
+  const { nodeDef, parentNodeUuid, onFocus } = props;
 
   if (__DEV__) {
     console.log(`Rendering form item ${nodeDef.props.name}`);
@@ -41,6 +41,7 @@ export const NodeDefFormItem = (props) => {
           <NodeComponentSwitch
             nodeDef={nodeDef}
             parentNodeUuid={parentNodeUuid}
+            onFocus={onFocus}
           />
         }
       </View>

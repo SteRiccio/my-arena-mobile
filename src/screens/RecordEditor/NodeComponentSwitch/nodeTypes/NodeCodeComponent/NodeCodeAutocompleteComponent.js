@@ -6,6 +6,7 @@ export const NodeCodeAutocompleteComponent = (props) => {
   const {
     itemLabelFunction,
     items,
+    onFocus,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
@@ -42,6 +43,7 @@ export const NodeCodeAutocompleteComponent = (props) => {
       itemLabelExtractor={itemLabelFunction}
       items={items}
       multiple={multiple}
+      onFocus={onFocus}
       onSelectedItemsChange={onSelectedItemsChange}
       selectedItems={selectedItems}
     />

@@ -8,7 +8,7 @@ import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch
 import { MultipleAttributeComponentWrapper } from "./MultipleAttributeComponentWrapper";
 
 export const NodeComponentSwitch = (props) => {
-  const { nodeDef, parentNodeUuid } = props;
+  const { nodeDef, parentNodeUuid, onFocus } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeComponentSwitch for ${nodeDef.props.name}`);
@@ -36,13 +36,18 @@ export const NodeComponentSwitch = (props) => {
       <SingleAttributeComponentSwitch
         nodeDef={nodeDef}
         parentNodeUuid={parentNodeUuid}
+        onFocus={onFocus}
       />
     );
   }
 
   if (nodeDef.type === NodeDefType.code) {
     return (
-      <NodeCodeComponent nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
+      <NodeCodeComponent
+        nodeDef={nodeDef}
+        parentNodeUuid={parentNodeUuid}
+        onFocus={onFocus}
+      />
     );
   }
 

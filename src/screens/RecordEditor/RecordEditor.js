@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import MenuDrawer from "react-native-side-drawer";
 import { useDispatch } from "react-redux";
 

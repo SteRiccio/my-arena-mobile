@@ -1,10 +1,12 @@
-import { NodeDefs, Surveys } from "@openforis/arena-core";
-import { Autocomplete } from "components/Autocomplete";
 import { useCallback, useMemo } from "react";
+
+import { NodeDefs } from "@openforis/arena-core";
+
+import { Autocomplete } from "components/Autocomplete";
 import { SurveySelectors } from "state/survey";
 
 export const NodeTaxonComponent = (props) => {
-  const { parentNodeUuid, nodeDef } = props;
+  const { nodeDef, onFocus } = props;
 
   if (__DEV__) {
     console.log(
@@ -32,6 +34,7 @@ export const NodeTaxonComponent = (props) => {
       itemKeyExtractor={(item) => item?.uuid}
       itemLabelExtractor={itemLabelFunction}
       items={taxa}
+      onFocus={onFocus}
       onSelectedItemsChange={onSelectedItemsChange}
       selectedItems={selectedItems}
     />
