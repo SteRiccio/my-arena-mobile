@@ -63,21 +63,26 @@ export const DataTable = (props) => {
       <RNPDataTable>
         <RNPDataTable.Header>
           {columns.map((column) => (
-            <RNPDataTable.Title key={column.key} style={{ flex: 1 }}>
+            <RNPDataTable.Title
+              key={column.key}
+              style={[{ flex: 1 }, column.style]}
+            >
               {column.header}
             </RNPDataTable.Title>
           ))}
-          {selectable && <RNPDataTable.Title />}
+          {selectable && (
+            <RNPDataTable.Title style={{ maxWidth: 70, minWidth: 70 }} />
+          )}
         </RNPDataTable.Header>
         {rows.map((row) => (
           <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
             {columns.map((column) => (
-              <RNPDataTable.Cell key={column.key}>
+              <RNPDataTable.Cell key={column.key} style={column.style}>
                 {row[column.key]}
               </RNPDataTable.Cell>
             ))}
             {selectable && (
-              <RNPDataTable.Cell>
+              <RNPDataTable.Cell style={{ maxWidth: 70, minWidth: 70 }}>
                 <Checkbox
                   checked={selectedRowIds.includes(row.key)}
                   onPress={() => onRowSelect(row)}

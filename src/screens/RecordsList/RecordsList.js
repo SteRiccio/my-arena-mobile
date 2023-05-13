@@ -108,7 +108,11 @@ export const RecordsList = () => {
             key: Objects.camelize(keyDef.props.name),
             header: NodeDefs.getLabelOrName(keyDef, lang),
           })),
-          { key: "dateCreated", header: "Created on" },
+          {
+            key: "dateModified",
+            header: "Modified on",
+            style: { minWidth: 70 },
+          },
         ]}
         rows={records.map(recordToRow)}
         onRowPress={onRowPress}
