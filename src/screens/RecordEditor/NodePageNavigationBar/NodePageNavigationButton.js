@@ -24,7 +24,7 @@ export const NodePageNavigationButton = (props) => {
   return (
     <Button
       icon={icon}
-      style={style}
+      style={[{ maxWidth: 200 }, style]}
       textKey={NodeDefs.getLabelOrName(entityDef, lang)}
       onPress={onPress}
     />

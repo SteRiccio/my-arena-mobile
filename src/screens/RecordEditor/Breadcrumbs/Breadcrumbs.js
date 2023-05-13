@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
@@ -10,12 +10,14 @@ import { Button, HView, Icon, IconButton } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
 import { screenKeys } from "../../screenKeys";
 import styles from "./styles";
+import { ScrollView } from "react-native";
 
 const Separator = () => <Icon source="greater-than" size={10} />;
 
 export const Breadcrumbs = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const scrollViewRef = useRef(null);
 
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -25,6 +27,11 @@ export const Breadcrumbs = () => {
   const actualEntityUuid = entityUuid || parentEntityUuid;
 
   const itemLabelFunction = (nodeDef) => NodeDefs.getLabelOrName(nodeDef, lang);
+
+  useEffect(() => {
+    // scroll to the end (right)
+    scrollViewRef?.current?.scrollToEnd({ animated: true });
+  }, [currentPageEntity]);
 
   const items = useMemo(() => {
     if (!actualEntityUuid) return [];
@@ -74,21 +81,23 @@ export const Breadcrumbs = () => {
   return (
     <HView style={styles.container}>
       <IconButton icon="home" onPress={onHomePress} />
-
       <Separator />
-
-      {items.map((item, index) => (
-        <HView key={item.uuid} style={styles.item}>
-          <Button
-            labelStyle={styles.itemButtonLabel}
-            mode="text"
-            onPress={() => onItemPress(item)}
-            style={styles.itemButton}
-            textKey={item.name}
-          />
-          {index < items.length - 1 && <Separator />}
+      <ScrollView horizontal ref={scrollViewRef}>
+        <HView style={styles.container}>
+          {items.map((item, index) => (
+            <HView key={item.uuid} style={styles.item}>
+              <Button
+                labelStyle={styles.itemButtonLabel}
+                mode="text"
+                onPress={() => onItemPress(item)}
+                style={styles.itemButton}
+                textKey={item.name}
+              />
+              {index < items.length - 1 && <Separator />}
+            </HView>
+          ))}
         </HView>
-      ))}
+      </ScrollView>
     </HView>
   );
 };
