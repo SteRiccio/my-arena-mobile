@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
+import { SRSs } from "@openforis/arena-core";
+
 import { DowngradeError, initialize as initializeDb } from "./db";
 import { SurveyService } from "service";
 import { SettingsActions, SurveyActions } from "state";
@@ -24,6 +26,8 @@ export const AppInitializer = (props) => {
     const initialize = async () => {
       console.log("Initializing app");
       try {
+        await SRSs.init();
+
         await initializeDb();
 
         await dispatch(SettingsActions.initSettings());

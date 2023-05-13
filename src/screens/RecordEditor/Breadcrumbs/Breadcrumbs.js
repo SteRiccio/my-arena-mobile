@@ -26,7 +26,20 @@ export const Breadcrumbs = () => {
   const { entityUuid, parentEntityUuid, entityDef } = currentPageEntity;
   const actualEntityUuid = entityUuid || parentEntityUuid;
 
-  const itemLabelFunction = (nodeDef) => NodeDefs.getLabelOrName(nodeDef, lang);
+  const itemLabelFunction = ({
+    nodeDef,
+    entity = null,
+    parentEntity = null,
+  }) => {
+    let label = NodeDefs.getLabelOrName(nodeDef, lang);
+
+    if (NodeDefs.isMultiple(nodeDef) && parentEntity) {
+      const siblings = Records.getChildren(parentEntity, nodeDef.uuid)(record);
+      const index = siblings.indexOf(entity);
+      label += `[${index + 1}]`;
+    }
+    return label;
+  };
 
   useEffect(() => {
     // scroll to the end (right)
@@ -41,33 +54,29 @@ export const Breadcrumbs = () => {
     if (parentEntityUuid && !entityUuid) {
       _items.push({
         uuid: entityDef.uuid,
-        name: itemLabelFunction(entityDef),
+        name: itemLabelFunction({ nodeDef: entityDef }),
       });
     }
 
     let currentEntity = Records.getNodeByUuid(actualEntityUuid)(record);
 
     while (currentEntity) {
-      const parent = Records.getParent(currentEntity)(record);
+      const parentEntity = Records.getParent(currentEntity)(record);
 
       const currentEntityDef = Surveys.getNodeDefByUuid({
         survey,
         uuid: currentEntity.nodeDefUuid,
       });
-      let itemName = itemLabelFunction(currentEntityDef);
+      const itemName = itemLabelFunction({
+        nodeDef: currentEntityDef,
+        parentEntity,
+        entity: currentEntity,
+      });
 
-      if (NodeDefs.isMultiple(currentEntityDef) && parent) {
-        const siblings = Records.getChildren(
-          parent,
-          currentEntityDef.uuid
-        )(record);
-        const index = siblings.indexOf(currentEntity);
-        itemName += `[${index + 1}]`;
-      }
       const item = { uuid: currentEntityDef.uuid, name: itemName };
       _items.unshift(item);
 
-      currentEntity = parent;
+      currentEntity = parentEntity;
     }
     return _items;
   }, [entityDef, actualEntityUuid]);

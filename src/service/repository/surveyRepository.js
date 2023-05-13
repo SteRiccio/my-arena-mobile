@@ -36,7 +36,9 @@ const fetchSurveyById = async (id) => {
 
 const fetchSurveySummaries = async () => {
   const surveys = await dbClient.many(
-    "SELECT id, server_url, uuid, name, label FROM survey"
+    `SELECT id, server_url, uuid, name, label 
+    FROM survey
+    ORDER BY name`
   );
   return surveys;
 };
