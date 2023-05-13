@@ -1,25 +1,28 @@
 import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
 
-const determineParentEntity = ({
-  survey,
-  record,
-  currentPageEntity,
-  entityDef,
-}) => {
+const determineEntity = ({ survey, record, currentPageEntity, entityDef }) => {
   if (NodeDefs.isRoot(entityDef)) {
     return null;
   }
   const {
     parentEntityUuid: currentParentEntityUuid,
     entityDef: currentEntityDef,
+    entityUuid: currentEntityUuid,
   } = currentPageEntity;
 
   const currentParentEntity = currentParentEntityUuid
     ? Records.getNodeByUuid(currentParentEntityUuid)(record)
     : null;
 
+  const currentEntity = currentEntityUuid
+    ? Records.getNodeByUuid(currentEntityUuid)(record)
+    : null;
+
   if (currentEntityDef.uuid === entityDef.uuid) {
-    return currentParentEntity;
+    if (NodeDefs.isMultiple(entityDef)) {
+      return currentParentEntity;
+    }
+    return currentEntity || currentParentEntity;
   }
 
   const root = Records.getRoot(record);
@@ -36,23 +39,26 @@ const determineParentEntity = ({
       node: currentParentEntity || root,
     });
 
-    if (!ancestorEntity) {
-      // ERROR
-      return null;
-    }
-    return Records.getParent(ancestorEntity)(record);
+    return ancestorEntity;
   }
   // descendant entity
-  const parentEntityDef = Surveys.getNodeDefParent({
-    survey,
-    nodeDef: entityDef,
-  });
-  const descendantParentEntity = Records.getDescendant({
+  if (NodeDefs.isMultiple(entityDef)) {
+    // pointer to list of entities
+    const parentEntityDef = Surveys.getNodeDefParent({
+      survey,
+      nodeDef: entityDef,
+    });
+    return Records.getDescendant({
+      record,
+      node: currentParentEntity || root,
+      nodeDefDescendant: parentEntityDef,
+    });
+  }
+  return Records.getDescendant({
     record,
     node: currentParentEntity || root,
-    nodeDefDescendant: parentEntityDef,
+    nodeDefDescendant: entityDef,
   });
-  return descendantParentEntity;
 };
 
 export const determinePageEntity = ({
@@ -86,25 +92,22 @@ export const determinePageEntity = ({
     };
   }
 
-  const parentEntity = determineParentEntity({
+  const entity = determineEntity({
     survey,
     record,
     currentPageEntity,
     entityDef,
   });
-  if (!parentEntity) return null;
+  if (!entity) return null;
 
-  if (NodeDefs.isSingle(entityDef)) {
-    return {
-      parentEntityUuid: parentEntity.uuid,
-      entityDef,
-      entityUuid: Records.getChild(parentEntity, entityDefUuid)(record)?.uuid,
-    };
-  }
+  const pointerToListOfEntities = entity.nodeDefUuid !== entityDef.uuid;
+
+  const parentEntity = Records.getParent(entity)(record);
+
   return {
-    parentEntityUuid: parentEntity.uuid,
+    parentEntityUuid: pointerToListOfEntities ? entity.uuid : parentEntity.uuid,
     entityDef,
-    entityUuid,
+    entityUuid: entityUuid || (pointerToListOfEntities ? null : entity.uuid),
   };
 };
 
