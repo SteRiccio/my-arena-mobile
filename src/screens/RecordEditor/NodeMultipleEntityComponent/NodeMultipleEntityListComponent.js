@@ -8,7 +8,7 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { Button, DataTable, VView } from "components";
+import { Button, DataTable, Text, VView } from "components";
 import {
   ConfirmActions,
   DataEntryActions,
@@ -97,18 +97,23 @@ export const NodeMultipleEntityListComponent = () => {
       <Button icon="plus" onPress={onNewPress}>
         New {nodeDefLabel}
       </Button>
-      <DataTable
-        columns={[
-          ...keyDefs.map((keyDef) => ({
-            key: NodeDefs.getName(keyDef),
-            header: NodeDefs.getLabelOrName(keyDef, lang),
-          })),
-        ]}
-        rows={rows}
-        onRowPress={onRowPress}
-        onDeleteSelectedRowIds={onDeleteSelectedNodeUuids}
-        selectable
-      />
+      {rows.length === 0 && (
+        <Text textKey="No entities defined" variant="titleMedium" />
+      )}
+      {rows.length > 0 && (
+        <DataTable
+          columns={[
+            ...keyDefs.map((keyDef) => ({
+              key: NodeDefs.getName(keyDef),
+              header: NodeDefs.getLabelOrName(keyDef, lang),
+            })),
+          ]}
+          rows={rows}
+          onRowPress={onRowPress}
+          onDeleteSelectedRowIds={onDeleteSelectedNodeUuids}
+          selectable
+        />
+      )}
     </VView>
   );
 };

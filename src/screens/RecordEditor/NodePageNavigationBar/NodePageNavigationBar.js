@@ -31,6 +31,10 @@ export const NodePageNavigationBar = () => {
     nodeDef: entityDef,
   });
 
+  const actualEntityUuid = entityUuid || parentEntityUuid;
+  const actualEntity = Records.getNodeByUuid(actualEntityUuid)(record);
+  const actualParentEntity = Records.getParent(actualEntity)(record);
+
   const getNextOrPrevSiblingEntityDef = useCallback(
     ({ offset }) => {
       if (!parentEntityDef) {
@@ -40,7 +44,11 @@ export const NodePageNavigationBar = () => {
         survey,
         nodeDef: parentEntityDef,
         includeAnalysis: false,
-      }).filter(NodeDefs.isEntity);
+      }).filter(
+        (childDef) =>
+          NodeDefs.isEntity(childDef) &&
+          Nodes.isChildApplicable(actualParentEntity, childDef.uuid)
+      );
 
       const currentEntityDefIndex = siblingEntityDefs.indexOf(entityDef);
       const siblingEntityDef =
@@ -60,8 +68,6 @@ export const NodePageNavigationBar = () => {
     if (NodeDefs.isMultiple(entityDef) && !entityUuid) {
       return null;
     }
-    const actualEntityUuid = entityUuid || parentEntityUuid;
-    const actualEntity = Records.getNodeByUuid(actualEntityUuid)(record);
 
     const childrenEntityDefs = Surveys.getNodeDefChildren({
       survey,
@@ -96,8 +102,8 @@ export const NodePageNavigationBar = () => {
     if (NodeDefs.isMultiple(entityDef) && entityUuid) {
       return entityDef;
     }
-    const next = getNextOrPrevSiblingEntityDef({ offset: -1 });
-    return next === entityDef ? parentEntityDef : next;
+    const prev = getNextOrPrevSiblingEntityDef({ offset: -1 });
+    return prev === entityDef ? parentEntityDef : prev;
   }, [survey, entityDef, entityUuid, getNextOrPrevSiblingEntityDef]);
 
   const prevEntityDef = getPrevEntityDef();
