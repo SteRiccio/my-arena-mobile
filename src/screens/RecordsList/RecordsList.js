@@ -11,7 +11,7 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { Button, DataTable, Loader, VView } from "components";
+import { Button, DataTable, Loader, Text, VView } from "components";
 import { useNavigationFocus } from "hooks";
 import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
 import { RecordService } from "service";
@@ -102,23 +102,28 @@ export const RecordsList = () => {
   return (
     <VView>
       <Button onPress={onNewRecordPress}>New Record</Button>
-      <DataTable
-        columns={[
-          ...rootDefKeys.map((keyDef) => ({
-            key: Objects.camelize(keyDef.props.name),
-            header: NodeDefs.getLabelOrName(keyDef, lang),
-          })),
-          {
-            key: "dateModified",
-            header: "Modified on",
-            style: { minWidth: 70 },
-          },
-        ]}
-        rows={records.map(recordToRow)}
-        onRowPress={onRowPress}
-        onDeleteSelectedRowIds={onDeleteSelectedRowIds}
-        selectable
-      />
+      {records.length === 0 && (
+        <Text textKey="No records found" variant="titleMedium" />
+      )}
+      {records.length > 0 && (
+        <DataTable
+          columns={[
+            ...rootDefKeys.map((keyDef) => ({
+              key: Objects.camelize(keyDef.props.name),
+              header: NodeDefs.getLabelOrName(keyDef, lang),
+            })),
+            {
+              key: "dateModified",
+              header: "Modified on",
+              style: { minWidth: 70 },
+            },
+          ]}
+          rows={records.map(recordToRow)}
+          onRowPress={onRowPress}
+          onDeleteSelectedRowIds={onDeleteSelectedRowIds}
+          selectable
+        />
+      )}
     </VView>
   );
 };

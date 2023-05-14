@@ -5,13 +5,13 @@ import { useNavigation } from "@react-navigation/native";
 import { DataTable, Loader, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveyService } from "service";
-import { ConfirmActions, SurveyActions } from "state";
+import { ConfirmActions, SurveyActions, SurveySelectors } from "state";
 import { useNavigationFocus } from "hooks";
 
 export const SurveysListRemote = () => {
   const navigation = useNavigation();
-
   const dispatch = useDispatch();
+  const surveysLocal = SurveySelectors.useSurveysLocal();
 
   const [state, setState] = useState({
     surveys: [],
@@ -52,9 +52,37 @@ export const SurveysListRemote = () => {
   useNavigationFocus({ onFocus: loadSurveys });
 
   const onRowPress = useCallback((surveySummary) => {
-    setState((statePrev) => ({ ...statePrev, loading: true }));
-    const surveyId = surveySummary.id;
-    dispatch(SurveyActions.importSurveyRemote({ surveyId, navigation }));
+    if (
+      surveysLocal.some(
+        (surveyLocal) => surveyLocal.uuid === surveySummary.uuid
+      )
+    ) {
+      dispatch(
+        ConfirmActions.show({
+          confirmButtonTextKey: "Update survey",
+          cancelButtonTextKey: "Cancel",
+          messageKey: "Survey already in this device. Update it?",
+          onConfirm: () => {
+            // TODO
+          },
+        })
+      );
+    } else {
+      dispatch(
+        ConfirmActions.show({
+          confirmButtonTextKey: "Import survey",
+          cancelButtonTextKey: "Cancel",
+          messageKey: "Import this survey?",
+          onConfirm: () => {
+            setState((statePrev) => ({ ...statePrev, loading: true }));
+            const surveyId = surveySummary.id;
+            dispatch(
+              SurveyActions.importSurveyRemote({ surveyId, navigation })
+            );
+          },
+        })
+      );
+    }
   }, []);
 
   if (loading) return <Loader />;
@@ -63,20 +91,25 @@ export const SurveysListRemote = () => {
 
   return (
     <VView>
-      <DataTable
-        columns={[
-          {
-            key: "name",
-            header: "Name",
-          },
-          {
-            key: "defaultLabel",
-            header: "Label",
-          },
-        ]}
-        rows={surveys.map((survey) => ({ key: survey.uuid, ...survey }))}
-        onRowPress={onRowPress}
-      />
+      {surveys.length === 0 && (
+        <Text textKey="No available surveys found" variant="labelLarge" />
+      )}
+      {surveys.length > 0 && (
+        <DataTable
+          columns={[
+            {
+              key: "name",
+              header: "Name",
+            },
+            {
+              key: "defaultLabel",
+              header: "Label",
+            },
+          ]}
+          rows={surveys.map((survey) => ({ key: survey.uuid, ...survey }))}
+          onRowPress={onRowPress}
+        />
+      )}
     </VView>
   );
 };

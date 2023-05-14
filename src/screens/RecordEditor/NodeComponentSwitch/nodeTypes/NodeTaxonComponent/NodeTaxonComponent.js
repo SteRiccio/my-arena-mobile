@@ -4,6 +4,7 @@ import { NodeDefs } from "@openforis/arena-core";
 
 import { Autocomplete } from "components/Autocomplete";
 import { SurveySelectors } from "state/survey";
+import { VView } from "components/VView";
 
 export const NodeTaxonComponent = (props) => {
   const { nodeDef, onFocus } = props;
@@ -30,13 +31,15 @@ export const NodeTaxonComponent = (props) => {
   const onSelectedItemsChange = useCallback(() => {}, []);
 
   return (
-    <Autocomplete
-      itemKeyExtractor={(item) => item?.uuid}
-      itemLabelExtractor={itemLabelFunction}
-      items={taxa}
-      onFocus={onFocus}
-      onSelectedItemsChange={onSelectedItemsChange}
-      selectedItems={selectedItems}
-    />
+    <VView>
+      <Autocomplete
+        itemKeyExtractor={(item) => item?.uuid}
+        itemLabelExtractor={itemLabelFunction}
+        items={taxa}
+        onFocus={onFocus}
+        onSelectedItemsChange={onSelectedItemsChange}
+        selectedItems={selectedItems}
+      />
+    </VView>
   );
 };

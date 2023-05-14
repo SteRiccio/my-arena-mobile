@@ -9,10 +9,10 @@ export const Autocomplete = (props) => {
     itemKeyExtractor,
     itemLabelExtractor,
     items,
+    multiple,
     onFocus,
     onSelectedItemsChange,
     selectedItems,
-    multiple,
   } = props;
 
   const value = selectedItems;
@@ -50,4 +50,5 @@ export const Autocomplete = (props) => {
 Autocomplete.defaultProps = {
   itemKeyExtractor: (item) => item?.key,
   itemLabelExtractor: (item) => item?.label,
+  multiple: false,
 };

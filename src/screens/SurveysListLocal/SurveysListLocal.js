@@ -1,12 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
-import { DataTable, VView } from "components";
+import { Button, DataTable, VView } from "components";
 import { SurveyService } from "service";
 import { useNavigationFocus } from "hooks";
 import { ConfirmActions, SurveyActions } from "state";
+import { screenKeys } from "../screenKeys";
 
 export const SurveysListLocal = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const [state, setState] = useState({ surveys: [], loading: true });
   const { surveys } = state;
@@ -36,6 +39,17 @@ export const SurveysListLocal = () => {
     );
   }, []);
 
+  const onRowPress = useCallback(
+    (survey) =>
+      dispatch(
+        SurveyActions.fetchAndSetCurrentSurvey({
+          surveyId: survey.id,
+          navigation,
+        })
+      ),
+    []
+  );
+
   return (
     <VView>
       <DataTable
@@ -46,8 +60,13 @@ export const SurveysListLocal = () => {
           },
         ]}
         onDeleteSelectedRowIds={onDeleteSelectedRowIds}
-        rows={surveys.map((survey) => survey)}
+        onRowPress={onRowPress}
+        rows={surveys}
         selectable
+      />
+      <Button
+        textKey="Import survey from cloud"
+        onPress={() => navigation.navigate(screenKeys.surveysListRemote)}
       />
     </VView>
   );
