@@ -1,19 +1,35 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { NodeDefs } from "@openforis/arena-core";
+import { NodeDefs, NodeValues } from "@openforis/arena-core";
 
-import { Autocomplete } from "components/Autocomplete";
+import { Autocomplete, Text, VView } from "components";
 import { SurveySelectors } from "state/survey";
-import { VView } from "components/VView";
+import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
+
+const SelectedTaxon = (props) => {
+  const { taxon } = props;
+  const { code, scientificName } = taxon.props;
+
+  return (
+    <Text
+      style={{ flex: 1, fontSize: 18 }}
+      textKey={`(${code}) ${scientificName}`}
+    />
+  );
+};
 
 export const NodeTaxonComponent = (props) => {
-  const { nodeDef, onFocus } = props;
+  const { nodeDef, nodeUuid, onFocus } = props;
 
   if (__DEV__) {
     console.log(
       `rendering NodeTaxonComponent for ${NodeDefs.getName(nodeDef)}`
     );
   }
+
+  const { value, updateNodeValue } = useNodeComponentLocalState({
+    nodeUuid,
+  });
 
   const survey = SurveySelectors.useCurrentSurvey();
 
@@ -26,19 +42,30 @@ export const NodeTaxonComponent = (props) => {
   const itemLabelFunction = (taxon) =>
     `(${taxon.props.code}) ${taxon.props.scientificName}`;
 
-  const selectedItems = [];
+  const [selectedTaxon, setSelectedTaxon] = useState(
+    value &&
+      taxa.find((taxon) => taxon.uuid === NodeValues.getValueTaxonUuid(value))
+  );
 
-  const onSelectedItemsChange = useCallback(() => {}, []);
+  const onSelectedItemsChange = useCallback((selection) => {
+    const selectedTaxonNext = selection[0];
+    setSelectedTaxon(selectedTaxonNext);
+    updateNodeValue(
+      selectedTaxonNext ? { taxonUuid: selectedTaxonNext.uuid } : null
+    );
+  }, []);
 
   return (
     <VView>
+      {!selectedTaxon && <Text textKey="Taxon not selected" />}
+      {selectedTaxon && <SelectedTaxon taxon={selectedTaxon} />}
       <Autocomplete
         itemKeyExtractor={(item) => item?.uuid}
         itemLabelExtractor={itemLabelFunction}
         items={taxa}
         onFocus={onFocus}
         onSelectedItemsChange={onSelectedItemsChange}
-        selectedItems={selectedItems}
+        selectedItems={[]}
       />
     </VView>
   );
