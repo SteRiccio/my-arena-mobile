@@ -33,7 +33,6 @@ export const NodePageNavigationBar = () => {
 
   const actualEntityUuid = entityUuid || parentEntityUuid;
   const actualEntity = Records.getNodeByUuid(actualEntityUuid)(record);
-  const actualParentEntity = Records.getParent(actualEntity)(record);
 
   const getNextOrPrevSiblingEntityDef = useCallback(
     ({ offset }) => {
@@ -47,7 +46,7 @@ export const NodePageNavigationBar = () => {
       }).filter(
         (childDef) =>
           NodeDefs.isEntity(childDef) &&
-          Nodes.isChildApplicable(actualParentEntity, childDef.uuid)
+          Nodes.isChildApplicable(actualEntity, childDef.uuid)
       );
 
       const currentEntityDefIndex = siblingEntityDefs.indexOf(entityDef);
