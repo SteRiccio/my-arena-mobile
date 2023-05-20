@@ -1,6 +1,6 @@
 import LZString from "lz-string";
 
-import { dbClient } from "db";
+import { DbUtils, dbClient } from "db";
 
 const insertSurvey = async (survey) => {
   const surveyJson = JSON.stringify(survey);
@@ -45,7 +45,7 @@ const fetchSurveySummaries = async () => {
 
 const deleteSurveys = async (surveyIds) => {
   await dbClient.executeSql(
-    `DELETE FROM survey WHERE id IN ("${surveyIds.toString()}")`
+    `DELETE FROM survey WHERE id IN (${DbUtils.quoteValues(surveyIds)})`
   );
 };
 

@@ -1,6 +1,6 @@
 import { Objects, Records, Surveys } from "@openforis/arena-core";
 
-import { dbClient } from "db";
+import { DbUtils, dbClient } from "db";
 
 const SUPPORTED_KEYS = 5;
 const keysColumns = Array.from(Array(SUPPORTED_KEYS).keys()).map(
@@ -82,10 +82,9 @@ const updateRecord = async ({ survey, record }) => {
 };
 
 const deleteRecords = async ({ surveyId, recordUuids }) => {
-  return dbClient.executeSql(
-    `DELETE FROM record WHERE survey_id = ? AND uuid IN ("${recordUuids.toString()}")`,
-    [surveyId]
-  );
+  const sql = `DELETE FROM record 
+    WHERE survey_id = ? AND uuid IN (${DbUtils.quoteValues(recordUuids)})`;
+  return dbClient.executeSql(sql, [surveyId]);
 };
 
 const rowToRecord = ({ survey }) => {
