@@ -44,6 +44,7 @@ export const RecordsList = () => {
   useNavigationFocus({ onFocus: loadRecords });
 
   const onNewRecordPress = () => {
+    setState((statePrev) => ({ ...statePrev, loading: true }));
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };
 
