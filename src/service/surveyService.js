@@ -31,6 +31,11 @@ const fetchCategoryItems = ({
   return items;
 };
 
+const statusToErrorKey = {
+  500: "internal_server_error",
+  401: "invalid_credentials",
+};
+
 const fetchSurveySummariesRemote = async () => {
   try {
     const { data } = await _get("api/surveys", { draft: false });
@@ -39,13 +44,7 @@ const fetchSurveySummariesRemote = async () => {
   } catch (error) {
     if (error.response) {
       const status = error?.response?.status;
-      console.log("---status", status);
-      const errorKey =
-        status === 500
-          ? "internal_server_error"
-          : status === 401
-          ? "invalid_credentials"
-          : error.errorMessage;
+      const errorKey = statusToErrorKey[status] || error.errorMessage;
       return { errorKey };
     } else {
       return { errorKey: "network_error" };
