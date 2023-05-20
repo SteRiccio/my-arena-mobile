@@ -16,13 +16,13 @@ export const AppStack = () => {
         }}
       >
         {Object.entries(screens).map(([key, screen]) => {
-          const { component, title, surveyNameAsTitle } = screen;
+          const { component, ...options } = screen;
           return (
             <Stack.Screen
               key={key}
               name={key}
               component={component}
-              options={{ title, surveyNameAsTitle }}
+              options={options}
             />
           );
         })}

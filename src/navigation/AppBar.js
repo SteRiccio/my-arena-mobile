@@ -4,9 +4,15 @@ import { useDispatch } from "react-redux";
 
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { screenKeys } from "screens";
+import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
 
 export const AppBar = (props) => {
   const { back, navigation, options } = props;
+  const { hasBack, surveyNameAsTitle, title: titleOption } = options;
+
+  const navigationState = navigation.getState();
+  const { index, routes } = navigationState;
+  const currentScreenKey = routes[index].name;
 
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
@@ -17,9 +23,9 @@ export const AppBar = (props) => {
   const { menuVisible } = state;
 
   const title =
-    options.surveyNameAsTitle && editingRecord && survey
+    surveyNameAsTitle && editingRecord && survey
       ? survey.props.name
-      : options.title;
+      : titleOption;
 
   const toggleMenu = useCallback(
     () =>
@@ -28,49 +34,51 @@ export const AppBar = (props) => {
   );
 
   return (
-    <>
-      <RNPAppbar.Header>
-        {editingRecord && (
-          <RNPAppbar.Action
-            icon="menu"
-            onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
-          />
-        )}
-        {back && <RNPAppbar.BackAction onPress={navigation.goBack} />}
-        <RNPAppbar.Content title={title} />
+    <RNPAppbar.Header>
+      {editingRecord && currentScreenKey === screenKeys.recordEditor && (
+        <RNPAppbar.Action
+          icon="menu"
+          onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
+        />
+      )}
 
-        <Menu
-          visible={menuVisible}
-          onDismiss={toggleMenu}
-          anchor={
-            <RNPAppbar.Action icon="dots-vertical" onPress={toggleMenu} />
-          }
-        >
-          <Menu.Item
-            onPress={() => {
-              navigation.navigate(screenKeys.login);
-              toggleMenu();
-            }}
-            title="Login"
-          />
-          <Divider />
-          <Menu.Item
-            onPress={() => {
-              navigation.navigate(screenKeys.surveysListLocal);
-              toggleMenu();
-            }}
-            title="Surveys"
-          />
-          <Divider />
-          <Menu.Item
-            onPress={() => {
-              navigation.navigate(screenKeys.settings);
-              toggleMenu();
-            }}
-            title="Settings"
-          />
-        </Menu>
-      </RNPAppbar.Header>
-    </>
+      {hasBack && back && <RNPAppbar.BackAction onPress={navigation.goBack} />}
+
+      {currentScreenKey === screenKeys.recordEditor && <Breadcrumbs />}
+
+      {currentScreenKey !== screenKeys.recordEditor && (
+        <RNPAppbar.Content title={title} />
+      )}
+
+      <Menu
+        visible={menuVisible}
+        onDismiss={toggleMenu}
+        anchor={<RNPAppbar.Action icon="dots-vertical" onPress={toggleMenu} />}
+      >
+        <Menu.Item
+          onPress={() => {
+            navigation.navigate(screenKeys.login);
+            toggleMenu();
+          }}
+          title="Login"
+        />
+        <Divider />
+        <Menu.Item
+          onPress={() => {
+            navigation.navigate(screenKeys.surveysListLocal);
+            toggleMenu();
+          }}
+          title="Surveys"
+        />
+        <Divider />
+        <Menu.Item
+          onPress={() => {
+            navigation.navigate(screenKeys.settings);
+            toggleMenu();
+          }}
+          title="Settings"
+        />
+      </Menu>
+    </RNPAppbar.Header>
   );
 };
