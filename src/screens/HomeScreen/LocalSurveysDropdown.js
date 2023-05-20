@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-
-import { Autocomplete } from "components";
-import { SurveyActions, SurveySelectors } from "state";
 import { useNavigation } from "@react-navigation/native";
+
+import { Dropdown } from "components";
+import { SurveyActions, SurveySelectors } from "state";
 
 export const LocalSurveysDropdown = () => {
   const navigation = useNavigation();
@@ -12,9 +12,7 @@ export const LocalSurveysDropdown = () => {
   const surveySummaries = SurveySelectors.useSurveysLocal();
 
   const onChange = useCallback(
-    async (selectedItems) => {
-      const surveySummary = selectedItems[0];
-      const surveyId = surveySummary.id;
+    async (surveyId) => {
       dispatch(
         SurveyActions.fetchAndSetCurrentSurvey({ surveyId, navigation })
       );
@@ -23,12 +21,13 @@ export const LocalSurveysDropdown = () => {
   );
 
   return (
-    <Autocomplete
+    <Dropdown
       items={surveySummaries}
-      itemKeyExtractor={(item) => item.uuid}
+      itemKeyExtractor={(item) => item.id}
       itemLabelExtractor={(item) => item.name}
-      onSelectedItemsChange={onChange}
-      selectedItems={[]}
+      label="Select a survey"
+      onChange={onChange}
+      value={null}
     />
   );
 };
