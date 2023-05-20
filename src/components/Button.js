@@ -2,10 +2,10 @@ import React from "react";
 import { Button as RNButton } from "react-native-paper";
 
 export const Button = (props) => {
-  const { children, textKey, ...otherProps } = props;
+  const { children, loading, textKey, ...otherProps } = props;
 
   return (
-    <RNButton {...otherProps}>
+    <RNButton loading={loading} {...otherProps}>
       {textKey}
       {children}
     </RNButton>
