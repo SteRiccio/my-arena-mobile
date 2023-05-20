@@ -7,7 +7,6 @@ import { screenKeys } from "screens/screenKeys";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
-import { RecordPageNavigator } from "./recordPageNavigator";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
@@ -62,6 +61,7 @@ const addNewEntity = async (dispatch, getState) => {
   dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
   dispatch(
     selectCurrentPageEntity({
+      parentEntityUuid: parentNode.uuid,
       entityDefUuid: nodeDef.uuid,
       entityUuid: nodeCreated.uuid,
     })
@@ -162,28 +162,13 @@ const addNewAttribute =
   };
 
 const selectCurrentPageEntity =
-  ({ entityDefUuid, entityUuid = null }) =>
-  (dispatch, getState) => {
-    const state = getState();
-    const currentPageEntity = DataEntrySelectors.selectCurrentPageEntity(state);
-    const survey = SurveySelectors.selectCurrentSurvey(state);
-    const record = DataEntrySelectors.selectRecord(state);
-
-    const nextPageEntity = RecordPageNavigator.determinePageEntity({
-      survey,
-      record,
-      currentPageEntity,
-      entityDefUuid,
-      entityUuid,
-    });
-
-    if (!nextPageEntity) return;
-
+  ({ parentEntityUuid, entityDefUuid, entityUuid = null }) =>
+  (dispatch) => {
     dispatch({
       type: CURRENT_PAGE_ENTITY_SET,
+      parentEntityUuid,
       entityDefUuid,
-      parentEntityUuid: nextPageEntity.parentEntityUuid,
-      entityUuid: nextPageEntity.entityUuid,
+      entityUuid,
     });
   };
 

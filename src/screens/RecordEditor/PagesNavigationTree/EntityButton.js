@@ -6,14 +6,14 @@ import { Text } from "components";
 import { DataEntryActions } from "state";
 
 export const EntityButton = ({ treeNode, isCurrentEntity }) => {
-  const { id: entityDefUuid, name: entityDefLabel } = treeNode;
+  const { label, entityPointer } = treeNode;
 
   const dispatch = useDispatch();
 
   const onPress = useCallback(() => {
-    dispatch(DataEntryActions.selectCurrentPageEntity({ entityDefUuid }));
+    dispatch(DataEntryActions.selectCurrentPageEntity(entityPointer));
     dispatch(DataEntryActions.toggleRecordPageMenuOpen);
-  }, [entityDefUuid, treeNode]);
+  }, [entityPointer]);
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -22,7 +22,7 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
           fontSize: 20,
           fontWeight: isCurrentEntity ? "bold" : "normal",
         }}
-        textKey={entityDefLabel}
+        textKey={label}
       />
     </TouchableOpacity>
   );

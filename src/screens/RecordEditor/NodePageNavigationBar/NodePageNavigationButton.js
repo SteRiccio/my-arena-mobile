@@ -1,13 +1,15 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
-import { NodeDefs } from "@openforis/arena-core";
+import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { Button } from "components";
 import { DataEntryActions, SurveySelectors } from "state";
 
 export const NodePageNavigationButton = (props) => {
-  const { entityDef, icon, style } = props;
+  const { entityPointer, icon, style } = props;
+
+  const { parentEntityUuid, entityDef, entityUuid, index } = entityPointer;
 
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -16,16 +18,21 @@ export const NodePageNavigationButton = (props) => {
     () =>
       dispatch(
         DataEntryActions.selectCurrentPageEntity({
+          parentEntityUuid,
           entityDefUuid: entityDef.uuid,
+          entityUuid,
         })
       ),
-    [entityDef]
+    [entityDef, entityUuid, parentEntityUuid]
   );
   return (
     <Button
       icon={icon}
       style={[{ maxWidth: 200 }, style]}
-      textKey={NodeDefs.getLabelOrName(entityDef, lang)}
+      textKey={
+        NodeDefs.getLabelOrName(entityDef, lang) +
+        (Objects.isEmpty(index) ? "" : `[${index + 1}]`)
+      }
       onPress={onPress}
     />
   );

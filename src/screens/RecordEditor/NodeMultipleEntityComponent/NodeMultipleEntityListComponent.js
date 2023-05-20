@@ -1,12 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
-import {
-  NodeDefs,
-  NodeValueFormatter,
-  Records,
-  Surveys,
-} from "@openforis/arena-core";
+import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
 
 import { Button, DataTable, Text, VView } from "components";
 import {
@@ -15,10 +10,9 @@ import {
   DataEntrySelectors,
   SurveySelectors,
 } from "state";
+import { RecordNodes } from "model/utils/RecordNodes";
 
-const EMPTY_VALUE = "---EMPTY---";
-
-export const NodeMultipleEntityListComponent = () => {
+export const NodeMultipleEntityListComponent = (props) => {
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const { entityDef, parentEntityUuid } =
@@ -47,6 +41,7 @@ export const NodeMultipleEntityListComponent = () => {
     ({ uuid }) => {
       dispatch(
         DataEntryActions.selectCurrentPageEntity({
+          parentEntityUuid,
           entityDefUuid: entityDef.uuid,
           entityUuid: uuid,
         })
@@ -66,29 +61,15 @@ export const NodeMultipleEntityListComponent = () => {
     );
   });
 
-  const entityToRow = (entity) => {
-    const keyNodes = Records.getEntityKeyNodes({
+  const entityToRow = (entity) => ({
+    key: entity.uuid,
+    uuid: entity.uuid,
+    ...RecordNodes.getEntityKeyValuesByNameFormatted({
       survey,
       record,
       entity,
-    });
-    return {
-      key: entity.uuid,
-      uuid: entity.uuid,
-      ...keyDefs.reduce((acc, keyDef, index) => {
-        const keyNode = keyNodes[index];
-        return {
-          ...acc,
-          [NodeDefs.getName(keyDef)]:
-            NodeValueFormatter.format({
-              survey,
-              nodeDef: keyDef,
-              value: keyNode?.value,
-            }) || EMPTY_VALUE,
-        };
-      }, {}),
-    };
-  };
+    }),
+  });
 
   const rows = entities.map(entityToRow);
 

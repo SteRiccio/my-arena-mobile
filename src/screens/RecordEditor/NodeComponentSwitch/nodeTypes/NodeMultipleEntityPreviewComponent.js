@@ -23,6 +23,7 @@ export const NodeMultipleEntityPreviewComponent = (props) => {
         onPress={() =>
           dispatch(
             DataEntryActions.selectCurrentPageEntity({
+              parentEntityUuid: parentNodeUuid,
               entityDefUuid: nodeDef.uuid,
             })
           )
