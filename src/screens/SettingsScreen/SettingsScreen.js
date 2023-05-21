@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 
 import { HView, Switch, Text, TextInput, VView } from "components";
 import { SettingsActions, SettingsSelectors } from "state";
+import { Objects } from "@openforis/arena-core";
 
 const propertyTypes = {
   boolean: "boolean",
@@ -14,9 +15,13 @@ const properties = {
     type: propertyTypes.boolean,
     labelKey: "Animations enabled",
   },
-  gpsAccuracyThreshold: {
+  locationAccuracyThreshold: {
     type: propertyTypes.numeric,
-    labelKey: "GPS accuracy threshold",
+    labelKey: "Location accuracy threshold (meters)",
+  },
+  locationAccuracyWatchTimeout: {
+    type: propertyTypes.numeric,
+    labelKey: "Location accuracy watch timeout (seconds)",
   },
 };
 
@@ -58,31 +63,30 @@ export const SettingsScreen = () => {
       }));
 
   return (
-    <VView>
+    <VView style={{ padding: 10 }}>
       {Object.entries(properties).map(([key, prop]) => {
         const { type, labelKey } = prop;
+        const value = settings[key];
         switch (type) {
           case propertyTypes.boolean:
             return (
               <HView
+                key={key}
                 style={{
                   justifyContent: "space-between",
                   alignItems: "center",
                 }}
               >
                 <Text textKey={labelKey} />
-                <Switch
-                  value={settings[key]}
-                  onChange={onPropValueChange({ key })}
-                />
+                <Switch value={value} onChange={onPropValueChange({ key })} />
               </HView>
             );
           case propertyTypes.numeric:
             return (
-              <VView>
+              <VView key={key}>
                 <Text textKey={labelKey} />
                 <TextInput
-                  value={settings[key]}
+                  value={Objects.isEmpty(value) ? "" : String(value)}
                   onChange={onPropValueChange({ key })}
                 />
               </VView>

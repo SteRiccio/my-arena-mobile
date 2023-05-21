@@ -8,17 +8,22 @@ const defaultServerUrl = "https://openforis-arena.org";
 const defaultSettings = {
   serverUrlType: "default",
   serverUrl: defaultServerUrl,
+  animationsEnabled: true,
+  locationAccuracyThreshold: 3,
+  locationAccuracyWatchTimeout: 120,
 };
 
 let INSTANCE = null;
 
 const fetchSettings = async () => {
-  const settings =
-    INSTANCE ||
-    (await AsyncStorageUtils.getItem(asyncStorageKeys.settings)) ||
-    defaultSettings;
-  INSTANCE = settings;
-  return settings;
+  if (!INSTANCE) {
+    console.log("====here");
+    INSTANCE = {
+      ...defaultSettings,
+      ...(await AsyncStorageUtils.getItem(asyncStorageKeys.settings)),
+    };
+  }
+  return INSTANCE;
 };
 
 const saveSettings = async (settings) => {

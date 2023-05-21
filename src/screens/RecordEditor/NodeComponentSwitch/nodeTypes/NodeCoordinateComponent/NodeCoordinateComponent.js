@@ -33,7 +33,7 @@ export const NodeCoordinateComponent = (props) => {
   }
 
   const settings = SettingsSelectors.useSettings();
-  const { gpsAccuracyThreshold } = settings;
+  const { locationAccuracyThreshold } = settings;
 
   const [state, setState] = useState({
     watchingLocation: false,
@@ -105,7 +105,7 @@ export const NodeCoordinateComponent = (props) => {
           const valueNext = locationToValue({ location, srsTo: srsId });
 
           onValueChange(valueNext);
-          if (valueNext.accuracy <= gpsAccuracyThreshold) {
+          if (valueNext.accuracy <= locationAccuracyThreshold) {
             stopGps();
           }
         }
@@ -158,7 +158,7 @@ export const NodeCoordinateComponent = (props) => {
       {watchingLocation && (
         <AccuracyProgressBar
           accuracy={accuracy}
-          accuracyThreshold={gpsAccuracyThreshold}
+          accuracyThreshold={locationAccuracyThreshold}
         />
       )}
       {!watchingLocation && (
