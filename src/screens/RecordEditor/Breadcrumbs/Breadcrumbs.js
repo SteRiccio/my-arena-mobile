@@ -114,7 +114,7 @@ export const Breadcrumbs = () => {
       <ScrollView horizontal ref={scrollViewRef}>
         <HView style={styles.container}>
           {items.map((item, index) => (
-            <HView key={item.uuid} style={styles.item}>
+            <HView key={item.entityDefUuid} style={styles.item}>
               <Button
                 labelStyle={styles.itemButtonLabel}
                 mode="text"

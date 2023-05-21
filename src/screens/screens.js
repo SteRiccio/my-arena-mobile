@@ -18,7 +18,6 @@ const screenDefaults = {
 export const screens = {
   [screenKeys.home]: {
     ...screenDefaults,
-    title: "My Arena Mobile",
     component: HomeScreen,
   },
   [screenKeys.login]: {
