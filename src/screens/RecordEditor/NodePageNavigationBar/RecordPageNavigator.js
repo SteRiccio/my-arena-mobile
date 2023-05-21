@@ -1,4 +1,6 @@
-import { Surveys, Records, NodeDefs } from "@openforis/arena-core";
+import { Surveys, Records, NodeDefs, Nodes } from "@openforis/arena-core";
+
+import { RecordNodes } from "model/utils/RecordNodes";
 
 const getSingleChildNodeUuid = ({ record, entityDef, parentEntity }) =>
   NodeDefs.isMultiple(entityDef)
@@ -30,6 +32,8 @@ const getNextOrPreviousMultipleEntityPointer = ({
   entity,
   offset,
 }) => {
+  if (Nodes.isRoot(entity)) return null;
+
   const parentEntity = Records.getParent(entity)(record);
   const entityDefUuid = entity.nodeDefUuid;
   const entityDef = Surveys.getNodeDefByUuid({
@@ -43,29 +47,43 @@ const getNextOrPreviousMultipleEntityPointer = ({
     offset,
   });
 
-  if (!siblingNode) return null;
-
-  return {
-    parentEntityUuid: parentEntity.uuid,
-    entityDef,
-    entityUuid: siblingNode.uuid,
-    index: siblingIndex,
-  };
+  if (siblingNode) {
+    return {
+      parentEntityUuid: parentEntity.uuid,
+      entityDef,
+      entityUuid: siblingNode.uuid,
+      index: siblingIndex,
+    };
+  }
+  return null;
 };
 
 const getNextOrPrevSiblingEntityPointer = ({
-  entityDef,
-  entityUuid,
-  parentEntityDef,
-  parentEntity,
   survey,
+  record,
+  entityDef,
+  parentEntity,
   offset,
+  entityUuid = null,
 }) => {
+  const parentEntityDef = Surveys.getNodeDefParent({
+    survey,
+    nodeDef: entityDef,
+  });
+
   if (!parentEntityDef) {
     return null;
   }
-  if (NodeDefs.isMultiple(entityDef) && entityUuid) {
-    return getNextOrPreviousMultipleEntityPointer({ entity, offset });
+
+  const entity = entityUuid ? Records.getNodeByUuid(entityUuid)(record) : null;
+
+  if (NodeDefs.isMultiple(entityDef) && entity) {
+    return getNextOrPreviousMultipleEntityPointer({
+      survey,
+      record,
+      entity,
+      offset,
+    });
   }
   const siblingEntityDefs = RecordNodes.getApplicableChildrenDefs({
     survey,
@@ -75,40 +93,65 @@ const getNextOrPrevSiblingEntityPointer = ({
   const currentEntityDefIndex = siblingEntityDefs.indexOf(entityDef);
   const siblingEntityDef = siblingEntityDefs[currentEntityDefIndex + offset];
 
-  if (!siblingEntityDef) return null;
-
-  return {
-    parentEntityUuid,
-    entityDef: siblingEntityDef,
-    entityUuid: getSingleChildNodeUuid({
+  if (siblingEntityDef)
+    return {
+      parentEntityUuid: parentEntity.uuid,
       entityDef: siblingEntityDef,
-      parentEntity,
-    }),
-  };
+      entityUuid: getSingleChildNodeUuid({
+        record,
+        entityDef: siblingEntityDef,
+        parentEntity,
+      }),
+    };
+  return null;
 };
 
-const getNextEntityPointer = ({
+const getFirstChildEntityPointer = ({
   survey,
+  record,
   entityDef,
   entityUuid,
   actualEntity,
 }) => {
-  if (entityUuid) {
-    const childrenEntityDefs = RecordNodes.getApplicableChildrenDefs({
-      survey,
-      nodeDef: entityDef,
-      parentEntity: actualEntity,
-    });
-    if (childrenEntityDefs.length > 0) {
-      const firstChildEntityDef = childrenEntityDefs[0];
-      return {
-        parentEntityUuid: entityUuid,
+  const childrenEntityDefs = RecordNodes.getApplicableChildrenDefs({
+    survey,
+    nodeDef: entityDef,
+    parentEntity: actualEntity,
+  });
+  if (childrenEntityDefs.length > 0) {
+    const firstChildEntityDef = childrenEntityDefs[0];
+    return {
+      parentEntityUuid: entityUuid,
+      entityDef: firstChildEntityDef,
+      entityUuid: getSingleChildNodeUuid({
+        record,
         entityDef: firstChildEntityDef,
-        entityUuid: getSingleChildNodeUuid({
-          entityDef: firstChildEntityDef,
-          parentEntity: actualEntity,
-        }),
-      };
+        parentEntity: actualEntity,
+      }),
+    };
+  }
+  return null;
+};
+
+const getNextEntityPointer = ({ survey, record, currentEntityPointer }) => {
+  const { parentEntityUuid, entityDef, entityUuid } = currentEntityPointer;
+
+  const parentEntity = parentEntityUuid
+    ? Records.getNodeByUuid(parentEntityUuid)(record)
+    : null;
+  const entity = entityUuid ? Records.getNodeByUuid(entityUuid)(record) : null;
+  const actualEntity = entity || parentEntity;
+
+  if (entityUuid) {
+    const firstChildEntityPointer = getFirstChildEntityPointer({
+      survey,
+      record,
+      entityDef,
+      entityUuid,
+      actualEntity,
+    });
+    if (firstChildEntityPointer) {
+      return firstChildEntityPointer;
     }
   }
 
@@ -116,23 +159,39 @@ const getNextEntityPointer = ({
     return null;
   }
 
-  const nextEntityPointer = getNextOrPrevSiblingEntityPointer({ offset: 1 });
+  const nextEntityPointer = getNextOrPrevSiblingEntityPointer({
+    survey,
+    record,
+    entityDef,
+    entityUuid,
+    parentEntity,
+    offset: 1,
+  });
   if (nextEntityPointer) {
     return nextEntityPointer;
   }
 
-  const ancestorMultipleEntity = getAncestorMultipleEntity({ entity });
+  const ancestorMultipleEntity = getAncestorMultipleEntity({
+    survey,
+    record,
+    entity: actualEntity,
+  });
+  const ancestorMultipleEntityDef = Surveys.getNodeDefByUuid({
+    survey,
+    uuid: ancestorMultipleEntity.nodeDefUuid,
+  });
+  if (NodeDefs.isRoot(ancestorMultipleEntityDef)) {
+    return null;
+  }
   const ancestorMultipleEntityPointer = getNextOrPreviousMultipleEntityPointer({
+    survey,
+    record,
     entity: ancestorMultipleEntity,
     offset: 1,
   });
   if (ancestorMultipleEntityPointer) {
     return ancestorMultipleEntityPointer;
   }
-  const ancestorMultipleEntityDef = Surveys.getNodeDefByUuid({
-    survey,
-    uuid: ancestorMultipleEntity.nodeDefUuid,
-  });
   return {
     parentEntityUuid: ancestorMultipleEntity.parentUuid,
     entityDef: ancestorMultipleEntityDef,
@@ -140,17 +199,29 @@ const getNextEntityPointer = ({
   };
 };
 
-const getPrevEntityPointer = (
-  record,
-  entityDef,
-  entityUuid,
-  parentEntityDef,
-  parentEntityUuid
-) => {
+const getPrevEntityPointer = ({ survey, record, currentEntityPointer }) => {
+  const { parentEntityUuid, entityDef, entityUuid } = currentEntityPointer;
+
+  const parentEntityDef = Surveys.getNodeDefParent({
+    survey,
+    nodeDef: entityDef,
+  });
+
   if (!parentEntityDef) {
     return null;
   }
-  const prevPointer = getNextOrPrevSiblingEntityPointer({ offset: -1 });
+  const parentEntity = parentEntityUuid
+    ? Records.getNodeByUuid(parentEntityUuid)(record)
+    : null;
+
+  const prevPointer = getNextOrPrevSiblingEntityPointer({
+    survey,
+    record,
+    entityDef,
+    entityUuid,
+    parentEntity,
+    offset: -1,
+  });
   if (prevPointer !== null) {
     return prevPointer;
   }

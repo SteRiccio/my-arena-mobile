@@ -163,12 +163,21 @@ const addNewAttribute =
 
 const selectCurrentPageEntity =
   ({ parentEntityUuid, entityDefUuid, entityUuid = null }) =>
-  (dispatch) => {
+  (dispatch, getState) => {
+    const state = getState();
+    const { entityDef: prevEntityDef, entityUuid: prevEntityUuid } =
+      DataEntrySelectors.selectCurrentPageEntity(state);
+
+    const nextEntityUuid =
+      entityDefUuid === prevEntityDef.uuid && entityUuid === prevEntityUuid
+        ? null // set pointer to list of entities
+        : entityUuid;
+
     dispatch({
       type: CURRENT_PAGE_ENTITY_SET,
       parentEntityUuid,
       entityDefUuid,
-      entityUuid,
+      entityUuid: nextEntityUuid,
     });
   };
 
