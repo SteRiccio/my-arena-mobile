@@ -6,6 +6,7 @@
       "components/*": ["components/*"],
       "db/*": ["db/*"],
       "hooks/*": ["hooks/*"],
+      "localization/*": ["localization/*"],
       "model/*": ["model/*"],
       "navigation/*": ["navigation/*"],
       "screens/*": ["screens/*"],

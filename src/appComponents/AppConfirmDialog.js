@@ -4,8 +4,11 @@ import { Dialog, Portal } from "react-native-paper";
 import { useConfirmDialog } from "state/confirm/useConfirmDialog";
 
 import { Button, Text } from "components";
+import { useTranslation } from "localization";
 
 export const AppConfirmDialog = () => {
+  const { t } = useTranslation();
+
   const {
     isOpen,
     confirm,
@@ -20,7 +23,7 @@ export const AppConfirmDialog = () => {
   return (
     <Portal>
       <Dialog visible={isOpen} onDismiss={cancel}>
-        <Dialog.Title>{titleKey}</Dialog.Title>
+        <Dialog.Title>{t(titleKey)}</Dialog.Title>
         <Dialog.Content>
           <Text
             variant="bodyMedium"

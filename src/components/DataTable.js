@@ -4,6 +4,7 @@ import { Banner } from "react-native-paper";
 
 import { Arrays } from "@openforis/arena-core";
 
+import { useTranslation } from "localization";
 import { Checkbox } from "./Checkbox";
 
 export const DataTable = (props) => {
@@ -15,6 +16,8 @@ export const DataTable = (props) => {
     onDeleteSelectedRowIds,
     selectable,
   } = props;
+
+  const { t } = useTranslation();
 
   const [state, setState] = useState({ selectedRowIds: [] });
 
@@ -67,7 +70,7 @@ export const DataTable = (props) => {
               key={column.key}
               style={[{ flex: 1 }, column.style]}
             >
-              {column.header}
+              {t(column.header)}
             </RNPDataTable.Title>
           ))}
           {selectable && (

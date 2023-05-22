@@ -99,11 +99,11 @@ export const SurveysListRemote = () => {
           columns={[
             {
               key: "name",
-              header: "Name",
+              header: "common:name",
             },
             {
               key: "defaultLabel",
-              header: "Label",
+              header: "common:label",
             },
           ]}
           rows={surveys.map((survey) => ({ key: survey.uuid, ...survey }))}

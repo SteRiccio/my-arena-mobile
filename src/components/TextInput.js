@@ -1,6 +1,8 @@
 import React from "react";
 import { TextInput as RNPTextInput } from "react-native-paper";
 
+import { useTranslation } from "localization";
+
 export const TextInput = (props) => {
   const {
     disabled,
@@ -15,13 +17,17 @@ export const TextInput = (props) => {
     value,
   } = props;
 
+  const { t } = useTranslation();
+
+  const label = t(labelKey);
+
   return (
     <RNPTextInput
       disabled={disabled}
       editable={editable}
       keyboardType={keyboardType}
       mode="outlined"
-      label={labelKey}
+      label={label}
       onChangeText={onChange}
       onPressIn={onPressIn}
       placeholder={placeholderKey}

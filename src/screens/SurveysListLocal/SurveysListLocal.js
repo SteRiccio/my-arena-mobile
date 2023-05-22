@@ -29,8 +29,8 @@ export const SurveysListLocal = () => {
   const onDeleteSelectedRowIds = useCallback((surveyIds) => {
     dispatch(
       ConfirmActions.show({
-        titleKey: "Delete surveys",
-        messageKey: "Delete the selected surveys?",
+        titleKey: "surveys:confirmDeleteSurvey.title",
+        messageKey: "surveys:confirmDeleteSurvey.message",
         onConfirm: async () => {
           await dispatch(SurveyActions.deleteSurveys(surveyIds));
           await loadSurveys();
@@ -56,7 +56,11 @@ export const SurveysListLocal = () => {
         columns={[
           {
             key: "name",
-            header: "Name",
+            header: "common:name",
+          },
+          {
+            key: "label",
+            header: "common:label",
           },
         ]}
         onDeleteSelectedRowIds={onDeleteSelectedRowIds}

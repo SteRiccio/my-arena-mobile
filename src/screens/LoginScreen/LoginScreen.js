@@ -3,6 +3,7 @@ import { RadioButton } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
 import { Button, FieldSet, HView, TextInput, VView } from "components";
+import { useTranslation } from "localization";
 import { SettingsService } from "service";
 import { RemoteConnectionActions } from "state";
 
@@ -13,6 +14,7 @@ const serverUrlTypes = {
 
 export const LoginScreen = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const [state, setState] = useState({
     serverUrl: SettingsService.defaultServerUrl,
@@ -85,14 +87,18 @@ export const LoginScreen = () => {
 
   return (
     <VView>
-      <FieldSet heading="Server URL">
+      <FieldSet heading="login:serverUrl">
         <RadioButton.Group
           onValueChange={onServerUrlTypeChange}
           value={serverUrlType}
         >
           <HView>
             {Object.values(serverUrlTypes).map((type) => (
-              <RadioButton.Item key={type} label={type} value={type} />
+              <RadioButton.Item
+                key={type}
+                label={t(`login:serverUrlType.${type}`)}
+                value={type}
+              />
             ))}
           </HView>
         </RadioButton.Group>
@@ -103,9 +109,9 @@ export const LoginScreen = () => {
         />
       </FieldSet>
 
-      <TextInput label="Email" onChange={onEmailChange} value={email} />
+      <TextInput label="login:email" onChange={onEmailChange} value={email} />
       <TextInput
-        label="Password"
+        label="login:password"
         onChange={onPasswordChange}
         value={password}
         secureTextEntry
