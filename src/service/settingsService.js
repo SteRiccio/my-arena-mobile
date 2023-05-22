@@ -17,7 +17,6 @@ let INSTANCE = null;
 
 const fetchSettings = async () => {
   if (!INSTANCE) {
-    console.log("====here");
     INSTANCE = {
       ...defaultSettings,
       ...(await AsyncStorageUtils.getItem(asyncStorageKeys.settings)),

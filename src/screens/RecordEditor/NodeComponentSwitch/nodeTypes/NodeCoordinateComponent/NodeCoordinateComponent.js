@@ -45,6 +45,7 @@ export const NodeCoordinateComponent = (props) => {
 
   const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
+    updateDelay: 500,
   });
 
   const survey = SurveySelectors.useCurrentSurvey();
@@ -122,7 +123,7 @@ export const NodeCoordinateComponent = (props) => {
   return (
     <VView>
       <HView style={styles.formItem}>
-        <Text textKey="X" />
+        <Text style={styles.formItemLabel} textKey="X" />
         <TextInput
           editable={editable}
           keyboardType="numeric"
@@ -135,7 +136,7 @@ export const NodeCoordinateComponent = (props) => {
         />
       </HView>
       <HView style={styles.formItem}>
-        <Text textKey="Y" />
+        <Text style={styles.formItemLabel} textKey="Y" />
         <TextInput
           editable={editable}
           keyboardType="numeric"
@@ -148,12 +149,12 @@ export const NodeCoordinateComponent = (props) => {
         />
       </HView>
       <HView style={styles.formItem}>
-        <Text textKey="SRS" />
+        <Text style={styles.formItemLabel} textKey="SRS" />
         <SrsDropdown onChange={onChangeSrs} value={srsId} />
       </HView>
       <HView>
-        <Text textKey="Accuracy" />
-        <Text textKey={accuracy} />
+        <Text style={styles.formItemLabel} textKey="Accuracy" />
+        <Text style={styles.accuracyField} textKey={accuracy} />
       </HView>
       {watchingLocation && (
         <AccuracyProgressBar
