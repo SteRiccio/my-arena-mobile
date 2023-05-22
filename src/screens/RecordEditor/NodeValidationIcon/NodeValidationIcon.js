@@ -1,6 +1,6 @@
-import { NodeDefs } from "@openforis/arena-core";
+import { NodeDefs, Validations } from "@openforis/arena-core";
 
-import { WarningIconButton } from "components";
+import { Tooltip, WarningIconButton } from "components";
 import { DataEntrySelectors } from "state";
 
 export const NodeValidationIcon = (props) => {
@@ -21,10 +21,20 @@ export const NodeValidationIcon = (props) => {
   if (!validation && !validationChildrenCount) return null;
 
   if (validationChildrenCount && !validationChildrenCount.valid) {
-    return <WarningIconButton />;
+    const message = "required field";
+    return (
+      <Tooltip titleKey={message}>
+        <WarningIconButton />
+      </Tooltip>
+    );
   }
   if (validation && !validation?.valid && NodeDefs.isSingle(nodeDef)) {
-    return <WarningIconButton />;
+    const message = "error";
+    return (
+      <Tooltip titleKey={message}>
+        <WarningIconButton />
+      </Tooltip>
+    );
   }
 
   return null;

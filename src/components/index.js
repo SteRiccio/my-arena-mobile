@@ -18,6 +18,7 @@ export { Switch } from "./Switch";
 export { Text } from "./Text";
 export { TextInput } from "./TextInput";
 export { TimePicker } from "./TimePicker";
+export { Tooltip } from "./Tooltip";
 export { View } from "./View";
 export { VView } from "./VView";
 export { CloseIconButton } from "./CloseIconButton";
