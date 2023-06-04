@@ -7,10 +7,12 @@ import { screenKeys } from "screens/screenKeys";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
+import { ConfirmActions } from "state/confirm";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const CURRENT_PAGE_ENTITY_SET = "CURRENT_PAGE_ENTITY_SET";
+const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
 
 const createNewRecord =
   ({ navigation }) =>
@@ -187,10 +189,27 @@ const toggleRecordPageMenuOpen = (dispatch, getState) => {
   dispatch({ type: PAGE_SELECTOR_MENU_OPEN_SET, open: !open });
 };
 
+const navigateToRecordsList =
+  ({ navigation }) =>
+  (dispatch) => {
+    dispatch(
+      ConfirmActions.show({
+        confirmButtonTextKey: "dataEntry:goToListOfRecords",
+        messageKey:
+          "dataEntry:confirmGoToListOfRecordsAndTerminateRecordEditing",
+        onConfirm: () => {
+          dispatch({ type: DATA_ENTRY_RESET });
+          navigation.navigate(screenKeys.recordsList);
+        },
+      })
+    );
+  };
+
 export const DataEntryActions = {
   CURRENT_RECORD_SET,
   CURRENT_PAGE_ENTITY_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
+  DATA_ENTRY_RESET,
 
   createNewRecord,
   addNewEntity,
@@ -201,4 +220,6 @@ export const DataEntryActions = {
   updateAttribute,
   selectCurrentPageEntity,
   toggleRecordPageMenuOpen,
+
+  navigateToRecordsList,
 };

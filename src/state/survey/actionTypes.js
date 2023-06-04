@@ -1,0 +1,4 @@
+export const SurveyActionTypes = {
+  CURRENT_SURVEY_SET: "CURRENT_SURVEY_SET",
+  SURVEYS_LOCAL_SET: "SURVEYS_LOCAL_SET",
+};

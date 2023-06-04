@@ -1,8 +1,12 @@
+import { SurveyActionTypes } from "state/survey";
 import { StoreUtils } from "../storeUtils";
 
 import { DataEntryActions } from "./actions";
 
 const actionHandlers = {
+  [SurveyActionTypes.CURRENT_SURVEY_SET]: () => ({}),
+  [DataEntryActions.DATA_ENTRY_RESET]: () => ({}),
+
   [DataEntryActions.CURRENT_RECORD_SET]: ({ state, action }) => ({
     ...state,
     currentRecord: action.record,

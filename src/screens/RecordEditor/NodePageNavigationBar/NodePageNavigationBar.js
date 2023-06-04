@@ -1,18 +1,19 @@
 import React, { useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { useKeyboardIsVisible } from "hooks";
 import { Button, HView, View } from "components";
-import { DataEntrySelectors, SurveySelectors } from "state";
-import { screenKeys } from "../../screenKeys";
+import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
 import { RecordPageNavigator } from "./RecordPageNavigator";
 
 import styles from "./styles";
 
 export const NodePageNavigationBar = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const keyboardVisible = useKeyboardIsVisible();
   const survey = SurveySelectors.useCurrentSurvey();
@@ -57,7 +58,9 @@ export const NodePageNavigationBar = () => {
           <Button
             icon="format-list-bulleted"
             textKey="dataEntry:listOfRecords"
-            onPress={() => navigation.navigate(screenKeys.recordsList)}
+            onPress={() => {
+              dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
+            }}
           />
         )}
         {prevEntityPointer && (

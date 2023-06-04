@@ -1,8 +1,8 @@
 import { screenKeys } from "screens/screenKeys";
 import { SurveyService } from "service";
+import { SurveyActionTypes } from "./actionTypes";
 
-const CURRENT_SURVEY_SET = "CURRENT_SURVEY_SET";
-const SURVEYS_LOCAL_SET = "SURVEYS_LOCAL_SET";
+const { CURRENT_SURVEY_SET, SURVEYS_LOCAL_SET } = SurveyActionTypes;
 
 const setCurrentSurvey =
   ({ survey, navigation }) =>
@@ -40,9 +40,6 @@ const deleteSurveys = (surveyIds) => async (dispatch) => {
 };
 
 export const SurveyActions = {
-  CURRENT_SURVEY_SET,
-  SURVEYS_LOCAL_SET,
-
   setCurrentSurvey,
   fetchAndSetCurrentSurvey,
   fetchAndSetLocalSurveys,

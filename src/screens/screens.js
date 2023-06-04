@@ -23,7 +23,7 @@ export const screens = {
   },
   [screenKeys.login]: {
     ...screenDefaults,
-    title: "common:screen.login",
+    title: "login:title",
     component: LoginScreen,
   },
   [screenKeys.recordsList]: {

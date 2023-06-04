@@ -2,7 +2,6 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { Button, CloseIconButton, HView, Text, View } from "components";
-import { screenKeys } from "screens";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { PagesNavigationTree } from "../PagesNavigationTree";
 
@@ -33,10 +32,9 @@ export const RecordEditorDrawer = () => {
       <Button
         icon="format-list-bulleted"
         textKey="List of records"
-        onPress={() => {
-          dispatch(DataEntryActions.toggleRecordPageMenuOpen);
-          navigation.navigate(screenKeys.recordsList);
-        }}
+        onPress={() =>
+          dispatch(DataEntryActions.navigateToRecordsList({ navigation }))
+        }
       />
     </View>
   );

@@ -6,4 +6,5 @@ export default {
     default: "Default",
     custom: "Custom",
   },
+  title: "Login",
 };
