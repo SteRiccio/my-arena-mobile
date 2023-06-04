@@ -44,7 +44,7 @@ const getEntityKeyValuesByNameFormatted = ({ survey, record, entity }) => {
   }, {});
 };
 
-const getApplicableChildrenDefs = ({ survey, nodeDef, parentEntity }) =>
+const getApplicableChildrenEntityDefs = ({ survey, nodeDef, parentEntity }) =>
   Surveys.getNodeDefChildren({
     survey,
     nodeDef,
@@ -69,6 +69,6 @@ const getSiblingNode = ({ record, parentEntity, node, offset }) => {
 export const RecordNodes = {
   getNodeName,
   getEntityKeyValuesByNameFormatted,
-  getApplicableChildrenDefs,
+  getApplicableChildrenEntityDefs,
   getSiblingNode,
 };

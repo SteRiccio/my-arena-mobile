@@ -65,24 +65,24 @@ export const useTreeData = () => {
       entity: visitedEntity,
     } = stack.pop();
 
-    const applicableChildrenEntityDefs = RecordNodes.getApplicableChildrenDefs({
-      survey,
-      nodeDef: visitedEntityDef,
-      parentEntity: visitedEntity,
-    }).filter(
-      (childDef) =>
-        NodeDefs.isEntity(childDef) &&
-        (Surveys.isNodeDefAncestor({
-          nodeDefAncestor: visitedEntityDef,
-          nodeDefDescendant: currentEntityDef,
-        }) ||
+    const applicableChildrenEntityDefs =
+      RecordNodes.getApplicableChildrenEntityDefs({
+        survey,
+        nodeDef: visitedEntityDef,
+        parentEntity: visitedEntity,
+      }).filter(
+        (childDef) =>
+          Surveys.isNodeDefAncestor({
+            nodeDefAncestor: visitedEntityDef,
+            nodeDefDescendant: currentEntityDef,
+          }) ||
           // is current entity def
           childDef.uuid === currentEntityDef.uuid ||
           // is sibling of current entity def
           childDef.parentUuid === currentEntityDef.parentUuid ||
           // is child of current entity def
-          childDef.parentUuid === currentEntityDef.uuid)
-    );
+          childDef.parentUuid === currentEntityDef.uuid
+      );
 
     applicableChildrenEntityDefs.forEach((childDef) => {
       const childEntity = getChildEntity({
