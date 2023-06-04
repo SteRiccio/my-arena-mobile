@@ -1,10 +1,12 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  container: {
-    padding: 10,
-  },
   appTitle: {
     margin: 20,
   },
+  container: {
+    alignItems: "center",
+    padding: 10,
+  },
+  logo: { width: 200, height: 200 },
 });
