@@ -75,7 +75,7 @@ const getNextOrPrevSiblingEntityPointer = ({
     return null;
   }
 
-  const entity = entityUuid ? Records.getNodeByUuid(entityUuid)(record) : null;
+  const entity = entityUuid ? Records.FgetNodeByUuid(entityUuid)(record) : null;
 
   if (NodeDefs.isMultiple(entityDef) && entity) {
     // go back to list of entities

@@ -18,39 +18,39 @@ const screenDefaults = {
 export const screens = {
   [screenKeys.home]: {
     ...screenDefaults,
-    title: "My Arena Mobile",
+    title: "common:appTitle",
     component: HomeScreen,
   },
   [screenKeys.login]: {
     ...screenDefaults,
-    title: "Login",
+    title: "common:screen.login",
     component: LoginScreen,
   },
   [screenKeys.recordsList]: {
     ...screenDefaults,
-    title: "Records List",
+    title: "dataEntry:listOfRecords",
     component: RecordsList,
   },
   [screenKeys.recordEditor]: {
     ...screenDefaults,
-    title: "Record Editor",
+    title: "dataEntry:recordEditor",
     hasBack: false,
     hasDrawer: true,
     component: RecordEditor,
   },
   [screenKeys.surveysListLocal]: {
     ...screenDefaults,
-    title: "Surveys in the device",
+    title: "surveys:surveysInTheDevice",
     component: SurveysListLocal,
   },
   [screenKeys.surveysListRemote]: {
     ...screenDefaults,
-    title: "Surveys in the cloud",
+    title: "surveys:surveysInTheCloud",
     component: SurveysListRemote,
   },
   [screenKeys.settings]: {
     ...screenDefaults,
-    title: "Settings",
+    title: "settings:title",
     component: SettingsScreen,
   },
 };

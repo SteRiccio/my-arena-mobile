@@ -2,12 +2,16 @@ import { useCallback, useState } from "react";
 import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
+import { useTranslation } from "localization";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { screenKeys } from "screens";
 import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
 
 export const AppBar = (props) => {
   const { back, navigation, options } = props;
+
+  const { t } = useTranslation();
+
   const { hasBack, surveyNameAsTitle, title: titleOption } = options;
 
   const navigationState = navigation.getState();
@@ -25,7 +29,7 @@ export const AppBar = (props) => {
   const title =
     surveyNameAsTitle && editingRecord && survey
       ? survey.props.name
-      : titleOption;
+      : t(titleOption);
 
   const toggleMenu = useCallback(
     () =>

@@ -6,4 +6,6 @@ export default {
   },
   manageSurveys: "Manage surveys",
   selectSurvey: "Select a survey",
+  surveysInTheCloud: "Surveys in the cloud",
+  surveysInTheDevice: "Surveys in the device",
 };

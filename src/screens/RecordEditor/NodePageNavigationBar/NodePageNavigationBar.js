@@ -56,7 +56,7 @@ export const NodePageNavigationBar = () => {
         {NodeDefs.isRoot(entityDef) && (
           <Button
             icon="format-list-bulleted"
-            textKey="List of records"
+            textKey="dataEntry:listOfRecords"
             onPress={() => navigation.navigate(screenKeys.recordsList)}
           />
         )}
