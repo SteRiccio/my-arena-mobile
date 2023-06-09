@@ -4,4 +4,8 @@ export default {
   goToListOfRecords: "Go to list of records",
   listOfRecords: "List of records",
   recordEditor: "Record editor",
+
+  // file attribute (image)
+  chooseAPicture: "Choose a picture",
+  pictureDeleteConfirmMessage: "Delete the existing picture?",
 };

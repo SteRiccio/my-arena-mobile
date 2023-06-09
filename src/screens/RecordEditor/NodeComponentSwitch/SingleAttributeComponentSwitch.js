@@ -7,11 +7,12 @@ import { Text } from "components";
 
 import { NodeBooleanComponent } from "./nodeTypes/NodeBooleanComponent";
 import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
-import { NodeTextComponent } from "./nodeTypes/NodeTextComponent";
-import { NodeDateComponent } from "./nodeTypes/NodeDateComponent";
-import { NodeTimeComponent } from "./nodeTypes/NodeTimeComponent";
 import { NodeCoordinateComponent } from "./nodeTypes/NodeCoordinateComponent";
+import { NodeDateComponent } from "./nodeTypes/NodeDateComponent";
+import { NodeFileComponent } from "./nodeTypes/NodeFileComponent";
 import { NodeTaxonComponent } from "./nodeTypes/NodeTaxonComponent";
+import { NodeTextComponent } from "./nodeTypes/NodeTextComponent";
+import { NodeTimeComponent } from "./nodeTypes/NodeTimeComponent";
 
 const nodeDefComponentByType = {
   [NodeDefType.boolean]: NodeBooleanComponent,
@@ -19,6 +20,7 @@ const nodeDefComponentByType = {
   [NodeDefType.coordinate]: NodeCoordinateComponent,
   [NodeDefType.date]: NodeDateComponent,
   [NodeDefType.decimal]: NodeTextComponent,
+  [NodeDefType.file]: NodeFileComponent,
   [NodeDefType.integer]: NodeTextComponent,
   [NodeDefType.taxon]: NodeTaxonComponent,
   [NodeDefType.text]: NodeTextComponent,

@@ -1,8 +1,17 @@
 import "react-native-get-random-values";
 
-import { RecordFactory, Records, RecordUpdater } from "@openforis/arena-core";
+import {
+  NodeDefs,
+  NodeDefType,
+  RecordFactory,
+  Records,
+  RecordUpdater,
+  Surveys,
+} from "@openforis/arena-core";
 
 import { RecordService } from "service/recordService";
+import { RecordFileService } from "service/recordFileService";
+
 import { screenKeys } from "screens/screenKeys";
 
 import { SurveySelectors } from "../survey/selectors";
@@ -110,13 +119,17 @@ const fetchAndEditRecord =
   };
 
 const updateAttribute =
-  ({ uuid, value }) =>
+  ({ uuid, value, fileUri = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
 
     const node = Records.getNodeByUuid(uuid)(record);
+    const nodeDef = Surveys.getNodeDefByUuid({
+      survey,
+      uuid: node.nodeDefUuid,
+    });
 
     const nodeUpdated = { ...node, value };
 
@@ -126,6 +139,28 @@ const updateAttribute =
       node: nodeUpdated,
     });
 
+    if (NodeDefs.getType(nodeDef) === NodeDefType.file) {
+      const surveyId = survey.id;
+
+      if (fileUri) {
+        const { fileUuid: fileUuidNext } = value || {};
+
+        await RecordFileService.saveRecordFile({
+          surveyId,
+          fileUuid: fileUuidNext,
+          sourceFileUri: fileUri,
+        });
+      }
+
+      const { value: valuePrev } = node;
+      const { fileUuid: fileUuidPrev } = valuePrev || {};
+      if (fileUuidPrev) {
+        await RecordFileService.deleteRecordFile({
+          surveyId,
+          fileUuid: fileUuidPrev,
+        });
+      }
+    }
     await RecordService.updateRecord({ survey, record: recordUpdated });
 
     dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
