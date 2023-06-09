@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as Location from "expo-location";
 
-import { Objects, PointFactory, Points } from "@openforis/arena-core";
+import { Objects, PointFactory, Points, Surveys } from "@openforis/arena-core";
 
 import { Button, HView, Text, TextInput, VView } from "components";
 import { SettingsSelectors, SurveySelectors } from "state";
@@ -10,19 +10,19 @@ import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState"
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
 import styles from "./nodeCoordinateComponentStyles";
 
-const locationToValue = ({ location, srsTo }) => {
+const locationToValue = ({ location, srsTo, srsIndex }) => {
   const { coords } = location;
   const { latitude, longitude, accuracy } = coords;
+  const accuracyFormatted = Math.floor(accuracy * 100) / 100;
 
   const pointLatLong = PointFactory.createInstance({
     x: longitude,
     y: latitude,
-    srs: "4326",
   });
-  const point = Points.transform(pointLatLong, srsTo);
+  const point = Points.transform(pointLatLong, srsTo, srsIndex);
   const { x, y } = point;
 
-  return { x, y, srsId: srsTo, accuracy };
+  return { x, y, srsId: srsTo, accuracy: accuracyFormatted };
 };
 
 export const NodeCoordinateComponent = (props) => {
@@ -49,9 +49,11 @@ export const NodeCoordinateComponent = (props) => {
   });
 
   const survey = SurveySelectors.useCurrentSurvey();
-  const srss = survey.props.srs;
+  const srss = Surveys.getSRSs(survey);
+  const srsIndex = useMemo(() => Surveys.getSRSIndex(survey), [srss]);
 
-  const editable = !nodeDef.props.readOnly;
+  const editable =
+    !nodeDef.props.readOnly && !nodeDef.props.allowOnlyDeviceCoordinate;
 
   const { accuracy, x, y, srsId = srss[0].code } = value || {};
 
@@ -96,24 +98,25 @@ export const NodeCoordinateComponent = (props) => {
   const onStartGpsPress = useCallback(async () => {
     const foregroundPermission =
       await Location.requestForegroundPermissionsAsync();
-    if (foregroundPermission.granted) {
-      locationSubscritionRef.current = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          distanceInterval: 10,
-        },
-        (location) => {
-          const valueNext = locationToValue({ location, srsTo: srsId });
-
-          onValueChange(valueNext);
-          if (valueNext.accuracy <= locationAccuracyThreshold) {
-            stopGps();
-          }
-        }
-      );
-      setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
+    if (!foregroundPermission.granted) {
+      return;
     }
-  }, []);
+    locationSubscritionRef.current = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.High,
+        distanceInterval: 10,
+      },
+      (location) => {
+        const valueNext = locationToValue({ location, srsTo: srsId, srsIndex });
+
+        onValueChange(valueNext);
+        if (valueNext.accuracy <= locationAccuracyThreshold) {
+          stopGps();
+        }
+      }
+    );
+    setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
+  }, [srsId, srsIndex]);
 
   const onStopGpsPress = useCallback(() => {
     stopGps();
@@ -152,9 +155,10 @@ export const NodeCoordinateComponent = (props) => {
         <Text style={styles.formItemLabel} textKey="SRS" />
         <SrsDropdown onChange={onChangeSrs} value={srsId} />
       </HView>
-      <HView>
+      <HView style={styles.accuracyFormItem}>
         <Text style={styles.formItemLabel} textKey="Accuracy" />
         <Text style={styles.accuracyField} textKey={accuracy} />
+        <Text style={styles.formItemLabel} textKey="m" />
       </HView>
       {watchingLocation && (
         <AccuracyProgressBar

@@ -6,6 +6,9 @@ export default StyleSheet.create({
     fontSize: 14,
     marginRight: 10,
   },
+  accuracyFormItem: {
+    alignItems: "baseline",
+  },
   numericTextInput: {
     width: 200,
     alignSelf: "stretch",
