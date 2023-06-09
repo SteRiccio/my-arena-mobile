@@ -53,10 +53,18 @@ export const MultipleAttributeComponentWrapper = (props) => {
   }, [nodes]);
 
   const onDeletePress = (node) => () => {
-    if (!Nodes.isValueBlank(node)) {
-      dispatch(ConfirmActions.show({ messageKey: "Delete this value?" }));
-    } else {
+    const performDelete = () =>
       dispatch(DataEntryActions.deleteNodes([node.uuid]));
+
+    if (!Nodes.isValueBlank(node)) {
+      dispatch(
+        ConfirmActions.show({
+          messageKey: "Delete this value?",
+          onConfirm: performDelete,
+        })
+      );
+    } else {
+      performDelete();
     }
   };
 
