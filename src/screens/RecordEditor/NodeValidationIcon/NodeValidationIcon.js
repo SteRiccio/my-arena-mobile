@@ -1,10 +1,15 @@
-import { NodeDefs, Validations } from "@openforis/arena-core";
+import { NodeDefs } from "@openforis/arena-core";
 
 import { Tooltip, WarningIconButton } from "components";
-import { DataEntrySelectors } from "state";
+import { useTranslation } from "localization";
+import { Validations } from "model/utils/Validations";
+import { DataEntrySelectors, SurveySelectors } from "state";
 
 export const NodeValidationIcon = (props) => {
   const { nodeDef, parentNodeUuid } = props;
+
+  const { t } = useTranslation();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const nodeDefUuid = nodeDef.uuid;
 
@@ -12,6 +17,7 @@ export const NodeValidationIcon = (props) => {
     parentNodeUuid,
     nodeDefUuid,
   });
+
   const validationChildrenCount =
     DataEntrySelectors.useRecordNodePointerValidationChildrenCount({
       parentNodeUuid,
@@ -29,7 +35,11 @@ export const NodeValidationIcon = (props) => {
     );
   }
   if (validation && !validation?.valid && NodeDefs.isSingle(nodeDef)) {
-    const message = "error";
+    const message = Validations.getJointErrorText({
+      validation,
+      t,
+      customMessageLang: lang,
+    });
     return (
       <Tooltip titleKey={message}>
         <WarningIconButton />
