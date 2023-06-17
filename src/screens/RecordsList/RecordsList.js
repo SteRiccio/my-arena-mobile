@@ -13,12 +13,15 @@ import {
 
 import { Button, DataTable, Loader, Text, VView } from "components";
 import { useNavigationFocus } from "hooks";
+import { useTranslation } from "localization";
 import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
 import { RecordService } from "service";
+import styles from "./styles";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
@@ -71,13 +74,16 @@ export const RecordsList = () => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
       const recordKeyProp = Objects.camelize(keyDef.props.name);
       const value = record[recordKeyProp];
-      acc[recordKeyProp] = NodeValueFormatter.format({
+      const valueFormatted = NodeValueFormatter.format({
         survey,
         nodeDef: keyDef,
         value,
         showLabel: true,
         lang,
       });
+      acc[recordKeyProp] = Objects.isEmpty(valueFormatted)
+        ? t("common:empty")
+        : valueFormatted;
       return acc;
     }, {});
 
@@ -101,8 +107,7 @@ export const RecordsList = () => {
   }
 
   return (
-    <VView>
-      <Button onPress={onNewRecordPress}>New Record</Button>
+    <VView style={styles.container}>
       {records.length === 0 && (
         <Text textKey="No records found" variant="titleMedium" />
       )}
@@ -125,6 +130,11 @@ export const RecordsList = () => {
           selectable
         />
       )}
+      <Button
+        onPress={onNewRecordPress}
+        style={styles.newRecordButton}
+        textKey="dataEntry:newRecord"
+      />
     </VView>
   );
 };

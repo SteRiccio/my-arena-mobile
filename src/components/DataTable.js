@@ -6,6 +6,8 @@ import { Arrays } from "@openforis/arena-core";
 
 import { useTranslation } from "localization";
 import { Checkbox } from "./Checkbox";
+import { VView } from "./VView";
+import { ScrollView } from "react-native";
 
 export const DataTable = (props) => {
   const {
@@ -53,7 +55,7 @@ export const DataTable = (props) => {
   );
 
   return (
-    <>
+    <VView style={{ flex: 1 }}>
       <Banner
         actions={[
           {
@@ -63,39 +65,42 @@ export const DataTable = (props) => {
         ]}
         visible={selectedRowIds.length > 0}
       />
-      <RNPDataTable>
+      <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
           {columns.map((column) => (
             <RNPDataTable.Title
               key={column.key}
               style={[{ flex: 1 }, column.style]}
+              textStyle={{ fontWeight: "bold", fontSize: 15 }}
             >
               {t(column.header)}
             </RNPDataTable.Title>
           ))}
           {selectable && (
-            <RNPDataTable.Title style={{ maxWidth: 70, minWidth: 70 }} />
+            <RNPDataTable.Title style={{ maxWidth: 40, minWidth: 40 }} />
           )}
         </RNPDataTable.Header>
-        {rows.map((row) => (
-          <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
-            {columns.map((column) => (
-              <RNPDataTable.Cell key={column.key} style={column.style}>
-                {row[column.key]}
-              </RNPDataTable.Cell>
-            ))}
-            {selectable && (
-              <RNPDataTable.Cell style={{ maxWidth: 70, minWidth: 70 }}>
-                <Checkbox
-                  checked={selectedRowIds.includes(row.key)}
-                  onPress={() => onRowSelect(row)}
-                />
-              </RNPDataTable.Cell>
-            )}
-          </RNPDataTable.Row>
-        ))}
+        <ScrollView persistentScrollbar>
+          {rows.map((row) => (
+            <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
+              {columns.map((column) => (
+                <RNPDataTable.Cell key={column.key} style={column.style}>
+                  {row[column.key]}
+                </RNPDataTable.Cell>
+              ))}
+              {selectable && (
+                <RNPDataTable.Cell style={{ maxWidth: 40, minWidth: 40 }}>
+                  <Checkbox
+                    checked={selectedRowIds.includes(row.key)}
+                    onPress={() => onRowSelect(row)}
+                  />
+                </RNPDataTable.Cell>
+              )}
+            </RNPDataTable.Row>
+          ))}
+        </ScrollView>
       </RNPDataTable>
-    </>
+    </VView>
   );
 };
 

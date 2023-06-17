@@ -7,6 +7,7 @@ import { SurveyService } from "service";
 import { useNavigationFocus } from "hooks";
 import { ConfirmActions, SurveyActions } from "state";
 import { screenKeys } from "../screenKeys";
+import styles from "./styles";
 
 export const SurveysListLocal = () => {
   const navigation = useNavigation();
@@ -51,7 +52,7 @@ export const SurveysListLocal = () => {
   );
 
   return (
-    <VView>
+    <VView style={styles.container}>
       <DataTable
         columns={[
           {
@@ -69,7 +70,8 @@ export const SurveysListLocal = () => {
         selectable
       />
       <Button
-        textKey="Import survey from cloud"
+        style={styles.importButton}
+        textKey="surveys:importSurveyFromCloud"
         onPress={() => navigation.navigate(screenKeys.surveysListRemote)}
       />
     </VView>

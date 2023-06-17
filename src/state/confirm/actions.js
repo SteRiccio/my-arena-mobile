@@ -3,9 +3,9 @@ const CONFIRM_HIDE = "CONFIRM_HIDE";
 
 const show =
   ({
-    titleKey = "Confirm",
-    cancelButtonTextKey = "Cancel",
-    confirmButtonTextKey = "Confirm",
+    titleKey = "common:confirm",
+    cancelButtonTextKey = "common:cancel",
+    confirmButtonTextKey = "common:confirm",
     messageKey,
     messageParams = {},
     onConfirm,
