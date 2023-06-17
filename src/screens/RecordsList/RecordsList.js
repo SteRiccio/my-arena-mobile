@@ -17,6 +17,7 @@ import { useTranslation } from "localization";
 import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
 import { RecordService } from "service";
 import styles from "./styles";
+import { SurveyLanguageDropdown } from "./SurveyLanguageDropdown";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -72,7 +73,7 @@ export const RecordsList = () => {
 
   const recordToRow = (record) => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
-      const recordKeyProp = Objects.camelize(keyDef.props.name);
+      const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
       const value = record[recordKeyProp];
       const valueFormatted = NodeValueFormatter.format({
         survey,
@@ -108,19 +109,20 @@ export const RecordsList = () => {
 
   return (
     <VView style={styles.container}>
+      <SurveyLanguageDropdown />
       {records.length === 0 && (
-        <Text textKey="No records found" variant="titleMedium" />
+        <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
       )}
       {records.length > 0 && (
         <DataTable
           columns={[
             ...rootDefKeys.map((keyDef) => ({
-              key: Objects.camelize(keyDef.props.name),
+              key: Objects.camelize(NodeDefs.getName(keyDef)),
               header: NodeDefs.getLabelOrName(keyDef, lang),
             })),
             {
               key: "dateModified",
-              header: "Modified on",
+              header: "common:modifiedOn",
               style: { minWidth: 70 },
             },
           ]}

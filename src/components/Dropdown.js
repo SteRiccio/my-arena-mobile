@@ -1,16 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
 import RNPDropdown from "react-native-paper-dropdown";
 
+import { useTranslation } from "localization";
+
 export const Dropdown = (props) => {
   const {
     disabled,
     itemKeyExtractor,
     itemLabelExtractor,
     items,
-    label,
+    label: labelProp,
     onChange,
     value,
   } = props;
+
+  const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
 
@@ -26,15 +30,16 @@ export const Dropdown = (props) => {
 
   const setValue = useCallback(
     async (val) => {
+      if (disabled) return;
       await onChange(val);
     },
-    [onChange, value]
+    [disabled, onChange, value]
   );
 
   return (
     <RNPDropdown
       disabled={disabled}
-      label={label}
+      label={t(labelProp)}
       list={options}
       mode="outlined"
       onDismiss={() => setOpen(false)}
@@ -49,5 +54,5 @@ export const Dropdown = (props) => {
 Dropdown.defaultProps = {
   itemKeyExtractor: (item) => item.value,
   itemLabelExtractor: (item) => item.label,
-  label: "Select an item",
+  label: "common:selectAnItem",
 };

@@ -3,7 +3,9 @@ export default {
   cancel: "Cancel",
   confirm: "Confirm",
   empty: "--- EMPTY ---",
+  label: "Label",
+  modifiedOn: "Modified on",
   name: "Name",
   networkNotAvailable: "Network not available!",
-  label: "Label",
+  selectAnItem: "Select an item",
 };

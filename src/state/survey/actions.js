@@ -2,13 +2,23 @@ import { screenKeys } from "screens/screenKeys";
 import { SurveyService } from "service";
 import { SurveyActionTypes } from "./actionTypes";
 
-const { CURRENT_SURVEY_SET, SURVEYS_LOCAL_SET } = SurveyActionTypes;
+const {
+  CURRENT_SURVEY_SET,
+  CURRENT_SURVEY_PREFERRED_LANG_SET,
+  SURVEYS_LOCAL_SET,
+} = SurveyActionTypes;
 
 const setCurrentSurvey =
   ({ survey, navigation }) =>
   (dispatch) => {
     dispatch({ type: CURRENT_SURVEY_SET, survey });
     navigation.navigate(screenKeys.recordsList);
+  };
+
+const setCurrentSurveyPreferredLanguage =
+  ({ lang }) =>
+  (dispatch) => {
+    dispatch({ type: CURRENT_SURVEY_PREFERRED_LANG_SET, lang });
   };
 
 const fetchAndSetCurrentSurvey =
@@ -41,6 +51,7 @@ const deleteSurveys = (surveyIds) => async (dispatch) => {
 
 export const SurveyActions = {
   setCurrentSurvey,
+  setCurrentSurveyPreferredLanguage,
   fetchAndSetCurrentSurvey,
   fetchAndSetLocalSurveys,
   importSurveyRemote,

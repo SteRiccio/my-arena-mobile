@@ -7,6 +7,13 @@ const actionHandlers = {
     currentSurvey: action.survey,
     currentSurveyPreferredLanguage: action.survey.props.languages[0],
   }),
+  [SurveyActionTypes.CURRENT_SURVEY_PREFERRED_LANG_SET]: ({
+    state,
+    action,
+  }) => ({
+    ...state,
+    currentSurveyPreferredLanguage: action.lang,
+  }),
   [SurveyActionTypes.SURVEYS_LOCAL_SET]: ({ state, action }) => ({
     ...state,
     surveysLocal: action.surveys,
