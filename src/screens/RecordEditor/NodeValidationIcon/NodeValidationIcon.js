@@ -34,15 +34,27 @@ export const NodeValidationIcon = (props) => {
       </Tooltip>
     );
   }
-  if (validation && !validation?.valid && NodeDefs.isSingle(nodeDef)) {
-    const message = Validations.getJointErrorText({
+  if (validation && !validation.valid && NodeDefs.isSingle(nodeDef)) {
+    const errorMessage = Validations.getJointErrorText({
       validation,
       t,
       customMessageLang: lang,
     });
+    const warningMessage = Validations.getJointWarningText({
+      validation,
+      t,
+      customMessageLang: lang,
+    });
+    const backgroundColor = errorMessage ? "darkred" : "orange";
+    const textColor = errorMessage ? "white" : "black";
+
     return (
-      <Tooltip titleKey={message}>
-        <WarningIconButton />
+      <Tooltip
+        backgroundColor={backgroundColor}
+        textColor={textColor}
+        titleKey={errorMessage || warningMessage}
+      >
+        <WarningIconButton iconColor={backgroundColor} />
       </Tooltip>
     );
   }

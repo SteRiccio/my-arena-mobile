@@ -19,7 +19,7 @@ const getJointTexts = ({ validation, severity, t, customMessageLang }) => {
           return message;
         }
       }
-      return t(key, params);
+      return t(`validation:${key}`, params);
     });
     result.push(...messages);
 
@@ -45,7 +45,14 @@ const getJointWarningText = ({ validation, t, customMessageLang }) =>
     customMessageLang,
   });
 
+const isError = (validation) =>
+  validation?.errors?.length > 0 ||
+  Object.values(validation.fields || {}).some(isError);
+const isWarning = (validation) => validation?.warnings?.length > 0;
+
 export const Validations = {
   getJointErrorText,
   getJointWarningText,
+  isError,
+  isWarning,
 };
