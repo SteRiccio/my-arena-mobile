@@ -9,6 +9,6 @@ This version of Arena Mobile has been developed entirely by me (Stefano Ricci), 
 
 If you find this application more reactive and easy to use compared to the official one, or you like some feature not included in the official one, please tell it here in GitHub creating a new Issue, or open a question in the Open Foris support forum.
 
-App logo provided by <a href="https://www.vecteezy.com/free-vector/wire">Wire Vectors by Vecteezy</a>
+App logo is free and provided by [Wire Vectors by Vecteezy](https://www.vecteezy.com/free-vector/wire).
 
 Cheers and enjoy the spaghetti code in this repository!
