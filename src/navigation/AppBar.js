@@ -59,22 +59,18 @@ export const AppBar = (props) => {
         onDismiss={toggleMenu}
         anchor={<RNPAppbar.Action icon="dots-vertical" onPress={toggleMenu} />}
       >
-        <Menu.Item
-          onPress={() => {
-            navigation.navigate(screenKeys.login);
-            toggleMenu();
-          }}
-          title="Login"
-        />
-        <Divider />
-        <Menu.Item
-          onPress={() => {
-            navigation.navigate(screenKeys.surveysListLocal);
-            toggleMenu();
-          }}
-          title="Surveys"
-        />
-        <Divider />
+        {!editingRecord && (
+          <>
+            <Menu.Item
+              onPress={() => {
+                navigation.navigate(screenKeys.surveysListLocal);
+                toggleMenu();
+              }}
+              title="Surveys"
+            />
+            <Divider />
+          </>
+        )}
         <Menu.Item
           onPress={() => {
             navigation.navigate(screenKeys.settings);

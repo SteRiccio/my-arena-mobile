@@ -1,9 +1,12 @@
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
-import { HView, Switch, Text, TextInput, VView } from "components";
-import { SettingsActions, SettingsSelectors } from "state";
 import { Objects } from "@openforis/arena-core";
+
+import { Button, HView, Switch, Text, TextInput, VView } from "components";
+import { SettingsActions, SettingsSelectors } from "state";
+import { screenKeys } from "../screenKeys";
 
 const propertyTypes = {
   boolean: "boolean",
@@ -27,6 +30,7 @@ const properties = {
 
 export const SettingsScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const settingsStored = SettingsSelectors.useSettings();
 
@@ -64,6 +68,13 @@ export const SettingsScreen = () => {
 
   return (
     <VView style={{ padding: 10 }}>
+      <Button
+        textKey="settings:connectionToRemoteServer"
+        onPress={() => {
+          navigation.navigate(screenKeys.settingsRemoteConnection);
+        }}
+      />
+
       {Object.entries(properties).map(([key, prop]) => {
         const { type, labelKey } = prop;
         const value = settings[key];

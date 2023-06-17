@@ -6,5 +6,7 @@ export default {
     default: "Default",
     custom: "Custom",
   },
-  title: "Login",
+  testUrl: "Test URL",
+  login: "Login",
+  title: "Connection to remote server",
 };

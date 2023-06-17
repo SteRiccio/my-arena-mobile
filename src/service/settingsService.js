@@ -2,8 +2,9 @@ import * as Keychain from "react-native-keychain";
 
 import { AsyncStorageUtils } from "./asyncStorage/AsyncStorageUtils";
 import { asyncStorageKeys } from "./asyncStorage/asyncStorageKeys";
+import { API } from "./api";
 
-const defaultServerUrl = "https://openforis-arena.org";
+const defaultServerUrl = "https://www.openforis-arena.org";
 
 const defaultSettings = {
   serverUrlType: "default",
@@ -36,6 +37,15 @@ const getCredentials = async (server) =>
 const setCredentials = async (server, email, password) =>
   Keychain.setInternetCredentials(server, email, password);
 
+const testServerUrl = async (serverUrl) => {
+  try {
+    await API.get(serverUrl, "guest/");
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const SettingsService = {
   defaultServerUrl,
   fetchSettings,
@@ -43,4 +53,6 @@ export const SettingsService = {
 
   getCredentials,
   setCredentials,
+
+  testServerUrl,
 };

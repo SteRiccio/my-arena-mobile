@@ -1,6 +1,6 @@
 import {
   HomeScreen,
-  LoginScreen,
+  SettingsRemoteConnectionScreen,
   RecordEditor,
   RecordsList,
   SettingsScreen,
@@ -21,11 +21,6 @@ export const screens = {
     title: "common:appTitle",
     component: HomeScreen,
   },
-  [screenKeys.login]: {
-    ...screenDefaults,
-    title: "login:title",
-    component: LoginScreen,
-  },
   [screenKeys.recordsList]: {
     ...screenDefaults,
     title: "dataEntry:listOfRecords",
@@ -38,6 +33,16 @@ export const screens = {
     hasDrawer: true,
     component: RecordEditor,
   },
+  [screenKeys.settings]: {
+    ...screenDefaults,
+    title: "settings:title",
+    component: SettingsScreen,
+  },
+  [screenKeys.settingsRemoteConnection]: {
+    ...screenDefaults,
+    title: "settingsRemoteConnection:title",
+    component: SettingsRemoteConnectionScreen,
+  },
   [screenKeys.surveysListLocal]: {
     ...screenDefaults,
     title: "surveys:surveysInTheDevice",
@@ -47,10 +52,5 @@ export const screens = {
     ...screenDefaults,
     title: "surveys:surveysInTheCloud",
     component: SurveysListRemote,
-  },
-  [screenKeys.settings]: {
-    ...screenDefaults,
-    title: "settings:title",
-    component: SettingsScreen,
   },
 };

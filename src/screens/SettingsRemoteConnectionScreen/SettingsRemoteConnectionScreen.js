@@ -2,28 +2,41 @@ import React, { useCallback, useEffect, useState } from "react";
 import { RadioButton } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
-import { Button, FieldSet, HView, TextInput, VView } from "components";
+import {
+  Button,
+  FieldSet,
+  HView,
+  Icon,
+  Text,
+  TextInput,
+  VView,
+} from "components";
 import { useTranslation } from "localization";
 import { SettingsService } from "service";
 import { RemoteConnectionActions } from "state";
+import { MessageActions } from "state/message";
+import { useIsNetworkConnected } from "hooks/useIsNetworkConnected";
 
 const serverUrlTypes = {
   default: "default",
   custom: "custom",
 };
 
-export const LoginScreen = () => {
+export const SettingsRemoteConnectionScreen = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const networkAvailable = useIsNetworkConnected();
 
   const [state, setState] = useState({
     serverUrl: SettingsService.defaultServerUrl,
     serverUrlType: serverUrlTypes.default,
+    serverUrlVerified: false,
     email: "",
     password: "",
   });
 
-  const { email, password, serverUrl, serverUrlType } = state;
+  const { email, password, serverUrl, serverUrlType, serverUrlVerified } =
+    state;
 
   useEffect(() => {
     const initialize = async () => {
@@ -58,6 +71,7 @@ export const LoginScreen = () => {
           type === serverUrlTypes.default
             ? SettingsService.defaultServerUrl
             : serverUrl,
+        serverUrlVerified: false,
       })),
     [serverUrl]
   );
@@ -67,9 +81,22 @@ export const LoginScreen = () => {
       setState((statePrev) => ({
         ...statePrev,
         serverUrl: serverUrlUpdated.trim(),
+        serverUrlVerified: false,
       })),
     []
   );
+
+  const onTestUrlPress = useCallback(async () => {
+    const valid = await SettingsService.testServerUrl(serverUrl);
+    setState((statePrev) => ({ ...statePrev, serverUrlVerified: valid }));
+    if (!valid) {
+      dispatch(
+        MessageActions.setMessage({
+          content: "settingsRemoteConnection:serverUrlNotValid",
+        })
+      );
+    }
+  }, [serverUrl]);
 
   const onEmailChange = useCallback(
     async (text) => setState((statePrev) => ({ ...statePrev, email: text })),
@@ -86,8 +113,10 @@ export const LoginScreen = () => {
   }, [email, password, serverUrl]);
 
   return (
-    <VView>
-      <FieldSet heading="login:serverUrl">
+    <VView style={{ padding: 10 }}>
+      {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
+
+      <FieldSet heading="settingsRemoteConnection:serverUrl">
         <RadioButton.Group
           onValueChange={onServerUrlTypeChange}
           value={serverUrlType}
@@ -96,27 +125,53 @@ export const LoginScreen = () => {
             {Object.values(serverUrlTypes).map((type) => (
               <RadioButton.Item
                 key={type}
-                label={t(`login:serverUrlType.${type}`)}
+                disabled={!networkAvailable}
+                label={t(`settingsRemoteConnection:serverUrlType.${type}`)}
                 value={type}
               />
             ))}
           </HView>
         </RadioButton.Group>
-        <TextInput
-          disabled={serverUrlType === serverUrlTypes.default}
-          value={serverUrl}
-          onChange={onServerUrlChange}
-        />
+        <HView>
+          <TextInput
+            disabled={
+              serverUrlType === serverUrlTypes.default || !networkAvailable
+            }
+            onChange={onServerUrlChange}
+            style={{ width: "90%" }}
+            value={serverUrl}
+          />
+          {serverUrlVerified && <Icon source="check" size={50} />}
+        </HView>
+        {!serverUrlVerified && (
+          <Button
+            disabled={!networkAvailable}
+            style={{ margin: 10 }}
+            textKey="settingsRemoteConnection:testUrl"
+            onPress={onTestUrlPress}
+          />
+        )}
       </FieldSet>
 
-      <TextInput label="login:email" onChange={onEmailChange} value={email} />
       <TextInput
-        label="login:password"
+        disabled={!networkAvailable}
+        label="settingsRemoteConnection:email"
+        onChange={onEmailChange}
+        value={email}
+      />
+      <TextInput
+        disabled={!networkAvailable}
+        label="settingsRemoteConnection:password"
         onChange={onPasswordChange}
         value={password}
         secureTextEntry
       />
-      <Button onPress={onLogin}>Login</Button>
+      <Button
+        disabled={!networkAvailable}
+        onPress={onLogin}
+        style={{ margin: 20 }}
+        textKey="settingsRemoteConnection:login"
+      />
     </VView>
   );
 };
