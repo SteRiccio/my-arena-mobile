@@ -3,7 +3,8 @@ export const migration_001_base = async (client) => {
     tx.executeSql(`CREATE TABLE IF NOT EXISTS survey (
         id          INTEGER         PRIMARY KEY AUTOINCREMENT,
         uuid        CHAR(16)        NOT NULL,
-        server_url  VARCHAR(255)    NOT NULL,
+        server_url  VARCHAR(255),
+        remote_id   INTEGER,
         name        VARCHAR(255)    NOT NULL,
         label       VARCHAR(255),
         content     TEXT            NOT NULL,

@@ -11,13 +11,15 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { Button, DataTable, Loader, Text, VView } from "components";
+import { Button, DataTable, HView, Loader, Text, VView } from "components";
 import { useNavigationFocus } from "hooks";
 import { useTranslation } from "localization";
-import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
 import { RecordService } from "service";
-import styles from "./styles";
+import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
+
 import { SurveyLanguageDropdown } from "./SurveyLanguageDropdown";
+import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
+import styles from "./styles";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -32,15 +34,35 @@ export const RecordsList = () => {
     return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
   }, [survey]);
 
-  const [state, setState] = useState({ records: [], loading: true });
-  const { records, loading } = state;
+  const [state, setState] = useState({
+    records: [],
+    syncStatusFetched: false,
+    loading: true,
+  });
+  const { records, loading, syncStatusFetched } = state;
 
   const loadRecords = useCallback(async () => {
     const _records = await RecordService.fetchRecords({ survey });
     setState((statePrev) => ({
       ...statePrev,
       records: _records,
+      syncStatusFetched: false,
       loading: false,
+    }));
+  }, [survey]);
+
+  const loadRecordsWithSyncStatus = useCallback(async () => {
+    setState((statePrev) => ({
+      ...statePrev,
+      loading: true,
+      syncStatusFetched: false,
+    }));
+    const _records = await RecordService.fetchRecordsWithSyncStatus({ survey });
+    setState((statePrev) => ({
+      ...statePrev,
+      records: _records,
+      loading: false,
+      syncStatusFetched: true,
     }));
   }, [survey]);
 
@@ -109,34 +131,54 @@ export const RecordsList = () => {
 
   return (
     <VView style={styles.container}>
-      <SurveyLanguageDropdown />
-      {records.length === 0 && (
-        <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
-      )}
-      {records.length > 0 && (
-        <DataTable
-          columns={[
-            ...rootDefKeys.map((keyDef) => ({
-              key: Objects.camelize(NodeDefs.getName(keyDef)),
-              header: NodeDefs.getLabelOrName(keyDef, lang),
-            })),
-            {
-              key: "dateModified",
-              header: "common:modifiedOn",
-              style: { minWidth: 70 },
-            },
-          ]}
-          rows={records.map(recordToRow)}
-          onRowPress={onRowPress}
-          onDeleteSelectedRowIds={onDeleteSelectedRowIds}
-          selectable
+      <VView style={styles.innerContainer}>
+        <SurveyLanguageDropdown />
+        {records.length === 0 && (
+          <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
+        )}
+        {records.length > 0 && (
+          <DataTable
+            columns={[
+              ...rootDefKeys.map((keyDef) => ({
+                key: Objects.camelize(NodeDefs.getName(keyDef)),
+                header: NodeDefs.getLabelOrName(keyDef, lang),
+              })),
+              {
+                key: "dateModified",
+                header: "common:modifiedOn",
+                style: { minWidth: 70 },
+              },
+              ...(syncStatusFetched
+                ? [
+                    {
+                      key: "syncStatus",
+                      header: "dataEntry:syncStatusHeader",
+                      cellRenderer: RecordSyncStatusIcon,
+                    },
+                  ]
+                : []),
+            ]}
+            rows={records.map(recordToRow)}
+            onRowPress={onRowPress}
+            onDeleteSelectedRowIds={onDeleteSelectedRowIds}
+            selectable
+          />
+        )}
+      </VView>
+      <HView style={styles.bottomActionBar}>
+        <Button
+          onPress={onNewRecordPress}
+          style={styles.newRecordButton}
+          textKey="dataEntry:newRecord"
         />
-      )}
-      <Button
-        onPress={onNewRecordPress}
-        style={styles.newRecordButton}
-        textKey="dataEntry:newRecord"
-      />
+        {records.length > 0 && (
+          <Button
+            onPress={loadRecordsWithSyncStatus}
+            style={styles.checkSyncStatusButton}
+            textKey="dataEntry:checkSyncStatus"
+          />
+        )}
+      </HView>
     </VView>
   );
 };

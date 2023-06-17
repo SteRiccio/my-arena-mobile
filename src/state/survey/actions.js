@@ -34,12 +34,9 @@ const fetchAndSetLocalSurveys = () => async (dispatch) => {
 };
 
 const importSurveyRemote =
-  ({ surveyId, cycle, navigation }) =>
+  ({ surveyId, navigation }) =>
   async (dispatch) => {
-    const survey = await SurveyService.importSurveyRemote({
-      id: surveyId,
-      cycle,
-    });
+    const survey = await SurveyService.importSurveyRemote({ id: surveyId });
     dispatch(setCurrentSurvey({ survey, navigation }));
     dispatch(fetchAndSetLocalSurveys());
   };

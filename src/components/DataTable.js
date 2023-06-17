@@ -83,9 +83,9 @@ export const DataTable = (props) => {
         <ScrollView persistentScrollbar>
           {rows.map((row) => (
             <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
-              {columns.map((column) => (
-                <RNPDataTable.Cell key={column.key} style={column.style}>
-                  {row[column.key]}
+              {columns.map(({ key: columnKey, style, cellRenderer = null }) => (
+                <RNPDataTable.Cell key={columnKey} style={style}>
+                  {cellRenderer ? cellRenderer({ row }) : row[columnKey]}
                 </RNPDataTable.Cell>
               ))}
               {selectable && (

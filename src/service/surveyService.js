@@ -1,14 +1,8 @@
 import { Surveys } from "@openforis/arena-core";
 
 import { SurveyRepository } from "./repository/surveyRepository";
-import { API } from "./api";
-import { SettingsService } from "./settingsService";
+import { AbstractService } from "./abstractService";
 import demoSurvey from "./simple_survey.json";
-
-const getServerUrl = async () =>
-  (await SettingsService.fetchSettings()).serverUrl;
-
-const _get = async (uri, params) => API.get(await getServerUrl(), uri, params);
 
 const {
   fetchSurveySummaries: fetchSurveySummariesLocal,
@@ -31,29 +25,20 @@ const fetchCategoryItems = ({
   return items;
 };
 
-const statusToErrorKey = {
-  500: "internal_server_error",
-  401: "invalid_credentials",
-};
-
 const fetchSurveySummariesRemote = async () => {
   try {
-    const { data } = await _get("api/surveys", { draft: false });
+    const { data } = await AbstractService.get("api/surveys", { draft: false });
     const { list: surveys } = data;
     return { surveys };
   } catch (error) {
-    if (error.response) {
-      const status = error?.response?.status;
-      const errorKey = statusToErrorKey[status] || error.errorMessage;
-      return { errorKey };
-    } else {
-      return { errorKey: "network_error" };
-    }
+    return AbstractService.handleError({ error });
   }
 };
 
 const fetchSurveyRemoteById = async ({ id, cycle }) => {
-  const { data } = await _get(`api/mobile/survey/${id}`, { cycle });
+  const { data } = await AbstractService.get(`api/mobile/survey/${id}`, {
+    cycle,
+  });
   const { survey } = data;
   return survey;
 };
