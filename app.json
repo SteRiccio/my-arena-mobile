@@ -2,7 +2,7 @@
   "expo": {
     "name": "MyArenaMobile",
     "slug": "my-arena-mobile",
-    "version": "1.0.1",
+    "version": "0.9.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "org.stericcio"
+      "package": "org.stericcio.myarenamobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
