@@ -17,6 +17,7 @@ import { screenKeys } from "screens/screenKeys";
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { ConfirmActions } from "state/confirm";
+import { RecordsExportJob } from "service/recordsExportJob";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
@@ -240,6 +241,14 @@ const navigateToRecordsList =
     );
   };
 
+const exportRecords =
+  ({ recordUuids }) =>
+  (dispatch, getState) => {
+    const state = getState();
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    new RecordsExportJob({ survey, recordUuids, user: {} }).start();
+  };
+
 export const DataEntryActions = {
   CURRENT_RECORD_SET,
   CURRENT_PAGE_ENTITY_SET,
@@ -257,4 +266,5 @@ export const DataEntryActions = {
   toggleRecordPageMenuOpen,
 
   navigateToRecordsList,
+  exportRecords,
 };

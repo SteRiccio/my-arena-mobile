@@ -1855,10 +1855,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@openforis/arena-core@^0.0.141":
-  version "0.0.141"
-  resolved "https://npm.pkg.github.com/download/@openforis/arena-core/0.0.141/ebaa31665b297dd96315be4baba9c783bb1ffc3f#ebaa31665b297dd96315be4baba9c783bb1ffc3f"
-  integrity sha512-kDw7lLD5baChnxX06gQldD+P2JHN0beD79OzV9ePhGehArGzHbJxjNfxfm1igHb0URWwct+CbJPQvli2weTEsQ==
+"@openforis/arena-core@^0.0.146":
+  version "0.0.146"
+  resolved "https://npm.pkg.github.com/download/@openforis/arena-core/0.0.146/d7a72c65c9a4e0057dbc3c467ded606b1d657218#d7a72c65c9a4e0057dbc3c467ded606b1d657218"
+  integrity sha512-jiT1i6F2iVoCv4/84Q/ohV3yLYIxjj2zPBn3EGdioodvrP3e3ceOcHG/JK36SOmVTpil6Y+2/SLhqIHUFBkRoQ==
   dependencies:
     "@esri/proj-codes" "^3.1.0"
     "@jsep-plugin/regex" "^1.0.3"
@@ -9421,6 +9421,11 @@ react-native-web@~0.18.12:
     normalize-css-color "^1.0.2"
     postcss-value-parser "^4.2.0"
     styleq "^0.1.2"
+
+react-native-zip-archive@^6.0.9:
+  version "6.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-zip-archive/-/react-native-zip-archive-6.0.9.tgz#9a1456f1dc6a9d7bb13135a00775e07cda247997"
+  integrity sha512-IYf3yHJ7sHzj9ucO3Amx/TtsZcTgHdfj+Dar8p1e32E+wBsn7mv0PDp2X/oCLGci0nG9i2DBstrnCW74/7NLYQ==
 
 react-native@0.71.3:
   version "0.71.3"

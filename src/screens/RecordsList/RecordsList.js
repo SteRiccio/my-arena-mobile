@@ -20,6 +20,7 @@ import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
 import { SurveyLanguageDropdown } from "./SurveyLanguageDropdown";
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import styles from "./styles";
+import { RecordSyncStatus } from "model/RecordSyncStatus";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -92,6 +93,13 @@ export const RecordsList = () => {
       })
     );
   }, []);
+
+  const onExportPress = useCallback(() => {
+    const newRecordsUuids = records
+      .filter((record) => record.syncStatus === RecordSyncStatus.new)
+      .map((record) => record.uuid);
+    dispatch(DataEntryActions.exportRecords({ recordUuids: newRecordsUuids }));
+  }, [records]);
 
   const recordToRow = (record) => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
@@ -171,11 +179,18 @@ export const RecordsList = () => {
           style={styles.newRecordButton}
           textKey="dataEntry:newRecord"
         />
-        {records.length > 0 && (
+        {!syncStatusFetched && records.length > 0 && (
           <Button
             onPress={loadRecordsWithSyncStatus}
             style={styles.checkSyncStatusButton}
             textKey="dataEntry:checkSyncStatus"
+          />
+        )}
+        {syncStatusFetched && (
+          <Button
+            onPress={onExportPress}
+            style={styles.exportButton}
+            textKey="dataEntry:exportData"
           />
         )}
       </HView>

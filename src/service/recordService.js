@@ -1,4 +1,4 @@
-import { Dates, NodeDefs, Surveys } from "@openforis/arena-core";
+import { Dates, NodeDefs, Objects, Surveys } from "@openforis/arena-core";
 import { AbstractService } from "./abstractService";
 import { RecordRepository } from "./repository/recordRepository";
 import { RecordSyncStatus } from "model/RecordSyncStatus";
@@ -26,7 +26,7 @@ const determineRecordSyncStatus = ({
   const rootDef = Surveys.getNodeDefRoot({ survey });
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
   const keysSpecified = keyDefs.every(
-    (keyDef) => !!recordSummaryLocal[NodeDefs.getName(keyDef)]
+    (keyDef) => !!recordSummaryLocal[Objects.camelize(NodeDefs.getName(keyDef))]
   );
   if (!keysSpecified) {
     return RecordSyncStatus.keysNotSpecified;
