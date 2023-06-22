@@ -11,6 +11,7 @@ import {
   SurveySelectors,
 } from "state";
 import { RecordNodes } from "model/utils/RecordNodes";
+import styles from "./styles";
 
 export const NodeMultipleEntityListComponent = (props) => {
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ export const NodeMultipleEntityListComponent = (props) => {
   const rows = entities.map(entityToRow);
 
   return (
-    <VView>
+    <VView style={styles.container}>
       <Button icon="plus" onPress={onNewPress}>
         New {nodeDefLabel}
       </Button>

@@ -7,6 +7,8 @@ export default {
   importSurvey: "Import survey",
   importSurveyConfirmMessage: "Import this survey?",
   importSurveyFromCloud: "Import survey from cloud",
+  loadSurveysErrorMessage:
+    "Error fetching surveys from remote server.\n\nUser not logged in or session expired.\n\nLogin to the server?",
   manageSurveys: "Manage surveys",
   selectSurvey: "Select a survey",
   surveysInTheCloud: "Surveys in the cloud",

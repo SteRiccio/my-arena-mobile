@@ -19,4 +19,7 @@ export default StyleSheet.create({
   checkSyncStatusButton: {
     alignSelf: "flex-end",
   },
+  exportButton: {
+    alignSelf: "flex-end",
+  },
 });

@@ -29,8 +29,7 @@ export const SurveysListRemote = () => {
         ConfirmActions.show({
           titleKey: "Error",
           confirmButtonTextKey: "Login",
-          messageKey:
-            "Error fetching surveys from remote location. User not logged in or session expired. Login to the server?",
+          messageKey: "surveys:loadSurveysErrorMessage",
           onConfirm: () =>
             navigation.navigate(screenKeys.settingsRemoteConnection),
           onCancel: () => navigation.goBack(),
