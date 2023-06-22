@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 import { UUIDs } from "@openforis/arena-core";
 
@@ -52,10 +53,11 @@ export const useNodeImageComponent = ({ nodeUuid }) => {
         const sourceFileUri = asset.uri;
         setPickedImageUri(sourceFileUri);
 
-        const nextFileUuid = UUIDs.v4();
-        const fileName = null;
-        const fileSize = null;
-        const valueUpdated = { fileUuid: nextFileUuid, fileName, fileSize };
+        const info = await FileSystem.getInfoAsync(sourceFileUri);
+
+        const fileName = uri.substring(uri.lastIndexOf("/") + 1);
+        const fileSize = info.size;
+        const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
         await updateNodeValue(valueUpdated, sourceFileUri);
       }
     },
