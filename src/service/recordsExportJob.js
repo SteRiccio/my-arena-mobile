@@ -1,7 +1,13 @@
 import { zip } from "react-native-zip-archive";
 import * as FileSystem from "expo-file-system";
 
-import { Dates, JobBase, Promises, UUIDs } from "@openforis/arena-core";
+import {
+  Dates,
+  JobBase,
+  JobStatus,
+  Promises,
+  UUIDs,
+} from "@openforis/arena-core";
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
 
@@ -51,11 +57,22 @@ export class RecordsExportJob extends JobBase {
       });
 
       const outputFileName = `recordsExport-${Dates.nowFormattedForStorage()}.zip`;
-      const outputFilePath = `${FileSystem.documentDirectory}${outputFileName}`;
+      this.outputFilePath = `${FileSystem.documentDirectory}${outputFileName}`;
 
-      await zip(tempFolderPath, outputFilePath);
+      await zip(tempFolderPath, this.outputFilePath);
     } finally {
       await FileSystem.deleteAsync(tempFolderPath);
+    }
+  }
+
+  async prepareResult() {
+    const { outputFilePath } = this;
+    if (this.summary.status === JobStatus.succeeded) {
+      return {
+        outputFilePath,
+      };
+    } else {
+      return null;
     }
   }
 
