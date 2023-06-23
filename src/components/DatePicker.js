@@ -25,6 +25,7 @@ export const DatePicker = (props) => {
     <HView>
       <TextInput
         editable={false}
+        nonEditableStyleVisible={false}
         onPressIn={showDatePicker}
         style={{ width: 140 }}
         value={Dates.format(value, DateFormats.dateDisplay)}

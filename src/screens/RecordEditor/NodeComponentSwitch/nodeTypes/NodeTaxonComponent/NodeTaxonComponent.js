@@ -34,13 +34,16 @@ export const NodeTaxonComponent = (props) => {
   const survey = SurveySelectors.useCurrentSurvey();
 
   const taxonomyUuid = NodeDefs.getTaxonomyUuid(nodeDef);
+
   const taxa = useMemo(() => {
     const allTaxa = Object.values(survey.refData?.taxonIndex || {});
     return allTaxa.filter((taxon) => taxon.taxonomyUuid === taxonomyUuid);
-  }, [survey]);
+  }, [survey, taxonomyUuid]);
 
-  const itemLabelFunction = (taxon) =>
-    `(${taxon.props.code}) ${taxon.props.scientificName}`;
+  const itemLabelFunction = (taxon) => {
+    const { code, scientificName } = taxon.props;
+    return `(${code}) ${scientificName}`;
+  };
 
   const [selectedTaxon, setSelectedTaxon] = useState(
     value &&

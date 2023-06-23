@@ -26,7 +26,7 @@ export const NodeEntityFormComponent = (props) => {
   }, [nodeDef, parentNodeUuid]);
 
   const onFormItemFocus = useCallback((event) => {
-    event.target
+    event?.target
       ?.getNativeRef?.()
       .measureLayout(scrollViewRef.current, (_x, y, _width, _height) => {
         scrollViewRef.current?.scrollTo({ y: y - 40, animated: true });

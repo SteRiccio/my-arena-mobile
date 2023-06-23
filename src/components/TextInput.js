@@ -9,6 +9,7 @@ export const TextInput = (props) => {
     editable,
     keyboardType,
     label: labelKey,
+    nonEditableStyleVisible,
     placeholder: placeholderKey,
     onChange,
     onPressIn,
@@ -21,7 +22,8 @@ export const TextInput = (props) => {
 
   const label = t(labelKey);
 
-  const style = editable ? {} : { backgroundColor: "#ebebeb" };
+  const style =
+    editable || !nonEditableStyleVisible ? {} : { backgroundColor: "#ebebeb" };
 
   return (
     <RNPTextInput
@@ -38,4 +40,8 @@ export const TextInput = (props) => {
       value={value}
     />
   );
+};
+
+TextInput.defaultProps = {
+  nonEditableStyleVisible: true,
 };
