@@ -134,7 +134,9 @@ const updateAttribute =
       uuid: node.nodeDefUuid,
     });
 
-    const nodeUpdated = { ...node, value };
+    const { meta } = node;
+    const metaUpdated = { ...meta, defaultValueApplied: false };
+    const nodeUpdated = { ...node, meta: metaUpdated, value };
 
     const { record: recordUpdated } = await RecordUpdater.updateNode({
       survey,
