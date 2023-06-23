@@ -34,7 +34,10 @@ export const Breadcrumbs = () => {
   }) => {
     let label = NodeDefs.getLabelOrName(nodeDef, lang);
 
-    if (NodeDefs.isRoot(nodeDef)) {
+    if (
+      NodeDefs.isRoot(nodeDef) ||
+      (NodeDefs.isMultiple(nodeDef) && parentEntity)
+    ) {
       const keyValuesByName = RecordNodes.getEntityKeyValuesByNameFormatted({
         survey,
         record,
@@ -43,11 +46,6 @@ export const Breadcrumbs = () => {
       return label + `[${Object.values(keyValuesByName)}]`;
     }
 
-    if (NodeDefs.isMultiple(nodeDef) && parentEntity) {
-      const siblings = Records.getChildren(parentEntity, nodeDef.uuid)(record);
-      const index = siblings.indexOf(entity);
-      label += `[${index + 1}]`;
-    }
     return label;
   };
 
