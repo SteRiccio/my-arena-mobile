@@ -1,6 +1,7 @@
 import "react-native-get-random-values";
 
 import {
+  JobStatus,
   NodeDefs,
   NodeDefType,
   RecordFactory,
@@ -18,6 +19,7 @@ import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { ConfirmActions } from "state/confirm";
 import { RecordsExportJob } from "service/recordsExportJob";
+import { MessageActions } from "state/message";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
@@ -243,10 +245,25 @@ const navigateToRecordsList =
 
 const exportRecords =
   ({ recordUuids }) =>
-  (dispatch, getState) => {
+  async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
-    new RecordsExportJob({ survey, recordUuids, user: {} }).start();
+    const job = new RecordsExportJob({ survey, recordUuids, user: {} });
+    await job.start();
+    const { result, summary } = job;
+
+    if (summary?.status === JobStatus.failed) {
+      dispatch(
+        MessageActions.setMessage({ content: "dataEntry:dataExportError" })
+      );
+    } else {
+      const { outputFilePath } = result;
+      dispatch(
+        MessageActions.setMessage({
+          content: `Data exported successfully into file: ${outputFilePath}`,
+        })
+      );
+    }
   };
 
 export const DataEntryActions = {
