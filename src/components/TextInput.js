@@ -13,13 +13,15 @@ export const TextInput = (props) => {
     onChange,
     onPressIn,
     secureTextEntry,
-    style,
+    style: styleProp,
     value,
   } = props;
 
   const { t } = useTranslation();
 
   const label = t(labelKey);
+
+  const style = editable ? {} : { backgroundColor: "#ebebeb" };
 
   return (
     <RNPTextInput
@@ -32,7 +34,7 @@ export const TextInput = (props) => {
       onPressIn={onPressIn}
       placeholder={placeholderKey}
       secureTextEntry={secureTextEntry}
-      style={style}
+      style={[styleProp, style]}
       value={value}
     />
   );
