@@ -250,9 +250,10 @@ const exportRecords =
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const job = new RecordsExportJob({ survey, recordUuids, user: {} });
     await job.start();
-    const { result, summary } = job;
+    const { summary } = job;
+    const { status, result } = summary;
 
-    if (summary?.status === JobStatus.failed) {
+    if (status === JobStatus.failed) {
       dispatch(
         MessageActions.setMessage({ content: "dataEntry:dataExportError" })
       );
