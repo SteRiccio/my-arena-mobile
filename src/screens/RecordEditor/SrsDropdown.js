@@ -4,7 +4,7 @@ import { Dropdown } from "components";
 import { SurveySelectors } from "state";
 
 export const SrsDropdown = (props) => {
-  const { onChange, value } = props;
+  const { editable, onChange, value } = props;
 
   const survey = SurveySelectors.useCurrentSurvey();
   const srss = survey.props.srs;
@@ -16,7 +16,7 @@ export const SrsDropdown = (props) => {
 
   return (
     <Dropdown
-      disabled={singleSrs}
+      disabled={!editable || singleSrs}
       items={items}
       onChange={onChange}
       value={selectedValue}

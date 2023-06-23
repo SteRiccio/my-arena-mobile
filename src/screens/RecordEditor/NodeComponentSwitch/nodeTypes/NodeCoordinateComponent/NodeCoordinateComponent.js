@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as Location from "expo-location";
 
-import { Objects, PointFactory, Points, Surveys } from "@openforis/arena-core";
+import {
+  NodeDefs,
+  Objects,
+  PointFactory,
+  Points,
+  Surveys,
+} from "@openforis/arena-core";
 
 import { Button, HView, Text, TextInput, VView } from "components";
 import { SettingsSelectors, SurveySelectors } from "state";
@@ -53,12 +59,14 @@ export const NodeCoordinateComponent = (props) => {
   const srsIndex = useMemo(() => Surveys.getSRSIndex(survey), [srss]);
 
   const editable =
-    !nodeDef.props.readOnly && !nodeDef.props.allowOnlyDeviceCoordinate;
+    !NodeDefs.isReadOnly(nodeDef) &&
+    !NodeDefs.isAllowOnlyDeviceCoordinate(nodeDef);
 
   const { accuracy, x, y, srsId = srss[0].code } = value || {};
 
-  const xTextValue = Objects.isEmpty(x) ? "" : String(x);
-  const yTextValue = Objects.isEmpty(y) ? "" : String(y);
+  const numberToString = (num) => (Objects.isEmpty(num) ? "" : String(num));
+  const xTextValue = numberToString(x);
+  const yTextValue = numberToString(y);
 
   const stopGps = () => {
     locationSubscritionRef.current?.remove();
@@ -153,7 +161,7 @@ export const NodeCoordinateComponent = (props) => {
       </HView>
       <HView style={styles.formItem}>
         <Text style={styles.formItemLabel} textKey="SRS" />
-        <SrsDropdown onChange={onChangeSrs} value={srsId} />
+        <SrsDropdown editable={editable} onChange={onChangeSrs} value={srsId} />
       </HView>
       <HView style={styles.accuracyFormItem}>
         <Text style={styles.formItemLabel} textKey="Accuracy" />
