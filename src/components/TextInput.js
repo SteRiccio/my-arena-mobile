@@ -16,6 +16,7 @@ export const TextInput = (props) => {
     secureTextEntry,
     style: styleProp,
     value,
+    ...otherProps
   } = props;
 
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export const TextInput = (props) => {
       secureTextEntry={secureTextEntry}
       style={[styleProp, style]}
       value={value}
+      {...otherProps}
     />
   );
 };

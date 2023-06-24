@@ -9,6 +9,7 @@ import {
   Icon,
   Text,
   TextInput,
+  TextInputPassword,
   VView,
 } from "components";
 import { useTranslation } from "localization";
@@ -99,7 +100,11 @@ export const SettingsRemoteConnectionScreen = () => {
   }, [serverUrl]);
 
   const onEmailChange = useCallback(
-    async (text) => setState((statePrev) => ({ ...statePrev, email: text })),
+    async (text) =>
+      setState((statePrev) => ({
+        ...statePrev,
+        email: text?.trim().toLocaleLowerCase(),
+      })),
     []
   );
 
@@ -159,12 +164,11 @@ export const SettingsRemoteConnectionScreen = () => {
         onChange={onEmailChange}
         value={email}
       />
-      <TextInput
+      <TextInputPassword
         disabled={!networkAvailable}
         label="settingsRemoteConnection:password"
         onChange={onPasswordChange}
         value={password}
-        secureTextEntry
       />
       <Button
         disabled={!networkAvailable}

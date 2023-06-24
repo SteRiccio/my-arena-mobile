@@ -4,7 +4,15 @@ import { useNavigation } from "@react-navigation/native";
 
 import { Objects } from "@openforis/arena-core";
 
-import { Button, HView, Switch, Text, TextInput, VView } from "components";
+import {
+  Button,
+  Divider,
+  HView,
+  Switch,
+  Text,
+  TextInput,
+  VView,
+} from "components";
 import { SettingsActions, SettingsSelectors } from "state";
 import { screenKeys } from "../screenKeys";
 
@@ -26,6 +34,42 @@ const properties = {
     type: propertyTypes.numeric,
     labelKey: "Location accuracy watch timeout (seconds)",
   },
+};
+
+const SettingsItem = (props) => {
+  const { settings, settingKey, prop, onPropValueChange } = props;
+  const { type, labelKey } = prop;
+  const value = settings[settingKey];
+  switch (type) {
+    case propertyTypes.boolean:
+      return (
+        <HView
+          key={settingKey}
+          style={{
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text textKey={labelKey} />
+          <Switch
+            value={value}
+            onChange={onPropValueChange({ key: settingKey })}
+          />
+        </HView>
+      );
+    case propertyTypes.numeric:
+      return (
+        <VView key={settingKey}>
+          <Text textKey={labelKey} />
+          <TextInput
+            value={Objects.isEmpty(value) ? "" : String(value)}
+            onChange={onPropValueChange({ key: settingKey })}
+          />
+        </VView>
+      );
+    default:
+      return null;
+  }
 };
 
 export const SettingsScreen = () => {
@@ -74,36 +118,17 @@ export const SettingsScreen = () => {
           navigation.navigate(screenKeys.settingsRemoteConnection);
         }}
       />
-
-      {Object.entries(properties).map(([key, prop]) => {
-        const { type, labelKey } = prop;
-        const value = settings[key];
-        switch (type) {
-          case propertyTypes.boolean:
-            return (
-              <HView
-                key={key}
-                style={{
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text textKey={labelKey} />
-                <Switch value={value} onChange={onPropValueChange({ key })} />
-              </HView>
-            );
-          case propertyTypes.numeric:
-            return (
-              <VView key={key}>
-                <Text textKey={labelKey} />
-                <TextInput
-                  value={Objects.isEmpty(value) ? "" : String(value)}
-                  onChange={onPropValueChange({ key })}
-                />
-              </VView>
-            );
-        }
-      })}
+      {Object.entries(properties).map(([key, prop], index) => (
+        <VView key={key} style={{ marginTop: 20 }}>
+          <SettingsItem
+            settings={settings}
+            settingKey={key}
+            prop={prop}
+            onPropValueChange={onPropValueChange}
+          />
+          {index < Object.entries(properties).length - 1 && <Divider />}
+        </VView>
+      ))}
     </VView>
   );
 };
