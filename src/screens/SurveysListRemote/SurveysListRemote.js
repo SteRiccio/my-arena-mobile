@@ -2,11 +2,13 @@ import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { DataTable, Loader, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
+import { DataTable, Loader, Searchbar, Text, VView } from "components";
+import { useNavigationFocus } from "hooks";
+import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
 import { SurveyService } from "service";
 import { ConfirmActions, SurveyActions, SurveySelectors } from "state";
-import { useNavigationFocus } from "hooks";
+
 import styles from "./styles";
 
 export const SurveysListRemote = () => {
@@ -41,10 +43,15 @@ export const SurveysListRemote = () => {
       errorKey,
       loading: false,
       surveys: _surveys,
+      surveysFiltered: _surveys,
+      searchValue: "",
     }));
   };
 
   useNavigationFocus({ onFocus: loadSurveys });
+
+  const { onSearchValueChange, searchValue, surveysFiltered } =
+    useSurveysSearch({ surveys });
 
   const onRowPress = useCallback((surveySummary) => {
     if (
@@ -84,24 +91,32 @@ export const SurveysListRemote = () => {
 
   return (
     <VView style={styles.container}>
-      {surveys.length === 0 && (
-        <Text textKey="No available surveys found" variant="labelLarge" />
+      {surveys.length > 5 && (
+        <Searchbar value={searchValue} onChange={onSearchValueChange} />
       )}
-      {surveys.length > 0 && (
-        <DataTable
-          columns={[
-            {
-              key: "name",
-              header: "common:name",
-            },
-            {
-              key: "defaultLabel",
-              header: "common:label",
-            },
-          ]}
-          rows={surveys.map((survey) => ({ key: survey.uuid, ...survey }))}
-          onRowPress={onRowPress}
-        />
+      {surveysFiltered.length === 0 && (
+        <Text textKey="surveys:noAvailableSurveysFound" variant="labelLarge" />
+      )}
+      {surveysFiltered.length > 0 && (
+        <>
+          <DataTable
+            columns={[
+              {
+                key: "name",
+                header: "common:name",
+              },
+              {
+                key: "defaultLabel",
+                header: "common:label",
+              },
+            ]}
+            rows={surveysFiltered.map((survey) => ({
+              key: survey.uuid,
+              ...survey,
+            }))}
+            onRowPress={onRowPress}
+          />
+        </>
       )}
     </VView>
   );

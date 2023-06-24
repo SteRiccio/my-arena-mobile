@@ -10,6 +10,7 @@ export default {
   loadSurveysErrorMessage:
     "Error fetching surveys from remote server.\n\nUser not logged in or session expired.\n\nLogin to the server?",
   manageSurveys: "Manage surveys",
+  noAvailableSurveysFound: "No available surveys found",
   selectSurvey: "Select a survey",
   surveysInTheCloud: "Surveys in the cloud",
   surveysInTheDevice: "Surveys in the device",

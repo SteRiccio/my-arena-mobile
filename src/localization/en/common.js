@@ -7,5 +7,6 @@ export default {
   modifiedOn: "Modified on",
   name: "Name",
   networkNotAvailable: "Network not available!",
+  search: "Search",
   selectAnItem: "Select an item",
 };

@@ -2,18 +2,20 @@ import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { Button, DataTable, VView } from "components";
+import { Button, DataTable, Loader, Searchbar, Text, VView } from "components";
 import { SurveyService } from "service";
 import { useNavigationFocus } from "hooks";
+import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
 import { ConfirmActions, SurveyActions } from "state";
 import { screenKeys } from "../screenKeys";
+
 import styles from "./styles";
 
 export const SurveysListLocal = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [state, setState] = useState({ surveys: [], loading: true });
-  const { surveys } = state;
+  const { loading, surveys } = state;
 
   const loadSurveys = async () => {
     const _surveys = await SurveyService.fetchSurveySummariesLocal();
@@ -26,6 +28,9 @@ export const SurveysListLocal = () => {
   };
 
   useNavigationFocus({ onFocus: loadSurveys });
+
+  const { onSearchValueChange, searchValue, surveysFiltered } =
+    useSurveysSearch({ surveys });
 
   const onDeleteSelectedRowIds = useCallback((surveyIds) => {
     dispatch(
@@ -51,24 +56,34 @@ export const SurveysListLocal = () => {
     []
   );
 
+  if (loading) return <Loader />;
+
   return (
     <VView style={styles.container}>
-      <DataTable
-        columns={[
-          {
-            key: "name",
-            header: "common:name",
-          },
-          {
-            key: "label",
-            header: "common:label",
-          },
-        ]}
-        onDeleteSelectedRowIds={onDeleteSelectedRowIds}
-        onRowPress={onRowPress}
-        rows={surveys}
-        selectable
-      />
+      {surveys.length > 1 && (
+        <Searchbar value={searchValue} onChange={onSearchValueChange} />
+      )}
+      {surveysFiltered.length === 0 && (
+        <Text textKey="surveys:noAvailableSurveysFound" variant="labelLarge" />
+      )}
+      {surveysFiltered.length > 0 && (
+        <DataTable
+          columns={[
+            {
+              key: "name",
+              header: "common:name",
+            },
+            {
+              key: "label",
+              header: "common:label",
+            },
+          ]}
+          onDeleteSelectedRowIds={onDeleteSelectedRowIds}
+          onRowPress={onRowPress}
+          rows={surveysFiltered}
+          selectable
+        />
+      )}
       <Button
         style={styles.importButton}
         textKey="surveys:importSurveyFromCloud"
