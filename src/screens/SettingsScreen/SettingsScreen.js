@@ -19,9 +19,23 @@ import { screenKeys } from "../screenKeys";
 const propertyTypes = {
   boolean: "boolean",
   numeric: "numeric",
+  options: "options",
 };
 
 const properties = {
+  theme: {
+    type: propertyTypes.options,
+    options: [
+      {
+        key: "light",
+        labelKey: "settings:theme.light.label",
+      },
+      {
+        key: "dark",
+        labelKey: "settings:theme.dark.label",
+      },
+    ],
+  },
   animationsEnabled: {
     type: propertyTypes.boolean,
     labelKey: "Animations enabled",
@@ -67,6 +81,8 @@ const SettingsItem = (props) => {
           />
         </VView>
       );
+    case propertyTypes.options:
+      return null;
     default:
       return null;
   }
