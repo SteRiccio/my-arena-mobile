@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import {
-  DarkTheme,
+  MD3DarkTheme,
   DefaultTheme,
   Provider as PaperProvider,
   ThemeProvider,
@@ -19,11 +19,12 @@ import { AppInitializer } from "./AppInitializer";
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const App = () => {
-  const nightMode = true;
+  const nightMode = false;
+  const theme = nightMode ? MD3DarkTheme : DefaultTheme;
 
   return (
-    <PaperProvider theme={nightMode ? DarkTheme : DefaultTheme}>
-      <ThemeProvider theme={nightMode ? DarkTheme : DefaultTheme}>
+    <PaperProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <Provider store={store}>
           <AppInitializer>
             <AppStack />

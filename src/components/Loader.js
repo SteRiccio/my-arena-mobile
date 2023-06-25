@@ -1,5 +1,17 @@
-import { ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator, useTheme } from "react-native-paper";
+
+import { View } from "./View";
+import { VView } from "./VView";
 
 export const Loader = () => {
-  return <ActivityIndicator animating />;
+  return (
+    <VView
+      style={{
+        flex: 1,
+        justifyContent: "center",
+      }}
+    >
+      <ActivityIndicator animating size="large" />
+    </VView>
+  );
 };

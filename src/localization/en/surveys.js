@@ -4,6 +4,7 @@ export default {
     message: "Delete the selected survey?",
     message_other: "Delete the selected surveys?",
   },
+  currentSurvey: "Current survey",
   importSurvey: "Import survey",
   importSurveyConfirmMessage: "Import this survey?",
   importSurveyFromCloud: "Import survey from cloud",
