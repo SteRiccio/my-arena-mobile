@@ -2,12 +2,14 @@ import { useCallback } from "react";
 import { View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 
+import { useTranslation } from "localization";
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 
 const booleanValues = ["true", "false"];
 
 export const NodeBooleanComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
+  const { t } = useTranslation();
 
   if (__DEV__) {
     console.log(`rendering NodeBooleanComponent for ${nodeDef.props.name}`);
@@ -30,7 +32,7 @@ export const NodeBooleanComponent = (props) => {
         onValueChange={onChange}
         buttons={booleanValues.map((val) => ({
           value: val,
-          label: val,
+          label: t(`common:${val}`),
         }))}
       />
     </View>

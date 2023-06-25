@@ -4,6 +4,7 @@ export default {
   checkSyncStatus: "Check sync status",
   exportData: "Export data",
   formLanguage: "Data entry form language",
+  goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",
   listOfRecords: "List of records",
   newRecord: "New record",
