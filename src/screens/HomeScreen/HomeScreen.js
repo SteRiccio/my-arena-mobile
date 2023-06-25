@@ -22,12 +22,18 @@ export const HomeScreen = () => {
         textKey="common:appTitle"
       />
       {survey && (
-        <FieldSet
-          heading="surveys:currentSurvey"
-          style={styles.currentSurveyFieldset}
-        >
-          <Text textKey={survey.props.name} />
-        </FieldSet>
+        <>
+          <FieldSet
+            heading="surveys:currentSurvey"
+            style={styles.currentSurveyFieldset}
+          >
+            <Text textKey={survey.props.name} />
+          </FieldSet>
+          <Button
+            textKey="dataEntry:goToDataEntry"
+            onPress={() => navigation.navigate(screenKeys.recordsList)}
+          />
+        </>
       )}
       <Button
         textKey="surveys:manageSurveys"
