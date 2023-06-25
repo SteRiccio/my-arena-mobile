@@ -8,11 +8,13 @@ import {
   Button,
   Divider,
   HView,
+  SegmentedButtons,
   Switch,
   Text,
   TextInput,
   VView,
 } from "components";
+import { Themes } from "model";
 import { SettingsActions, SettingsSelectors } from "state";
 import { screenKeys } from "../screenKeys";
 
@@ -25,34 +27,29 @@ const propertyTypes = {
 const properties = {
   theme: {
     type: propertyTypes.options,
-    options: [
-      {
-        key: "light",
-        labelKey: "settings:theme.light.label",
-      },
-      {
-        key: "dark",
-        labelKey: "settings:theme.dark.label",
-      },
-    ],
+    labelKey: "settings:theme.label",
+    options: Object.values(Themes).map((theme) => ({
+      value: theme,
+      label: `settings:theme.${theme}`,
+    })),
   },
   animationsEnabled: {
     type: propertyTypes.boolean,
-    labelKey: "Animations enabled",
+    labelKey: "settings:animationsEnabled",
   },
   locationAccuracyThreshold: {
     type: propertyTypes.numeric,
-    labelKey: "Location accuracy threshold (meters)",
+    labelKey: "settings:locationAccuracyThreshold",
   },
   locationAccuracyWatchTimeout: {
     type: propertyTypes.numeric,
-    labelKey: "Location accuracy watch timeout (seconds)",
+    labelKey: "settings:locationAccuracyWatchTimeout",
   },
 };
 
 const SettingsItem = (props) => {
   const { settings, settingKey, prop, onPropValueChange } = props;
-  const { type, labelKey } = prop;
+  const { type, labelKey, options } = prop;
   const value = settings[settingKey];
   switch (type) {
     case propertyTypes.boolean:
@@ -82,7 +79,16 @@ const SettingsItem = (props) => {
         </VView>
       );
     case propertyTypes.options:
-      return null;
+      return (
+        <VView key={settingKey}>
+          <Text textKey={labelKey} />
+          <SegmentedButtons
+            buttons={options}
+            onChange={onPropValueChange({ key: settingKey })}
+            value={value}
+          />
+        </VView>
+      );
     default:
       return null;
   }

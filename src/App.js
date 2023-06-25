@@ -14,26 +14,34 @@ import { rootReducer } from "./state/reducers";
 
 import { AppMessageDialog } from "./appComponents/AppMessageDialog";
 import { AppConfirmDialog } from "./appComponents/AppConfirmDialog";
+import { Themes } from "./model";
 import { AppInitializer } from "./AppInitializer";
+import { SettingsSelectors } from "./state";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
-const App = () => {
-  const nightMode = false;
-  const theme = nightMode ? MD3DarkTheme : DefaultTheme;
+const AppInnerContainer = () => {
+  const settings = SettingsSelectors.useSettings();
+  const theme = settings.theme === Themes.dark ? MD3DarkTheme : DefaultTheme;
 
   return (
     <PaperProvider theme={theme}>
       <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <AppInitializer>
-            <AppStack />
-            <AppMessageDialog />
-            <AppConfirmDialog />
-          </AppInitializer>
-        </Provider>
+        <AppInitializer>
+          <AppStack />
+          <AppMessageDialog />
+          <AppConfirmDialog />
+        </AppInitializer>
       </ThemeProvider>
     </PaperProvider>
+  );
+};
+
+const App = () => {
+  return (
+    <Provider store={store}>
+      <AppInnerContainer />
+    </Provider>
   );
 };
 

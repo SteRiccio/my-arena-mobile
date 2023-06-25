@@ -7,11 +7,12 @@ import { API } from "./api";
 const defaultServerUrl = "https://www.openforis-arena.org";
 
 const defaultSettings = {
-  serverUrlType: "default",
-  serverUrl: defaultServerUrl,
   animationsEnabled: true,
   locationAccuracyThreshold: 3,
   locationAccuracyWatchTimeout: 120,
+  serverUrlType: "default",
+  serverUrl: defaultServerUrl,
+  theme: "dark",
 };
 
 let INSTANCE = null;

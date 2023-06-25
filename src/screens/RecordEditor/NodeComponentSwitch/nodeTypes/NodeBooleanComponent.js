@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import { View } from "react-native";
-import { SegmentedButtons } from "react-native-paper";
 
 import { useTranslation } from "localization";
+import { HView, SegmentedButtons } from "components";
+
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 
 const booleanValues = ["true", "false"];
@@ -26,15 +26,15 @@ export const NodeBooleanComponent = (props) => {
   );
 
   return (
-    <View style={[{ flexDirection: "row", width: "100%" }]}>
+    <HView style={{ width: "100%" }}>
       <SegmentedButtons
-        value={value}
-        onValueChange={onChange}
         buttons={booleanValues.map((val) => ({
           value: val,
-          label: t(`common:${val}`),
+          label: `common:${val}`,
         }))}
+        onChange={onChange}
+        value={value}
       />
-    </View>
+    </HView>
   );
 };

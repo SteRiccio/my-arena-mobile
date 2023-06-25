@@ -13,6 +13,7 @@ export { IconButton } from "./IconButton";
 export { Loader } from "./Loader";
 export { MessageDialog } from "./MessageDialog";
 export { ProgressBar } from "./ProgressBar";
+export { SegmentedButtons } from "./SegmentedButtons";
 export { Searchbar } from "./Searchbar";
 export { Select } from "./Select";
 export { Snackbar } from "./Snackbar";
