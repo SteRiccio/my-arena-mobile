@@ -259,11 +259,17 @@ const exportRecords =
       dispatch(
         MessageActions.setMessage({ content: "dataEntry:dataExportError" })
       );
-    } else {
-      const { outputFilePath } = result;
+    } else if (status === JobStatus.succeeded) {
+      const { outputFilePath } = result || {};
       dispatch(
         MessageActions.setMessage({
           content: `Data exported successfully into file: ${outputFilePath}`,
+        })
+      );
+    } else {
+      dispatch(
+        MessageActions.setMessage({
+          content: `Job status: ${status}`,
         })
       );
     }
