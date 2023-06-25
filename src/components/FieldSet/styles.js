@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export default styles = StyleSheet.create({
-  fieldSet: {
+  container: {
     margin: 10,
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -11,8 +11,10 @@ export default styles = StyleSheet.create({
   },
   legend: {
     position: "absolute",
-    top: -10,
+    top: -14,
     left: 10,
+    paddingHorizontal: 6,
     fontWeight: "bold",
+    fontSize: 16,
   },
 });

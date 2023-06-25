@@ -21,18 +21,19 @@ export const HomeScreen = () => {
         variant="displaySmall"
         textKey="common:appTitle"
       />
-      <VView>
-        {survey && (
-          <FieldSet heading="surveys:currentSurvey">
-            <Text textKey={survey.props.name} />
-          </FieldSet>
-        )}
-        <Button
-          textKey="surveys:manageSurveys"
-          style={{ marginTop: 40 }}
-          onPress={() => navigation.navigate(screenKeys.surveysListLocal)}
-        />
-      </VView>
+      {survey && (
+        <FieldSet
+          heading="surveys:currentSurvey"
+          style={styles.currentSurveyFieldset}
+        >
+          <Text textKey={survey.props.name} />
+        </FieldSet>
+      )}
+      <Button
+        textKey="surveys:manageSurveys"
+        style={{ marginTop: 40 }}
+        onPress={() => navigation.navigate(screenKeys.surveysListLocal)}
+      />
     </VView>
   );
 };

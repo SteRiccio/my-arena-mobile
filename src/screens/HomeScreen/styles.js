@@ -10,4 +10,7 @@ export default StyleSheet.create({
     padding: 10,
   },
   logo: { width: 200, height: 200 },
+  currentSurveyFieldset: {
+    width: "80%",
+  },
 });
