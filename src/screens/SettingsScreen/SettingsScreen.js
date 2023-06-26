@@ -14,9 +14,10 @@ import {
   TextInput,
   VView,
 } from "components";
-import { Themes } from "model";
+import { ThemesSettings } from "model";
 import { SettingsActions, SettingsSelectors } from "state";
 import { screenKeys } from "../screenKeys";
+import styles from "./styles";
 
 const propertyTypes = {
   boolean: "boolean",
@@ -28,7 +29,7 @@ const properties = {
   theme: {
     type: propertyTypes.options,
     labelKey: "settings:theme.label",
-    options: Object.values(Themes).map((theme) => ({
+    options: Object.values(ThemesSettings).map((theme) => ({
       value: theme,
       label: `settings:theme.${theme}`,
     })),
@@ -133,7 +134,7 @@ export const SettingsScreen = () => {
       }));
 
   return (
-    <VView style={{ padding: 10 }}>
+    <VView style={styles.container}>
       <Button
         textKey="settings:connectionToRemoteServer"
         onPress={() => {
@@ -141,7 +142,7 @@ export const SettingsScreen = () => {
         }}
       />
       {Object.entries(properties).map(([key, prop], index) => (
-        <VView key={key} style={{ marginTop: 20 }}>
+        <VView key={key} style={styles.settingsItemWrapper}>
           <SettingsItem
             settings={settings}
             settingKey={key}

@@ -9,20 +9,19 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 
-import { AppStack } from "./navigation/AppStack";
-import { rootReducer } from "./state/reducers";
-
 import { AppMessageDialog } from "./appComponents/AppMessageDialog";
 import { AppConfirmDialog } from "./appComponents/AppConfirmDialog";
 import { Themes } from "./model";
+import { AppStack } from "./navigation/AppStack";
+import { rootReducer } from "./state/reducers";
+import { useEffectiveTheme } from "hooks";
 import { AppInitializer } from "./AppInitializer";
-import { SettingsSelectors } from "./state";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const AppInnerContainer = () => {
-  const settings = SettingsSelectors.useSettings();
-  const theme = settings.theme === Themes.dark ? MD3DarkTheme : DefaultTheme;
+  const themeSetting = useEffectiveTheme();
+  const theme = themeSetting === Themes.dark ? MD3DarkTheme : DefaultTheme;
 
   return (
     <PaperProvider theme={theme}>

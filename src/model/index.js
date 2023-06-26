@@ -1,1 +1,1 @@
-export { Themes } from "./Themes";
+export { Themes, ThemesSettings } from "./Themes";

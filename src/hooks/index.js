@@ -1,3 +1,4 @@
+export { useEffectiveTheme } from "./useEffectiveTheme";
 export { useKeyboardIsVisible } from "./useKeyboardIsVisible";
 export { useNavigationFocus } from "./useNavigationFocus";
 export { useRequestCameraPermission } from "./useRequestCameraPermission";

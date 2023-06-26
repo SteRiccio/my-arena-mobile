@@ -3,6 +3,7 @@ import * as Keychain from "react-native-keychain";
 import { AsyncStorageUtils } from "./asyncStorage/AsyncStorageUtils";
 import { asyncStorageKeys } from "./asyncStorage/asyncStorageKeys";
 import { API } from "./api";
+import { ThemesSettings } from "model";
 
 const defaultServerUrl = "https://www.openforis-arena.org";
 
@@ -12,7 +13,7 @@ const defaultSettings = {
   locationAccuracyWatchTimeout: 120,
   serverUrlType: "default",
   serverUrl: defaultServerUrl,
-  theme: "dark",
+  theme: ThemesSettings.systemDefault,
 };
 
 let INSTANCE = null;
