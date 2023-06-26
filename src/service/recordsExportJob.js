@@ -67,13 +67,7 @@ export class RecordsExportJob extends JobBase {
 
   async prepareResult() {
     const { outputFilePath } = this;
-    if (this.summary.status === JobStatus.succeeded) {
-      return {
-        outputFilePath,
-      };
-    } else {
-      return null;
-    }
+    return { outputFilePath };
   }
 
   createLogger() {
