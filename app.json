@@ -23,7 +23,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "org.stericcio.myarenamobile"
+      "package": "org.stericcio.myarenamobile",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
