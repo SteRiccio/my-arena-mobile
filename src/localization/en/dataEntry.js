@@ -2,6 +2,7 @@ export default {
   confirmGoToListOfRecordsAndTerminateRecordEditing:
     "Go to list of records and terminate record editing?",
   checkSyncStatus: "Check sync status",
+  dataExportError: "Data export error",
   exportData: "Export data",
   formLanguage: "Data entry form language",
   goToDataEntry: "Go to data entry",

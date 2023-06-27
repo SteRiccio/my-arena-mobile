@@ -17,6 +17,7 @@ import { SettingsService } from "service";
 import { RemoteConnectionActions } from "state";
 import { MessageActions } from "state/message";
 import { useIsNetworkConnected } from "hooks/useIsNetworkConnected";
+import styles from "./styles";
 
 const serverUrlTypes = {
   default: "default",
@@ -118,7 +119,7 @@ export const SettingsRemoteConnectionScreen = () => {
   }, [email, password, serverUrl]);
 
   return (
-    <VView style={{ padding: 10 }}>
+    <VView style={styles.container}>
       {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
 
       <FieldSet heading="settingsRemoteConnection:serverUrl">
