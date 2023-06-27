@@ -11,21 +11,25 @@ import { ConfirmActions, SurveyActions, SurveySelectors } from "state";
 
 import styles from "./styles";
 
+const INITIAL_STATE = {
+  surveys: [],
+  loading: true,
+  errorKey: null,
+};
+
 export const SurveysListRemote = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const surveysLocal = SurveySelectors.useSurveysLocal();
 
-  const [state, setState] = useState({
-    surveys: [],
-    loading: true,
-    errorKey: null,
-  });
+  const [state, setState] = useState(INITIAL_STATE);
   const { surveys, loading, errorKey } = state;
 
   const loadSurveys = async () => {
+    setState(INITIAL_STATE);
+
     const data = await SurveyService.fetchSurveySummariesRemote();
-    const { surveys: _surveys, errorKey } = data;
+    const { surveys: _surveys = [], errorKey } = data;
     if (errorKey) {
       dispatch(
         ConfirmActions.show({
@@ -43,8 +47,6 @@ export const SurveysListRemote = () => {
       errorKey,
       loading: false,
       surveys: _surveys,
-      surveysFiltered: _surveys,
-      searchValue: "",
     }));
   };
 
@@ -87,7 +89,13 @@ export const SurveysListRemote = () => {
 
   if (loading) return <Loader />;
 
-  if (errorKey) return <Text textKey={errorKey} />;
+  if (errorKey)
+    return (
+      <Text
+        textKey="surveys:errorFetchingSurveysWithDetails"
+        textParams={{ details: errorKey }}
+      />
+    );
 
   return (
     <VView style={styles.container}>

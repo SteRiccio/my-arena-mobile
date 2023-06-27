@@ -5,6 +5,9 @@ export default {
     message_other: "Delete the selected surveys?",
   },
   currentSurvey: "Current survey",
+  errorFetchingSurveys: "Error fetching surveys from remote server",
+  errorFetchingSurveysWithDetails:
+    "$t(surveys:errorFetchingSurveys): {{details}}",
   importSurvey: "Import survey",
   importSurveyConfirmMessage: "Import this survey?",
   importSurveyFromCloud: "Import survey from cloud",
