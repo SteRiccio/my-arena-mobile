@@ -1,6 +1,5 @@
-import { ActivityIndicator, useTheme } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 
-import { View } from "./View";
 import { VView } from "./VView";
 
 export const Loader = () => {

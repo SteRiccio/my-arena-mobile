@@ -11,16 +11,24 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { Button, DataTable, HView, Loader, Text, VView } from "components";
+import {
+  Button,
+  DataTable,
+  HView,
+  Loader,
+  LoadingIcon,
+  Text,
+  VView,
+} from "components";
 import { useNavigationFocus } from "hooks";
 import { useTranslation } from "localization";
 import { RecordService } from "service";
 import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
+import { RecordSyncStatus } from "model/RecordSyncStatus";
 
 import { SurveyLanguageDropdown } from "./SurveyLanguageDropdown";
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import styles from "./styles";
-import { RecordSyncStatus } from "model/RecordSyncStatus";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -37,10 +45,11 @@ export const RecordsList = () => {
 
   const [state, setState] = useState({
     records: [],
+    syncStatusLoading: false,
     syncStatusFetched: false,
     loading: true,
   });
-  const { records, loading, syncStatusFetched } = state;
+  const { records, loading, syncStatusLoading, syncStatusFetched } = state;
 
   const loadRecords = useCallback(async () => {
     const _records = await RecordService.fetchRecords({ survey });
@@ -48,6 +57,7 @@ export const RecordsList = () => {
       ...statePrev,
       records: _records,
       syncStatusFetched: false,
+      syncStatusLoading: false,
       loading: false,
     }));
   }, [survey]);
@@ -55,7 +65,7 @@ export const RecordsList = () => {
   const loadRecordsWithSyncStatus = useCallback(async () => {
     setState((statePrev) => ({
       ...statePrev,
-      loading: true,
+      syncStatusLoading: true,
       syncStatusFetched: false,
     }));
     const _records = await RecordService.fetchRecordsWithSyncStatus({ survey });
@@ -63,6 +73,7 @@ export const RecordsList = () => {
       ...statePrev,
       records: _records,
       loading: false,
+      syncStatusLoading: false,
       syncStatusFetched: true,
     }));
   }, [survey]);
@@ -156,12 +167,14 @@ export const RecordsList = () => {
                 header: "common:modifiedOn",
                 style: { minWidth: 70 },
               },
-              ...(syncStatusFetched
+              ...(syncStatusLoading || syncStatusFetched
                 ? [
                     {
                       key: "syncStatus",
                       header: "dataEntry:syncStatusHeader",
-                      cellRenderer: RecordSyncStatusIcon,
+                      cellRenderer: syncStatusLoading
+                        ? LoadingIcon
+                        : RecordSyncStatusIcon,
                     },
                   ]
                 : []),

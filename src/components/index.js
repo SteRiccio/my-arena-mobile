@@ -11,6 +11,7 @@ export { HView } from "./HView";
 export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
 export { Loader } from "./Loader";
+export { LoadingIcon } from "./LoadingIcon";
 export { MessageDialog } from "./MessageDialog";
 export { ProgressBar } from "./ProgressBar";
 export { SegmentedButtons } from "./SegmentedButtons";
