@@ -83,7 +83,7 @@ export const useNodeImageComponent = ({ nodeUuid }) => {
         })
       );
     } else {
-      openImageLibrary;
+      openImageLibrary();
     }
   }, [openImageLibrary, pickedImageUri]);
 
