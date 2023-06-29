@@ -5,7 +5,7 @@ import { MessageActions } from "../state/message/actions";
 
 export const AppMessageDialog = () => {
   const dispatch = useDispatch();
-  const { content } = useSelector((state) => state.message);
+  const { content, contentParams } = useSelector((state) => state.message);
 
   const onDismiss = () => {
     dispatch(MessageActions.dismissMessage());
@@ -14,6 +14,11 @@ export const AppMessageDialog = () => {
   if (!content) return null;
 
   return (
-    <MessageDialog content={content} onDismiss={onDismiss} onDone={onDismiss} />
+    <MessageDialog
+      content={content}
+      contentParams={contentParams}
+      onDismiss={onDismiss}
+      onDone={onDismiss}
+    />
   );
 };

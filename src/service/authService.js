@@ -14,10 +14,10 @@ const login = async ({ serverUrl: serverUrlParam, email, password }) => {
     return res?.data;
   } catch (err) {
     if (!err.response) {
-      return { error: "Error::api:invalidServerUrl" };
+      return { error: "authService:error.invalidServerUrl" };
     }
     if (err?.response?.status === 401) {
-      return { error: "Error::authApi:invalidCredentials" };
+      return { error: "authService:error.invalidCredentials" };
     }
     return { error: err };
   }

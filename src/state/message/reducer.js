@@ -7,6 +7,7 @@ const actionHandlers = {
   [MessageActions.MESSAGE_SET]: ({ state, action }) => ({
     ...state,
     content: action.content,
+    contentParams: action.contentParams,
   }),
   [MessageActions.MESSAGE_DISMISSED]: () => ({
     ...initialState,

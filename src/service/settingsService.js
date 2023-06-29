@@ -13,7 +13,7 @@ const defaultSettings = {
   locationAccuracyWatchTimeout: 120,
   serverUrlType: "default",
   serverUrl: defaultServerUrl,
-  theme: ThemesSettings.systemDefault,
+  theme: ThemesSettings.auto,
 };
 
 let INSTANCE = null;

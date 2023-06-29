@@ -6,9 +6,9 @@ const dismissMessage = () => (dispatch) => {
 };
 
 const setMessage =
-  ({ content }) =>
+  ({ content, contentParams }) =>
   (dispatch) => {
-    dispatch({ type: MESSAGE_SET, content });
+    dispatch({ type: MESSAGE_SET, content, contentParams });
   };
 
 export const MessageActions = {

@@ -25,7 +25,12 @@ const login =
       dispatch(MessageActions.setMessage({ content: "Login successful!" }));
       dispatch({ type: LOGGED_IN, user });
     } else if (error) {
-      dispatch(MessageActions.setMessage({ content: "Error: " + error }));
+      dispatch(
+        MessageActions.setMessage({
+          content: "authService:error.generic",
+          contentParams: { details: error },
+        })
+      );
     }
   };
 
