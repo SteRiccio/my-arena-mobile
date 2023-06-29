@@ -39,13 +39,14 @@ export const NodeCoordinateComponent = (props) => {
   }
 
   const settings = SettingsSelectors.useSettings();
-  const { locationAccuracyThreshold } = settings;
+  const { locationAccuracyThreshold, locationAccuracyWatchTimeout } = settings;
 
   const [state, setState] = useState({
     watchingLocation: false,
   });
 
   const locationSubscritionRef = useRef(null);
+  const locationAccuracyWatchTimeoutRef = useRef(null);
 
   const { watchingLocation } = state;
 
@@ -68,9 +69,20 @@ export const NodeCoordinateComponent = (props) => {
   const xTextValue = numberToString(x);
   const yTextValue = numberToString(y);
 
+  const clearLocationWatchTimeout = () => {
+    if (locationAccuracyWatchTimeoutRef.current) {
+      clearTimeout(locationAccuracyWatchTimeoutRef.current);
+      locationAccuracyWatchTimeoutRef.current = null;
+    }
+  };
+
   const stopGps = () => {
     locationSubscritionRef.current?.remove();
     locationSubscritionRef.current = null;
+
+    clearLocationWatchTimeout();
+
+    setState((statePrev) => ({ ...statePrev, watchingLocation: false }));
   };
 
   useEffect(() => {
@@ -109,6 +121,7 @@ export const NodeCoordinateComponent = (props) => {
     if (!foregroundPermission.granted) {
       return;
     }
+    clearLocationWatchTimeout();
     locationSubscritionRef.current = await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.High,
@@ -123,12 +136,16 @@ export const NodeCoordinateComponent = (props) => {
         }
       }
     );
+    locationAccuracyWatchTimeoutRef.current = setTimeout(
+      stopGps,
+      locationAccuracyWatchTimeout * 1000
+    );
+
     setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
-  }, [srsId, srsIndex]);
+  }, [srsId, srsIndex, locationAccuracyWatchTimeout]);
 
   const onStopGpsPress = useCallback(() => {
     stopGps();
-    setState((statePrev) => ({ ...statePrev, watchingLocation: false }));
   });
 
   return (
