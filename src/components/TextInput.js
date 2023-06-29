@@ -5,6 +5,7 @@ import { useTranslation } from "localization";
 
 export const TextInput = (props) => {
   const {
+    autoCapitalize,
     disabled,
     editable,
     keyboardType,
@@ -22,28 +23,17 @@ export const TextInput = (props) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const showAsReadOnly = disabled || (!editable && nonEditableStyleVisible);
+  const showAsReadOnly = !editable && nonEditableStyleVisible;
 
   const label = t(labelKey);
 
-  const notEditableStyle = showAsReadOnly
-    ? { backgroundColor: theme.colors.surfaceVariant }
-    : {};
+  const notEditableStyle = { backgroundColor: theme.colors.surfaceVariant };
 
-  const style = [
-    {
-      backgroundColor: theme.colors.background,
-      ...notEditableStyle,
-    },
-    styleProp,
-  ];
-
-  const textColor = showAsReadOnly
-    ? theme.colors.onSurfaceVariant
-    : theme.colors.onBackground;
+  const style = [...(showAsReadOnly ? [notEditableStyle] : []), styleProp];
 
   return (
     <RNPTextInput
+      autoCapitalize={autoCapitalize}
       disabled={disabled}
       editable={editable}
       keyboardType={keyboardType}
@@ -54,7 +44,7 @@ export const TextInput = (props) => {
       placeholder={placeholderKey}
       secureTextEntry={secureTextEntry}
       style={style}
-      textColor={textColor}
+      theme={theme}
       value={value}
       {...otherProps}
     />

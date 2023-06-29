@@ -8,6 +8,7 @@ import {
   Button,
   Divider,
   HView,
+  ScrollView,
   SegmentedButtons,
   Switch,
   Text,
@@ -134,24 +135,26 @@ export const SettingsScreen = () => {
       }));
 
   return (
-    <VView style={styles.container}>
-      <Button
-        textKey="settings:connectionToRemoteServer"
-        onPress={() => {
-          navigation.navigate(screenKeys.settingsRemoteConnection);
-        }}
-      />
-      {Object.entries(properties).map(([key, prop], index) => (
-        <VView key={key} style={styles.settingsItemWrapper}>
-          <SettingsItem
-            settings={settings}
-            settingKey={key}
-            prop={prop}
-            onPropValueChange={onPropValueChange}
-          />
-          {index < Object.entries(properties).length - 1 && <Divider />}
-        </VView>
-      ))}
-    </VView>
+    <ScrollView style={styles.container}>
+      <VView>
+        <Button
+          textKey="settings:connectionToRemoteServer"
+          onPress={() => {
+            navigation.navigate(screenKeys.settingsRemoteConnection);
+          }}
+        />
+        {Object.entries(properties).map(([key, prop], index) => (
+          <VView key={key} style={styles.settingsItemWrapper}>
+            <SettingsItem
+              settings={settings}
+              settingKey={key}
+              prop={prop}
+              onPropValueChange={onPropValueChange}
+            />
+            {index < Object.entries(properties).length - 1 && <Divider />}
+          </VView>
+        ))}
+      </VView>
+    </ScrollView>
   );
 };

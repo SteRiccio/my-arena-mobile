@@ -14,6 +14,7 @@ export { Loader } from "./Loader";
 export { LoadingIcon } from "./LoadingIcon";
 export { MessageDialog } from "./MessageDialog";
 export { ProgressBar } from "./ProgressBar";
+export { ScrollView } from "./ScrollView";
 export { SegmentedButtons } from "./SegmentedButtons";
 export { Searchbar } from "./Searchbar";
 export { Select } from "./Select";

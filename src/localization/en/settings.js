@@ -6,8 +6,8 @@ export default {
   locationAccuracyWatchTimeout: "Location accuracy watch timeout (seconds)",
   theme: {
     label: "Theme",
+    auto: "Auto",
     dark: "Dark",
     light: "Light",
-    systemDefault: "System default",
   },
 };

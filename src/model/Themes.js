@@ -4,6 +4,6 @@ export const Themes = {
 };
 
 export const ThemesSettings = {
-  systemDefault: "systemDefault",
+  auto: "auto",
   ...Themes,
 };

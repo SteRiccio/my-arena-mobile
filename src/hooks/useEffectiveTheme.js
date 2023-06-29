@@ -11,7 +11,7 @@ export const useEffectiveTheme = () => {
     const settings = SettingsSelectors.selectSettings(state);
     return settings.theme;
   });
-  if (themeSetting === ThemesSettings.systemDefault) {
+  if (themeSetting === ThemesSettings.auto) {
     return colorScheme === "dark" ? Themes.dark : Themes.light;
   }
   return themeSetting;

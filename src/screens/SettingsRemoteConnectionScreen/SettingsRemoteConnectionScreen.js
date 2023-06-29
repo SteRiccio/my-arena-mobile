@@ -104,7 +104,7 @@ export const SettingsRemoteConnectionScreen = () => {
     async (text) =>
       setState((statePrev) => ({
         ...statePrev,
-        email: text?.trim().toLocaleLowerCase(),
+        email: text,
       })),
     []
   );
@@ -115,7 +115,12 @@ export const SettingsRemoteConnectionScreen = () => {
   );
 
   const onLogin = useCallback(async () => {
-    dispatch(RemoteConnectionActions.login({ serverUrl, email, password }));
+    // normalize email
+    setState((statePrev) => ({
+      ...statePrev,
+      email: statePrev.email.trim().toLocaleLowerCase(),
+    })),
+      dispatch(RemoteConnectionActions.login({ serverUrl, email, password }));
   }, [email, password, serverUrl]);
 
   return (
@@ -160,7 +165,9 @@ export const SettingsRemoteConnectionScreen = () => {
       </FieldSet>
 
       <TextInput
+        autoCapitalize="none"
         disabled={!networkAvailable}
+        keyboardType="email-address"
         label="settingsRemoteConnection:email"
         onChange={onEmailChange}
         value={email}

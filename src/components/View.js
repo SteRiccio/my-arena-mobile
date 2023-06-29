@@ -9,7 +9,7 @@ export const View = (props) => {
 
   return (
     <RNView
-      style={[{ backgroundColor: theme.colors.inverseOnSurface }, style]}
+      style={[{ backgroundColor: theme.colors.background }, style]}
       {...otherProps}
     >
       {children}
