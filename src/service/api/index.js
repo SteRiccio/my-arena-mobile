@@ -14,8 +14,8 @@ const getUrl = ({ serverUrl, uri }) => {
 const get = (serverUrl, uri, params = {}) =>
   axios.get(getUrl({ serverUrl, uri }), { ...config, params });
 
-const post = (serverUrl, uri, data) =>
-  axios.post(getUrl({ serverUrl, uri }), data, config);
+const post = (serverUrl, uri, data, headers) =>
+  axios.post(getUrl({ serverUrl, uri }), data, { ...config, headers });
 
 export const API = {
   get,

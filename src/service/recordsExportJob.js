@@ -8,6 +8,9 @@ import {
   Promises,
   UUIDs,
 } from "@openforis/arena-core";
+
+import { JobMobile } from "model";
+
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
 
@@ -16,7 +19,7 @@ const RECORDS_SUMMARY_JSON_FILENAME = "records.json";
 
 const toJson = (obj) => JSON.stringify(obj, null, 2);
 
-export class RecordsExportJob extends JobBase {
+export class RecordsExportJob extends JobMobile {
   constructor({ survey, recordUuids, user }) {
     super({ survey, recordUuids, user });
   }
@@ -24,12 +27,12 @@ export class RecordsExportJob extends JobBase {
   async execute() {
     const { survey, recordUuids } = this.context;
 
-    const tempFolderPath = `${FileSystem.cacheDirectory}${UUIDs.v4()}`;
+    const tempFolderUri = `${FileSystem.cacheDirectory}${UUIDs.v4()}`;
 
     try {
-      const tempRecordsFolderPath = `${tempFolderPath}/${RECORDS_FOLDER_NAME}`;
+      const tempRecordsFolderUri = `${tempFolderUri}/${RECORDS_FOLDER_NAME}`;
 
-      await FileSystem.makeDirectoryAsync(tempRecordsFolderPath, {
+      await FileSystem.makeDirectoryAsync(tempRecordsFolderUri, {
         intermediates: true,
       });
 
@@ -42,40 +45,31 @@ export class RecordsExportJob extends JobBase {
         recordsToExport.map(({ uuid, cycle }) => ({ uuid, cycle }))
       );
 
-      const tempRecordsSummaryJsonFilePath = `${tempRecordsFolderPath}/${RECORDS_SUMMARY_JSON_FILENAME}`;
+      const tempRecordsSummaryJsonFileUri = `${tempRecordsFolderUri}/${RECORDS_SUMMARY_JSON_FILENAME}`;
       await FileSystem.writeAsStringAsync(
-        tempRecordsSummaryJsonFilePath,
+        tempRecordsSummaryJsonFileUri,
         recordsSummaryJson
       );
 
       await Promises.each(recordsToExport, async (recordSummary) => {
         const { id: recordId, uuid } = recordSummary;
         const record = await RecordService.fetchRecord({ survey, recordId });
-        const tempRecordFilePath = `${tempRecordsFolderPath}/${uuid}.json`;
-        await FileSystem.writeAsStringAsync(tempRecordFilePath, toJson(record));
+        const tempRecordFileUri = `${tempRecordsFolderUri}/${uuid}.json`;
+        await FileSystem.writeAsStringAsync(tempRecordFileUri, toJson(record));
         this.incrementProcessedItems();
       });
 
       const outputFileName = `recordsExport-${Dates.nowFormattedForStorage()}.zip`;
-      this.outputFilePath = `${FileSystem.documentDirectory}${outputFileName}`;
+      this.outputFileUri = `${FileSystem.documentDirectory}${outputFileName}`;
 
-      await zip(tempFolderPath, this.outputFilePath);
+      await zip(tempFolderUri, this.outputFileUri);
     } finally {
-      await FileSystem.deleteAsync(tempFolderPath);
+      await FileSystem.deleteAsync(tempFolderUri);
     }
   }
 
   async prepareResult() {
-    const { outputFilePath } = this;
-    return { outputFilePath };
-  }
-
-  createLogger() {
-    const log = (message) => console.log(message);
-    return {
-      debug: (message) => log(message),
-      error: (message) => log(message),
-      warning: (message) => log(message),
-    };
+    const { outputFileUri } = this;
+    return { outputFileUri };
   }
 }

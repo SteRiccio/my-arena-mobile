@@ -21,7 +21,16 @@ const getServerUrl = async () =>
 
 const get = async (uri, params) => API.get(await getServerUrl(), uri, params);
 
-export const AbstractService = {
+const post = async (uri, data) => API.post(await getServerUrl(), uri, data);
+
+const postMultipartData = async (uri, data) =>
+  API.post(await getServerUrl(), uri, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+export const RemoteService = {
   get,
+  post,
+  postMultipartData,
   handleError,
 };

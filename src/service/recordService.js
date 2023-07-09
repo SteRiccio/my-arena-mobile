@@ -1,5 +1,5 @@
 import { Dates, NodeDefs, Objects, Surveys } from "@openforis/arena-core";
-import { AbstractService } from "./abstractService";
+import { RemoteService } from "./remoteService";
 import { RecordRepository } from "./repository/recordRepository";
 import { RecordSyncStatus } from "model/RecordSyncStatus";
 
@@ -8,13 +8,13 @@ const { fetchRecord, fetchRecords, insertRecord, updateRecord, deleteRecords } =
 
 const fetchRecordsSummariesRemote = async ({ surveyRemoteId }) => {
   try {
-    const { data } = await AbstractService.get(
+    const { data } = await RemoteService.get(
       `api/survey/${surveyRemoteId}/records/summary`
     );
     const { list } = data;
     return list;
   } catch (error) {
-    return AbstractService.handleError({ error });
+    return RemoteService.handleError({ error });
   }
 };
 
@@ -68,6 +68,20 @@ const fetchRecordsWithSyncStatus = async ({ survey }) => {
   });
 };
 
+const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
+  const surveyRemoteId = survey.remoteId;
+  const formData = new FormData();
+  formData.append("file", { uri: fileUri });
+  formData.append("cycle", cycle);
+
+  const { data } = await RemoteService.postMultipartData(
+    `api/mobile/survey/${surveyRemoteId}`,
+    formData
+  );
+  const { job } = data;
+  return job;
+};
+
 export const RecordService = {
   fetchRecord,
   fetchRecords,
@@ -75,4 +89,5 @@ export const RecordService = {
   insertRecord,
   updateRecord,
   deleteRecords,
+  uploadRecordsToRemoteServer,
 };

@@ -250,6 +250,8 @@ const exportRecords =
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
+    const cycle =
+      survey.props.defaultCycleKey || Surveys.getLastCycleKey(survey);
     const job = new RecordsExportJob({ survey, recordUuids, user: {} });
     await job.start();
     const { summary } = job;
@@ -260,10 +262,15 @@ const exportRecords =
         MessageActions.setMessage({ content: "dataEntry:dataExportError" })
       );
     } else if (status === JobStatus.succeeded) {
-      const { outputFilePath } = result || {};
+      const { outputFileUri } = result || {};
+      const remoteJob = await RecordService.uploadRecordsToRemoteServer({
+        survey,
+        cycle,
+        fileUri: outputFileUri,
+      });
       dispatch(
         MessageActions.setMessage({
-          content: `Data exported successfully into file: ${outputFilePath}`,
+          content: `Records import started remotely: ${remoteJob?.uuid}`,
         })
       );
     } else {

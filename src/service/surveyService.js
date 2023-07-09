@@ -1,7 +1,7 @@
 import { Surveys } from "@openforis/arena-core";
 
 import { SurveyRepository } from "./repository/surveyRepository";
-import { AbstractService } from "./abstractService";
+import { RemoteService } from "./remoteService";
 import demoSurvey from "./simple_survey.json";
 
 const {
@@ -27,16 +27,16 @@ const fetchCategoryItems = ({
 
 const fetchSurveySummariesRemote = async () => {
   try {
-    const { data } = await AbstractService.get("api/surveys", { draft: false });
+    const { data } = await RemoteService.get("api/surveys", { draft: false });
     const { list: surveys } = data;
     return { surveys };
   } catch (error) {
-    return AbstractService.handleError({ error });
+    return RemoteService.handleError({ error });
   }
 };
 
 const fetchSurveyRemoteById = async ({ id, cycle }) => {
-  const { data } = await AbstractService.get(`api/mobile/survey/${id}`, {
+  const { data } = await RemoteService.get(`api/mobile/survey/${id}`, {
     cycle,
   });
   const { survey } = data;
