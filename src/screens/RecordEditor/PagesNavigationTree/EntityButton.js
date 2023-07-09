@@ -19,7 +19,7 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
     <TouchableOpacity onPress={onPress}>
       <Text
         style={{
-          fontSize: 20,
+          fontSize: isCurrentEntity ? 24 : 20,
           fontWeight: isCurrentEntity ? "bold" : "normal",
         }}
         textKey={label}

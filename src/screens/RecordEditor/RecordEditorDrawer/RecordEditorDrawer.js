@@ -5,19 +5,20 @@ import { Button, CloseIconButton, HView, Text, View } from "components";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { PagesNavigationTree } from "../PagesNavigationTree";
 
-import styles from "./styles";
+import { useStyles } from "./styles";
 
 export const RecordEditorDrawer = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
+  const styles = useStyles();
 
   if (!pageSelectorOpen) return null;
 
   return (
     <View style={styles.pagesNavigatorContainer}>
-      <HView>
+      <HView style={styles.titleContainer}>
         <Text
           variant="headlineMedium"
           style={styles.titleText}
@@ -26,6 +27,7 @@ export const RecordEditorDrawer = () => {
         <CloseIconButton
           onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
           style={styles.closeButton}
+          size={26}
         />
       </HView>
       <PagesNavigationTree />

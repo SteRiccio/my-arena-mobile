@@ -13,5 +13,10 @@ export const Indicator = (props) => {
     return "+";
   };
 
-  return <Text style={{ width: 20 }} textKey={getIndicatorText()} />;
+  return (
+    <Text
+      style={{ fontSize: 32, width: 22, lineHeight: 34 }}
+      textKey={getIndicatorText()}
+    />
+  );
 };

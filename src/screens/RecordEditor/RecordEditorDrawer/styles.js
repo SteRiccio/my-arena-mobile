@@ -1,16 +1,25 @@
 import { StyleSheet } from "react-native";
+import { useTheme } from "react-native-paper";
 
-export default StyleSheet.create({
-  titleText: {
-    flex: 1,
-  },
-  pagesNavigatorContainer: {
-    flex: 0.8,
-    backgroundColor: "#38C8EC",
-    padding: 10,
-    borderWidth: 1,
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-  },
-});
+export const useStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    titleText: {
+      flex: 1,
+    },
+    titleContainer: {
+      backgroundColor: "transparent",
+      alignItems: "center",
+    },
+    pagesNavigatorContainer: {
+      flex: 0.8,
+      backgroundColor: theme.colors.surfaceVariant,
+      padding: 10,
+      borderWidth: 1,
+    },
+    closeButton: {
+      alignSelf: "flex-end",
+    },
+  });
+};

@@ -1,11 +1,10 @@
 import TreeView from "react-native-final-tree-view";
 
-import { HView } from "components";
+import { HView, ScrollView } from "components";
 
 import { EntityButton } from "./EntityButton";
 import { Indicator } from "./Indicator";
 import { useTreeData } from "./useTreeData";
-import { ScrollView } from "react-native";
 
 const TreeNodeRenderer = ({
   node: treeNode,
@@ -22,6 +21,8 @@ const TreeNodeRenderer = ({
         fontSize: 18,
         gap: 20,
         height: 30,
+        backgroundColor: "transparent",
+        alignItems: "center",
       }}
     >
       <Indicator isExpanded={isExpanded} hasChildrenNodes={hasChildrenNodes} />
@@ -34,12 +35,11 @@ export const PagesNavigationTree = () => {
   const data = useTreeData();
 
   return (
-    <ScrollView showsVerticalScrollIndicator style={{ flex: 1 }}>
-      <TreeView
-        data={data}
-        initialExpanded={true}
-        renderNode={TreeNodeRenderer}
-      />
+    <ScrollView
+      showsVerticalScrollIndicator
+      style={{ flex: 1, backgroundColor: "transparent" }}
+    >
+      <TreeView data={data} initialExpanded renderNode={TreeNodeRenderer} />
     </ScrollView>
   );
 };

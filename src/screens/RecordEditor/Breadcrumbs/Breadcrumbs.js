@@ -12,7 +12,7 @@ import { DataEntryActions } from "../../../state/dataEntry/actions";
 
 import styles from "./styles";
 
-const Separator = () => <Icon source="greater-than" size={10} />;
+const Separator = () => <Icon source="greater-than" size={20} />;
 
 export const Breadcrumbs = () => {
   const dispatch = useDispatch();
@@ -111,18 +111,22 @@ export const Breadcrumbs = () => {
     <HView style={styles.container}>
       <ScrollView horizontal ref={scrollViewRef}>
         <HView style={styles.container}>
-          {items.map((item, index) => (
-            <HView key={item.entityDefUuid} style={styles.item}>
-              <Button
-                labelStyle={styles.itemButtonLabel}
-                mode="text"
-                onPress={() => onItemPress(item)}
-                style={styles.itemButton}
-                textKey={item.name}
-              />
-              {index < items.length - 1 && <Separator />}
-            </HView>
-          ))}
+          {items.map((item, index) => {
+            const isLastItem = index === items.length - 1;
+            return (
+              <HView key={item.entityDefUuid} style={styles.item}>
+                <Button
+                  compact
+                  labelStyle={styles.itemButtonLabel}
+                  mode={isLastItem ? "contained" : "outlined"}
+                  onPress={() => onItemPress(item)}
+                  style={styles.itemButton}
+                  textKey={item.name}
+                />
+                {!isLastItem && <Separator />}
+              </HView>
+            );
+          })}
         </HView>
       </ScrollView>
     </HView>
