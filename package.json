@@ -1,6 +1,6 @@
 {
   "name": "myarenamobile",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "main": "AppEntry.js",
   "scripts": {
     "start": "expo start",
