@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { Strings } from "@openforis/arena-core";
 
-const config = { withCredentials: true };
+const defaultConfig = { withCredentials: true };
 
 const getUrl = ({ serverUrl, uri }) => {
   const parts = [];
@@ -12,10 +12,10 @@ const getUrl = ({ serverUrl, uri }) => {
 };
 
 const get = (serverUrl, uri, params = {}) =>
-  axios.get(getUrl({ serverUrl, uri }), { ...config, params });
+  axios.get(getUrl({ serverUrl, uri }), { ...defaultConfig, params });
 
-const post = (serverUrl, uri, data, headers) =>
-  axios.post(getUrl({ serverUrl, uri }), data, { ...config, headers });
+const post = (serverUrl, uri, data, config = {}) =>
+  axios.post(getUrl({ serverUrl, uri }), data, { ...defaultConfig, ...config });
 
 export const API = {
   get,

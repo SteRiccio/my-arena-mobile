@@ -9,12 +9,15 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 
-import { AppMessageDialog } from "./appComponents/AppMessageDialog";
-import { AppConfirmDialog } from "./appComponents/AppConfirmDialog";
-import { Themes } from "./model";
-import { AppStack } from "./navigation/AppStack";
-import { rootReducer } from "./state/reducers";
+import { AppConfirmDialog } from "appComponents/AppConfirmDialog";
+import { AppMessageDialog } from "appComponents/AppMessageDialog";
+import { JobMonitorDialog } from "appComponents/JobMonitorDialog";
+
+import { Themes } from "model";
+import { AppStack } from "navigation/AppStack";
+import { rootReducer } from "state/reducers";
 import { useEffectiveTheme } from "hooks";
+
 import { AppInitializer } from "./AppInitializer";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
@@ -30,6 +33,7 @@ const AppInnerContainer = () => {
           <AppStack />
           <AppMessageDialog />
           <AppConfirmDialog />
+          <JobMonitorDialog />
         </AppInitializer>
       </ThemeProvider>
     </PaperProvider>

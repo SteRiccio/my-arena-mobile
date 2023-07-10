@@ -17,3 +17,8 @@ export const ProgressBar = (props) => {
     />
   );
 };
+
+ProgressBar.defaultProps = {
+  indeterminate: false,
+  progress: 100,
+}

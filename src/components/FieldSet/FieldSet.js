@@ -21,7 +21,7 @@ export const FieldSet = (props) => {
       <Text
         style={[
           styles.legend,
-          { backgroundColor: theme.colors.inverseOnSurface },
+          { backgroundColor: theme.colors.surface },
         ]}
         textKey={heading}
       />

@@ -71,7 +71,7 @@ const fetchRecordsWithSyncStatus = async ({ survey }) => {
 const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
   const surveyRemoteId = survey.remoteId;
   const formData = new FormData();
-  formData.append("file", { uri: fileUri });
+  formData.append("file", { uri: fileUri, name: 'arena-mobile-data.zip', type: 'application/zip' });
   formData.append("cycle", cycle);
 
   const { data } = await RemoteService.postMultipartData(

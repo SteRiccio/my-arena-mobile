@@ -19,7 +19,9 @@ import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { ConfirmActions } from "state/confirm";
 import { RecordsExportJob } from "service/recordsExportJob";
+import { WebSocketService } from "service";
 import { MessageActions } from "state/message";
+import { JobMonitorActions } from "state/jobMonitor";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
@@ -252,6 +254,20 @@ const exportRecords =
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle =
       survey.props.defaultCycleKey || Surveys.getLastCycleKey(survey);
+
+        //  const fileUri = "content://com.android.externalstorage.documents/tree/primary%3ADownload/document/primary%3ADownload%2Farena_mobile_export_testi_4_2023-07-10_08-02-48.zip";
+        // const fileInfo = await getInfoAsync(fileUri);
+        // console.log(fileInfo)
+
+        // const remoteJob = await RecordService.uploadRecordsToRemoteServer({
+        //       survey,
+        //       cycle,
+        //       fileUri,
+        //     });
+        // const jobUuid = remoteJob?.uuid
+        // dispatch(JobMonitorActions.start({jobUuid, titleKey: 'dataEntry:exportData'}))
+
+
     const job = new RecordsExportJob({ survey, recordUuids, user: {} });
     await job.start();
     const { summary } = job;
@@ -263,16 +279,18 @@ const exportRecords =
       );
     } else if (status === JobStatus.succeeded) {
       const { outputFileUri } = result || {};
+      
       const remoteJob = await RecordService.uploadRecordsToRemoteServer({
         survey,
         cycle,
         fileUri: outputFileUri,
       });
-      dispatch(
-        MessageActions.setMessage({
-          content: `Records import started remotely: ${remoteJob?.uuid}`,
-        })
-      );
+
+      dispatch(JobMonitorActions.start({
+        jobUuid: remoteJob.uuid, 
+        titleKey: 'dataEntry:exportData',
+        onClose: () => WebSocketService.close()
+      }))
     } else {
       dispatch(
         MessageActions.setMessage({

@@ -29,6 +29,8 @@ const postMultipartData = async (uri, data) =>
   });
 
 export const RemoteService = {
+  getServerUrl,
+
   get,
   post,
   postMultipartData,
