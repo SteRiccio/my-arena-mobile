@@ -131,6 +131,7 @@ export const NodeCoordinateComponent = (props) => {
         const valueNext = locationToValue({ location, srsTo: srsId, srsIndex });
 
         onValueChange(valueNext);
+
         if (valueNext.accuracy <= locationAccuracyThreshold) {
           stopGps();
         }
@@ -142,7 +143,12 @@ export const NodeCoordinateComponent = (props) => {
     );
 
     setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
-  }, [srsId, srsIndex, locationAccuracyWatchTimeout]);
+  }, [
+    srsId,
+    srsIndex,
+    locationAccuracyThreshold,
+    locationAccuracyWatchTimeout,
+  ]);
 
   const onStopGpsPress = useCallback(() => {
     stopGps();
