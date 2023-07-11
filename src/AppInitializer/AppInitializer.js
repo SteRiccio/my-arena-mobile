@@ -3,13 +3,13 @@ import { useDispatch } from "react-redux";
 
 import { SRSs } from "@openforis/arena-core";
 
-import { DowngradeError, initialize as initializeDb } from "./db";
+import { DowngradeError, initialize as initializeDb } from "../db";
 import { SurveyService } from "service";
 import { SettingsActions, SurveyActions } from "state";
 
-import { Text, View } from "./components";
+import { Text, View } from "../components";
 
-import styles from "./appStyles";
+import styles from "./styles";
 
 export const AppInitializer = (props) => {
   const { children } = props;
