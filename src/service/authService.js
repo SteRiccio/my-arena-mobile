@@ -1,11 +1,15 @@
 import { API } from "./api";
-import { SettingsService } from "./settingsService";
+import { RemoteService } from "./remoteService";
 
-const getServerUrl = async () =>
-  (await SettingsService.fetchSettings()).serverUrl;
+const fetchUser = async () => {
+  const { data } = await RemoteService.get("/auth/user");
+  return data.user;
+};
 
 const login = async ({ serverUrl: serverUrlParam, email, password }) => {
-  const serverUrl = serverUrlParam ? serverUrlParam : await getServerUrl();
+  const serverUrl = serverUrlParam
+    ? serverUrlParam
+    : await RemoteService.getServerUrl();
   try {
     const res = await API.post(serverUrl, "/auth/login", {
       email,
@@ -24,5 +28,6 @@ const login = async ({ serverUrl: serverUrlParam, email, password }) => {
 };
 
 export const AuthService = {
+  fetchUser,
   login,
 };

@@ -19,10 +19,9 @@ import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { ConfirmActions } from "state/confirm";
 import { RecordsExportJob } from "service/recordsExportJob";
-import { WebSocketService } from "service";
+import { AuthService, WebSocketService } from "service";
 import { MessageActions } from "state/message";
 import { JobMonitorActions } from "state/jobMonitor";
-import { RemoteConnectionSelectors } from "..";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
@@ -268,7 +267,9 @@ const exportRecords =
     // const jobUuid = remoteJob?.uuid
     // dispatch(JobMonitorActions.start({jobUuid, titleKey: 'dataEntry:exportData'}))
 
-    const user = RemoteConnectionSelectors.selectLoggedUser(state);
+    const user = await AuthService.fetchUser();
+    // TODO if user is null, do login
+
     const job = new RecordsExportJob({ survey, recordUuids, user });
     await job.start();
     const { summary } = job;
