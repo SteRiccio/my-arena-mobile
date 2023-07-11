@@ -56,17 +56,24 @@ export const SurveysListRemote = () => {
     useSurveysSearch({ surveys });
 
   const onRowPress = useCallback((surveySummary) => {
-    if (
-      surveysLocal.some(
-        (surveyLocal) => surveyLocal.uuid === surveySummary.uuid
-      )
-    ) {
+    const localSurveyWithSameUuid = surveysLocal.find(
+      (surveyLocal) => surveyLocal.uuid === surveySummary.uuid
+    );
+
+    if (localSurveyWithSameUuid) {
       dispatch(
         ConfirmActions.show({
           confirmButtonTextKey: "surveys:updateSurvey",
           messageKey: "surveys:updateSurveyConfirmMessage",
           onConfirm: () => {
-            // TODO
+            setState((statePrev) => ({ ...statePrev, loading: true }));
+            dispatch(
+              SurveyActions.updateSurveyRemote({
+                surveyId: localSurveyWithSameUuid.id,
+                surveyRemoteId: surveySummary.id,
+                navigation,
+              })
+            );
           },
         })
       );

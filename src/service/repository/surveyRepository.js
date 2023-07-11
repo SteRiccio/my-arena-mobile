@@ -25,6 +25,26 @@ const insertSurvey = async (survey) => {
   return survey;
 };
 
+const updateSurvey = async ({ id, survey }) => {
+  const surveyJson = JSON.stringify(survey);
+  const content = LZString.compressToBase64(surveyJson);
+
+  await dbClient.executeSql(
+    `UPDATE survey SET name = ?, label = ?, content = ?, date_created = ?, date_modified = ?
+     WHERE id = ?`,
+    [
+      survey.props.name,
+      survey.props.labels?.["en"],
+      content,
+      survey.dateCreated,
+      survey.dateModified,
+      id,
+    ]
+  );
+  survey.remoteId = survey.id;
+  return survey;
+};
+
 const fetchSurveyById = async (id) => {
   const row = await dbClient.one(
     "SELECT remote_id, content FROM survey WHERE id = ?",
@@ -57,5 +77,6 @@ export const SurveyRepository = {
   fetchSurveyById,
   fetchSurveySummaries,
   insertSurvey,
+  updateSurvey,
   deleteSurveys,
 };

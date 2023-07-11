@@ -33,17 +33,40 @@ const fetchAndSetLocalSurveys = () => async (dispatch) => {
   dispatch({ type: SURVEYS_LOCAL_SET, surveys });
 };
 
-const importSurveyRemote =
-  ({ surveyId, navigation }) =>
+const _onSurveyInsertOrUpdate =
+  ({ survey, navigation }) =>
   async (dispatch) => {
-    const survey = await SurveyService.importSurveyRemote({ id: surveyId });
     dispatch(setCurrentSurvey({ survey, navigation }));
     dispatch(fetchAndSetLocalSurveys());
   };
 
-const deleteSurveys = (surveyIds) => async (dispatch) => {
+const importSurveyRemote =
+  ({ surveyId, navigation }) =>
+  async (dispatch) => {
+    const survey = await SurveyService.importSurveyRemote({ id: surveyId });
+    dispatch(_onSurveyInsertOrUpdate({ survey, navigation }));
+  };
+
+const updateSurveyRemote =
+  ({ surveyId, surveyRemoteId, navigation }) =>
+  async (dispatch) => {
+    const survey = await SurveyService.updateSurveyRemote({
+      surveyId,
+      surveyRemoteId,
+    });
+    dispatch(_onSurveyInsertOrUpdate({ survey, navigation }));
+  };
+
+const deleteSurveys = (surveyIds) => async (dispatch, getState) => {
+  const state = getState();
+  const surveyState = state.survey;
   await SurveyService.deleteSurveys(surveyIds);
   dispatch(fetchAndSetLocalSurveys());
+
+  // reset current survey if among deleted ones
+  if (surveyIds.includes(surveyState.currentSurvey?.id)) {
+    dispatch({ type: CURRENT_SURVEY_SET, survey: null });
+  }
 };
 
 export const SurveyActions = {
@@ -52,5 +75,6 @@ export const SurveyActions = {
   fetchAndSetCurrentSurvey,
   fetchAndSetLocalSurveys,
   importSurveyRemote,
+  updateSurveyRemote,
   deleteSurveys,
 };

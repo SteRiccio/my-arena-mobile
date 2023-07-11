@@ -8,6 +8,7 @@ const {
   fetchSurveySummaries: fetchSurveySummariesLocal,
   fetchSurveyById,
   insertSurvey,
+  updateSurvey,
   deleteSurveys,
 } = SurveyRepository;
 
@@ -35,7 +36,7 @@ const fetchSurveySummariesRemote = async () => {
   }
 };
 
-const fetchSurveyRemoteById = async ({ id, cycle }) => {
+const fetchSurveyRemoteById = async ({ id, cycle = null }) => {
   const { data } = await RemoteService.get(`api/mobile/survey/${id}`, {
     cycle,
   });
@@ -47,9 +48,14 @@ const importDemoSurvey = async () => {
   await insertSurvey(demoSurvey);
 };
 
-const importSurveyRemote = async ({ id, cycle }) => {
-  const survey = await fetchSurveyRemoteById({ id, cycle });
+const importSurveyRemote = async ({ id }) => {
+  const survey = await fetchSurveyRemoteById({ id });
   return insertSurvey(survey);
+};
+
+const updateSurveyRemote = async ({ surveyId, surveyRemoteId }) => {
+  const survey = await fetchSurveyRemoteById({ id: surveyRemoteId });
+  return updateSurvey({ id: surveyId, survey });
 };
 
 export const SurveyService = {
@@ -60,5 +66,6 @@ export const SurveyService = {
   importSurveyRemote,
   fetchCategoryItems,
   insertSurvey,
+  updateSurveyRemote,
   deleteSurveys,
 };
