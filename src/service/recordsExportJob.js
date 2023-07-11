@@ -54,6 +54,9 @@ export class RecordsExportJob extends JobMobile {
       await Promises.each(recordsToExport, async (recordSummary) => {
         const { id: recordId, uuid } = recordSummary;
         const record = await RecordService.fetchRecord({ survey, recordId });
+        if (!record.ownerUuid) {
+          record.ownerUuid = user.uuid;
+        }
         const tempRecordFileUri = `${tempRecordsFolderUri}/${uuid}.json`;
         await FileSystem.writeAsStringAsync(tempRecordFileUri, toJson(record));
         this.incrementProcessedItems();

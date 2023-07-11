@@ -9,6 +9,7 @@ export {
 export {
   RemoteConnectionActions,
   RemoteConnectionReducer,
+  RemoteConnectionSelectors,
 } from "./remoteConnection";
 
 export {
