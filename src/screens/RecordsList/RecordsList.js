@@ -37,7 +37,8 @@ export const RecordsList = () => {
   const { t } = useTranslation();
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
-  const defaultCycle = Surveys.getDefaultCycleKey(survey);
+  const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
+  const defaultCycle = String(Number(defaultCycleKey) + 1);
   const cycles = Surveys.getCycleKeys(survey);
 
   const rootDefKeys = useMemo(() => {

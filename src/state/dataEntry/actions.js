@@ -33,10 +33,13 @@ const createNewRecord =
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
+    const cycle = Surveys.getDefaultCycleKey(survey);
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
+      cycle,
       user: {},
     });
+
     let { record } = await RecordUpdater.createRootEntity({
       survey,
       record: recordEmpty,
