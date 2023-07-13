@@ -13,6 +13,7 @@ import {
 
 import {
   Button,
+  CollapsiblePanel,
   DataTable,
   HView,
   Loader,
@@ -26,7 +27,7 @@ import { RecordService } from "service";
 import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
 import { RecordSyncStatus } from "model/RecordSyncStatus";
 
-import { SurveyLanguageDropdown } from "./SurveyLanguageDropdown";
+import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import styles from "./styles";
 
@@ -36,6 +37,8 @@ export const RecordsList = () => {
   const { t } = useTranslation();
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const defaultCycle = Surveys.getDefaultCycleKey(survey);
+  const cycles = Surveys.getCycleKeys(survey);
 
   const rootDefKeys = useMemo(() => {
     if (!survey) return [];
@@ -151,7 +154,21 @@ export const RecordsList = () => {
   return (
     <VView style={styles.container}>
       <VView style={styles.innerContainer}>
-        <SurveyLanguageDropdown />
+        <CollapsiblePanel headerKey="dataEntry:options">
+          <>
+            <SurveyLanguageSelector />
+            {cycles.length > 1 && (
+              <HView style={styles.formItem}>
+                <Text
+                  style={styles.formItemLabel}
+                  textKey="dataEntry:cycleForNewRecords"
+                />
+                <Text textKey={defaultCycle} />
+              </HView>
+            )}
+          </>
+        </CollapsiblePanel>
+
         {records.length === 0 && (
           <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
         )}

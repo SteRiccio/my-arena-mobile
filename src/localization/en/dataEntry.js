@@ -2,9 +2,11 @@ export default {
   confirmGoToListOfRecordsAndTerminateRecordEditing:
     "Go to list of records and terminate record editing?",
   checkSyncStatus: "Check sync status",
+  cycleForNewRecords: "Cycle for new records:",
+  options: "Data entry options",
   dataExportError: "Data export error",
   exportData: "Export data",
-  formLanguage: "Data entry form language",
+  formLanguage: "Form language:",
   goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",
   listOfRecords: "List of records",

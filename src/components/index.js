@@ -1,6 +1,7 @@
 export { Autocomplete } from "./Autocomplete";
 export { Button } from "./Button";
 export { Checkbox } from "./Checkbox";
+export { CollapsiblePanel } from "./CollapsiblePanel";
 export { DataTable } from "./DataTable";
 export { DatePicker } from "./DatePicker";
 export { Divider } from "./Divider";

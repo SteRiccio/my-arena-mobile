@@ -11,10 +11,13 @@ export const Dropdown = (props) => {
     items,
     label: labelProp,
     onChange,
+    showLabel,
     value,
   } = props;
 
   const { t } = useTranslation();
+
+  const label = showLabel ? t(labelProp) : "";
 
   const [open, setOpen] = useState(false);
 
@@ -39,7 +42,7 @@ export const Dropdown = (props) => {
   return (
     <RNPDropdown
       disabled={disabled}
-      label={t(labelProp)}
+      label={label}
       list={options}
       mode="outlined"
       onDismiss={() => setOpen(false)}
@@ -55,4 +58,5 @@ Dropdown.defaultProps = {
   itemKeyExtractor: (item) => item.value,
   itemLabelExtractor: (item) => item.label,
   label: "common:selectAnItem",
+  showLabel: true,
 };

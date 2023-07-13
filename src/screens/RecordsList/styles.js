@@ -4,6 +4,8 @@ export default StyleSheet.create({
   container: {
     flex: 1,
   },
+  formItem: { alignItems: "center" },
+  formItemLabel: { fontSize: 16, width: 170 },
   innerContainer: {
     flex: 1,
     padding: 4,
