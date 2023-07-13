@@ -55,7 +55,9 @@ export const useNodeImageComponent = ({ nodeUuid }) => {
 
         const info = await FileSystem.getInfoAsync(sourceFileUri);
 
-        const fileName = uri.substring(uri.lastIndexOf("/") + 1);
+        const fileName = sourceFileUri.substring(
+          sourceFileUri.lastIndexOf("/") + 1
+        );
         const fileSize = info.size;
         const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
         await updateNodeValue(valueUpdated, sourceFileUri);

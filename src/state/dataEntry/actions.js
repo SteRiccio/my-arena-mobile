@@ -18,7 +18,7 @@ import { screenKeys } from "screens/screenKeys";
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { ConfirmActions } from "state/confirm";
-import { RecordsExportJob } from "service/recordsExportJob";
+import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerationJob";
 import { AuthService, WebSocketService } from "service";
 import { MessageActions } from "state/message";
 import { JobMonitorActions } from "state/jobMonitor";
@@ -270,7 +270,11 @@ const exportRecords =
     const user = await AuthService.fetchUser();
     // TODO if user is null, do login
 
-    const job = new RecordsExportJob({ survey, recordUuids, user });
+    const job = new RecordsExportFileGenerationJob({
+      survey,
+      recordUuids,
+      user,
+    });
     await job.start();
     const { summary } = job;
     const { status, result } = summary;
