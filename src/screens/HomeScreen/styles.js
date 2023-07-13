@@ -11,6 +11,6 @@ export default StyleSheet.create({
   },
   logo: { width: 200, height: 200 },
   currentSurveyFieldset: {
-    width: "80%",
+    width: "90%",
   },
 });

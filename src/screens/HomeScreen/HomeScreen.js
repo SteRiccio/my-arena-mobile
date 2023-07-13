@@ -6,6 +6,7 @@ import { useAssets } from "expo-asset";
 import { Button, FieldSet, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveySelectors } from "state/survey";
+
 import styles from "./styles";
 
 export const HomeScreen = () => {
@@ -27,7 +28,12 @@ export const HomeScreen = () => {
             heading="surveys:currentSurvey"
             style={styles.currentSurveyFieldset}
           >
-            <Text textKey={survey.props.name} />
+            <VView>
+              <Text
+                textKey={`${survey.props.labels?.["en"]} [${survey.props.name}]`}
+                variant="titleMedium"
+              />
+            </VView>
           </FieldSet>
           <Button
             textKey="dataEntry:goToDataEntry"
