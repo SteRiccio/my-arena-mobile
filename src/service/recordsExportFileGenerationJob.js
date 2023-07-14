@@ -5,6 +5,7 @@ import {
   Dates,
   NodeDefType,
   NodeDefs,
+  Objects,
   Promises,
   Records,
   UUIDs,
@@ -70,23 +71,27 @@ export class RecordsExportFileGenerationJob extends JobMobile {
         const tempRecordFileUri = `${tempRecordsFolderUri}/${uuid}.json`;
         await FileSystem.writeAsStringAsync(tempRecordFileUri, toJson(record));
 
-        const { recordFiles } = await this.writeRecordFiles({
-          tempFolderUri,
-          nodeDefsFile,
-          record,
-        });
+        if (!Objects.isEmpty(nodeDefsFile)) {
+          const { recordFiles } = await this.writeRecordFiles({
+            tempFolderUri,
+            nodeDefsFile,
+            record,
+          });
 
-        files.push(...recordFiles);
+          files.push(...recordFiles);
+        }
 
         this.incrementProcessedItems();
       });
 
-      const filesSummaryJson = toJson(files);
-      const tempFilesSummaryJsonFileUri = `${tempFolderUri}/${FILES_FOLDER_NAME}/${FILES_SUMMARY_JSON_FILENAME}`;
-      await FileSystem.writeAsStringAsync(
-        tempFilesSummaryJsonFileUri,
-        filesSummaryJson
-      );
+      if (files.length > 0) {
+        const filesSummaryJson = toJson(files);
+        const tempFilesSummaryJsonFileUri = `${tempFolderUri}/${FILES_FOLDER_NAME}/${FILES_SUMMARY_JSON_FILENAME}`;
+        await FileSystem.writeAsStringAsync(
+          tempFilesSummaryJsonFileUri,
+          filesSummaryJson
+        );
+      }
 
       const outputFileName = `recordsExport-${Dates.nowFormattedForStorage()}.zip`;
       this.outputFileUri = `${FileSystem.documentDirectory}${outputFileName}`;
@@ -108,6 +113,8 @@ export class RecordsExportFileGenerationJob extends JobMobile {
     }, []);
 
     const recordFiles = nodesFile.reduce((acc, nodeFile) => {
+      if (!nodeFile.value) return acc;
+
       const { fileName: name, fileSize: size, fileUuid } = nodeFile.value;
 
       acc.push({
