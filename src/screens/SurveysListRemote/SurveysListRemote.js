@@ -92,7 +92,7 @@ export const SurveysListRemote = () => {
         })
       );
     }
-  }, []);
+  }, [surveysLocal]);
 
   if (loading) return <Loader />;
 
