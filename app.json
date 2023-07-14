@@ -2,7 +2,7 @@
   "expo": {
     "name": "My Arena Mobile",
     "slug": "my-arena-mobile",
-    "version": "0.9.10",
+    "version": "0.9.11",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,7 +24,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 10
+      "versionCode": 11
     },
     "web": {
       "favicon": "./assets/favicon.png"
