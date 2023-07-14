@@ -24,15 +24,25 @@ export const DataTable = (props) => {
   const { t } = useTranslation();
 
   const [state, setState] = useState({ selectedRowIds: [] });
-  const pressInTimeoutRef = useRef(null);
+  const longPressTimeoutRef = useRef(null);
 
   const { selectedRowIds, selectionEnabled } = state;
+
+  const clearLongPressTimeout = () => {
+    if (longPressTimeoutRef.current) {
+      clearTimeout(longPressTimeoutRef.current);
+    }
+  };
 
   useEffect(() => {
     setState((statePrev) => ({
       ...statePrev,
       selectedRowIds: [],
     }));
+
+    return () => {
+      clearLongPressTimeout();
+    };
   }, [rows]);
 
   const onRowSelect = useCallback(
@@ -60,11 +70,9 @@ export const DataTable = (props) => {
 
   const onRowPressIn = (row) => {
     if (selectable) {
-      if (pressInTimeoutRef.current) {
-        clearTimeout(pressInTimeoutRef.current);
-      }
-      pressInTimeoutRef.current = setTimeout(() => {
-        pressInTimeoutRef.current = null;
+      clearLongPressTimeout();
+      longPressTimeoutRef.current = setTimeout(() => {
+        longPressTimeoutRef.current = null;
         onRowSelect(row);
         onRowLongPress?.(row);
       }, longPressDelayMs);
@@ -74,8 +82,9 @@ export const DataTable = (props) => {
   };
 
   const onRowPressOut = (row) => {
-    if (pressInTimeoutRef.current) {
-      clearTimeout(pressInTimeoutRef.current);
+    if (longPressTimeoutRef.current) {
+      // long press timeout not reached yet: only a "short" press
+      clearLongPressTimeout();
       onRowPress(row);
     }
   };

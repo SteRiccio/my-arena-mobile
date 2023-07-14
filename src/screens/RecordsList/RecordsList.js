@@ -183,7 +183,7 @@ export const RecordsList = () => {
               {
                 key: "dateModified",
                 header: "common:modifiedOn",
-                style: { minWidth: 70 },
+                style: { minWidth: 50 },
               },
               ...(syncStatusLoading || syncStatusFetched
                 ? [
