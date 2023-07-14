@@ -1,19 +1,21 @@
-import { useCallback, useEffect, useState } from "react";
-import { DataTable as RNPDataTable } from "react-native-paper";
-import { Banner } from "react-native-paper";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Banner, DataTable as RNPDataTable } from "react-native-paper";
 
 import { Arrays } from "@openforis/arena-core";
 
 import { useTranslation } from "localization";
 import { Checkbox } from "./Checkbox";
+import { ScrollView } from "./ScrollView";
 import { VView } from "./VView";
-import { ScrollView } from "react-native";
+
+const longPressDelayMs = 1000;
 
 export const DataTable = (props) => {
   const {
     columns,
     rows,
     onRowPress,
+    onRowLongPress,
     onSelectionChange,
     onDeleteSelectedRowIds,
     selectable,
@@ -22,8 +24,9 @@ export const DataTable = (props) => {
   const { t } = useTranslation();
 
   const [state, setState] = useState({ selectedRowIds: [] });
+  const pressInTimeoutRef = useRef(null);
 
-  const { selectedRowIds } = state;
+  const { selectedRowIds, selectionEnabled } = state;
 
   useEffect(() => {
     setState((statePrev) => ({
@@ -41,6 +44,7 @@ export const DataTable = (props) => {
 
       setState((statePrev) => ({
         ...statePrev,
+        selectionEnabled: selectedRowIdsNext.length > 0,
         selectedRowIds: selectedRowIdsNext,
       }));
 
@@ -53,6 +57,28 @@ export const DataTable = (props) => {
     () => onDeleteSelectedRowIds?.(selectedRowIds),
     [selectedRowIds, onDeleteSelectedRowIds]
   );
+
+  const onRowPressIn = (row) => {
+    if (selectable) {
+      if (pressInTimeoutRef.current) {
+        clearTimeout(pressInTimeoutRef.current);
+      }
+      pressInTimeoutRef.current = setTimeout(() => {
+        pressInTimeoutRef.current = null;
+        onRowSelect(row);
+        onRowLongPress?.(row);
+      }, longPressDelayMs);
+    } else {
+      onRowPress(row);
+    }
+  };
+
+  const onRowPressOut = (row) => {
+    if (pressInTimeoutRef.current) {
+      clearTimeout(pressInTimeoutRef.current);
+      onRowPress(row);
+    }
+  };
 
   return (
     <VView style={{ flex: 1 }}>
@@ -76,19 +102,27 @@ export const DataTable = (props) => {
               {t(column.header)}
             </RNPDataTable.Title>
           ))}
-          {selectable && (
+          {selectionEnabled && (
             <RNPDataTable.Title style={{ maxWidth: 40, minWidth: 40 }} />
           )}
         </RNPDataTable.Header>
         <ScrollView persistentScrollbar>
           {rows.map((row) => (
-            <RNPDataTable.Row key={row.key} onPress={() => onRowPress?.(row)}>
+            <RNPDataTable.Row
+              key={row.key}
+              onPressIn={() => onRowPressIn(row)}
+              onPressOut={() => onRowPressOut(row)}
+            >
               {columns.map(({ key: columnKey, style, cellRenderer = null }) => (
-                <RNPDataTable.Cell key={columnKey} style={style}>
+                <RNPDataTable.Cell
+                  key={columnKey}
+                  style={style}
+                  textStyle={{ flex: 1 }}
+                >
                   {cellRenderer ? cellRenderer({ row }) : row[columnKey]}
                 </RNPDataTable.Cell>
               ))}
-              {selectable && (
+              {selectionEnabled && (
                 <RNPDataTable.Cell style={{ maxWidth: 40, minWidth: 40 }}>
                   <Checkbox
                     checked={selectedRowIds.includes(row.key)}
