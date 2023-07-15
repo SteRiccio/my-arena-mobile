@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-
-import { SRSs } from "@openforis/arena-core";
+import SystemNavigationBar from "react-native-system-navigation-bar";
 
 import { DowngradeError, initialize as initializeDb } from "../db";
 import { SurveyService } from "service";
@@ -26,7 +25,9 @@ export const AppInitializer = (props) => {
     const initialize = async () => {
       console.log("Initializing app");
       try {
-        await SRSs.init();
+        try {
+          SystemNavigationBar.immersive();
+        } catch (e) {}
 
         await initializeDb();
 
