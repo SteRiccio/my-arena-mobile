@@ -9,12 +9,13 @@ import { ScrollView } from "./ScrollView";
 import { VView } from "./VView";
 
 const longPressDelayMs = 1000;
+const maxPressInLocationYDiff = 10;
 
 export const DataTable = (props) => {
   const {
     columns,
     rows,
-    onRowPress,
+    onRowPress: onRowPressProp,
     onRowLongPress,
     onSelectionChange,
     onDeleteSelectedRowIds,
@@ -25,12 +26,14 @@ export const DataTable = (props) => {
 
   const [state, setState] = useState({ selectedRowIds: [] });
   const longPressTimeoutRef = useRef(null);
+  const pressInLocationYRef = useRef(null);
 
   const { selectedRowIds, selectionEnabled } = state;
 
   const clearLongPressTimeout = () => {
     if (longPressTimeoutRef.current) {
       clearTimeout(longPressTimeoutRef.current);
+      longPressTimeoutRef.current = null;
     }
   };
 
@@ -68,25 +71,36 @@ export const DataTable = (props) => {
     [selectedRowIds, onDeleteSelectedRowIds]
   );
 
-  const onRowPressIn = (row) => {
+  const onRowPressIn = ({ event, row }) => {
     if (selectable) {
+      pressInLocationYRef.current = event.nativeEvent.locationY;
       clearLongPressTimeout();
+
       longPressTimeoutRef.current = setTimeout(() => {
         longPressTimeoutRef.current = null;
         onRowSelect(row);
         onRowLongPress?.(row);
       }, longPressDelayMs);
-    } else {
-      onRowPress(row);
     }
   };
 
-  const onRowPressOut = (row) => {
+  const onRowPressOut = ({ event, row }) => {
     if (longPressTimeoutRef.current) {
       // long press timeout not reached yet: only a "short" press
       clearLongPressTimeout();
-      onRowPress(row);
+
+      const locationYDiff = Math.abs(
+        pressInLocationYRef.current - event.nativeEvent.locationY
+      );
+      if (locationYDiff <= maxPressInLocationYDiff) {
+        if (selectionEnabled) {
+          onRowSelect(row);
+        } else {
+          onRowPressProp?.(row);
+        }
+      }
     }
+    pressInLocationYRef.current = null;
   };
 
   return (
@@ -119,8 +133,8 @@ export const DataTable = (props) => {
           {rows.map((row) => (
             <RNPDataTable.Row
               key={row.key}
-              onPressIn={() => onRowPressIn(row)}
-              onPressOut={() => onRowPressOut(row)}
+              onPressIn={(event) => onRowPressIn({ event, row })}
+              onPressOut={(event) => onRowPressOut({ event, row })}
             >
               {columns.map(({ key: columnKey, style, cellRenderer = null }) => (
                 <RNPDataTable.Cell
