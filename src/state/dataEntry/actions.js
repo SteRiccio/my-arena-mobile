@@ -14,6 +14,7 @@ import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
+import { i18n } from "localization";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
@@ -22,11 +23,14 @@ import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerat
 import { AuthService, WebSocketService } from "service";
 import { MessageActions } from "state/message";
 import { JobMonitorActions } from "state/jobMonitor";
+import { Validations } from "model/utils/Validations";
 
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const CURRENT_PAGE_ENTITY_SET = "CURRENT_PAGE_ENTITY_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
+
+const { t } = i18n;
 
 const createNewRecord =
   ({ navigation }) =>
@@ -280,11 +284,23 @@ const exportRecords =
     });
     await job.start();
     const { summary } = job;
-    const { status, result } = summary;
+    const { errors, result, status } = summary;
 
     if (status === JobStatus.failed) {
+      const validationErrors = Object.values(errors).map((item) => item.error);
+      const details = validationErrors
+        .map((validationError) =>
+          Validations.getJointErrorText({
+            validation: validationError,
+            t,
+          })
+        )
+        .join(";\n");
       dispatch(
-        MessageActions.setMessage({ content: "dataEntry:dataExportError" })
+        MessageActions.setMessage({
+          content: "dataEntry:errorGeneratingRecordsExportFile",
+          contentParams: { details },
+        })
       );
     } else if (status === JobStatus.succeeded) {
       const { outputFileUri } = result || {};

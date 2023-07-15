@@ -4,7 +4,8 @@ export default {
   checkSyncStatus: "Check sync status",
   cycleForNewRecords: "Cycle for new records:",
   options: "Data entry options",
-  dataExportError: "Data export error",
+  errorGeneratingRecordsExportFile:
+    "Error generating records export file: {{details}}",
   exportData: "Export data",
   formLanguage: "Form language:",
   goToDataEntry: "Go to data entry",

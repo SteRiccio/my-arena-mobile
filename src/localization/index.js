@@ -18,4 +18,4 @@ i18n
     },
   });
 
-export { useTranslation };
+export { i18n, useTranslation };

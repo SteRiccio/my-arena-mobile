@@ -1,4 +1,7 @@
 export default {
+  appErrors: {
+    generic: "Unexpected error: {{text}}",
+  },
   record: {
     ancestorNotFound: "Ancestor node not found in record",
     keyDuplicate: "Duplicate record key",

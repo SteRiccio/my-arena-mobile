@@ -45,6 +45,10 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       const recordsToExport = recordsSummary.filter((recordSummary) =>
         recordUuids.includes(recordSummary.uuid)
       );
+
+      // set total
+      this.summary.total = recordsToExport.length;
+
       const recordsSummaryJson = toJson(
         recordsToExport.map(({ uuid, cycle }) => ({ uuid, cycle }))
       );
