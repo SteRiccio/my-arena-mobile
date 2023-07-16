@@ -1,4 +1,5 @@
 import { AuthService, SettingsService } from "service";
+import { i18n } from "localization";
 
 import { MessageActions } from "../message/actions";
 import { SettingsActions } from "../settings/actions";
@@ -22,13 +23,16 @@ const login =
       const settingsUpdated = { ...settings, serverUrl, email, password };
       dispatch(SettingsActions.updateSettings(settingsUpdated));
 
-      dispatch(MessageActions.setMessage({ content: "Login successful!" }));
+      dispatch(
+        MessageActions.setMessage({ content: "authService:loginSuccessful" })
+      );
       dispatch({ type: LOGGED_IN, user });
     } else if (error) {
+      const details = i18n.t(error);
       dispatch(
         MessageActions.setMessage({
           content: "authService:error.generic",
-          contentParams: { details: error },
+          contentParams: { details },
         })
       );
     }

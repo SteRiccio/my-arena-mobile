@@ -55,44 +55,52 @@ export const SurveysListRemote = () => {
   const { onSearchValueChange, searchValue, surveysFiltered } =
     useSurveysSearch({ surveys });
 
-  const onRowPress = useCallback((surveySummary) => {
-    const localSurveyWithSameUuid = surveysLocal.find(
-      (surveyLocal) => surveyLocal.uuid === surveySummary.uuid
-    );
+  const onRowPress = useCallback(
+    (surveySummary) => {
+      const surveyName = surveySummary.props.name;
+      const localSurveyWithSameUuid = surveysLocal.find(
+        (surveyLocal) => surveyLocal.uuid === surveySummary.uuid
+      );
 
-    if (localSurveyWithSameUuid) {
-      dispatch(
-        ConfirmActions.show({
-          confirmButtonTextKey: "surveys:updateSurvey",
-          messageKey: "surveys:updateSurveyConfirmMessage",
-          onConfirm: () => {
-            setState((statePrev) => ({ ...statePrev, loading: true }));
-            dispatch(
-              SurveyActions.updateSurveyRemote({
-                surveyId: localSurveyWithSameUuid.id,
-                surveyRemoteId: surveySummary.id,
-                navigation,
-              })
-            );
-          },
-        })
-      );
-    } else {
-      dispatch(
-        ConfirmActions.show({
-          confirmButtonTextKey: "surveys:importSurvey",
-          messageKey: "surveys:importSurveyConfirmMessage",
-          onConfirm: () => {
-            setState((statePrev) => ({ ...statePrev, loading: true }));
-            const surveyId = surveySummary.id;
-            dispatch(
-              SurveyActions.importSurveyRemote({ surveyId, navigation })
-            );
-          },
-        })
-      );
-    }
-  }, [surveysLocal]);
+      if (localSurveyWithSameUuid) {
+        // update existing survey
+        dispatch(
+          ConfirmActions.show({
+            confirmButtonTextKey: "surveys:updateSurvey",
+            messageKey: "surveys:updateSurveyConfirmMessage",
+            messageParams: { surveyName },
+            onConfirm: () => {
+              setState((statePrev) => ({ ...statePrev, loading: true }));
+              dispatch(
+                SurveyActions.updateSurveyRemote({
+                  surveyId: localSurveyWithSameUuid.id,
+                  surveyRemoteId: surveySummary.id,
+                  navigation,
+                })
+              );
+            },
+          })
+        );
+      } else {
+        // import new survey
+        dispatch(
+          ConfirmActions.show({
+            confirmButtonTextKey: "surveys:importSurvey",
+            messageKey: "surveys:importSurveyConfirmMessage",
+            messageParams: { surveyName },
+            onConfirm: () => {
+              setState((statePrev) => ({ ...statePrev, loading: true }));
+              const surveyId = surveySummary.id;
+              dispatch(
+                SurveyActions.importSurveyRemote({ surveyId, navigation })
+              );
+            },
+          })
+        );
+      }
+    },
+    [surveysLocal]
+  );
 
   if (loading) return <Loader />;
 

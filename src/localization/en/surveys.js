@@ -9,7 +9,7 @@ export default {
   errorFetchingSurveysWithDetails:
     "$t(surveys:errorFetchingSurveys): {{details}}",
   importSurvey: "Import survey",
-  importSurveyConfirmMessage: "Import this survey?",
+  importSurveyConfirmMessage: "Import the survey \"{{surveyName}}\"?",
   importSurveyFromCloud: "Import survey from cloud",
   loadSurveysErrorMessage:
     "Error fetching surveys from remote server.\n\nUser not logged in or session expired.\n\nLogin to the server?",
@@ -19,5 +19,6 @@ export default {
   surveysInTheCloud: "Surveys in the cloud",
   surveysInTheDevice: "Surveys in the device",
   updateSurvey: "Update survey",
-  updateSurveyConfirmMessage: "Survey already in this device. Update it?",
+  updateSurveyConfirmMessage:
+    "Survey \"{{surveyName}}\" already in this device. Update it?",
 };
