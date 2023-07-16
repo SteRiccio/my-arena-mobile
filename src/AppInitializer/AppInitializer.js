@@ -24,35 +24,39 @@ export const AppInitializer = (props) => {
   useEffect(() => {
     const initialize = async () => {
       console.log("Initializing app");
+
       try {
-        try {
-          SystemNavigationBar.immersive();
-        } catch (e) {}
+        await SystemNavigationBar.stickyImmersive();
+      } catch (e) {
+        // ignore it (not available)
+      }
 
-        await initializeDb();
+      await initializeDb();
 
-        await dispatch(SettingsActions.initSettings());
+      await dispatch(SettingsActions.initSettings());
 
-        // initialize local surveys
-        const surveySummaries = await SurveyService.fetchSurveySummariesLocal();
-        if (surveySummaries.length === 0) {
-          await SurveyService.importDemoSurvey();
-        }
+      // initialize local surveys
+      const surveySummaries = await SurveyService.fetchSurveySummariesLocal();
+      if (surveySummaries.length === 0) {
+        await SurveyService.importDemoSurvey();
+      }
 
-        await dispatch(SurveyActions.fetchAndSetLocalSurveys());
+      await dispatch(SurveyActions.fetchAndSetLocalSurveys());
 
-        console.log("App initialized");
-      } catch (err) {
+      console.log("App initialized");
+    };
+    initialize()
+      .then(() => {
+        setState((statePrev) => ({ ...statePrev, loading: false }));
+      })
+      .catch((err) => {
         console.error("===error", err);
         const errorMessage =
           err instanceof DowngradeError
             ? "Downgrade error"
             : "Unexpected error";
         setState((statePrev) => ({ ...statePrev, errorMessage }));
-      }
-      setState((statePrev) => ({ ...statePrev, loading: false }));
-    };
-    initialize();
+      });
   }, []);
 
   if (loading) {
