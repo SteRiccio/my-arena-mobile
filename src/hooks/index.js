@@ -1,3 +1,4 @@
+export { useDeviceInfo } from "./useDeviceInfo";
 export { useEffectiveTheme } from "./useEffectiveTheme";
 export { useKeyboardIsVisible } from "./useKeyboardIsVisible";
 export { useNavigationFocus } from "./useNavigationFocus";

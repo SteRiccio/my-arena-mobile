@@ -9440,6 +9440,11 @@ react-native-system-navigation-bar@^2.6.1:
   resolved "https://registry.yarnpkg.com/react-native-system-navigation-bar/-/react-native-system-navigation-bar-2.6.1.tgz#cead40f7311fe92be4921808901b7b56e9c763d8"
   integrity sha512-IN5n55sEbA4oAvwUqK8oCfKKc4fXJmBzcqC/Eq8bv26gTwzk6oUiPrHtzJCSJvWyCOCt6jKuc9vDWEFTLDOLog==
 
+react-native-version-number@^0.3.6:
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/react-native-version-number/-/react-native-version-number-0.3.6.tgz#dd8b1435fc217df0a166d7e4a61fdc993f3e7437"
+  integrity sha512-TdyXiK90NiwmSbmAUlUBOV6WI1QGoqtvZZzI5zQY4fKl67B3ZrZn/h+Wy/OYIKKFMfePSiyfeIs8LtHGOZ/NgA==
+
 react-native-web@~0.18.12:
   version "0.18.12"
   resolved "https://registry.yarnpkg.com/react-native-web/-/react-native-web-0.18.12.tgz#d4bb3a783ece2514ba0508d7805b09c0a98f5a8e"

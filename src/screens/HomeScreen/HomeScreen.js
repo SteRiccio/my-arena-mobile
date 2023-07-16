@@ -6,6 +6,7 @@ import { useAssets } from "expo-asset";
 import { Button, FieldSet, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveySelectors } from "state/survey";
+import { useDeviceInfo } from "hooks/useDeviceInfo";
 
 import styles from "./styles";
 
@@ -13,6 +14,11 @@ export const HomeScreen = () => {
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
   const [logo] = useAssets(require("../../../assets/icon.png"));
+
+  const surveyName = survey?.props.name;
+  const surveyLabelInDefaultLanguage = survey?.props.labels?.["en"] ?? "";
+  const surveyTitle = `${surveyLabelInDefaultLanguage} [${surveyName}]`;
+  const deviceInfo = useDeviceInfo();
 
   return (
     <VView style={styles.container}>
@@ -22,6 +28,9 @@ export const HomeScreen = () => {
         variant="displaySmall"
         textKey="common:appTitle"
       />
+      <Text style={styles.appVersionName} variant="labelSmall">
+        v{deviceInfo.version} [{deviceInfo.buildNumber}]
+      </Text>
       {survey && (
         <>
           <FieldSet
@@ -29,10 +38,7 @@ export const HomeScreen = () => {
             style={styles.currentSurveyFieldset}
           >
             <VView>
-              <Text
-                textKey={`${survey.props.labels?.["en"]} [${survey.props.name}]`}
-                variant="titleMedium"
-              />
+              <Text textKey={surveyTitle} variant="titleMedium" />
             </VView>
           </FieldSet>
           <Button
