@@ -30,6 +30,7 @@ import { RecordSyncStatus } from "model/RecordSyncStatus";
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import styles from "./styles";
+import { MessageActions } from "state/message";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -72,14 +73,29 @@ export const RecordsList = () => {
       syncStatusLoading: true,
       syncStatusFetched: false,
     }));
-    const _records = await RecordService.fetchRecordsWithSyncStatus({ survey });
-    setState((statePrev) => ({
-      ...statePrev,
-      records: _records,
-      loading: false,
-      syncStatusLoading: false,
-      syncStatusFetched: true,
-    }));
+    try {
+      const _records = await RecordService.fetchRecordsWithSyncStatus({
+        survey,
+      });
+      setState((statePrev) => ({
+        ...statePrev,
+        records: _records,
+        loading: false,
+        syncStatusLoading: false,
+        syncStatusFetched: true,
+      }));
+    } catch (error) {
+      setState((statePrev) => ({
+        ...statePrev,
+        syncStatusLoading: false,
+      }));
+      dispatch(
+        MessageActions.setMessage({
+          content: "dataEntry:errorFetchingRecordsSyncStatus",
+          contentParams: { details: String(error) },
+        })
+      );
+    }
   }, [survey]);
 
   // reload records on navigation focus (e.g. going back to records list screen)
@@ -212,6 +228,7 @@ export const RecordsList = () => {
         />
         {!syncStatusFetched && records.length > 0 && (
           <Button
+            loading={syncStatusLoading}
             onPress={loadRecordsWithSyncStatus}
             style={styles.checkSyncStatusButton}
             textKey="dataEntry:checkSyncStatus"

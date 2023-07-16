@@ -4,6 +4,8 @@ export default {
   checkSyncStatus: "Check sync status",
   cycleForNewRecords: "Cycle for new records:",
   options: "Data entry options",
+  errorFetchingRecordsSyncStatus:
+    "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
   exportData: "Export data",
