@@ -4,4 +4,5 @@ export default {
     invalidServerUrl: "Invalid Server URL",
     invalidCredentials: "Invalid Email or Password",
   },
+  loginSuccessful: "Login successful!",
 };
