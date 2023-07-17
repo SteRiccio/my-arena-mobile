@@ -14,6 +14,7 @@ export default {
   no: "No",
   search: "Search",
   selectAnItem: "Select an item",
+  srs: "SRS",
   true: "True",
   yes: "Yes",
 };

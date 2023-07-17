@@ -3,8 +3,9 @@ import React from "react";
 import { Button, HView, Text, TextInput, VView } from "components";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
-import styles from "./nodeCoordinateComponentStyles";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
+import styles from "./styles";
+import { LocationNavigator } from "./LocationNavigator";
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef } = props;
@@ -58,11 +59,14 @@ export const NodeCoordinateComponent = (props) => {
         />
       </HView>
       <HView style={styles.formItem}>
-        <Text style={styles.formItemLabel} textKey="SRS" />
+        <Text style={styles.formItemLabel} textKey="common:srs" />
         <SrsDropdown editable={editable} onChange={onChangeSrs} value={srsId} />
       </HView>
       <HView style={styles.accuracyFormItem}>
-        <Text style={styles.formItemLabel} textKey="Accuracy" />
+        <Text
+          style={styles.formItemLabel}
+          textKey="dataEntry:coordinate.accuracy"
+        />
         <Text style={styles.accuracyField} textKey={accuracy} />
         <Text style={styles.formItemLabel} textKey="m" />
       </HView>
@@ -73,9 +77,18 @@ export const NodeCoordinateComponent = (props) => {
         />
       )}
       {!watchingLocation && (
-        <Button onPress={onStartGpsPress}>Start GPS</Button>
+        <Button
+          onPress={onStartGpsPress}
+          textKey="dataEntry:coordinate.startGPS"
+        />
       )}
-      {watchingLocation && <Button onPress={onStopGpsPress}>Stop GPS</Button>}
+      {watchingLocation && (
+        <Button
+          onPress={onStopGpsPress}
+          textKey="dataEntry:coordinate.stopGPS"
+        />
+      )}
+      <LocationNavigator />
     </VView>
   );
 };
