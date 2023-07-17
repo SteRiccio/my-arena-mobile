@@ -1,11 +1,13 @@
 import React from "react";
+import { Dialog, Modal, Portal } from "react-native-paper";
 
+import { useTranslation } from "localization";
 import { Button, HView, Text, TextInput, VView } from "components";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
-import styles from "./styles";
 import { LocationNavigator } from "./LocationNavigator";
+import styles from "./styles";
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef } = props;
@@ -17,18 +19,23 @@ export const NodeCoordinateComponent = (props) => {
   const {
     accuracy,
     applicable,
+    compassNavigatorVisible,
     editable,
+    hideCompassNavigator,
     locationAccuracyThreshold,
     onChangeX,
     onChangeY,
     onChangeSrs,
     onStartGpsPress,
     onStopGpsPress,
+    showCompassNavigator,
     srsId,
     xTextValue,
     yTextValue,
     watchingLocation,
   } = useNodeCoordinateComponent(props);
+
+  const { t } = useTranslation();
 
   return (
     <VView>
@@ -88,7 +95,21 @@ export const NodeCoordinateComponent = (props) => {
           textKey="dataEntry:coordinate.stopGPS"
         />
       )}
-      <LocationNavigator />
+      <Button
+        onPress={showCompassNavigator}
+        textKey="dataEntry:coordinate.navigateToExpectedLocation"
+      />
+      <Portal>
+        <Modal
+          visible={compassNavigatorVisible}
+          onDismiss={hideCompassNavigator}
+        >
+          <VView>
+            <LocationNavigator />
+            <Button onPress={hideCompassNavigator}>{t("common:close")}</Button>
+          </VView>
+        </Modal>
+      </Portal>
     </VView>
   );
 };

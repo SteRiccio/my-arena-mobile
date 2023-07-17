@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Dimensions, Image } from "react-native";
 import * as Location from "expo-location";
 import { Magnetometer } from "expo-sensors";
+import { useAssets } from "expo-asset";
+
+import { VView } from "components/VView";
+import { Text } from "components/Text";
+import { View } from "components/View";
+
+const { height, width } = Dimensions.get("window");
 
 const targetPoint = { x: 12.49228, y: 41.89119 };
 
@@ -18,11 +26,18 @@ const magnetometerDataToAngle = (magnetometer) => {
   return Math.round(angle);
 };
 
+const _degree = (magnetometer) => {
+  return magnetometer - 90 >= 0 ? magnetometer - 90 : magnetometer + 271;
+};
+
 export const LocationNavigator = (props) => {
   const locationSubscriptionRef = useRef(null);
   const magnetometerSubscriptionRef = useRef(null);
+  const [compassBg] = useAssets(
+    require("../../../../../../assets/compass_bg.png")
+  );
 
-  const [state, setState] = useState({});
+  const [state, setState] = useState({ heading: 0, angleToTarget: 0 });
   const { heading, angleToTarget } = state;
 
   const updateState = useCallback(
@@ -79,5 +94,33 @@ export const LocationNavigator = (props) => {
     };
   }, []);
 
-  console.log(state);
+  return (
+    <VView>
+      <View>
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: height / 27,
+            width: width,
+            position: "absolute",
+            textAlign: "center",
+            top: "50%",
+            left: 0,
+          }}
+        >
+          {_degree(heading)}°
+        </Text>
+        <Image
+          source={compassBg}
+          style={{
+            height: width - 80,
+            justifyContent: "center",
+            alignItems: "center",
+            resizeMode: "contain",
+            transform: [{ rotate: 360 - heading + "deg" }],
+          }}
+        />
+      </View>
+    </VView>
+  );
 };

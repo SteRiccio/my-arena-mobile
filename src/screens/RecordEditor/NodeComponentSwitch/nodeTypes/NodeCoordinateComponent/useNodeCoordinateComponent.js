@@ -34,13 +34,14 @@ export const useNodeCoordinateComponent = (props) => {
   const { locationAccuracyThreshold, locationAccuracyWatchTimeout } = settings;
 
   const [state, setState] = useState({
+    compassNavigatorVisible: false,
     watchingLocation: false,
   });
 
   const locationSubscritionRef = useRef(null);
   const locationAccuracyWatchTimeoutRef = useRef(null);
 
-  const { watchingLocation } = state;
+  const { compassNavigatorVisible, watchingLocation } = state;
 
   const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
@@ -144,18 +145,39 @@ export const useNodeCoordinateComponent = (props) => {
 
   const onStopGpsPress = useCallback(() => {
     stopGps();
-  });
+  }, []);
+
+  const showCompassNavigator = useCallback(
+    () =>
+      setState((statePrev) => ({
+        ...statePrev,
+        compassNavigatorVisible: true,
+      })),
+    []
+  );
+
+  const hideCompassNavigator = useCallback(
+    () =>
+      setState((statePrev) => ({
+        ...statePrev,
+        compassNavigatorVisible: false,
+      })),
+    []
+  );
 
   return {
     accuracy,
     applicable,
+    compassNavigatorVisible,
     editable,
+    hideCompassNavigator,
     locationAccuracyThreshold,
     onChangeX,
     onChangeY,
     onChangeSrs,
     onStartGpsPress,
     onStopGpsPress,
+    showCompassNavigator,
     srsId,
     xTextValue,
     yTextValue,
