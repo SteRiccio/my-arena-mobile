@@ -9,7 +9,6 @@ import { SurveySelectors } from "state/survey";
 import { useDeviceInfo } from "hooks/useDeviceInfo";
 
 import styles from "./styles";
-import { DateFormats, Dates } from "@openforis/arena-core";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
@@ -30,8 +29,7 @@ export const HomeScreen = () => {
         textKey="common:appTitle"
       />
       <Text style={styles.appVersionName} variant="labelSmall">
-        v{deviceInfo.version} [{deviceInfo.buildNumber}]{" "}
-        {Dates.format(deviceInfo.lastUpdateDate, DateFormats.dateDisplay)}
+        v{deviceInfo.version} [{deviceInfo.buildNumber}]
       </Text>
       {survey && (
         <>

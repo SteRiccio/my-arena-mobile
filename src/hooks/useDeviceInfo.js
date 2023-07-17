@@ -1,23 +1,15 @@
-import { useEffect, useState } from "react";
-import * as Application from "expo-application";
+import VersionNumber from "react-native-version-number";
 
 export const useDeviceInfo = () => {
-  const [info, setInfo] = useState({});
+  try {
+    const buildNumber = VersionNumber.buildVersion();
+    const version = VersionNumber.buildVersion();
 
-  useEffect(() => {
-    const init = async () => {
-      const buildNumber = Application.nativeBuildVersion;
-      const version = Application.nativeApplicationVersion;
-      const lastUpdateDate = await Application.getLastUpdateTimeAsync();
-
-      setInfo({
-        buildNumber,
-        version,
-        lastUpdateDate,
-      });
+    return {
+      buildNumber,
+      version,
     };
-    init();
-  });
-
-  return info;
+  } catch (e) {
+    return {};
+  }
 };
