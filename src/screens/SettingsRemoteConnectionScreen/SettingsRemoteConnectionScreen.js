@@ -7,6 +7,7 @@ import {
   FieldSet,
   HView,
   Icon,
+  ScrollView,
   Text,
   TextInput,
   TextInputPassword,
@@ -79,7 +80,7 @@ export const SettingsRemoteConnectionScreen = () => {
   );
 
   const onServerUrlChange = useCallback(
-    async (serverUrlUpdated) =>
+    (serverUrlUpdated) =>
       setState((statePrev) => ({
         ...statePrev,
         serverUrl: serverUrlUpdated.trim(),
@@ -101,7 +102,7 @@ export const SettingsRemoteConnectionScreen = () => {
   }, [serverUrl]);
 
   const onEmailChange = useCallback(
-    async (text) =>
+    (text) =>
       setState((statePrev) => ({
         ...statePrev,
         email: text,
@@ -110,80 +111,85 @@ export const SettingsRemoteConnectionScreen = () => {
   );
 
   const onPasswordChange = useCallback(
-    async (text) => setState((statePrev) => ({ ...statePrev, password: text })),
+    (text) => setState((statePrev) => ({ ...statePrev, password: text })),
     []
   );
 
-  const onLogin = useCallback(async () => {
+  const onLogin = useCallback(() => {
     // normalize email
+    const emailNew = email.trim().toLocaleLowerCase();
     setState((statePrev) => ({
       ...statePrev,
-      email: statePrev.email.trim().toLocaleLowerCase(),
-    })),
-      dispatch(RemoteConnectionActions.login({ serverUrl, email, password }));
+      email: emailNew,
+    }));
+    dispatch(
+      RemoteConnectionActions.login({ serverUrl, email: emailNew, password })
+    );
   }, [email, password, serverUrl]);
 
   return (
-    <VView style={styles.container}>
-      {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
+    <ScrollView>
+      <VView style={styles.container}>
+        {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
 
-      <FieldSet heading="settingsRemoteConnection:serverUrl">
-        <RadioButton.Group
-          onValueChange={onServerUrlTypeChange}
-          value={serverUrlType}
-        >
+        <FieldSet heading="settingsRemoteConnection:serverUrl">
+          <RadioButton.Group
+            onValueChange={onServerUrlTypeChange}
+            value={serverUrlType}
+          >
+            <HView>
+              {Object.values(serverUrlTypes).map((type) => (
+                <RadioButton.Item
+                  key={type}
+                  disabled={!networkAvailable}
+                  label={t(`settingsRemoteConnection:serverUrlType.${type}`)}
+                  value={type}
+                />
+              ))}
+            </HView>
+          </RadioButton.Group>
           <HView>
-            {Object.values(serverUrlTypes).map((type) => (
-              <RadioButton.Item
-                key={type}
-                disabled={!networkAvailable}
-                label={t(`settingsRemoteConnection:serverUrlType.${type}`)}
-                value={type}
-              />
-            ))}
+            <TextInput
+              disabled={
+                serverUrlType === serverUrlTypes.default || !networkAvailable
+              }
+              onChange={onServerUrlChange}
+              style={{ width: "90%" }}
+              value={serverUrl}
+            />
+            {serverUrlVerified && <Icon source="check" size={50} />}
           </HView>
-        </RadioButton.Group>
-        <HView>
-          <TextInput
-            disabled={
-              serverUrlType === serverUrlTypes.default || !networkAvailable
-            }
-            onChange={onServerUrlChange}
-            style={{ width: "90%" }}
-            value={serverUrl}
-          />
-          {serverUrlVerified && <Icon source="check" size={50} />}
-        </HView>
-        {!serverUrlVerified && (
-          <Button
-            disabled={!networkAvailable}
-            style={{ margin: 10 }}
-            textKey="settingsRemoteConnection:testUrl"
-            onPress={onTestUrlPress}
-          />
-        )}
-      </FieldSet>
+          {!serverUrlVerified && (
+            <Button
+              disabled={!networkAvailable}
+              style={{ margin: 10 }}
+              textKey="settingsRemoteConnection:testUrl"
+              onPress={onTestUrlPress}
+            />
+          )}
+        </FieldSet>
 
-      <TextInput
-        autoCapitalize="none"
-        disabled={!networkAvailable}
-        keyboardType="email-address"
-        label="settingsRemoteConnection:email"
-        onChange={onEmailChange}
-        value={email}
-      />
-      <TextInputPassword
-        disabled={!networkAvailable}
-        label="settingsRemoteConnection:password"
-        onChange={onPasswordChange}
-        value={password}
-      />
-      <Button
-        disabled={!networkAvailable}
-        onPress={onLogin}
-        style={{ margin: 20 }}
-        textKey="settingsRemoteConnection:login"
-      />
-    </VView>
+        <TextInput
+          autoCapitalize="none"
+          disabled={!networkAvailable}
+          keyboardType="email-address"
+          label="settingsRemoteConnection:email"
+          onChange={onEmailChange}
+          value={email}
+        />
+        <TextInputPassword
+          disabled={!networkAvailable}
+          label="settingsRemoteConnection:password"
+          onChange={onPasswordChange}
+          value={password}
+        />
+        <Button
+          disabled={!networkAvailable}
+          onPress={onLogin}
+          style={{ margin: 20 }}
+          textKey="settingsRemoteConnection:login"
+        />
+      </VView>
+    </ScrollView>
   );
 };

@@ -21,7 +21,7 @@ export const Button = (props) => {
         onPressProp(event);
       }
     },
-    [loading]
+    [loading, onPressProp]
   );
 
   return (

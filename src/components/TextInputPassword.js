@@ -8,6 +8,7 @@ export const TextInputPassword = (props) => {
 
   return (
     <TextInput
+      autoCapitalize="none"
       secureTextEntry={secureTextEntry}
       right={
         <RNPTextInput.Icon
