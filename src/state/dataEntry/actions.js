@@ -1,4 +1,8 @@
-import "react-native-get-random-values";
+import * as Crypto from "expo-crypto";
+
+if (!global.crypto) {
+  global.crypto = Crypto;
+}
 
 import {
   JobStatus,
