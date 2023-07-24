@@ -31,6 +31,7 @@ export default {
     accuracy: "Accuracy",
     startGPS: "Start GPS",
     stopGPS: "Stop GPS",
+    useCurrentLocation: "Use current location",
   },
   // file attribute (image)
   chooseAPicture: "Choose a picture",
