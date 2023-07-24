@@ -2,6 +2,7 @@
   "expo": {
     "name": "My Arena Mobile",
     "slug": "my-arena-mobile",
+    "owner": "stericcio",
     "version": "0.9.14",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,9 +16,6 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -25,6 +23,9 @@
       },
       "package": "org.stericcio.myarenamobile",
       "versionCode": 14
+    },
+    "ios": {
+      "supportsTablet": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +35,6 @@
         "projectId": "012cdbda-2ceb-4767-923c-f7be51666f1d"
       }
     },
-    "owner": "stericcio"
+    "jsEngine": "jsc"
   }
 }

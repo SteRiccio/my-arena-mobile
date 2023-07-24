@@ -27,6 +27,12 @@ export default {
       "Not in entry step anymore (in cleansing or analysis step)",
   },
 
+  coordinate: {
+    accuracy: "Accuracy",
+    startGPS: "Start GPS",
+    stopGPS: "Stop GPS",
+    useCurrentLocation: "Use current location",
+  },
   // file attribute (image)
   chooseAPicture: "Choose a picture",
   pictureDeleteConfirmMessage: "Delete the existing picture?",

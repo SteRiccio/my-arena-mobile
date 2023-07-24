@@ -2,6 +2,7 @@ import {
   NodeDefs,
   NodeValueFormatter,
   Nodes,
+  RecordExpressionEvaluator,
   Records,
   Surveys,
 } from "@openforis/arena-core";
@@ -66,9 +67,62 @@ const getSiblingNode = ({ record, parentEntity, node, offset }) => {
   return { siblingNode, siblingIndex };
 };
 
+const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
+  const possibleExpressions = {
+    simpleIdentifier: "\\w+",
+    categoryItemProp: `categoryItemProp\\s*\\(.*\\)\\s*`,
+    parentFunction: `parent\\s*\\(.*\\)\\s*`,
+  };
+  const validations = NodeDefs.getValidations(nodeDef);
+  const distanceValidation = validations?.expressions?.find((expression) =>
+    /\s*distance\s*(.*)\s*/.test(expression.expression)
+  );
+
+  if (!distanceValidation) {
+    return null;
+  }
+  const thisOrAttrName = `(?:this|${NodeDefs.getName(nodeDef)})`;
+
+  const distanceFunctionRegExp = (firstArgument, secondArgument) =>
+    `\\s*distance\\s*\\(\\s*(${firstArgument})\\s*,\\s*(${secondArgument})\\s*\\)`;
+
+  let distanceTargetExpression = null;
+  Object.values(possibleExpressions).some((possibleExpression) => {
+    const expression = distanceValidation.expression;
+    // this or attribute name as 1st argument
+    let match = expression.match(
+      distanceFunctionRegExp(thisOrAttrName, possibleExpression)
+    );
+    if (match) {
+      distanceTargetExpression = match[2];
+      return true;
+    }
+    // this or attribute name as 2nd argument
+    match = expression.match(
+      distanceFunctionRegExp(possibleExpression, thisOrAttrName)
+    );
+    if (match) {
+      distanceTargetExpression = match[1];
+      return true;
+    }
+    return false;
+  });
+  if (distanceTargetExpression) {
+    const distanceTarget = new RecordExpressionEvaluator().evalExpression({
+      survey,
+      record,
+      node,
+      query: distanceTargetExpression,
+    });
+    return distanceTarget;
+  }
+  return null;
+};
+
 export const RecordNodes = {
   getNodeName,
   getEntityKeyValuesByNameFormatted,
   getApplicableChildrenEntityDefs,
   getSiblingNode,
+  getCoordinateDistanceTarget,
 };

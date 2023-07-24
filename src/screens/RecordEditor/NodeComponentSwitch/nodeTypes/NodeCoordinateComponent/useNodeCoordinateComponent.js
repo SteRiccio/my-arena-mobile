@@ -1,16 +1,22 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 
 import {
   NodeDefs,
+  Numbers,
   Objects,
   PointFactory,
   Points,
+  Records,
   Surveys,
 } from "@openforis/arena-core";
 
-import { SettingsSelectors, SurveySelectors } from "state";
+import { DataEntrySelectors, SettingsSelectors, SurveySelectors } from "state";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
+import { RecordNodes } from "model/utils/RecordNodes";
+
+const stringToNumber = (str) => Numbers.toNumber(str);
+const numberToString = (num) => (Objects.isEmpty(num) ? "" : String(num));
 
 const locationToValue = ({ location, srsTo, srsIndex }) => {
   const { coords } = location;
@@ -24,7 +30,7 @@ const locationToValue = ({ location, srsTo, srsIndex }) => {
   const point = Points.transform(pointLatLong, srsTo, srsIndex);
   const { x, y } = point;
 
-  return { x, y, srsId: srsTo, accuracy: accuracyFormatted };
+  return { x, y, srs: srsTo, accuracy: accuracyFormatted };
 };
 
 export const useNodeCoordinateComponent = (props) => {
@@ -34,13 +40,14 @@ export const useNodeCoordinateComponent = (props) => {
   const { locationAccuracyThreshold, locationAccuracyWatchTimeout } = settings;
 
   const [state, setState] = useState({
+    compassNavigatorVisible: false,
     watchingLocation: false,
   });
 
   const locationSubscritionRef = useRef(null);
   const locationAccuracyWatchTimeoutRef = useRef(null);
 
-  const { watchingLocation } = state;
+  const { compassNavigatorVisible, watchingLocation } = state;
 
   const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
@@ -48,16 +55,24 @@ export const useNodeCoordinateComponent = (props) => {
   });
 
   const survey = SurveySelectors.useCurrentSurvey();
+  const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const srss = Surveys.getSRSs(survey);
-  const srsIndex = useMemo(() => Surveys.getSRSIndex(survey), [srss]);
+  const record = DataEntrySelectors.useRecord();
+  const node = Records.getNodeByUuid(nodeUuid)(record);
+
+  const distanceTarget = RecordNodes.getCoordinateDistanceTarget({
+    survey,
+    nodeDef,
+    record,
+    node,
+  });
 
   const editable =
     !NodeDefs.isReadOnly(nodeDef) &&
     !NodeDefs.isAllowOnlyDeviceCoordinate(nodeDef);
 
-  const { accuracy, x, y, srsId = srss[0].code } = value || {};
+  const { accuracy, x, y, srs = srss[0].code } = value || {};
 
-  const numberToString = (num) => (Objects.isEmpty(num) ? "" : String(num));
   const xTextValue = numberToString(x);
   const yTextValue = numberToString(y);
 
@@ -83,9 +98,9 @@ export const useNodeCoordinateComponent = (props) => {
 
   const onValueChange = useCallback(
     (valueNext) => {
-      if (!valueNext.srsId && srss.length === 1) {
+      if (!valueNext.srs && srss.length === 1) {
         // set default SRS
-        valueNext.srsId = srss[0].code;
+        valueNext.srs = srss[0].code;
       }
       updateNodeValue(valueNext);
     },
@@ -93,17 +108,17 @@ export const useNodeCoordinateComponent = (props) => {
   );
 
   const onChangeX = useCallback(
-    (x) => onValueChange({ ...value, x }),
+    (xStr) => onValueChange({ ...value, x: stringToNumber(xStr) }),
     [value, onValueChange]
   );
 
   const onChangeY = useCallback(
-    (y) => onValueChange({ ...value, y }),
+    (yStr) => onValueChange({ ...value, y: stringToNumber(yStr) }),
     [value, onValueChange]
   );
 
   const onChangeSrs = useCallback(
-    (srsId) => onValueChange({ ...value, srsId }),
+    (srs) => onValueChange({ ...value, srs }),
     [value, updateNodeValue]
   );
 
@@ -120,7 +135,7 @@ export const useNodeCoordinateComponent = (props) => {
         distanceInterval: 0.01,
       },
       (location) => {
-        const valueNext = locationToValue({ location, srsTo: srsId, srsIndex });
+        const valueNext = locationToValue({ location, srsTo: srs, srsIndex });
 
         onValueChange(valueNext);
 
@@ -135,28 +150,54 @@ export const useNodeCoordinateComponent = (props) => {
     );
 
     setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
-  }, [
-    srsId,
-    srsIndex,
-    locationAccuracyThreshold,
-    locationAccuracyWatchTimeout,
-  ]);
+  }, [srs, srsIndex, locationAccuracyThreshold, locationAccuracyWatchTimeout]);
 
   const onStopGpsPress = useCallback(() => {
     stopGps();
-  });
+  }, []);
+
+  const showCompassNavigator = useCallback(
+    () =>
+      setState((statePrev) => ({
+        ...statePrev,
+        compassNavigatorVisible: true,
+      })),
+    []
+  );
+
+  const hideCompassNavigator = useCallback(
+    () =>
+      setState((statePrev) => ({
+        ...statePrev,
+        compassNavigatorVisible: false,
+      })),
+    []
+  );
+
+  const onCompassNavigatorUseCurrentLocation = useCallback(
+    (location) => {
+      const valueNext = locationToValue({ location, srsTo: srs, srsIndex });
+      onValueChange(valueNext);
+    },
+    [srs, onValueChange]
+  );
 
   return {
     accuracy,
     applicable,
+    compassNavigatorVisible,
+    distanceTarget,
     editable,
+    hideCompassNavigator,
     locationAccuracyThreshold,
     onChangeX,
     onChangeY,
     onChangeSrs,
+    onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
     onStopGpsPress,
-    srsId,
+    showCompassNavigator,
+    srs,
     xTextValue,
     yTextValue,
     watchingLocation,
