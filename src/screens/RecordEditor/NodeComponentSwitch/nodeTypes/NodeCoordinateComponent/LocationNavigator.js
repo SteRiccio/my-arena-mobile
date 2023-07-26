@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, Image } from "react-native";
 import { Modal, Portal, useTheme } from "react-native-paper";
 import * as Location from "expo-location";
-import { Magnetometer } from "expo-sensors";
 
 import { Objects, PointFactory, Points } from "@openforis/arena-core";
 
 import { useTranslation } from "localization";
+import { useMagnetometerHeading } from "hooks";
 import { Button, HView, Text, View, VView } from "components";
 import { SurveySelectors } from "state/survey";
 
@@ -31,21 +31,6 @@ const targetLocationMarkerHeight = height / 26;
 const radsToDegrees = (rads) =>
   (rads >= 0 ? rads : rads + 2 * Math.PI) * (180 / Math.PI);
 
-const magnetometerDataToAngle = (magnetometer) => {
-  let angle = 0;
-  if (magnetometer) {
-    const { x, y } = magnetometer;
-    const rads = Math.atan2(y, x);
-    angle = radsToDegrees(rads);
-  }
-  // Match the device top with 0° degree angle (by default 0° starts from the right of the device)
-  let result = Math.round(angle) - 90;
-  if (result < 0) {
-    result += 360;
-  }
-  return result;
-};
-
 const formatNumber = (num, decimals = 2) =>
   Objects.isEmpty(num) ? "-" : num.toFixed(decimals);
 
@@ -66,7 +51,6 @@ export const LocationNavigator = (props) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
 
   const locationSubscriptionRef = useRef(null);
-  const magnetometerSubscriptionRef = useRef(null);
 
   const theme = useTheme();
 
@@ -74,12 +58,14 @@ export const LocationNavigator = (props) => {
 
   const [state, setState] = useState({
     currentLocation: null,
-    heading: 0,
     angleToTarget: 0,
     accuracy: 0,
     distance: 0,
   });
-  const { currentLocation, heading, angleToTarget, accuracy, distance } = state;
+
+  const heading = useMagnetometerHeading();
+
+  const { currentLocation, angleToTarget, accuracy, distance } = state;
   const currentLocationX = currentLocation?.coords?.longitude;
   const currentLocationY = currentLocation?.coords?.latitude;
 
@@ -113,9 +99,6 @@ export const LocationNavigator = (props) => {
   };
 
   useEffect(() => {
-    magnetometerSubscriptionRef.current = Magnetometer.addListener((data) => {
-      updateState({ heading: magnetometerDataToAngle(data) });
-    });
     const startWatchLocation = async () => {
       locationSubscriptionRef.current = await Location.watchPositionAsync(
         {
@@ -145,7 +128,6 @@ export const LocationNavigator = (props) => {
     startWatchLocation();
 
     return () => {
-      magnetometerSubscriptionRef.current?.remove();
       locationSubscriptionRef.current?.remove();
     };
   }, []);
