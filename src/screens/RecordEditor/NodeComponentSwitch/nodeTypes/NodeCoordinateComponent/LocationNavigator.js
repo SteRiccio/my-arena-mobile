@@ -1,26 +1,35 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, Image } from "react-native";
-import { Modal, Portal } from "react-native-paper";
+import { Modal, Portal, useTheme } from "react-native-paper";
 import * as Location from "expo-location";
 import { Magnetometer } from "expo-sensors";
-import { useAssets } from "expo-asset";
 
 import { Objects, PointFactory, Points } from "@openforis/arena-core";
 
+import { useTranslation } from "localization";
 import { Button, HView, Text, View, VView } from "components";
 import { SurveySelectors } from "state/survey";
 
 import styles from "./locationNavigatorStyles";
 
+const compassBgBlack = require(`../../../../../../assets/compass_bg_black.png`);
+const compassBgWhite = require(`../../../../../../assets/compass_bg_white.png`);
+const arrowUpGreen = require("../../../../../../assets/arrow_up_green.png");
+const arrowUpOrange = require("../../../../../../assets/arrow_up_orange.png");
+const arrowUpRed = require("../../../../../../assets/arrow_up_red.png");
+const circleGreen = require("../../../../../../assets/circle_green.png");
+
+const arrowToTargetVisibleDistanceThreshold = 10;
+
 const { height, width } = Dimensions.get("window");
 
+const compassImageSize = width - 40;
+const arrowToTargetHeight = compassImageSize * 0.7;
+const targetLocationBoxWidth = compassImageSize * 0.7;
 const targetLocationMarkerHeight = height / 26;
-const targetLocationBoxWidth = width;
-const compassImageSize =
-  targetLocationBoxWidth - targetLocationMarkerHeight * 2;
 
 const radsToDegrees = (rads) =>
-  rads >= 0 ? rads * (180 / Math.PI) : (rads + 2 * Math.PI) * (180 / Math.PI);
+  (rads >= 0 ? rads : rads + 2 * Math.PI) * (180 / Math.PI);
 
 const magnetometerDataToAngle = (magnetometer) => {
   let angle = 0;
@@ -29,28 +38,39 @@ const magnetometerDataToAngle = (magnetometer) => {
     const rads = Math.atan2(y, x);
     angle = radsToDegrees(rads);
   }
-  return Math.round(angle);
+  // Match the device top with 0° degree angle (by default 0° starts from the right of the device)
+  let result = Math.round(angle) - 90;
+  if (result < 0) {
+    result += 360;
+  }
+  return result;
 };
 
-const _degree = (magnetometer) => {
-  return magnetometer - 90 >= 0 ? magnetometer - 90 : magnetometer + 271;
-};
-
-const formatNumber = (num, decimals) =>
+const formatNumber = (num, decimals = 2) =>
   Objects.isEmpty(num) ? "-" : num.toFixed(decimals);
 
+const FormItem = ({ labelKey, children }) => {
+  const { t } = useTranslation();
+  const label = `${t(labelKey)}:`;
+  return (
+    <HView style={{ alignItems: "baseline" }}>
+      <Text variant="labelLarge">{label}</Text>
+      <Text variant="bodyLarge">{children}</Text>
+    </HView>
+  );
+};
+
 export const LocationNavigator = (props) => {
-  const { targetLocation, onDismiss, onUseCurrentLocation } = props;
+  const { targetPoint, onDismiss, onUseCurrentLocation } = props;
 
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
 
   const locationSubscriptionRef = useRef(null);
   const magnetometerSubscriptionRef = useRef(null);
-  const [[compassBg, compassPointer, cicleGreen] = []] = useAssets([
-    require("../../../../../../assets/compass_bg.png"),
-    require("../../../../../../assets/compass_pointer.png"),
-    require("../../../../../../assets/circle_green.png"),
-  ]);
+
+  const theme = useTheme();
+
+  const compassBg = theme.dark ? compassBgWhite : compassBgBlack;
 
   const [state, setState] = useState({
     currentLocation: null,
@@ -60,19 +80,37 @@ export const LocationNavigator = (props) => {
     distance: 0,
   });
   const { currentLocation, heading, angleToTarget, accuracy, distance } = state;
+  const currentLocationX = currentLocation?.coords?.longitude;
+  const currentLocationY = currentLocation?.coords?.latitude;
+
+  const arrowToTargetVisible =
+    distance >= arrowToTargetVisibleDistanceThreshold;
 
   const targetLocationBoxWidthAdjusted =
-    targetLocationBoxWidth * (distance < 10 ? distance / 10 : 1);
+    targetLocationBoxWidth *
+    (arrowToTargetVisible
+      ? 1
+      : (distance * 100) / arrowToTargetVisibleDistanceThreshold);
 
-  const updateState = useCallback(
-    (params) => {
-      const stateNext = { ...state, ...params };
-      if (!Objects.isEqual(state, stateNext)) {
-        setState(stateNext);
-      }
-    },
-    [state]
-  );
+  const targetLocationBoxMargin =
+    (compassImageSize -
+      targetLocationBoxWidth +
+      (targetLocationBoxWidth - targetLocationBoxWidthAdjusted)) /
+    2;
+
+  let angleToTargetDifference = angleToTarget - heading;
+  if (angleToTargetDifference < 0) angleToTargetDifference += 360;
+
+  const arrowToTargetSource =
+    angleToTargetDifference > 45
+      ? arrowUpRed
+      : angleToTargetDifference > 20
+      ? arrowUpOrange
+      : arrowUpGreen;
+
+  const updateState = (params) => {
+    setState((statePrev) => ({ ...statePrev, ...params }));
+  };
 
   useEffect(() => {
     magnetometerSubscriptionRef.current = Magnetometer.addListener((data) => {
@@ -82,27 +120,17 @@ export const LocationNavigator = (props) => {
       locationSubscriptionRef.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          distanceInterval: 0.1,
+          distanceInterval: 0.2,
         },
         (location) => {
           const { coords } = location;
-          const {
-            latitude: currentLocationY,
-            longitude: currentLocationX,
-            accuracy: accuracyNew,
-          } = coords;
-          const angleRads = Math.atan2(
-            currentLocationY - targetLocation.y,
-            currentLocationX - targetLocation.x
-          );
+          const { latitude: y, longitude: x, accuracy: accuracyNew } = coords;
+          const angleRads = Math.atan2(y - targetPoint.y, x - targetPoint.x);
           const angleToTargetNew = radsToDegrees(angleRads);
-          const currentLocationPoint = PointFactory.createInstance({
-            x: currentLocationX,
-            y: currentLocationX,
-          });
+          const currentLocationPoint = PointFactory.createInstance({ x, y });
           const distanceNew = Points.distance(
             currentLocationPoint,
-            targetLocation,
+            targetPoint,
             srsIndex
           );
           updateState({
@@ -120,7 +148,7 @@ export const LocationNavigator = (props) => {
       magnetometerSubscriptionRef.current?.remove();
       locationSubscriptionRef.current?.remove();
     };
-  }, [srsIndex, targetLocation, updateState]);
+  }, []);
 
   const onUseCurrentLocationPress = useCallback(() => {
     onUseCurrentLocation(currentLocation);
@@ -130,8 +158,12 @@ export const LocationNavigator = (props) => {
   return (
     <Portal>
       <Modal visible onDismiss={onDismiss}>
-        <VView>
-          <VView style={{ marginVertical: 40 }}>
+        <VView style={styles.container}>
+          <Text
+            textKey="dataEntry:coordinate.navigateToTarget"
+            variant="titleLarge"
+          />
+          <VView style={styles.compassContainer}>
             {/* <Image
         source={compassPointer}
         style={{
@@ -140,86 +172,84 @@ export const LocationNavigator = (props) => {
           resizeMode: "contain",
         }}
       /> */}
+
             <View
               style={{
-                height: targetLocationBoxWidth,
-                width: targetLocationBoxWidth,
+                borderWidth: 1,
+                height: compassImageSize,
+                width: compassImageSize,
               }}
             >
-              <View
+              <Image
+                source={compassBg}
                 style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
                   height: compassImageSize,
                   width: compassImageSize,
-                  position: "absolute",
-                  left: targetLocationMarkerHeight,
-                  top: targetLocationMarkerHeight,
+                  resizeMode: "contain",
+                  transform: [{ rotate: `${360 - heading} deg` }],
                 }}
-              >
+              />
+              {arrowToTargetVisible && (
                 <Image
-                  source={compassBg}
+                  source={arrowToTargetSource}
                   style={{
-                    height: compassImageSize,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    alignSelf: "center",
+                    position: "absolute",
+                    top: (compassImageSize - arrowToTargetHeight) / 2,
+                    height: arrowToTargetHeight,
+                    transform: [{ rotate: angleToTargetDifference + "deg" }],
                     resizeMode: "contain",
-                    transform: [{ rotate: 360 - heading + "deg" }],
+                    alignSelf: "center",
                   }}
                 />
-                <Text
-                  variant="displaySmall"
+              )}
+              {!arrowToTargetVisible && (
+                <View
                   style={{
-                    width: "100%",
+                    backgroundColor: "transparent",
+                    width: targetLocationBoxWidthAdjusted,
+                    height: targetLocationBoxWidthAdjusted,
                     position: "absolute",
-                    textAlign: "center",
-                    top: "45%",
+                    top: targetLocationBoxMargin,
+                    left: targetLocationBoxMargin,
+                    transform: [{ rotate: angleToTargetDifference + "deg" }],
                   }}
                 >
-                  {_degree(heading)}°
-                </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: "transparent",
-                  width: targetLocationBoxWidthAdjusted,
-                  height: targetLocationBoxWidthAdjusted,
-                  position: "absolute",
-                  top:
-                    (targetLocationBoxWidth - targetLocationBoxWidthAdjusted) /
-                    2,
-                  left:
-                    (targetLocationBoxWidth - targetLocationBoxWidthAdjusted) /
-                    2,
-                  resizeMode: "contain",
-                  transform: [
-                    { rotate: 360 - (heading + angleToTarget) + "deg" },
-                  ],
-                }}
-              >
-                <Image
-                  source={cicleGreen}
-                  style={{
-                    alignSelf: "center",
-                    height: targetLocationMarkerHeight,
-                    resizeMode: "contain",
-                  }}
-                />
-              </View>
+                  <Image
+                    source={circleGreen}
+                    style={{
+                      alignSelf: "center",
+                      height: targetLocationMarkerHeight,
+                      resizeMode: "contain",
+                    }}
+                  />
+                </View>
+              )}
             </View>
+
             <HView style={{ justifyContent: "space-between" }}>
-              <HView>
-                <Text textKey="accuracy" />
-                <Text>{formatNumber(accuracy)}m</Text>
-              </HView>
-              <HView>
-                <Text textKey="distance" />
-                <Text>{formatNumber(distance)}m</Text>
-              </HView>
-              <HView>
-                <Text textKey="angle" />
-                <Text> {formatNumber(angleToTarget)} &deg;</Text>
-              </HView>
+              <FormItem labelKey="dataEntry:coordinate.accuracy">
+                {formatNumber(accuracy)}m
+              </FormItem>
+              <FormItem labelKey="dataEntry:coordinate.distance">
+                {formatNumber(distance)}m
+              </FormItem>
             </HView>
+            <HView style={{ justifyContent: "space-between" }}>
+              <FormItem labelKey="dataEntry:coordinate.heading">
+                {formatNumber(heading, 0)}&deg;
+              </FormItem>
+              <FormItem labelKey="dataEntry:coordinate.angleToTargetLocation">
+                {formatNumber(angleToTarget, 0)}
+                &deg;
+              </FormItem>
+            </HView>
+            <FormItem labelKey="dataEntry:coordinate.currentLocation">
+              {formatNumber(currentLocationX, 5)},
+              {formatNumber(currentLocationY, 5)}
+            </FormItem>
           </VView>
           <HView style={styles.bottomBar}>
             <Button onPress={onDismiss} textKey="common:close" />

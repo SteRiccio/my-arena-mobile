@@ -115,7 +115,7 @@ export const NodeCoordinateComponent = (props) => {
         <LocationNavigator
           onDismiss={hideCompassNavigator}
           onUseCurrentLocation={onCompassNavigatorUseCurrentLocation}
-          targetLocation={distanceTarget}
+          targetPoint={distanceTarget}
         />
       )}
     </VView>

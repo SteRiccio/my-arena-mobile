@@ -29,6 +29,11 @@ export default {
 
   coordinate: {
     accuracy: "Accuracy",
+    angleToTargetLocation: "Angle to target",
+    currentLocation: "Current location",
+    distance: "Distance",
+    heading: "Heading",
+    navigateToTarget: "Navigate to target",
     startGPS: "Start GPS",
     stopGPS: "Stop GPS",
     useCurrentLocation: "Use current location",
