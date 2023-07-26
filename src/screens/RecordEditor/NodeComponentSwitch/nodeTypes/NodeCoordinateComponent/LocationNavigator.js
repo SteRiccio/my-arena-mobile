@@ -100,6 +100,9 @@ export const LocationNavigator = (props) => {
 
   useEffect(() => {
     const startWatchLocation = async () => {
+      const permission = await Location.requestForegroundPermissionsAsync();
+      if (!permission.granted) return;
+
       locationSubscriptionRef.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
