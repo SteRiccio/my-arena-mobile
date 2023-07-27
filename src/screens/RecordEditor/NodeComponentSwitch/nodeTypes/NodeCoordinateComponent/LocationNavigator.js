@@ -76,7 +76,7 @@ export const LocationNavigator = (props) => {
     targetLocationBoxWidth *
     (arrowToTargetVisible
       ? 1
-      : (distance * 100) / arrowToTargetVisibleDistanceThreshold);
+      : distance / arrowToTargetVisibleDistanceThreshold);
 
   const targetLocationBoxMargin =
     (compassImageSize -
