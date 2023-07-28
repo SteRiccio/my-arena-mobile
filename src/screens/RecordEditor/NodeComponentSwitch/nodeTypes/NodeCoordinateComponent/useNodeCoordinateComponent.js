@@ -258,6 +258,7 @@ export const useNodeCoordinateComponent = (props) => {
     onStopGpsPress,
     showCompassNavigator,
     srs,
+    srsIndex,
     uiValue,
     watchingLocation,
   };
