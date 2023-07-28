@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { Button, HView, IconButton, Text, TextInput, VView } from "components";
 import { SrsDropdown } from "../../../SrsDropdown";
@@ -22,50 +22,43 @@ export const NodeCoordinateComponent = (props) => {
     distanceTarget,
     editable,
     hideCompassNavigator,
+    includedExtraFields,
     locationAccuracyThreshold,
-    onChangeX,
-    onChangeY,
-    onChangeSrs,
+    onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
     onStopGpsPress,
     showCompassNavigator,
     srs,
-    xTextValue,
-    yTextValue,
+    uiValue,
     watchingLocation,
   } = useNodeCoordinateComponent(props);
+
+  const createNumericFieldFormItem = useCallback(
+    ({ fieldKey }) => (
+      <HView style={styles.formItem}>
+        <Text style={styles.formItemLabel} textKey={fieldKey} />
+        <TextInput
+          editable={editable}
+          keyboardType="numeric"
+          style={[
+            styles.numericTextInput,
+            ...(applicable ? [] : [styles.textInputNotApplicable]),
+          ]}
+          onChange={onChangeValueField(fieldKey)}
+          value={uiValue[fieldKey]}
+        />
+      </HView>
+    ),
+    [applicable, editable, uiValue]
+  );
 
   return (
     <VView>
       <HView style={{ alignItems: "center" }}>
         <VView>
-          <HView style={styles.formItem}>
-            <Text style={styles.formItemLabel} textKey="X" />
-            <TextInput
-              editable={editable}
-              keyboardType="numeric"
-              style={[
-                styles.numericTextInput,
-                ...(applicable ? [] : [styles.textInputNotApplicable]),
-              ]}
-              onChange={onChangeX}
-              value={xTextValue}
-            />
-          </HView>
-          <HView style={styles.formItem}>
-            <Text style={styles.formItemLabel} textKey="Y" />
-            <TextInput
-              editable={editable}
-              keyboardType="numeric"
-              style={[
-                styles.numericTextInput,
-                ...(applicable ? [] : [styles.textInputNotApplicable]),
-              ]}
-              onChange={onChangeY}
-              value={yTextValue}
-            />
-          </HView>
+          {createNumericFieldFormItem({ fieldKey: "x" })}
+          {createNumericFieldFormItem({ fieldKey: "y" })}
         </VView>
         {distanceTarget && (
           <IconButton
@@ -78,18 +71,29 @@ export const NodeCoordinateComponent = (props) => {
       </HView>
       <HView style={styles.formItem}>
         <Text style={styles.formItemLabel} textKey="common:srs" />
-        <SrsDropdown editable={editable} onChange={onChangeSrs} value={srs} />
+        <SrsDropdown
+          editable={editable}
+          onChange={onChangeValueField("srs")}
+          value={srs}
+        />
       </HView>
-      {!Objects.isEmpty(accuracy) && (
-        <HView style={styles.accuracyFormItem}>
-          <Text
-            style={styles.formItemLabel}
-            textKey="dataEntry:coordinate.accuracy"
-          />
-          <Text style={styles.accuracyField} textKey={accuracy} />
-          <Text style={styles.formItemLabel} textKey="m" />
-        </HView>
+      {includedExtraFields.map((fieldKey) =>
+        createNumericFieldFormItem({ fieldKey })
       )}
+      {
+        // always show accuracy (as read-only if not included in extra fields)
+        !Objects.isEmpty(accuracy) &&
+          !includedExtraFields.includes("accuracy") && (
+            <HView style={styles.accuracyFormItem}>
+              <Text
+                style={styles.formItemLabel}
+                textKey="dataEntry:coordinate.accuracy"
+              />
+              <Text style={styles.accuracyField} textKey={accuracy} />
+              <Text style={styles.formItemLabel} textKey="m" />
+            </HView>
+          )
+      }
       {watchingLocation && (
         <AccuracyProgressBar
           accuracy={accuracy}

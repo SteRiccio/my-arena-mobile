@@ -6,7 +6,12 @@ import { DataEntryActions, DataEntrySelectors, StoreUtils } from "state";
 
 const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
 
-export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
+export const useNodeComponentLocalState = ({
+  nodeUuid,
+  updateDelay = 0,
+  uiValueToNodeValue = (value) => value,
+  nodeValueToUiValue = (value) => value,
+}) => {
   const dispatch = useDispatch();
   const dirtyRef = useRef(false);
   const debouncedUpdateRef = useRef(null);
@@ -20,41 +25,66 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
   });
 
   const [state, setState] = useState({
-    value: undefined,
+    invalidValue: false,
+    value: nodeValue,
+    uiValue: nodeValueToUiValue(nodeValue),
     validation: nodeValidation,
   });
-  const { value, validation } = state;
+  const { invalidValue, value, uiValue, validation } = state;
 
   useEffect(() => {
     if (!updateDelay) return;
 
-    if (Objects.isEqual(value, nodeValue)) {
-      // node value updated according to user needs: set dirty to false
-      if (dirtyRef.current) {
+    const nodeValueFromUI = uiValueToNodeValue(uiValue);
+
+    const dirty = dirtyRef.current;
+
+    if (
+      Objects.isEqual(nodeValue, nodeValueFromUI) ||
+      (Objects.isEmpty(nodeValue) && Objects.isEmpty(nodeValueFromUI))
+    ) {
+      if (dirty) {
+        // node value updated according to user needs: set dirty to false
         dirtyRef.current = false;
       }
-    } else {
-      if (dirtyRef.current) {
-        // component is dirty (value being updated by the user): do not update UI using node value
-      } else {
-        dirtyRef.current = false;
-        setState((statePrev) => ({
-          ...statePrev,
-          value: nodeValue,
-          validation: nodeValidation,
-        }));
-      }
+    } else if (dirty) {
+      // component is dirty (value being updated by the user): do not update UI using node value
+    } else if (!invalidValue) {
+      // UI value not in sync with node value: update UI
+      setState((statePrev) => ({
+        ...statePrev,
+        value: nodeValue,
+        uiValue: nodeValueToUiValue(nodeValue),
+        validation: nodeValidation,
+      }));
     }
-  }, [nodeValue, updateDelay]);
+  }, [invalidValue, nodeValue, nodeValidation, uiValue, updateDelay]);
 
   const updateNodeValue = useCallback(
-    async (valueUpdated, fileUri = null) => {
+    async (uiValueUpdated, fileUri = null) => {
+      const nodeValueUpdated = uiValueToNodeValue(uiValueUpdated);
+
+      if (
+        !Objects.isEmpty(uiValueUpdated) &&
+        Objects.isEmpty(nodeValueUpdated)
+      ) {
+        // inserted value is not valid: do not update record, only UI
+        setState((statePrev) => ({
+          ...statePrev,
+          invalidValue: true,
+          uiValue: uiValueUpdated,
+        }));
+        return;
+      }
+
       if (updateDelay) {
         dirtyRef.current = true;
 
         setState((statePrev) => ({
           ...statePrev,
-          value: valueUpdated,
+          invalidValue: false,
+          value: nodeValueUpdated,
+          uiValue: uiValueUpdated,
           validation: null,
         }));
 
@@ -63,7 +93,7 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
         debouncedUpdateRef.current = StoreUtils.debounceAction(
           DataEntryActions.updateAttribute({
             uuid: nodeUuid,
-            value: valueUpdated,
+            value: nodeValueUpdated,
             fileUri,
           }),
           getNodeUpdateActionKey({ nodeUuid }),
@@ -75,18 +105,20 @@ export const useNodeComponentLocalState = ({ nodeUuid, updateDelay = 0 }) => {
         dispatch(
           DataEntryActions.updateAttribute({
             uuid: nodeUuid,
-            value: valueUpdated,
+            value: nodeValueUpdated,
             fileUri,
           })
         );
       }
     },
-    [nodeUuid]
+    [nodeUuid, updateDelay, uiValueToNodeValue]
   );
 
   return {
     applicable,
+    invalidValue,
     value: updateDelay ? value : nodeValue,
+    uiValue,
     validation: updateDelay ? validation : nodeValidation,
     updateNodeValue,
   };

@@ -8,6 +8,7 @@ export const TextInput = (props) => {
     autoCapitalize,
     disabled,
     editable,
+    error,
     keyboardType,
     label: labelKey,
     nonEditableStyleVisible,
@@ -36,6 +37,7 @@ export const TextInput = (props) => {
       autoCapitalize={autoCapitalize}
       disabled={disabled}
       editable={editable}
+      error={error}
       keyboardType={keyboardType}
       mode="outlined"
       label={label}
@@ -54,6 +56,7 @@ export const TextInput = (props) => {
 TextInput.defaultProps = {
   disabled: false,
   editable: true,
+  error: false,
   nonEditableStyleVisible: true,
   style: {},
 };

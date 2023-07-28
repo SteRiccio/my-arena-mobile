@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 
 import {
   NodeDefs,
+  NodeDefType,
   Nodes,
   Objects,
   Records,
@@ -10,6 +11,7 @@ import {
 } from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
+import { SurveyNodeDefs } from "model/utils/SurveyNodeDefs";
 
 const getDataEntryState = (state) => state.dataEntry;
 
@@ -94,12 +96,37 @@ const selectRecordNodePointerVisibility =
     return applicable || !hiddenWhenNotRelevant;
   };
 
+const _cleanupAttributeValue = ({ value, attributeDef }) => {
+  if (!value) return value;
+
+  if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
+    const includedExtraFields =
+      SurveyNodeDefs.getCoordinateNodeDefIncludedExtraFields(attributeDef);
+    const mandatoryFields = ["x", "y", "srs"];
+    const fieldsToRemove = Object.keys(value).filter(
+      (field) =>
+        !mandatoryFields.includes(field) && !includedExtraFields.includes(field)
+    );
+    fieldsToRemove.forEach((field) => {
+      delete value[field];
+    });
+  }
+  return value;
+};
+
 const selectRecordAttributeInfo =
   (state) =>
   ({ nodeUuid }) => {
     const record = selectRecord(state);
     const attribute = Records.getNodeByUuid(nodeUuid)(record);
-    const value = attribute?.value;
+    let value = attribute?.value;
+    if (value) {
+      const survey = SurveySelectors.selectCurrentSurvey(state);
+      const attributeDef = attribute
+        ? Surveys.getNodeDefByUuid({ survey, uuid: attribute.nodeDefUuid })
+        : null;
+      value = _cleanupAttributeValue({ value, attributeDef });
+    }
     const validation = RecordValidations.getValidationNode({ nodeUuid })(
       record.validation
     );

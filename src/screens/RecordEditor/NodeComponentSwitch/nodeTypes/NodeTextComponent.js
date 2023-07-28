@@ -1,4 +1,4 @@
-import { NodeDefType, Objects } from "@openforis/arena-core";
+import { NodeDefType, NodeDefs, Objects } from "@openforis/arena-core";
 import { useCallback } from "react";
 
 import { TextInput } from "../../../../components";
@@ -10,24 +10,39 @@ export const NodeTextComponent = (props) => {
   if (__DEV__) {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
   }
-  const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
-    nodeUuid,
-    updateDelay: 500,
-  });
 
-  const onChange = useCallback((text) => {
-    updateNodeValue(text);
-  }, []);
-
-  const editable = !nodeDef.props.readOnly;
   const isNumeric = [NodeDefType.decimal, NodeDefType.integer].includes(
     nodeDef.type
   );
-  const textValue = Objects.isEmpty(value) ? "" : String(value);
+
+  const editable = !NodeDefs.isReadOnly(nodeDef);
+
+  const nodeValueToUiValue = useCallback(
+    (value) => (Objects.isEmpty(value) ? "" : String(value)),
+    []
+  );
+
+  const uiValueToNodeValue = useCallback(
+    (uiValue) => {
+      if (Objects.isEmpty(uiValue)) return null;
+      if (isNumeric) return Number(uiValue);
+      return uiValue;
+    },
+    [isNumeric]
+  );
+
+  const { applicable, invalidValue, uiValue, updateNodeValue } =
+    useNodeComponentLocalState({
+      nodeUuid,
+      updateDelay: 500,
+      nodeValueToUiValue,
+      uiValueToNodeValue,
+    });
 
   return (
     <TextInput
       editable={editable}
+      error={invalidValue}
       keyboardType={isNumeric ? "numeric" : undefined}
       style={[
         {
@@ -36,8 +51,8 @@ export const NodeTextComponent = (props) => {
         },
         style,
       ]}
-      onChange={onChange}
-      value={textValue}
+      onChange={updateNodeValue}
+      value={uiValue}
     />
   );
 };
