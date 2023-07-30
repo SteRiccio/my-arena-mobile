@@ -12,20 +12,25 @@ const TreeNodeRenderer = ({
   isExpanded,
   hasChildrenNodes,
 }) => {
-  const { isCurrentEntity } = treeNode;
+  const { isCurrentEntity, isRoot } = treeNode;
 
   return (
     <HView
       style={{
-        marginLeft: 25 * level,
+        marginLeft: isRoot ? 0 : 20 * (level - 1),
         fontSize: 18,
-        gap: 20,
+        gap: 2,
         height: 30,
         backgroundColor: "transparent",
         alignItems: "center",
       }}
     >
-      <Indicator isExpanded={isExpanded} hasChildrenNodes={hasChildrenNodes} />
+      {!isRoot && (
+        <Indicator
+          isExpanded={isExpanded}
+          hasChildrenNodes={hasChildrenNodes}
+        />
+      )}
       <EntityButton treeNode={treeNode} isCurrentEntity={isCurrentEntity} />
     </HView>
   );

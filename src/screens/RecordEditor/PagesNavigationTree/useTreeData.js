@@ -36,6 +36,7 @@ export const useTreeData = () => {
   const createTreeItem = ({ nodeDef, parentEntityUuid, entityUuid }) => ({
     id: nodeDef.uuid,
     label: NodeDefs.getLabelOrName(nodeDef, lang),
+    isRoot: !parentEntityUuid,
     children: [],
     isCurrentEntity: nodeDef.uuid === currentEntityDef.uuid,
     entityPointer: {
