@@ -40,7 +40,7 @@ export const NodeCoordinateComponent = (props) => {
 
   const createNumericFieldFormItem = useCallback(
     ({ fieldKey }) => (
-      <HView style={styles.formItem}>
+      <HView key={fieldKey} style={styles.formItem}>
         <Text
           style={styles.formItemLabel}
           textKey={`dataEntry:coordinate.${fieldKey}`}

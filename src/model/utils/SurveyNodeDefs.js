@@ -1,4 +1,4 @@
-const getCoordinateNodeDefIncludedExtraFields = (nodeDef) => {
+const getCoordinateAdditionalFields = (nodeDef) => {
   const result = [];
   if (nodeDef.props.includeAccuracy) result.push("accuracy");
   if (nodeDef.props.includeAltitude) result.push("altitude");
@@ -7,5 +7,5 @@ const getCoordinateNodeDefIncludedExtraFields = (nodeDef) => {
 };
 
 export const SurveyNodeDefs = {
-  getCoordinateNodeDefIncludedExtraFields,
+  getCoordinateAdditionalFields,
 };

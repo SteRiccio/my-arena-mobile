@@ -32,7 +32,7 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   const { x, y } = point;
 
   const includedExtraFields =
-    SurveyNodeDefs.getCoordinateNodeDefIncludedExtraFields(nodeDef);
+    SurveyNodeDefs.getCoordinateAdditionalFields(nodeDef);
 
   const result = {
     x: numberToString(x),
@@ -41,7 +41,7 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   };
 
   includedExtraFields.forEach((field) => {
-    result[field] = coords[field];
+    result[field] = String(coords[field]);
   });
   // always include accuracy
   result["accuracy"] = String(Math.floor(accuracy * 100) / 100);
@@ -55,7 +55,7 @@ export const useNodeCoordinateComponent = (props) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const srss = useMemo(() => Surveys.getSRSs(survey), [survey]);
   const includedExtraFields = useMemo(
-    () => SurveyNodeDefs.getCoordinateNodeDefIncludedExtraFields(nodeDef),
+    () => SurveyNodeDefs.getCoordinateAdditionalFields(nodeDef),
     [nodeDef]
   );
 

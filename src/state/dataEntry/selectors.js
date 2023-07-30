@@ -100,12 +100,12 @@ const _cleanupAttributeValue = ({ value, attributeDef }) => {
   if (!value) return value;
 
   if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
-    const includedExtraFields =
-      SurveyNodeDefs.getCoordinateNodeDefIncludedExtraFields(attributeDef);
+    const additionalFields =
+      SurveyNodeDefs.getCoordinateAdditionalFields(attributeDef);
     const mandatoryFields = ["x", "y", "srs"];
     const fieldsToRemove = Object.keys(value).filter(
       (field) =>
-        !mandatoryFields.includes(field) && !includedExtraFields.includes(field)
+        !mandatoryFields.includes(field) && !additionalFields.includes(field)
     );
     fieldsToRemove.forEach((field) => {
       delete value[field];
