@@ -147,14 +147,11 @@ const updateAttribute =
       uuid: node.nodeDefUuid,
     });
 
-    const { meta } = node;
-    const metaUpdated = { ...meta, defaultValueApplied: false };
-    const nodeUpdated = { ...node, meta: metaUpdated, value };
-
-    const { record: recordUpdated } = await RecordUpdater.updateNode({
+    const { record: recordUpdated } = await RecordUpdater.updateAttributeValue({
       survey,
       record,
-      node: nodeUpdated,
+      attributeUuid: uuid,
+      value,
     });
 
     if (NodeDefs.getType(nodeDef) === NodeDefType.file) {
@@ -203,13 +200,15 @@ const addNewAttribute =
     const nodeCreated = Object.values(nodesCreated).find(
       (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
     );
-    const nodeUpdated = { ...nodeCreated, value };
 
-    const { record: recordUpdated2 } = await RecordUpdater.updateNode({
-      survey,
-      record: recordUpdated,
-      node: nodeUpdated,
-    });
+    const { record: recordUpdated2 } = await RecordUpdater.updateAttributeValue(
+      {
+        survey,
+        record: recordUpdated,
+        attributeUuid: nodeCreated.uuid,
+        value,
+      }
+    );
 
     await RecordService.updateRecord({ survey, record: recordUpdated2 });
 
