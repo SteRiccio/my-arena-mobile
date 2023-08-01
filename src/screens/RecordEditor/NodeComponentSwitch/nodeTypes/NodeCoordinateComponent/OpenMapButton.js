@@ -27,5 +27,5 @@ export const OpenMapButton = (props) => {
 
   if (!pointLatLng) return null;
 
-  return <IconButton icon="map" onPress={onPress} />;
+  return <IconButton icon="map" onPress={onPress} size={30} />;
 };

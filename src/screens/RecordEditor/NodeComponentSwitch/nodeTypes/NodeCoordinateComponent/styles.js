@@ -10,7 +10,7 @@ export default StyleSheet.create({
     alignItems: "baseline",
   },
   numericTextInput: {
-    width: 200,
+    width: 180,
     alignSelf: "stretch",
   },
   accuracyField: {
