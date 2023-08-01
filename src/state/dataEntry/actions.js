@@ -63,7 +63,7 @@ const createNewRecord =
     record.surveyId = survey.id;
     record.dateModified = getMaxDateModified(nodes);
 
-    record = await RecordService.insertRecord({ survey, record, dateModified });
+    record = await RecordService.insertRecord({ survey, record });
 
     dispatch(editRecord({ navigation, record }));
   };
