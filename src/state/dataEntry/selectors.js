@@ -11,7 +11,6 @@ import {
 } from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
-import { SurveyNodeDefs } from "model/utils/SurveyNodeDefs";
 
 const getDataEntryState = (state) => state.dataEntry;
 
@@ -101,7 +100,7 @@ const _cleanupAttributeValue = ({ value, attributeDef }) => {
 
   if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
     const additionalFields =
-      SurveyNodeDefs.getCoordinateAdditionalFields(attributeDef);
+      NodeDefs.getCoordinateAdditionalFields(attributeDef);
     const mandatoryFields = ["x", "y", "srs"];
     const fieldsToRemove = Object.keys(value).filter(
       (field) =>
