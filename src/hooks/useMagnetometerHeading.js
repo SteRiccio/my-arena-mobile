@@ -21,17 +21,42 @@ const magnetometerDataToAngle = (magnetometer) => {
 
 export const useMagnetometerHeading = () => {
   const magnetometerSubscriptionRef = useRef(null);
-  const [heading, setHeading] = useState(0);
+  const [state, setState] = useState({
+    magnetometerAvailable: true,
+    heading: 0,
+  });
+
+  const { magnetometerAvailable, heading } = state;
 
   useEffect(() => {
-    magnetometerSubscriptionRef.current = Magnetometer.addListener((data) => {
-      setHeading(magnetometerDataToAngle(data));
-    });
+    Magnetometer.isAvailableAsync()
+      .then((available) => {
+        if (available) {
+          magnetometerSubscriptionRef.current = Magnetometer.addListener(
+            (data) => {
+              setState((statePrev) => ({
+                ...statePrev,
+                heading: magnetometerDataToAngle(data),
+              }));
+            }
+          );
+        }
+        setState((statePrev) => ({
+          ...statePrev,
+          magnetometerAvailable: available,
+        }));
+      })
+      .catch(() => {
+        setState((statePrev) => ({
+          ...statePrev,
+          magnetometerAvailable: available,
+        }));
+      });
 
     return () => {
       magnetometerSubscriptionRef.current?.remove();
     };
   }, []);
 
-  return heading;
+  return { magnetometerAvailable, heading };
 };

@@ -35,6 +35,7 @@ export default {
     altitude: "Altitude",
     altitudeAccuracy: "Altitude accuracy",
     heading: "Heading",
+    magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
     startGPS: "Start GPS",
     stopGPS: "Stop GPS",

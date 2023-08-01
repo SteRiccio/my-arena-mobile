@@ -63,7 +63,7 @@ export const LocationNavigator = (props) => {
     distance: 0,
   });
 
-  const heading = useMagnetometerHeading();
+  const { heading, magnetometerAvailable } = useMagnetometerHeading();
 
   const { currentLocation, angleToTarget, accuracy, distance } = state;
   const currentLocationX = currentLocation?.coords?.longitude;
@@ -148,6 +148,12 @@ export const LocationNavigator = (props) => {
             textKey="dataEntry:coordinate.navigateToTarget"
             variant="titleLarge"
           />
+          {!magnetometerAvailable && (
+            <Text
+              textKey="dataEntry:coordinate.magnetometerNotAvailable"
+              variant="labelMedium"
+            />
+          )}
           <VView style={styles.compassContainer}>
             {/* <Image
         source={compassPointer}
@@ -160,7 +166,6 @@ export const LocationNavigator = (props) => {
 
             <View
               style={{
-                borderWidth: 1,
                 height: compassImageSize,
                 width: compassImageSize,
               }}
