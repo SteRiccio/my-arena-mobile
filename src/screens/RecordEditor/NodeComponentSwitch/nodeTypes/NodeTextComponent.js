@@ -16,6 +16,9 @@ export const NodeTextComponent = (props) => {
   );
 
   const editable = !NodeDefs.isReadOnly(nodeDef);
+  const multiline =
+    NodeDefs.getType(nodeDef) === NodeDefType.text &&
+    nodeDef.props.textInputType === "multiLine";
 
   const nodeValueToUiValue = useCallback(
     (value) => (Objects.isEmpty(value) ? "" : String(value)),
@@ -51,6 +54,8 @@ export const NodeTextComponent = (props) => {
         },
         style,
       ]}
+      multiline={multiline}
+      numberOfLines={multiline ? 4 : 1}
       onChange={updateNodeValue}
       value={uiValue}
     />
