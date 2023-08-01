@@ -135,12 +135,14 @@ export const useNodeCoordinateComponent = (props) => {
     !NodeDefs.isReadOnly(nodeDef) &&
     !NodeDefs.isAllowOnlyDeviceCoordinate(nodeDef);
 
-  const { accuracy, x, y, srs = srss[0].code } = uiValue || {};
+  const { accuracy, srs = srss[0].code } = uiValue || {};
 
   const clearLocationWatchTimeout = () => {
     if (locationWatchIntervalRef.current) {
       clearInterval(locationWatchIntervalRef.current);
       locationWatchIntervalRef.current = null;
+    }
+    if (locationAccuracyWatchTimeoutRef.current) {
       clearTimeout(locationAccuracyWatchTimeoutRef.current);
       locationAccuracyWatchTimeoutRef.current = null;
     }
@@ -183,7 +185,7 @@ export const useNodeCoordinateComponent = (props) => {
     if (!foregroundPermission.granted) {
       return;
     }
-    clearLocationWatchTimeout();
+    stopGps();
     locationSubscritionRef.current = await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.Highest,
