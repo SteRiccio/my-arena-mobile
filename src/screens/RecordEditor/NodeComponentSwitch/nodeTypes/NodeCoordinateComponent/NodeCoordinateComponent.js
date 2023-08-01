@@ -5,6 +5,7 @@ import { Objects } from "@openforis/arena-core";
 import { Button, HView, IconButton, Text, TextInput, VView } from "components";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
+import { ElapsedTimeProgressBar } from "./ElapsedTimeProgressBar";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
 import { LocationNavigator } from "./LocationNavigator";
 import { OpenMapButton } from "./OpenMapButton";
@@ -27,6 +28,8 @@ export const NodeCoordinateComponent = (props) => {
     hideCompassNavigator,
     includedExtraFields,
     locationAccuracyThreshold,
+    locationWatchElapsedTime,
+    locationWatchTimeout,
     onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
@@ -105,10 +108,16 @@ export const NodeCoordinateComponent = (props) => {
           )
       }
       {watchingLocation && (
-        <AccuracyProgressBar
-          accuracy={accuracy}
-          accuracyThreshold={locationAccuracyThreshold}
-        />
+        <VView style={{ margin: 4 }}>
+          <AccuracyProgressBar
+            accuracy={accuracy}
+            accuracyThreshold={locationAccuracyThreshold}
+          />
+          <ElapsedTimeProgressBar
+            elapsedTime={locationWatchElapsedTime}
+            elapsedTimeThreshold={locationWatchTimeout}
+          />
+        </VView>
       )}
       {!watchingLocation && (
         <Button

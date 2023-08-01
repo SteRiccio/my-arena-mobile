@@ -15,7 +15,6 @@ import {
 import { RecordNodes } from "model/utils/RecordNodes";
 import { DataEntrySelectors, SettingsSelectors, SurveySelectors } from "state";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
-import { SurveyNodeDefs } from "model/utils/SurveyNodeDefs";
 
 const stringToNumber = (str) => Numbers.toNumber(str);
 const numberToString = (num) => (Objects.isEmpty(num) ? "" : String(num));
@@ -31,8 +30,7 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   const point = Points.transform(pointLatLong, srsTo, srsIndex);
   const { x, y } = point;
 
-  const includedExtraFields =
-    SurveyNodeDefs.getCoordinateAdditionalFields(nodeDef);
+  const includedExtraFields = NodeDefs.getCoordinateAdditionalFields(nodeDef);
 
   const result = {
     x: numberToString(x),
@@ -55,7 +53,7 @@ export const useNodeCoordinateComponent = (props) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const srss = useMemo(() => Surveys.getSRSs(survey), [survey]);
   const includedExtraFields = useMemo(
-    () => SurveyNodeDefs.getCoordinateAdditionalFields(nodeDef),
+    () => NodeDefs.getCoordinateAdditionalFields(nodeDef),
     [nodeDef]
   );
 
@@ -65,12 +63,18 @@ export const useNodeCoordinateComponent = (props) => {
   const [state, setState] = useState({
     compassNavigatorVisible: false,
     watchingLocation: false,
+    locationWatchElapsedTime: 0,
   });
 
   const locationSubscritionRef = useRef(null);
   const locationAccuracyWatchTimeoutRef = useRef(null);
+  const locationWatchIntervalRef = useRef(null);
 
-  const { compassNavigatorVisible, watchingLocation } = state;
+  const {
+    compassNavigatorVisible,
+    locationWatchElapsedTime,
+    watchingLocation,
+  } = state;
 
   const nodeValueToUiValue = useCallback(
     (nodeValue) => {
@@ -134,7 +138,9 @@ export const useNodeCoordinateComponent = (props) => {
   const { accuracy, x, y, srs = srss[0].code } = uiValue || {};
 
   const clearLocationWatchTimeout = () => {
-    if (locationAccuracyWatchTimeoutRef.current) {
+    if (locationWatchIntervalRef.current) {
+      clearInterval(locationWatchIntervalRef.current);
+      locationWatchIntervalRef.current = null;
       clearTimeout(locationAccuracyWatchTimeoutRef.current);
       locationAccuracyWatchTimeoutRef.current = null;
     }
@@ -146,7 +152,11 @@ export const useNodeCoordinateComponent = (props) => {
 
     clearLocationWatchTimeout();
 
-    setState((statePrev) => ({ ...statePrev, watchingLocation: false }));
+    setState((statePrev) => ({
+      ...statePrev,
+      locationWatchElapsedTime: 0,
+      watchingLocation: false,
+    }));
   };
 
   useEffect(() => {
@@ -194,10 +204,15 @@ export const useNodeCoordinateComponent = (props) => {
         }
       }
     );
-    locationAccuracyWatchTimeoutRef.current = setTimeout(
-      stopGps,
-      locationAccuracyWatchTimeout * 1000
-    );
+    locationWatchIntervalRef.current = setInterval(() => {
+      setState((statePrev) => ({
+        ...statePrev,
+        locationWatchElapsedTime: statePrev.locationWatchElapsedTime + 1000,
+      }));
+    }, 1000);
+    locationAccuracyWatchTimeoutRef.current = setTimeout(() => {
+      stopGps();
+    }, locationAccuracyWatchTimeout * 1000);
 
     setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
   }, [
@@ -252,6 +267,8 @@ export const useNodeCoordinateComponent = (props) => {
     hideCompassNavigator,
     includedExtraFields,
     locationAccuracyThreshold,
+    locationWatchElapsedTime,
+    locationWatchTimeout: locationAccuracyWatchTimeout,
     onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
