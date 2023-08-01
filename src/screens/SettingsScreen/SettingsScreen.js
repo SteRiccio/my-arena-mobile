@@ -76,7 +76,9 @@ const SettingsItem = (props) => {
           <Text textKey={labelKey} />
           <TextInput
             value={Objects.isEmpty(value) ? "" : String(value)}
-            onChange={onPropValueChange({ key: settingKey })}
+            onChange={(value) =>
+              onPropValueChange({ key: settingKey })(Number(value))
+            }
           />
         </VView>
       );

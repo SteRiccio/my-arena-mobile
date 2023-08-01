@@ -5,6 +5,7 @@ if (!global.crypto) {
 }
 
 import {
+  Dates,
   JobStatus,
   NodeDefs,
   NodeDefType,
@@ -36,6 +37,12 @@ const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
 
 const { t } = i18n;
 
+const getMaxDateModified = (nodes) =>
+  Object.values(nodes).reduce((acc, node) => {
+    const dateModified = Dates.parseISO(node.dateModified);
+    return Math.max(acc, dateModified);
+  }, new Date());
+
 const createNewRecord =
   ({ navigation }) =>
   async (dispatch, getState) => {
@@ -48,14 +55,15 @@ const createNewRecord =
       user: {},
     });
 
-    let { record } = await RecordUpdater.createRootEntity({
+    let { record, nodes } = await RecordUpdater.createRootEntity({
       survey,
       record: recordEmpty,
     });
 
     record.surveyId = survey.id;
+    record.dateModified = getMaxDateModified(nodes);
 
-    record = await RecordService.insertRecord({ survey, record });
+    record = await RecordService.insertRecord({ survey, record, dateModified });
 
     dispatch(editRecord({ navigation, record }));
   };
@@ -79,6 +87,8 @@ const addNewEntity = async (dispatch, getState) => {
       nodeDef,
     });
 
+  record.dateModified = getMaxDateModified(nodesCreated);
+
   const nodeCreated = Object.values(nodesCreated).find(
     (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
   );
@@ -100,11 +110,13 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = DataEntrySelectors.selectRecord(state);
 
-  const { record: recordUpdated } = await RecordUpdater.deleteNodes({
+  const { record: recordUpdated, nodes } = await RecordUpdater.deleteNodes({
     survey,
     record,
     nodeUuids,
   });
+
+  record.dateModified = getMaxDateModified(nodes);
 
   await RecordService.updateRecord({ survey, record: recordUpdated });
 
@@ -147,15 +159,15 @@ const updateAttribute =
       uuid: node.nodeDefUuid,
     });
 
-    const { meta } = node;
-    const metaUpdated = { ...meta, defaultValueApplied: false };
-    const nodeUpdated = { ...node, meta: metaUpdated, value };
+    const { record: recordUpdated, nodes: nodesUpdated } =
+      await RecordUpdater.updateAttributeValue({
+        survey,
+        record,
+        attributeUuid: uuid,
+        value,
+      });
 
-    const { record: recordUpdated } = await RecordUpdater.updateNode({
-      survey,
-      record,
-      node: nodeUpdated,
-    });
+    record.dateModified = getMaxDateModified(nodesUpdated);
 
     if (NodeDefs.getType(nodeDef) === NodeDefType.file) {
       const surveyId = survey.id;
@@ -203,13 +215,15 @@ const addNewAttribute =
     const nodeCreated = Object.values(nodesCreated).find(
       (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
     );
-    const nodeUpdated = { ...nodeCreated, value };
 
-    const { record: recordUpdated2 } = await RecordUpdater.updateNode({
-      survey,
-      record: recordUpdated,
-      node: nodeUpdated,
-    });
+    const { record: recordUpdated2 } = await RecordUpdater.updateAttributeValue(
+      {
+        survey,
+        record: recordUpdated,
+        attributeUuid: nodeCreated.uuid,
+        value,
+      }
+    );
 
     await RecordService.updateRecord({ survey, record: recordUpdated2 });
 

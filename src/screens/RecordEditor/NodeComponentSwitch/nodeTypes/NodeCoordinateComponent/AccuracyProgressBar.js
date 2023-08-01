@@ -16,5 +16,7 @@ export const AccuracyProgressBar = (props) => {
     accuracyThreshold,
   });
 
-  return <ProgressBar progress={progress} color={color} />;
+  return (
+    <ProgressBar progress={progress} color={color} style={{ margin: 0 }} />
+  );
 };

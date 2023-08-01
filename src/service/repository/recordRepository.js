@@ -76,8 +76,13 @@ const updateRecord = async ({ survey, record }) => {
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
 
   return dbClient.executeSql(
-    `UPDATE record SET content = ?, ${keyColumnsSet} WHERE id = ?`,
-    [JSON.stringify(record), ...keyColumnsValues, record.id]
+    `UPDATE record SET content = ?, date_modified = ?, ${keyColumnsSet} WHERE id = ?`,
+    [
+      JSON.stringify(record),
+      record.dateModified || Date.now(),
+      ...keyColumnsValues,
+      record.id,
+    ]
   );
 };
 

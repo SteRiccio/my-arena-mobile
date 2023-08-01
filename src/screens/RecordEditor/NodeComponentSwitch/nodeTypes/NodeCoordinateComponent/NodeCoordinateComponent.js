@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useCallback } from "react";
+
+import { Objects } from "@openforis/arena-core";
 
 import { Button, HView, IconButton, Text, TextInput, VView } from "components";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
+import { ElapsedTimeProgressBar } from "./ElapsedTimeProgressBar";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
 import { LocationNavigator } from "./LocationNavigator";
+import { OpenMapButton } from "./OpenMapButton";
+
 import styles from "./styles";
-import { Objects } from "@openforis/arena-core";
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef } = props;
@@ -22,79 +26,98 @@ export const NodeCoordinateComponent = (props) => {
     distanceTarget,
     editable,
     hideCompassNavigator,
+    includedExtraFields,
     locationAccuracyThreshold,
-    onChangeX,
-    onChangeY,
-    onChangeSrs,
+    locationWatchElapsedTime,
+    locationWatchTimeout,
+    onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
     onStopGpsPress,
     showCompassNavigator,
     srs,
-    xTextValue,
-    yTextValue,
+    srsIndex,
+    uiValue,
     watchingLocation,
   } = useNodeCoordinateComponent(props);
+
+  const createNumericFieldFormItem = useCallback(
+    ({ fieldKey }) => (
+      <HView key={fieldKey} style={styles.formItem}>
+        <Text
+          style={styles.formItemLabel}
+          textKey={`dataEntry:coordinate.${fieldKey}`}
+        />
+        <TextInput
+          editable={editable}
+          keyboardType="numeric"
+          style={[
+            styles.numericTextInput,
+            ...(applicable ? [] : [styles.textInputNotApplicable]),
+          ]}
+          onChange={onChangeValueField(fieldKey)}
+          value={uiValue[fieldKey]}
+        />
+      </HView>
+    ),
+    [applicable, editable, uiValue]
+  );
 
   return (
     <VView>
       <HView style={{ alignItems: "center" }}>
         <VView>
-          <HView style={styles.formItem}>
-            <Text style={styles.formItemLabel} textKey="X" />
-            <TextInput
-              editable={editable}
-              keyboardType="numeric"
-              style={[
-                styles.numericTextInput,
-                ...(applicable ? [] : [styles.textInputNotApplicable]),
-              ]}
-              onChange={onChangeX}
-              value={xTextValue}
-            />
-          </HView>
-          <HView style={styles.formItem}>
-            <Text style={styles.formItemLabel} textKey="Y" />
-            <TextInput
-              editable={editable}
-              keyboardType="numeric"
-              style={[
-                styles.numericTextInput,
-                ...(applicable ? [] : [styles.textInputNotApplicable]),
-              ]}
-              onChange={onChangeY}
-              value={yTextValue}
-            />
-          </HView>
+          {createNumericFieldFormItem({ fieldKey: "x" })}
+          {createNumericFieldFormItem({ fieldKey: "y" })}
         </VView>
-        {distanceTarget && (
-          <IconButton
-            icon="compass-outline"
-            onPress={showCompassNavigator}
-            size={50}
-            style={{ alignSelf: "center", margin: 20 }}
-          />
-        )}
+        <HView style={{ alignItems: "center" }}>
+          {uiValue && <OpenMapButton point={uiValue} srsIndex={srsIndex} />}
+          {distanceTarget && (
+            <IconButton
+              icon="compass-outline"
+              onPress={showCompassNavigator}
+              size={30}
+              style={{ alignSelf: "center", margin: 20 }}
+            />
+          )}
+        </HView>
       </HView>
       <HView style={styles.formItem}>
         <Text style={styles.formItemLabel} textKey="common:srs" />
-        <SrsDropdown editable={editable} onChange={onChangeSrs} value={srs} />
-      </HView>
-      {!Objects.isEmpty(accuracy) && (
-        <HView style={styles.accuracyFormItem}>
-          <Text
-            style={styles.formItemLabel}
-            textKey="dataEntry:coordinate.accuracy"
-          />
-          <Text style={styles.accuracyField} textKey={accuracy} />
-          <Text style={styles.formItemLabel} textKey="m" />
-        </HView>
-      )}
-      {watchingLocation && (
-        <AccuracyProgressBar
-          accuracy={accuracy}
-          accuracyThreshold={locationAccuracyThreshold}
+        <SrsDropdown
+          editable={editable}
+          onChange={onChangeValueField("srs")}
+          value={srs}
         />
+      </HView>
+      {includedExtraFields.map((fieldKey) =>
+        createNumericFieldFormItem({ fieldKey })
+      )}
+      {
+        // always show accuracy (as read-only if not included in extra fields)
+        !Objects.isEmpty(accuracy) &&
+          !includedExtraFields.includes("accuracy") && (
+            <HView style={styles.accuracyFormItem}>
+              <Text
+                style={styles.formItemLabel}
+                textKey="dataEntry:coordinate.accuracy"
+              />
+              <Text style={styles.accuracyField} textKey={accuracy} />
+              <Text style={styles.formItemLabel} textKey="m" />
+            </HView>
+          )
+      }
+      {watchingLocation && (
+        <VView style={{ margin: 4 }}>
+          <AccuracyProgressBar
+            accuracy={accuracy}
+            accuracyThreshold={locationAccuracyThreshold}
+          />
+          <ElapsedTimeProgressBar
+            elapsedTime={locationWatchElapsedTime}
+            elapsedTimeThreshold={locationWatchTimeout * 1000}
+          />
+        </VView>
       )}
       {!watchingLocation && (
         <Button

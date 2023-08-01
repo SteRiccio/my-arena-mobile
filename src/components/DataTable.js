@@ -105,11 +105,13 @@ export const DataTable = (props) => {
         </RNPDataTable.Header>
         <ScrollView persistentScrollbar>
           {rows.map((row) => (
-            <RNPDataTable.Row key={row.key}>
+            <RNPDataTable.Row
+              key={row.key}
+              onPress={() => onRowPress(row)}
+              onLongPress={() => onRowLongPress(row)}
+            >
               {columns.map(({ key: columnKey, style, cellRenderer = null }) => (
                 <RNPDataTable.Cell
-                  onPress={() => onRowPress(row)}
-                  onLongPress={() => onRowLongPress(row)}
                   key={columnKey}
                   style={style}
                   textStyle={{ flex: 1 }}

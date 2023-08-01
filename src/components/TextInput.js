@@ -8,9 +8,12 @@ export const TextInput = (props) => {
     autoCapitalize,
     disabled,
     editable,
+    error,
     keyboardType,
     label: labelKey,
     nonEditableStyleVisible,
+    multiline,
+    numberOfLines,
     placeholder: placeholderKey,
     onChange,
     onPressIn,
@@ -36,9 +39,12 @@ export const TextInput = (props) => {
       autoCapitalize={autoCapitalize}
       disabled={disabled}
       editable={editable}
+      error={error}
       keyboardType={keyboardType}
-      mode="outlined"
       label={label}
+      mode="outlined"
+      multiline={multiline}
+      numberOfLines={numberOfLines}
       onChangeText={onChange}
       onPressIn={onPressIn}
       placeholder={placeholderKey}
@@ -54,6 +60,8 @@ export const TextInput = (props) => {
 TextInput.defaultProps = {
   disabled: false,
   editable: true,
+  error: false,
+  multiline: false,
   nonEditableStyleVisible: true,
   style: {},
 };
