@@ -115,7 +115,7 @@ export const NodeCoordinateComponent = (props) => {
           />
           <ElapsedTimeProgressBar
             elapsedTime={locationWatchElapsedTime}
-            elapsedTimeThreshold={locationWatchTimeout}
+            elapsedTimeThreshold={locationWatchTimeout * 1000}
           />
         </VView>
       )}
