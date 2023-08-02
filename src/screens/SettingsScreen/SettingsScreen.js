@@ -10,6 +10,7 @@ import {
   HView,
   ScrollView,
   SegmentedButtons,
+  Slider,
   Switch,
   Text,
   TextInput,
@@ -24,6 +25,7 @@ const propertyTypes = {
   boolean: "boolean",
   numeric: "numeric",
   options: "options",
+  slider: "slider",
 };
 
 const properties = {
@@ -44,8 +46,11 @@ const properties = {
     labelKey: "settings:locationAccuracyThreshold",
   },
   locationAccuracyWatchTimeout: {
-    type: propertyTypes.numeric,
+    type: propertyTypes.slider,
     labelKey: "settings:locationAccuracyWatchTimeout",
+    minValue: 30,
+    maxValue: 300,
+    step: 30,
   },
 };
 
@@ -90,6 +95,22 @@ const SettingsItem = (props) => {
             buttons={options}
             onChange={onPropValueChange({ key: settingKey })}
             value={value}
+          />
+        </VView>
+      );
+    case propertyTypes.slider:
+      const { minValue, maxValue, step } = prop;
+      return (
+        <VView key={settingKey}>
+          <HView>
+            <Text textKey={labelKey} textParams={{ value }} />
+          </HView>
+          <Slider
+            minValue={minValue}
+            maxValue={maxValue}
+            step={step}
+            value={value}
+            onValueChange={onPropValueChange({ key: settingKey })}
           />
         </VView>
       );
