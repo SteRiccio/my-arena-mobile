@@ -34,6 +34,7 @@ const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const CURRENT_PAGE_ENTITY_SET = "CURRENT_PAGE_ENTITY_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
+const RECORD_EDIT_VIEW_MODE_SET = "RECORD_EDIT_VIEW_MODE_SET";
 
 const { t } = i18n;
 
@@ -256,6 +257,10 @@ const toggleRecordPageMenuOpen = (dispatch, getState) => {
   dispatch({ type: PAGE_SELECTOR_MENU_OPEN_SET, open: !open });
 };
 
+const selectRecordEditViewMode = (viewMode) => (dispatch) => {
+  dispatch({ type: RECORD_EDIT_VIEW_MODE_SET, viewMode });
+};
+
 const navigateToRecordsList =
   ({ navigation }) =>
   (dispatch) => {
@@ -350,6 +355,7 @@ export const DataEntryActions = {
   CURRENT_PAGE_ENTITY_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
   DATA_ENTRY_RESET,
+  RECORD_EDIT_VIEW_MODE_SET,
 
   createNewRecord,
   addNewEntity,
@@ -363,4 +369,6 @@ export const DataEntryActions = {
 
   navigateToRecordsList,
   exportRecords,
+
+  selectRecordEditViewMode,
 };

@@ -175,13 +175,31 @@ const selectCurrentPageEntity = (state) => {
   return { parentEntityUuid, entityDef, entityUuid };
 };
 
+const selectCurrentPageEntityRelevantChildDefs = (state) => {
+  const { parentEntityUuid, entityDef, entityUuid } =
+    selectCurrentPageEntity(state);
+  const childDefs = selectChildDefs(state)({ nodeDef: entityDef });
+  const record = selectRecord(state);
+  const parentEntity = Records.getNodeByUuid(entityUuid || parentEntityUuid)(
+    record
+  );
+  return childDefs.filter((childDef) =>
+    Nodes.isChildApplicable(parentEntity, childDef.uuid)
+  );
+};
+
 // record page
 const selectRecordPageSelectorMenuOpen = (state) =>
   getDataEntryState(state).recordPageSelectorMenuOpen;
 
+// view mode
+const selectRecordEditViewMode = (state) =>
+  getDataEntryState(state).recordEditViewMode;
+
 export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageEntity,
+  selectRecordEditViewMode,
 
   useRecord: () => useSelector(selectRecord),
 
@@ -259,8 +277,16 @@ export const DataEntrySelectors = {
   useCurrentPageEntity: () =>
     useSelector((state) => selectCurrentPageEntity(state), Objects.isEqual),
 
+  useCurrentPageEntityRelevantChildDefs: () =>
+    useSelector(
+      (state) => selectCurrentPageEntityRelevantChildDefs(state),
+      Objects.isEqual
+    ),
+
   // page selector
   selectRecordPageSelectorMenuOpen,
   useIsRecordPageSelectorMenuOpen: () =>
     useSelector((state) => selectRecordPageSelectorMenuOpen(state)),
+
+  useRecordEditViewMode: () => useSelector(selectRecordEditViewMode),
 };

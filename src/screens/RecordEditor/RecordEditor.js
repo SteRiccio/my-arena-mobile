@@ -1,16 +1,20 @@
 import React from "react";
 import MenuDrawer from "react-native-side-drawer";
 
+import { RecordEditViewMode } from "model";
 import { VView } from "components";
 import { DataEntrySelectors } from "state";
+
 import { NodePageNavigationBar } from "./NodePageNavigationBar";
 import { RecordPageForm } from "./RecordPageForm";
 import { RecordEditorDrawer } from "./RecordEditorDrawer";
+import { RecordNodesCarousel } from "./RecordNodesCarousel";
 
 import styles from "./styles.js";
 
 export const RecordEditor = () => {
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
+  const viewMode = DataEntrySelectors.useRecordEditViewMode();
 
   return (
     <MenuDrawer
@@ -23,7 +27,11 @@ export const RecordEditor = () => {
       opacity={0.4}
     >
       <VView style={styles.internalContainer}>
-        <RecordPageForm />
+        {viewMode === RecordEditViewMode.form ? (
+          <RecordPageForm />
+        ) : (
+          <RecordNodesCarousel />
+        )}
         <NodePageNavigationBar />
       </VView>
     </MenuDrawer>
