@@ -26,6 +26,11 @@ export default {
     notInEntryStepAnymore:
       "Not in entry step anymore (in cleansing or analysis step)",
   },
+  viewModeLabel: "View mode",
+  viewMode: {
+    form: "Form",
+    oneNode: "One node",
+  },
 
   coordinate: {
     accuracy: "Accuracy",

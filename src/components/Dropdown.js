@@ -24,7 +24,7 @@ export const Dropdown = (props) => {
   const itemToOption = useCallback(
     (item) => ({
       value: itemKeyExtractor(item),
-      label: itemLabelExtractor(item),
+      label: t(itemLabelExtractor(item)),
     }),
     [itemKeyExtractor, itemLabelExtractor]
   );

@@ -10,7 +10,7 @@ import { useKeyboardIsVisible } from "hooks";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
-import { RecordPageNavigator } from "./RecordPageNavigator";
+import { RecordPageNavigator } from "../../../model/RecordPageNavigator";
 import { SingleNodeNavigationButton } from "./SingleNodeNavigationButton";
 
 import styles from "./styles";
@@ -42,6 +42,7 @@ export const BottomNavigationBar = () => {
       }),
     [survey, record, currentEntityPointer]
   );
+
   const nextEntityPointer = useMemo(
     () =>
       RecordPageNavigator.getNextEntityPointer({

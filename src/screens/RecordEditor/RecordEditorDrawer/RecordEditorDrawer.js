@@ -4,21 +4,24 @@ import { useNavigation } from "@react-navigation/native";
 import {
   Button,
   CloseIconButton,
+  Dropdown,
   HView,
-  SegmentedButtons,
   Text,
   View,
 } from "components";
+import { RecordEditViewMode } from "model";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { PagesNavigationTree } from "../PagesNavigationTree";
 
 import { useStyles } from "./styles";
-import { RecordEditViewMode } from "model/RecordEditViewMode";
+import { PageNodesList } from "../PageNodesList/PageNodesList";
+import { Surveys } from "@openforis/arena-core";
 
 export const RecordEditorDrawer = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
+  const langCode = SurveySelectors.useCurrentSurveyPreferredLang();
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
   const viewMode = DataEntrySelectors.useRecordEditViewMode();
   const styles = useStyles();
@@ -31,7 +34,9 @@ export const RecordEditorDrawer = () => {
         <Text
           variant="headlineMedium"
           style={styles.titleText}
-          textKey={survey.props.name}
+          textKey={
+            Surveys.getLabel(langCode)(survey) || Surveys.getName(survey)
+          }
         />
         <CloseIconButton
           onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
@@ -39,23 +44,30 @@ export const RecordEditorDrawer = () => {
           size={26}
         />
       </HView>
-      <PagesNavigationTree />
+
+      {viewMode === RecordEditViewMode.oneNode ? (
+        <PageNodesList />
+      ) : (
+        <PagesNavigationTree />
+      )}
+
+      <Dropdown
+        items={Object.values(RecordEditViewMode).map((mode) => ({
+          value: mode,
+          label: `dataEntry:viewMode.${mode}`,
+        }))}
+        label="dataEntry:viewModeLabel"
+        onChange={(value) =>
+          dispatch(DataEntryActions.selectRecordEditViewMode(value))
+        }
+        value={viewMode}
+      />
       <Button
         icon="format-list-bulleted"
         textKey="dataEntry:listOfRecords"
         onPress={() =>
           dispatch(DataEntryActions.navigateToRecordsList({ navigation }))
         }
-      />
-      <SegmentedButtons
-        buttons={Object.values(RecordEditViewMode).map((mode) => ({
-          value: mode,
-          label: `dataEntry:viewMode.${mode}`,
-        }))}
-        onChange={(value) =>
-          dispatch(DataEntryActions.selectRecordEditViewMode(value))
-        }
-        value={viewMode}
       />
     </View>
   );

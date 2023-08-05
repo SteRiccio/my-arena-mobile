@@ -36,12 +36,10 @@ const actionHandlers = {
     ...state,
     recordPageSelectorMenuOpen: action.open,
   }),
-
-  [DataEntryActions.RECORD_EDIT_VIEW_MODE_SET]: ({ state, action }) =>
-    console.log("====", action) || {
-      ...state,
-      recordEditViewMode: action.viewMode,
-    },
+  [DataEntryActions.RECORD_EDIT_VIEW_MODE_SET]: ({ state, action }) => ({
+    ...state,
+    recordEditViewMode: action.viewMode,
+  }),
 };
 
 export const DataEntryReducer = StoreUtils.exportReducer({

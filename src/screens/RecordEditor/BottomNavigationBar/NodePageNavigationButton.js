@@ -7,7 +7,7 @@ import { Button } from "components";
 import { DataEntryActions, SurveySelectors } from "state";
 
 export const NodePageNavigationButton = (props) => {
-  const { entityPointer, icon, style } = props;
+  const { entityPointer, icon, mode, style } = props;
 
   const { parentEntityUuid, entityDef, entityUuid, index } = entityPointer;
 
@@ -28,6 +28,7 @@ export const NodePageNavigationButton = (props) => {
   return (
     <Button
       icon={icon}
+      mode={mode}
       style={[{ maxWidth: 200 }, style]}
       textKey={
         NodeDefs.getLabelOrName(entityDef, lang) +
