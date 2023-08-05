@@ -7632,7 +7632,7 @@ prompts@^2.3.2, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@15.8.1:
+prop-types@*, prop-types@15.8.1, prop-types@^15.7.2:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -7799,6 +7799,13 @@ react-native-collapsible@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/react-native-collapsible/-/react-native-collapsible-1.6.1.tgz#27e289831a6955aebde98abff2424a7710f36f02"
   integrity sha512-orF4BeiXd2hZW7fu9YcqIJXzN6TJcFcddY807D3MAOVktLuW9oQ+RIkrTJ5DR3v9ZOFfREkOjEmS79qeUTvkBQ==
+
+react-native-dots-pagination@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-dots-pagination/-/react-native-dots-pagination-0.3.0.tgz#a2b0f4f15243931e1c9b7bedc6562345b1b3a12b"
+  integrity sha512-ExdSCyO78NQ02V9CDphVv0tUNwwX60MaHOAcPE7GCTM83GSNvf9LaEY8Btth3F/IZuGnnFUC4kFIim1rZDlA1w==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-native-dropdown-picker@^5.4.6:
   version "5.4.6"
