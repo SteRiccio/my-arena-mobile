@@ -28,6 +28,10 @@ const actionHandlers = {
       },
     };
   },
+  [DataEntryActions.CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({
+    state,
+    action,
+  }) => ({ ...state, activeChildDefIndex: action.index }),
   [DataEntryActions.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: action.open,

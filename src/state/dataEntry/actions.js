@@ -33,6 +33,8 @@ import { Validations } from "model/utils/Validations";
 const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const CURRENT_PAGE_ENTITY_SET = "CURRENT_PAGE_ENTITY_SET";
+const CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET =
+  "CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
 const RECORD_EDIT_VIEW_MODE_SET = "RECORD_EDIT_VIEW_MODE_SET";
 
@@ -251,6 +253,10 @@ const selectCurrentPageEntity =
     });
   };
 
+const selectCurrentPageEntityActiveChildIndex = (index) => (dispatch) => {
+  dispatch({ type: CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET, index });
+};
+
 const toggleRecordPageMenuOpen = (dispatch, getState) => {
   const state = getState();
   const open = DataEntrySelectors.selectRecordPageSelectorMenuOpen(state);
@@ -353,6 +359,7 @@ const exportRecords =
 export const DataEntryActions = {
   CURRENT_RECORD_SET,
   CURRENT_PAGE_ENTITY_SET,
+  CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
   DATA_ENTRY_RESET,
   RECORD_EDIT_VIEW_MODE_SET,
@@ -365,6 +372,7 @@ export const DataEntryActions = {
   fetchAndEditRecord,
   updateAttribute,
   selectCurrentPageEntity,
+  selectCurrentPageEntityActiveChildIndex,
   toggleRecordPageMenuOpen,
 
   navigateToRecordsList,

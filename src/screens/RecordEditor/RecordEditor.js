@@ -9,6 +9,7 @@ import { NodePageNavigationBar } from "./NodePageNavigationBar";
 import { RecordPageForm } from "./RecordPageForm";
 import { RecordEditorDrawer } from "./RecordEditorDrawer";
 import { RecordNodesCarousel } from "./RecordNodesCarousel";
+import { SingleNodesNavigationBar } from "./SingleNodesNavigationBar";
 
 import styles from "./styles.js";
 
@@ -32,7 +33,11 @@ export const RecordEditor = () => {
         ) : (
           <RecordNodesCarousel />
         )}
-        <NodePageNavigationBar />
+        {viewMode === RecordEditViewMode.form ? (
+          <NodePageNavigationBar />
+        ) : (
+          <SingleNodesNavigationBar />
+        )}
       </VView>
     </MenuDrawer>
   );

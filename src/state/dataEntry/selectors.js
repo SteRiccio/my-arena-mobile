@@ -188,6 +188,9 @@ const selectCurrentPageEntityRelevantChildDefs = (state) => {
   );
 };
 
+const selectCurrentPageEntityActiveChildDefIndex = (state) =>
+  getDataEntryState(state).activeChildDefIndex;
+
 // record page
 const selectRecordPageSelectorMenuOpen = (state) =>
   getDataEntryState(state).recordPageSelectorMenuOpen;
@@ -282,6 +285,9 @@ export const DataEntrySelectors = {
       (state) => selectCurrentPageEntityRelevantChildDefs(state),
       Objects.isEqual
     ),
+
+  useCurrentPageEntityActiveChildIndex: () =>
+    useSelector((state) => selectCurrentPageEntityActiveChildDefIndex(state)),
 
   // page selector
   selectRecordPageSelectorMenuOpen,
