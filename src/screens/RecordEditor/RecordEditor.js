@@ -5,11 +5,10 @@ import { RecordEditViewMode } from "model";
 import { VView } from "components";
 import { DataEntrySelectors } from "state";
 
-import { NodePageNavigationBar } from "./NodePageNavigationBar";
+import { BottomNavigationBar } from "./BottomNavigationBar";
 import { RecordPageForm } from "./RecordPageForm";
 import { RecordEditorDrawer } from "./RecordEditorDrawer";
 import { RecordNodesCarousel } from "./RecordNodesCarousel";
-import { SingleNodesNavigationBar } from "./SingleNodesNavigationBar";
 
 import styles from "./styles.js";
 
@@ -33,11 +32,7 @@ export const RecordEditor = () => {
         ) : (
           <RecordNodesCarousel />
         )}
-        {viewMode === RecordEditViewMode.form ? (
-          <NodePageNavigationBar />
-        ) : (
-          <SingleNodesNavigationBar />
-        )}
+        <BottomNavigationBar />
       </VView>
     </MenuDrawer>
   );
