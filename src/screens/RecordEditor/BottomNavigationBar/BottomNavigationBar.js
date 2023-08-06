@@ -23,7 +23,7 @@ export const BottomNavigationBar = () => {
   const record = DataEntrySelectors.useRecord();
 
   const currentEntityPointer = DataEntrySelectors.useCurrentPageEntity();
-  const { entityDef } = currentEntityPointer;
+  const { entityDef, entityUuid } = currentEntityPointer;
 
   const viewMode = DataEntrySelectors.useRecordEditViewMode();
 
@@ -61,11 +61,19 @@ export const BottomNavigationBar = () => {
     return null;
   }
 
+  const activeChildIsLastChild = activeChildIndex + 1 === childDefs.length;
+
   const listOfRecordsButtonVisible =
     NodeDefs.isRoot(entityDef) &&
     (viewMode !== RecordEditViewMode.oneNode || activeChildIndex === 0);
 
   const pageButtonsVisible = viewMode !== RecordEditViewMode.oneNode;
+
+  const singleNodesButtonsVisible =
+    viewMode === RecordEditViewMode.oneNode &&
+    childDefs?.length > 0 &&
+    (!NodeDefs.isMultiple(entityDef) || entityUuid);
+
   const prevPageButtonVisible = pageButtonsVisible && prevEntityPointer;
 
   const nextPageButtonVisible =
@@ -73,11 +81,13 @@ export const BottomNavigationBar = () => {
     nextEntityPointer &&
     !Objects.isEqual(nextEntityPointer, prevEntityPointer);
 
-  const singleNodesButtonsVisible = viewMode === RecordEditViewMode.oneNode;
   const prevSingleNodeButtonVisible =
     singleNodesButtonsVisible && activeChildIndex > 0;
+
   const nextSingleNodeButtonVisible =
-    singleNodesButtonsVisible && activeChildIndex < childDefs.length;
+    singleNodesButtonsVisible &&
+    activeChildIndex >= 0 &&
+    !activeChildIsLastChild;
 
   return (
     <HView style={styles.container}>

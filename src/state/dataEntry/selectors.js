@@ -147,9 +147,10 @@ const selectChildDefs =
   ({ nodeDef }) => {
     const cycle = selectRecordCycle(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
-    const childDefs = Surveys.getNodeDefChildren({
+    const childDefs = Surveys.getNodeDefChildrenSorted({
       survey,
       nodeDef,
+      cycle,
       includeAnalysis: false,
     }) // only child defs in same page
       .filter((childDef) => !NodeDefs.getLayoutProps(cycle)(childDef).pageUuid);

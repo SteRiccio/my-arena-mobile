@@ -6,6 +6,9 @@ import { NodeSingleEntityComponent } from "./nodeTypes/NodeSingleEntityComponent
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
 import { MultipleAttributeComponentWrapper } from "./MultipleAttributeComponentWrapper";
+import { DataEntrySelectors } from "state/dataEntry";
+import { RecordEditViewMode } from "model/RecordEditViewMode";
+import { NodeMultipleEntityComponent } from "../NodeMultipleEntityComponent";
 
 export const NodeComponentSwitch = (props) => {
   const { nodeDef, parentNodeUuid, onFocus } = props;
@@ -14,12 +17,22 @@ export const NodeComponentSwitch = (props) => {
     console.log(`rendering NodeComponentSwitch for ${nodeDef.props.name}`);
   }
 
+  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+
   if (NodeDefs.isEntity(nodeDef)) {
     if (NodeDefs.isSingle(nodeDef)) {
       return (
         <NodeSingleEntityComponent
           nodeDef={nodeDef}
           parentNodeUuid={parentNodeUuid}
+        />
+      );
+    }
+    if (viewMode === RecordEditViewMode.oneNode) {
+      return (
+        <NodeMultipleEntityComponent
+          entityDef={nodeDef}
+          parentEntityUuid={parentNodeUuid}
         />
       );
     }

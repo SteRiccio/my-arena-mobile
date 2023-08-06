@@ -1,6 +1,8 @@
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
+import { Surveys } from "@openforis/arena-core";
+
 import {
   Button,
   CloseIconButton,
@@ -12,10 +14,9 @@ import {
 import { RecordEditViewMode } from "model";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { PagesNavigationTree } from "../PagesNavigationTree";
+import { PageNodesList } from "../PageNodesList";
 
 import { useStyles } from "./styles";
-import { PageNodesList } from "../PageNodesList/PageNodesList";
-import { Surveys } from "@openforis/arena-core";
 
 export const RecordEditorDrawer = () => {
   const dispatch = useDispatch();

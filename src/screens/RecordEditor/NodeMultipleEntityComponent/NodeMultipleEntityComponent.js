@@ -1,11 +1,13 @@
 import { NodeDefs } from "@openforis/arena-core";
 
+import { RecordEditViewMode } from "model";
 import { DataEntrySelectors } from "state";
 import { NodeEntityFormComponent } from "../NodeComponentSwitch/nodeTypes/NodeEntityFormComponent";
 import { NodeMultipleEntityListComponent } from "./NodeMultipleEntityListComponent";
+import { RecordNodesCarousel } from "../RecordNodesCarousel";
 
-export const NodeMultipleEntityComponent = () => {
-  const { entityDef, entityUuid } = DataEntrySelectors.useCurrentPageEntity();
+export const NodeMultipleEntityComponent = (props) => {
+  const { entityDef, parentEntityUuid, entityUuid } = props;
 
   if (__DEV__) {
     console.log(
@@ -13,7 +15,12 @@ export const NodeMultipleEntityComponent = () => {
     );
   }
 
+  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+
   if (entityUuid) {
+    if (viewMode === RecordEditViewMode.oneNode) {
+      return <RecordNodesCarousel />;
+    }
     return (
       <NodeEntityFormComponent
         nodeDef={entityDef}
@@ -22,5 +29,10 @@ export const NodeMultipleEntityComponent = () => {
     );
   }
 
-  return <NodeMultipleEntityListComponent />;
+  return (
+    <NodeMultipleEntityListComponent
+      entityDef={entityDef}
+      parentEntityUuid={parentEntityUuid}
+    />
+  );
 };

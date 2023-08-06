@@ -26,6 +26,7 @@ const actionHandlers = {
         entityDefUuid,
         entityUuid,
       },
+      activeChildDefIndex: 0,
     };
   },
   [DataEntryActions.CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({

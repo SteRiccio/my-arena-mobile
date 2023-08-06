@@ -11,6 +11,7 @@ export const useStyles = () => {
     },
     childContainer: {
       margin: 10,
+      flex: 1,
     },
   });
 };

@@ -8,7 +8,8 @@ import { View } from "components";
 import styles from "./styles";
 
 export const RecordPageForm = () => {
-  const { entityDef, entityUuid } = DataEntrySelectors.useCurrentPageEntity();
+  const { entityDef, entityUuid, parentEntityUuid } =
+    DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
     console.log(`rendering RecordPageForm of ${NodeDefs.getName(entityDef)}`);
@@ -21,7 +22,11 @@ export const RecordPageForm = () => {
         parentNodeUuid={entityUuid}
       />
     ) : (
-      <NodeMultipleEntityComponent />
+      <NodeMultipleEntityComponent
+        entityDef={entityDef}
+        parentEntityUuid={parentEntityUuid}
+        entityUuid={entityUuid}
+      />
     );
   return <View style={styles.container}>{internalContainer}</View>;
 };

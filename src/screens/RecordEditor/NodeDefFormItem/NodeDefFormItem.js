@@ -5,12 +5,13 @@ import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { DataEntrySelectors, SettingsSelectors, SurveySelectors } from "state";
 
-import { Fade, Text } from "components";
+import { Fade, Text, VView } from "components";
 
 import { NodeValidationIcon } from "../NodeValidationIcon/NodeValidationIcon";
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
 
 import styles from "./styles.js";
+import { RecordEditViewMode } from "model/RecordEditViewMode";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid, onFocus } = props;
@@ -27,32 +28,41 @@ export const NodeDefFormItem = (props) => {
     parentNodeUuid,
     nodeDefUuid: nodeDef.uuid,
   });
+  const viewMode = DataEntrySelectors.useRecordEditViewMode();
 
-  const labelOrName = nodeDef.props.labels?.[lang] || nodeDef.props.name;
+  const labelOrName = NodeDefs.getLabelOrName(nodeDef, lang);
 
   const internalComponent = (
-    <View style={styles.externalContainer}>
+    <VView
+      style={[
+        styles.externalContainer,
+        viewMode === RecordEditViewMode.oneNode ? { flex: 1 } : {},
+      ]}
+    >
       <View style={styles.nodeDefLabelContainer}>
         <Text style={styles.nodeDefLabel} textKey={labelOrName} />
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
       </View>
-      <View style={styles.internalContainer}>
-        {
-          <NodeComponentSwitch
-            nodeDef={nodeDef}
-            parentNodeUuid={parentNodeUuid}
-            onFocus={onFocus}
-          />
-        }
+      <View
+        style={[
+          styles.internalContainer,
+          viewMode === RecordEditViewMode.oneNode ? { flex: 1 } : {},
+        ]}
+      >
+        <NodeComponentSwitch
+          nodeDef={nodeDef}
+          parentNodeUuid={parentNodeUuid}
+          onFocus={onFocus}
+        />
       </View>
-    </View>
+    </VView>
   );
 
   if (alwaysVisible) {
     return internalComponent;
   }
 
-  if (settings.animationsEnabled) {
+  if (settings.animationsEnabled && viewMode !== RecordEditViewMode.oneNode) {
     return <Fade visible={visible}>{internalComponent}</Fade>;
   }
 

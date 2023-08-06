@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
 import PagerView from "react-native-pager-view";
 import Dots from "react-native-dots-pagination";
@@ -10,11 +10,13 @@ import { DataEntryActions, DataEntrySelectors } from "state/dataEntry";
 import { VView, View } from "components";
 
 import { NodeDefFormItem } from "../NodeDefFormItem";
+
 import { useStyles } from "./styles";
 
 export const RecordNodesCarousel = () => {
   const dispatch = useDispatch();
-  const { entityDef, entityUuid } = DataEntrySelectors.useCurrentPageEntity();
+  const { entityDef, entityUuid, parentEntityUuid } =
+    DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
     console.log(
@@ -23,6 +25,7 @@ export const RecordNodesCarousel = () => {
   }
 
   const pagerViewRef = useRef(null);
+  const pagerViewScrollStateRef = useRef(null);
   const styles = useStyles();
 
   const childrenDefs =
@@ -30,30 +33,37 @@ export const RecordNodesCarousel = () => {
   const activeChildIndex =
     DataEntrySelectors.useCurrentPageEntityActiveChildIndex();
 
-  const onPageSelected = useCallback(
-    (e) =>
-      dispatch(
-        DataEntryActions.selectCurrentPageEntityActiveChildIndex(
-          e.nativeEvent.position
-        )
-      ),
-    []
-  );
+  const onPageSelected = useCallback((e) => {
+    const position = e.nativeEvent.position;
+    dispatch(
+      DataEntryActions.selectCurrentPageEntityActiveChildIndex(position)
+    );
+  }, []);
+
+  const onPageScrollStateChanged = useCallback((e) => {
+    pagerViewScrollStateRef.current = e.nativeEvent.pageScrollState;
+  }, []);
 
   useEffect(() => {
-    requestAnimationFrame(() =>
-      pagerViewRef.current?.setPage(activeChildIndex)
-    );
-  }, [activeChildIndex, pagerViewRef]);
+    requestAnimationFrame(() => {
+      if (
+        pagerViewScrollStateRef.current === null ||
+        pagerViewScrollStateRef.current === "idle"
+      ) {
+        // set page only when not scrolling to avoid polling between pages
+        pagerViewRef.current?.setPage(activeChildIndex);
+      }
+    });
+  }, [activeChildIndex, pagerViewRef, pagerViewScrollStateRef]);
 
-  return (
-    <VView style={styles.container}>
+  const pagerView = useMemo(() => {
+    return (
       <PagerView
         offscreenPageLimit={2}
         onPageSelected={onPageSelected}
+        onPageScrollStateChanged={onPageScrollStateChanged}
         ref={pagerViewRef}
         style={styles.pager}
-        initialPage={activeChildIndex}
       >
         {childrenDefs.map((childDef) => (
           <View key={childDef.uuid} style={styles.childContainer}>
@@ -61,6 +71,22 @@ export const RecordNodesCarousel = () => {
           </View>
         ))}
       </PagerView>
+    );
+  }, [childrenDefs, onPageSelected, onPageScrollStateChanged]);
+
+  if (
+    NodeDefs.isMultiple(entityDef) &&
+    !NodeDefs.isRoot(entityDef) &&
+    !entityUuid
+  ) {
+    return (
+      <NodeDefFormItem nodeDef={entityDef} parentNodeUuid={parentEntityUuid} />
+    );
+  }
+
+  return (
+    <VView style={styles.container}>
+      {pagerView}
       <Dots length={childrenDefs.length} active={activeChildIndex} />
     </VView>
   );

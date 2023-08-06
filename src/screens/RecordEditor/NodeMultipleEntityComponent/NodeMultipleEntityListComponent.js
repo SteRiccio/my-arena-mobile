@@ -14,10 +14,10 @@ import { RecordNodes } from "model/utils/RecordNodes";
 import styles from "./styles";
 
 export const NodeMultipleEntityListComponent = (props) => {
+  const { entityDef, parentEntityUuid } = props;
+
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
-  const { entityDef, parentEntityUuid } =
-    DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
     console.log(
@@ -26,11 +26,12 @@ export const NodeMultipleEntityListComponent = (props) => {
     );
   }
 
+  const entityDefUuid = entityDef.uuid;
   const survey = SurveySelectors.useCurrentSurvey();
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
   const record = DataEntrySelectors.useRecord();
   const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
-  const entities = Records.getChildren(parentEntity, entityDef.uuid)(record);
+  const entities = Records.getChildren(parentEntity, entityDefUuid)(record);
 
   const nodeDefLabel = NodeDefs.getLabelOrName(entityDef, lang);
 
@@ -43,12 +44,12 @@ export const NodeMultipleEntityListComponent = (props) => {
       dispatch(
         DataEntryActions.selectCurrentPageEntity({
           parentEntityUuid,
-          entityDefUuid: entityDef.uuid,
+          entityDefUuid,
           entityUuid: uuid,
         })
       );
     },
-    [entityDef]
+    [parentEntityUuid, entityDefUuid]
   );
 
   const onDeleteSelectedNodeUuids = useCallback((nodeUuids) => {
