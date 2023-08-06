@@ -3,7 +3,8 @@ export default {
   animationsEnabled: "Animations enabled",
   connectionToRemoteServer: "Connection to remote server",
   locationAccuracyThreshold: "Location accuracy threshold (meters)",
-  locationAccuracyWatchTimeout: "Location accuracy watch timeout (seconds)",
+  locationAccuracyWatchTimeout:
+    "Location accuracy watch timeout: {{value}} seconds",
   theme: {
     label: "Theme",
     auto: "Auto",
