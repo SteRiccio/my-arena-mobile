@@ -23,8 +23,8 @@ export const RecordEditor = () => {
       drawerContent={<RecordEditorDrawer />}
       drawerPercentage={75}
       animationTime={250}
-      overlay
-      opacity={0.4}
+      overlay={false}
+      opacity={1}
     >
       <VView style={styles.internalContainer}>
         {viewMode === RecordEditViewMode.form ? (
