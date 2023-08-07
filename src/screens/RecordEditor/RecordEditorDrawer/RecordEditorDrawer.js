@@ -12,7 +12,13 @@ import {
   View,
 } from "components";
 import { RecordEditViewMode } from "model";
-import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
+import {
+  DataEntryActions,
+  DataEntrySelectors,
+  SurveyOptionsActions,
+  SurveyOptionsSelectors,
+  SurveySelectors,
+} from "state";
 import { PagesNavigationTree } from "../PagesNavigationTree";
 import { PageNodesList } from "../PageNodesList";
 
@@ -24,7 +30,7 @@ export const RecordEditorDrawer = () => {
   const survey = SurveySelectors.useCurrentSurvey();
   const langCode = SurveySelectors.useCurrentSurveyPreferredLang();
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
-  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const styles = useStyles();
 
   if (!pageSelectorOpen) return null;
@@ -59,7 +65,7 @@ export const RecordEditorDrawer = () => {
         }))}
         label="dataEntry:viewModeLabel"
         onChange={(value) =>
-          dispatch(DataEntryActions.selectRecordEditViewMode(value))
+          dispatch(SurveyOptionsActions.selectRecordEditViewMode(value))
         }
         value={viewMode}
       />

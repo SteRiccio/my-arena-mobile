@@ -7,7 +7,12 @@ import { NodeDefs, Objects } from "@openforis/arena-core";
 import { Button, HView, View } from "components";
 import { RecordEditViewMode } from "model";
 import { useKeyboardIsVisible } from "hooks";
-import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
+import {
+  DataEntryActions,
+  DataEntrySelectors,
+  SurveyOptionsSelectors,
+  SurveySelectors,
+} from "state";
 
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
 import { RecordPageNavigator } from "../../../model/RecordPageNavigator";
@@ -25,7 +30,7 @@ export const BottomNavigationBar = () => {
   const currentEntityPointer = DataEntrySelectors.useCurrentPageEntity();
   const { entityDef, entityUuid } = currentEntityPointer;
 
-  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   if (__DEV__) {
     console.log(

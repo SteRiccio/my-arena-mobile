@@ -3,15 +3,20 @@ import { View } from "react-native";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
-import { DataEntrySelectors, SettingsSelectors, SurveySelectors } from "state";
+import {
+  DataEntrySelectors,
+  SettingsSelectors,
+  SurveyOptionsSelectors,
+  SurveySelectors,
+} from "state";
 
 import { Fade, Text, VView } from "components";
+import { RecordEditViewMode } from "model";
 
 import { NodeValidationIcon } from "../NodeValidationIcon/NodeValidationIcon";
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
 
 import styles from "./styles.js";
-import { RecordEditViewMode } from "model/RecordEditViewMode";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid, onFocus } = props;
@@ -28,7 +33,7 @@ export const NodeDefFormItem = (props) => {
     parentNodeUuid,
     nodeDefUuid: nodeDef.uuid,
   });
-  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   const labelOrName = NodeDefs.getLabelOrName(nodeDef, lang);
 

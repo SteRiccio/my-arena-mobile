@@ -3,7 +3,7 @@ import MenuDrawer from "react-native-side-drawer";
 
 import { RecordEditViewMode } from "model";
 import { VView } from "components";
-import { DataEntrySelectors } from "state";
+import { DataEntrySelectors, SurveyOptionsSelectors } from "state";
 
 import { BottomNavigationBar } from "./BottomNavigationBar";
 import { RecordPageForm } from "./RecordPageForm";
@@ -14,7 +14,7 @@ import styles from "./styles.js";
 
 export const RecordEditor = () => {
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
-  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   return (
     <MenuDrawer

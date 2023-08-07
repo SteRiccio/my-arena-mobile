@@ -1,7 +1,7 @@
 import { NodeDefs } from "@openforis/arena-core";
 
 import { RecordEditViewMode } from "model";
-import { DataEntrySelectors } from "state";
+import { SurveyOptionsSelectors } from "state";
 import { NodeEntityFormComponent } from "../NodeComponentSwitch/nodeTypes/NodeEntityFormComponent";
 import { NodeMultipleEntityListComponent } from "./NodeMultipleEntityListComponent";
 import { RecordNodesCarousel } from "../RecordNodesCarousel";
@@ -15,7 +15,7 @@ export const NodeMultipleEntityComponent = (props) => {
     );
   }
 
-  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   if (entityUuid) {
     if (viewMode === RecordEditViewMode.oneNode) {

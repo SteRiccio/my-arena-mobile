@@ -1,13 +1,14 @@
 import { NodeDefType, NodeDefs } from "@openforis/arena-core";
 
+import { RecordEditViewMode } from "model";
+import { SurveyOptionsSelectors } from "state";
+
 import { NodeCodeComponent } from "./nodeTypes/NodeCodeComponent";
 import { NodeMultipleEntityPreviewComponent } from "./nodeTypes/NodeMultipleEntityPreviewComponent";
 import { NodeSingleEntityComponent } from "./nodeTypes/NodeSingleEntityComponent";
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
 import { MultipleAttributeComponentWrapper } from "./MultipleAttributeComponentWrapper";
-import { DataEntrySelectors } from "state/dataEntry";
-import { RecordEditViewMode } from "model/RecordEditViewMode";
 import { NodeMultipleEntityComponent } from "../NodeMultipleEntityComponent";
 
 export const NodeComponentSwitch = (props) => {
@@ -17,7 +18,7 @@ export const NodeComponentSwitch = (props) => {
     console.log(`rendering NodeComponentSwitch for ${nodeDef.props.name}`);
   }
 
-  const viewMode = DataEntrySelectors.useRecordEditViewMode();
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   if (NodeDefs.isEntity(nodeDef)) {
     if (NodeDefs.isSingle(nodeDef)) {

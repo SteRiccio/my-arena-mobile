@@ -26,3 +26,9 @@ export {
   SurveySelectors,
   SurveyState,
 } from "./survey";
+
+export {
+  SurveyOptionsActions,
+  SurveyOptionsReducer,
+  SurveyOptionsSelectors,
+} from "./surveyOptions";

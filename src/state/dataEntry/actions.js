@@ -30,13 +30,11 @@ import { MessageActions } from "state/message";
 import { JobMonitorActions } from "state/jobMonitor";
 import { Validations } from "model/utils/Validations";
 
-const CURRENT_RECORD_SET = "CURRENT_RECORD_SET";
+const RECORD_SET = "RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
-const CURRENT_PAGE_ENTITY_SET = "CURRENT_PAGE_ENTITY_SET";
-const CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET =
-  "CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
+const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
+const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
-const RECORD_EDIT_VIEW_MODE_SET = "RECORD_EDIT_VIEW_MODE_SET";
 
 const { t } = i18n;
 
@@ -98,7 +96,7 @@ const addNewEntity = async (dispatch, getState) => {
 
   await RecordService.updateRecord({ survey, record: recordUpdated });
 
-  dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
+  dispatch({ type: RECORD_SET, record: recordUpdated });
   dispatch(
     selectCurrentPageEntity({
       parentEntityUuid: parentNode.uuid,
@@ -123,7 +121,7 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
 
   await RecordService.updateRecord({ survey, record: recordUpdated });
 
-  dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
+  dispatch({ type: RECORD_SET, record: recordUpdated });
 };
 
 const deleteRecords = (recordUuids) => async (_dispatch, getState) => {
@@ -136,7 +134,7 @@ const deleteRecords = (recordUuids) => async (_dispatch, getState) => {
 const editRecord =
   ({ navigation, record }) =>
   (dispatch) => {
-    dispatch({ type: CURRENT_RECORD_SET, record });
+    dispatch({ type: RECORD_SET, record });
     navigation.navigate(screenKeys.recordEditor);
   };
 
@@ -196,7 +194,7 @@ const updateAttribute =
     }
     await RecordService.updateRecord({ survey, record: recordUpdated });
 
-    dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated });
+    dispatch({ type: RECORD_SET, record: recordUpdated });
   };
 
 const addNewAttribute =
@@ -230,7 +228,7 @@ const addNewAttribute =
 
     await RecordService.updateRecord({ survey, record: recordUpdated2 });
 
-    dispatch({ type: CURRENT_RECORD_SET, record: recordUpdated2 });
+    dispatch({ type: RECORD_SET, record: recordUpdated2 });
   };
 
 const selectCurrentPageEntity =
@@ -246,7 +244,7 @@ const selectCurrentPageEntity =
         : entityUuid;
 
     dispatch({
-      type: CURRENT_PAGE_ENTITY_SET,
+      type: PAGE_ENTITY_SET,
       parentEntityUuid,
       entityDefUuid,
       entityUuid: nextEntityUuid,
@@ -254,17 +252,13 @@ const selectCurrentPageEntity =
   };
 
 const selectCurrentPageEntityActiveChildIndex = (index) => (dispatch) => {
-  dispatch({ type: CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET, index });
+  dispatch({ type: PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET, index });
 };
 
 const toggleRecordPageMenuOpen = (dispatch, getState) => {
   const state = getState();
   const open = DataEntrySelectors.selectRecordPageSelectorMenuOpen(state);
   dispatch({ type: PAGE_SELECTOR_MENU_OPEN_SET, open: !open });
-};
-
-const selectRecordEditViewMode = (viewMode) => (dispatch) => {
-  dispatch({ type: RECORD_EDIT_VIEW_MODE_SET, viewMode });
 };
 
 const navigateToRecordsList =
@@ -357,12 +351,11 @@ const exportRecords =
   };
 
 export const DataEntryActions = {
-  CURRENT_RECORD_SET,
-  CURRENT_PAGE_ENTITY_SET,
-  CURRENT_PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
+  RECORD_SET,
+  PAGE_ENTITY_SET,
+  PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
   DATA_ENTRY_RESET,
-  RECORD_EDIT_VIEW_MODE_SET,
 
   createNewRecord,
   addNewEntity,
@@ -377,6 +370,4 @@ export const DataEntryActions = {
 
   navigateToRecordsList,
   exportRecords,
-
-  selectRecordEditViewMode,
 };

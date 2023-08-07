@@ -14,7 +14,7 @@ import { SurveySelectors } from "../survey/selectors";
 
 const getDataEntryState = (state) => state.dataEntry;
 
-const selectRecord = (state) => getDataEntryState(state).currentRecord;
+const selectRecord = (state) => getDataEntryState(state).record;
 
 const selectIsEditingRecord = (state) => !!selectRecord(state);
 
@@ -196,14 +196,9 @@ const selectCurrentPageEntityActiveChildDefIndex = (state) =>
 const selectRecordPageSelectorMenuOpen = (state) =>
   getDataEntryState(state).recordPageSelectorMenuOpen;
 
-// view mode
-const selectRecordEditViewMode = (state) =>
-  getDataEntryState(state).recordEditViewMode;
-
 export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageEntity,
-  selectRecordEditViewMode,
 
   useRecord: () => useSelector(selectRecord),
 
@@ -294,6 +289,4 @@ export const DataEntrySelectors = {
   selectRecordPageSelectorMenuOpen,
   useIsRecordPageSelectorMenuOpen: () =>
     useSelector((state) => selectRecordPageSelectorMenuOpen(state)),
-
-  useRecordEditViewMode: () => useSelector(selectRecordEditViewMode),
 };

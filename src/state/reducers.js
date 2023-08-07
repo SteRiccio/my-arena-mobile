@@ -7,6 +7,7 @@ import { MessageReducer } from "./message";
 import { RemoteConnectionReducer } from "./remoteConnection";
 import { SettingsReducer } from "./settings";
 import { SurveyReducer } from "./survey";
+import { SurveyOptionsReducer } from "./surveyOptions";
 
 export const rootReducer = combineReducers({
   confirm: ConfirmReducer,
@@ -16,4 +17,5 @@ export const rootReducer = combineReducers({
   remoteConnection: RemoteConnectionReducer,
   settings: SettingsReducer,
   survey: SurveyReducer,
+  surveyOptions: SurveyOptionsReducer,
 });
