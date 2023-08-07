@@ -7,6 +7,12 @@ export {
 } from "./dataEntry";
 
 export {
+  DeviceInfoActions,
+  DeviceInfoReducer,
+  DeviceInfoSelectors,
+} from "./deviceInfo";
+
+export {
   RemoteConnectionActions,
   RemoteConnectionReducer,
   RemoteConnectionSelectors,

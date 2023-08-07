@@ -4,7 +4,7 @@ import SystemNavigationBar from "react-native-system-navigation-bar";
 
 import { DowngradeError, initialize as initializeDb } from "../db";
 import { SurveyService } from "service";
-import { SettingsActions, SurveyActions } from "state";
+import { DeviceInfoActions, SettingsActions, SurveyActions } from "state";
 
 import { Text, View } from "../components";
 
@@ -32,6 +32,8 @@ export const AppInitializer = (props) => {
       }
 
       await initializeDb();
+
+      await dispatch(DeviceInfoActions.initDeviceInfo());
 
       await dispatch(SettingsActions.initSettings());
 

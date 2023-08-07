@@ -11,10 +11,13 @@ import { RecordEditorDrawer } from "./RecordEditorDrawer";
 import { RecordNodesCarousel } from "./RecordNodesCarousel";
 
 import styles from "./styles.js";
+import { DeviceInfoSelectors } from "state/deviceInfo";
 
 export const RecordEditor = () => {
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
+
+  const isPhone = DeviceInfoSelectors.useIsPhone();
 
   return (
     <MenuDrawer
@@ -23,8 +26,8 @@ export const RecordEditor = () => {
       drawerContent={<RecordEditorDrawer />}
       drawerPercentage={75}
       animationTime={250}
-      overlay={false}
-      opacity={1}
+      overlay={isPhone}
+      opacity={isPhone ? 0.4 : 1}
     >
       <VView style={styles.internalContainer}>
         {viewMode === RecordEditViewMode.form ? (
