@@ -24,7 +24,7 @@ export const RecordEditor = () => {
       open={pageSelectorOpen}
       position="left"
       drawerContent={<RecordEditorDrawer />}
-      drawerPercentage={75}
+      drawerPercentage={isPhone ? 75 : 25}
       animationTime={250}
       overlay={isPhone}
       opacity={isPhone ? 0.4 : 1}

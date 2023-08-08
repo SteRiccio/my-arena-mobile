@@ -28,6 +28,7 @@ export { StoreUtils } from "./storeUtils";
 
 export {
   SurveyActions,
+  SurveyActionTypes,
   SurveyReducer,
   SurveySelectors,
   SurveyState,

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { FlatList } from "react-native";
 import { useDispatch } from "react-redux";
-import { List } from "react-native-paper";
+import { List, useTheme } from "react-native-paper";
 
 import { NodeDefType, NodeDefs } from "@openforis/arena-core";
 
@@ -30,12 +30,15 @@ const getNodeDefIcon = (nodeDef) =>
 
 export const PageNodesList = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   const childDefs = DataEntrySelectors.useCurrentPageEntityRelevantChildDefs();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const currentEntityPointer = DataEntrySelectors.useCurrentPageEntity();
   const { entityDef, entityUuid } = currentEntityPointer;
+  const activeChildIndex =
+    DataEntrySelectors.useCurrentPageEntityActiveChildIndex();
 
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
@@ -60,6 +63,12 @@ export const PageNodesList = () => {
     [survey, record, currentEntityPointer]
   );
 
+  const activeChildTextStyle = { color: theme.colors.onPrimary };
+  const activeChildItemStyle = {
+    backgroundColor: theme.colors.primary,
+  };
+  const activeItemIconColor = theme.colors.onPrimary;
+
   return (
     <VView style={{ flex: 1, backgroundColor: "transparent" }}>
       {!NodeDefs.isRoot(entityDef) && prevEntityPointer && (
@@ -73,21 +82,30 @@ export const PageNodesList = () => {
           scrollEnabled
           style={{ flex: 1 }}
           data={childDefs}
-          renderItem={({ index, item }) => (
-            <List.Item
-              title={NodeDefs.getLabelOrName(item, lang)}
-              onPress={() =>
-                dispatch(
-                  DataEntryActions.selectCurrentPageEntityActiveChildIndex(
-                    index
+          renderItem={({ index, item }) => {
+            const activeItem = index === activeChildIndex;
+            return (
+              <List.Item
+                title={NodeDefs.getLabelOrName(item, lang)}
+                onPress={() =>
+                  dispatch(
+                    DataEntryActions.selectCurrentPageEntityActiveChildIndex(
+                      index
+                    )
                   )
-                )
-              }
-              left={(props) => (
-                <List.Icon {...props} icon={getNodeDefIcon(item)} />
-              )}
-            />
-          )}
+                }
+                left={(props) => (
+                  <List.Icon
+                    {...props}
+                    color={activeItem ? activeItemIconColor : undefined}
+                    icon={getNodeDefIcon(item)}
+                  />
+                )}
+                style={activeItem ? activeChildItemStyle : undefined}
+                titleStyle={activeItem ? activeChildTextStyle : undefined}
+              />
+            );
+          }}
           keyExtractor={(item) => item.uuid}
         />
       )}
