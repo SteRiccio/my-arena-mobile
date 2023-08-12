@@ -38,11 +38,13 @@ export const Breadcrumbs = () => {
       NodeDefs.isRoot(nodeDef) ||
       (NodeDefs.isMultiple(nodeDef) && parentEntity)
     ) {
-      const keyValuesByName = RecordNodes.getEntityKeyValuesByNameFormatted({
-        survey,
-        record,
-        entity,
-      });
+      const keyValuesByName = RecordNodes.getEntitySummaryValuesByNameFormatted(
+        {
+          survey,
+          record,
+          entity,
+        }
+      );
       return label + `[${Object.values(keyValuesByName)}]`;
     }
 
