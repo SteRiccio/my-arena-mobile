@@ -1,4 +1,5 @@
 import SystemNavigationBar from "react-native-system-navigation-bar";
+import Clipboard from "@react-native-clipboard/clipboard";
 
 const setFullScreen = async (fullScreen) => {
   try {
@@ -12,6 +13,17 @@ const setFullScreen = async (fullScreen) => {
   }
 };
 
+const copyValueToClipboard = (value) => {
+  try {
+    Clipboard.setString(value);
+    return true;
+  } catch (_error) {
+    // ignore it
+    return false;
+  }
+};
+
 export const SystemUtils = {
   setFullScreen,
+  copyValueToClipboard,
 };
