@@ -1,3 +1,4 @@
+import { Keyboard } from "react-native";
 import * as Crypto from "expo-crypto";
 
 if (!global.crypto) {
@@ -256,6 +257,7 @@ const selectCurrentPageEntityActiveChildIndex = (index) => (dispatch) => {
 };
 
 const toggleRecordPageMenuOpen = (dispatch, getState) => {
+  Keyboard.dismiss();
   const state = getState();
   const open = DataEntrySelectors.selectRecordPageSelectorMenuOpen(state);
   dispatch({ type: PAGE_SELECTOR_MENU_OPEN_SET, open: !open });
