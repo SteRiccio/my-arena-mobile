@@ -11,6 +11,13 @@ const initSettings = () => async (dispatch) => {
   dispatch(setSettings(settings));
 };
 
+const updateSetting =
+  ({ key, value }) =>
+  async (dispatch) => {
+    const settingsUpdated = await SettingsService.updateSetting({ key, value });
+    dispatch(setSettings(settingsUpdated));
+  };
+
 const updateSettings = (settings) => async (dispatch) => {
   await SettingsService.saveSettings(settings);
   dispatch(setSettings(settings));
@@ -20,5 +27,6 @@ export const SettingsActions = {
   SETTINGS_SET,
 
   initSettings,
+  updateSetting,
   updateSettings,
 };

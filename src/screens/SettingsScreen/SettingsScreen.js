@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
@@ -10,43 +10,28 @@ import {
   HView,
   ScrollView,
   SegmentedButtons,
+  Slider,
   Switch,
   Text,
   TextInput,
   VView,
 } from "components";
-import { ThemesSettings } from "model";
 import { SettingsActions, SettingsSelectors } from "state";
 import { screenKeys } from "../screenKeys";
+import { SettingsModel } from "./SettingsModel";
+
 import styles from "./styles";
 
-const propertyTypes = {
-  boolean: "boolean",
-  numeric: "numeric",
-  options: "options",
-};
+const settingsPropertiesEntries = Object.entries(SettingsModel.properties);
 
-const properties = {
-  theme: {
-    type: propertyTypes.options,
-    labelKey: "settings:theme.label",
-    options: Object.values(ThemesSettings).map((theme) => ({
-      value: theme,
-      label: `settings:theme.${theme}`,
-    })),
-  },
-  animationsEnabled: {
-    type: propertyTypes.boolean,
-    labelKey: "settings:animationsEnabled",
-  },
-  locationAccuracyThreshold: {
-    type: propertyTypes.numeric,
-    labelKey: "settings:locationAccuracyThreshold",
-  },
-  locationAccuracyWatchTimeout: {
-    type: propertyTypes.numeric,
-    labelKey: "settings:locationAccuracyWatchTimeout",
-  },
+const SettingsFormItem = (props) => {
+  const { settingKey, labelKey, labelParams, children } = props;
+  return (
+    <VView key={settingKey}>
+      <Text textKey={labelKey} textParams={labelParams} />
+      {children}
+    </VView>
+  );
 };
 
 const SettingsItem = (props) => {
@@ -54,7 +39,7 @@ const SettingsItem = (props) => {
   const { type, labelKey, options } = prop;
   const value = settings[settingKey];
   switch (type) {
-    case propertyTypes.boolean:
+    case SettingsModel.propertyType.boolean:
       return (
         <HView
           key={settingKey}
@@ -70,28 +55,43 @@ const SettingsItem = (props) => {
           />
         </HView>
       );
-    case propertyTypes.numeric:
+    case SettingsModel.propertyType.numeric:
       return (
-        <VView key={settingKey}>
-          <Text textKey={labelKey} />
+        <SettingsFormItem settingsKey={settingKey} labelKey={labelKey}>
           <TextInput
             value={Objects.isEmpty(value) ? "" : String(value)}
             onChange={(value) =>
               onPropValueChange({ key: settingKey })(Number(value))
             }
           />
-        </VView>
+        </SettingsFormItem>
       );
-    case propertyTypes.options:
+    case SettingsModel.propertyType.options:
       return (
-        <VView key={settingKey}>
-          <Text textKey={labelKey} />
+        <SettingsFormItem settingsKey={settingKey} labelKey={labelKey}>
           <SegmentedButtons
             buttons={options}
             onChange={onPropValueChange({ key: settingKey })}
             value={value}
           />
-        </VView>
+        </SettingsFormItem>
+      );
+    case SettingsModel.propertyType.slider:
+      const { minValue, maxValue, step } = prop;
+      return (
+        <SettingsFormItem
+          settingsKey={settingKey}
+          labelKey={labelKey}
+          labelParams={{ value }}
+        >
+          <Slider
+            minValue={minValue}
+            maxValue={maxValue}
+            step={step}
+            value={value}
+            onValueChange={onPropValueChange({ key: settingKey })}
+          />
+        </SettingsFormItem>
       );
     default:
       return null;
@@ -119,22 +119,14 @@ export const SettingsScreen = () => {
   //   fetchCredentials();
   // }, [serverUrl]);
 
-  const updateSettings = useCallback(
-    async (settingsUpdateFn) => {
-      const settingsUpdated = settingsUpdateFn(settings);
-      dispatch(SettingsActions.updateSettings(settingsUpdated));
-      setState({ settings: settingsUpdated });
-    },
-    [settings]
-  );
-
   const onPropValueChange =
     ({ key }) =>
-    (value) =>
-      updateSettings((settingsPrev) => ({
-        ...settingsPrev,
-        [key]: value,
-      }));
+    (value) => {
+      dispatch(SettingsActions.updateSetting({ key, value }));
+      setState((statePrev) =>
+        Objects.assocPath({ obj: statePrev, path: ["settings", key], value })
+      );
+    };
 
   return (
     <ScrollView style={styles.container}>
@@ -145,7 +137,7 @@ export const SettingsScreen = () => {
             navigation.navigate(screenKeys.settingsRemoteConnection);
           }}
         />
-        {Object.entries(properties).map(([key, prop], index) => (
+        {settingsPropertiesEntries.map(([key, prop], index) => (
           <VView key={key} style={styles.settingsItemWrapper}>
             <SettingsItem
               settings={settings}
@@ -153,7 +145,9 @@ export const SettingsScreen = () => {
               prop={prop}
               onPropValueChange={onPropValueChange}
             />
-            {index < Object.entries(properties).length - 1 && <Divider />}
+            {index < Object.entries(SettingsModel.properties).length - 1 && (
+              <Divider />
+            )}
           </VView>
         ))}
       </VView>

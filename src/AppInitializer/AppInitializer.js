@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import SystemNavigationBar from "react-native-system-navigation-bar";
 
-import { DowngradeError, initialize as initializeDb } from "../db";
-import { SurveyService } from "service";
-import { SettingsActions, SurveyActions } from "state";
-
-import { Text, View } from "../components";
+import { DowngradeError, initialize as initializeDb } from "db";
+import { Text, View } from "components";
+import { SettingsService, SurveyService } from "service";
+import { DeviceInfoActions, SettingsActions, SurveyActions } from "state";
+import { SystemUtils } from "utils";
 
 import styles from "./styles";
 
@@ -25,15 +24,16 @@ export const AppInitializer = (props) => {
     const initialize = async () => {
       console.log("Initializing app");
 
-      try {
-        await SystemNavigationBar.stickyImmersive();
-      } catch (e) {
-        // ignore it (not available)
+      await dispatch(DeviceInfoActions.initDeviceInfo());
+
+      const settings = await SettingsService.fetchSettings();
+      await dispatch(SettingsActions.updateSettings(settings));
+
+      if (settings.fullScreen) {
+        await SystemUtils.setFullScreen(settings.fullScreen);
       }
 
       await initializeDb();
-
-      await dispatch(SettingsActions.initSettings());
 
       // initialize local surveys
       const surveySummaries = await SurveyService.fetchSurveySummariesLocal();

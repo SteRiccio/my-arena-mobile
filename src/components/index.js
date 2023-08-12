@@ -19,6 +19,7 @@ export { ScrollView } from "./ScrollView";
 export { SegmentedButtons } from "./SegmentedButtons";
 export { Searchbar } from "./Searchbar";
 export { Select } from "./Select";
+export { Slider } from "./Slider";
 export { Snackbar } from "./Snackbar";
 export { Switch } from "./Switch";
 export { Text } from "./Text";

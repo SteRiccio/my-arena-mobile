@@ -9,6 +9,7 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
+import Toast from "react-native-toast-message";
 
 import { AppConfirmDialog } from "appComponents/AppConfirmDialog";
 import { AppMessageDialog } from "appComponents/AppMessageDialog";
@@ -41,6 +42,7 @@ const AppInnerContainer = () => {
             <AppConfirmDialog />
             <JobMonitorDialog />
           </AppInitializer>
+          <Toast />
         </View>
       </ThemeProvider>
     </PaperProvider>

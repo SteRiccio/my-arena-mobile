@@ -6,9 +6,10 @@ import { useAssets } from "expo-asset";
 import { Button, FieldSet, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveySelectors } from "state/survey";
-import { useDeviceInfo } from "hooks/useDeviceInfo";
+import { useAppInfo } from "hooks/useAppInfo";
 
 import styles from "./styles";
+import { DateFormats, Dates } from "@openforis/arena-core";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
@@ -18,7 +19,7 @@ export const HomeScreen = () => {
   const surveyName = survey?.props.name;
   const surveyLabelInDefaultLanguage = survey?.props.labels?.["en"] ?? "";
   const surveyTitle = `${surveyLabelInDefaultLanguage} [${surveyName}]`;
-  const deviceInfo = useDeviceInfo();
+  const deviceInfo = useAppInfo();
 
   return (
     <VView style={styles.container}>
@@ -29,7 +30,13 @@ export const HomeScreen = () => {
         textKey="common:appTitle"
       />
       <Text style={styles.appVersionName} variant="labelSmall">
-        v{deviceInfo.version} [{deviceInfo.buildNumber}]
+        v{deviceInfo.version} [{deviceInfo.buildNumber}] (
+        {Dates.convertDate({
+          dateStr: deviceInfo.lastUpdateTime,
+          formatFrom: DateFormats.datetimeISO,
+          formatTo: DateFormats.dateDisplay,
+        })}
+        )
       </Text>
       {survey && (
         <>

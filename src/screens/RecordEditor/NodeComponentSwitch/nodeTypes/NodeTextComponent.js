@@ -1,8 +1,11 @@
-import { NodeDefType, NodeDefs, Objects } from "@openforis/arena-core";
 import { useCallback } from "react";
 
-import { TextInput } from "../../../../components";
+import { NodeDefType, NodeDefs, Objects } from "@openforis/arena-core";
+
+import { SystemUtils } from "utils";
+import { HView, IconButton, TextInput } from "components";
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
+import { Toasts } from "components/Toasts";
 
 export const NodeTextComponent = (props) => {
   const { nodeDef, nodeUuid, style } = props;
@@ -42,22 +45,33 @@ export const NodeTextComponent = (props) => {
       uiValueToNodeValue,
     });
 
+  const onCopyPress = () => {
+    if (SystemUtils.copyValueToClipboard(uiValue)) {
+      Toasts.show('common:textCopiedToClipboard')
+    }
+  };
+
   return (
-    <TextInput
-      editable={editable}
-      error={invalidValue}
-      keyboardType={isNumeric ? "numeric" : undefined}
-      style={[
-        {
-          alignSelf: "stretch",
-          ...(applicable ? {} : { backgroundColor: "lightgray" }),
-        },
-        style,
-      ]}
-      multiline={multiline}
-      numberOfLines={multiline ? 4 : 1}
-      onChange={updateNodeValue}
-      value={uiValue}
-    />
+    <HView style={{ width: "100%" }}>
+      <TextInput
+        editable={editable}
+        error={invalidValue}
+        keyboardType={isNumeric ? "numeric" : undefined}
+        style={[
+          {
+            display: "flex",
+            flex: 1,
+            alignSelf: "stretch",
+            ...(applicable ? {} : { backgroundColor: "lightgray" }),
+          },
+          style,
+        ]}
+        multiline={multiline}
+        numberOfLines={multiline ? 4 : 1}
+        onChange={updateNodeValue}
+        value={uiValue}
+      />
+      {!editable && <IconButton icon="content-copy" onPress={onCopyPress} />}
+    </HView>
   );
 };

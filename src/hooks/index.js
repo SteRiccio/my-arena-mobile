@@ -1,4 +1,4 @@
-export { useDeviceInfo } from "./useDeviceInfo";
+export { useAppInfo as useDeviceInfo } from "./useAppInfo";
 export { useEffectiveTheme } from "./useEffectiveTheme";
 export { useKeyboardIsVisible } from "./useKeyboardIsVisible";
 export { useMagnetometerHeading } from "./useMagnetometerHeading";

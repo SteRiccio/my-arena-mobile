@@ -2,7 +2,6 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   externalContainer: {
-    flexDirection: "column",
     width: "100%",
   },
   nodeDefLabelContainer: {

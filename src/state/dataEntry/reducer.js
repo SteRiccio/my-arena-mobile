@@ -3,15 +3,22 @@ import { StoreUtils } from "../storeUtils";
 
 import { DataEntryActions } from "./actions";
 
-const actionHandlers = {
-  [SurveyActionTypes.CURRENT_SURVEY_SET]: () => ({}),
-  [DataEntryActions.DATA_ENTRY_RESET]: () => ({}),
+const initialState = {
+  record: null,
+  recordCurrentPageEntity: null,
+  recordPageSelectorMenuOpen: false,
+};
 
-  [DataEntryActions.CURRENT_RECORD_SET]: ({ state, action }) => ({
+const actionHandlers = {
+  [SurveyActionTypes.CURRENT_SURVEY_SET]: () => ({ ...initialState }),
+  [DataEntryActions.DATA_ENTRY_RESET]: () => ({ ...initialState }),
+
+  [DataEntryActions.RECORD_SET]: ({ state, action }) => ({
     ...state,
-    currentRecord: action.record,
+    recordPageSelectorMenuOpen: false,
+    record: action.record,
   }),
-  [DataEntryActions.CURRENT_PAGE_ENTITY_SET]: ({ state, action }) => {
+  [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => {
     const { parentEntityUuid, entityDefUuid, entityUuid } = action;
 
     return {
@@ -21,8 +28,13 @@ const actionHandlers = {
         entityDefUuid,
         entityUuid,
       },
+      activeChildDefIndex: 0,
     };
   },
+  [DataEntryActions.PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({
+    state,
+    action,
+  }) => ({ ...state, activeChildDefIndex: action.index }),
   [DataEntryActions.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: action.open,
@@ -31,5 +43,5 @@ const actionHandlers = {
 
 export const DataEntryReducer = StoreUtils.exportReducer({
   actionHandlers,
-  initialState: false,
+  initialState,
 });

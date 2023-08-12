@@ -26,6 +26,11 @@ export default {
     notInEntryStepAnymore:
       "Not in entry step anymore (in cleansing or analysis step)",
   },
+  viewModeLabel: "View mode",
+  viewMode: {
+    form: "Form",
+    oneNode: "One node",
+  },
 
   coordinate: {
     accuracy: "Accuracy",
@@ -42,6 +47,9 @@ export default {
     useCurrentLocation: "Use current location",
     x: "X",
     y: "Y",
+  },
+  taxon: {
+    taxonNotSelected: "--- Taxon not selected ---",
   },
   // file attribute (image)
   chooseAPicture: "Choose a picture",

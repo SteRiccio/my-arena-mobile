@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
+import { useTheme } from "react-native-paper";
 import RNPDropdown from "react-native-paper-dropdown";
 
 import { useTranslation } from "localization";
@@ -15,6 +16,7 @@ export const Dropdown = (props) => {
     value,
   } = props;
 
+  const theme = useTheme();
   const { t } = useTranslation();
 
   const label = showLabel ? t(labelProp) : "";
@@ -24,7 +26,7 @@ export const Dropdown = (props) => {
   const itemToOption = useCallback(
     (item) => ({
       value: itemKeyExtractor(item),
-      label: itemLabelExtractor(item),
+      label: t(itemLabelExtractor(item)),
     }),
     [itemKeyExtractor, itemLabelExtractor]
   );
@@ -48,6 +50,8 @@ export const Dropdown = (props) => {
       onDismiss={() => setOpen(false)}
       setValue={setValue}
       showDropDown={() => setOpen(true)}
+      dropDownItemStyle={{ backgroundColor: theme.colors.surfaceVariant }}
+      dropDownItemTextStyle={{ color: theme.colors.onSurfaceVariant }}
       value={value}
       visible={open}
     />

@@ -14,7 +14,7 @@ import { SurveySelectors } from "../survey/selectors";
 
 const getDataEntryState = (state) => state.dataEntry;
 
-const selectRecord = (state) => getDataEntryState(state).currentRecord;
+const selectRecord = (state) => getDataEntryState(state).record;
 
 const selectIsEditingRecord = (state) => !!selectRecord(state);
 
@@ -147,9 +147,10 @@ const selectChildDefs =
   ({ nodeDef }) => {
     const cycle = selectRecordCycle(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
-    const childDefs = Surveys.getNodeDefChildren({
+    const childDefs = Surveys.getNodeDefChildrenSorted({
       survey,
       nodeDef,
+      cycle,
       includeAnalysis: false,
     }) // only child defs in same page
       .filter((childDef) => !NodeDefs.getLayoutProps(cycle)(childDef).pageUuid);
@@ -174,6 +175,22 @@ const selectCurrentPageEntity = (state) => {
 
   return { parentEntityUuid, entityDef, entityUuid };
 };
+
+const selectCurrentPageEntityRelevantChildDefs = (state) => {
+  const { parentEntityUuid, entityDef, entityUuid } =
+    selectCurrentPageEntity(state);
+  const childDefs = selectChildDefs(state)({ nodeDef: entityDef });
+  const record = selectRecord(state);
+  const parentEntity = Records.getNodeByUuid(entityUuid || parentEntityUuid)(
+    record
+  );
+  return childDefs.filter((childDef) =>
+    Nodes.isChildApplicable(parentEntity, childDef.uuid)
+  );
+};
+
+const selectCurrentPageEntityActiveChildDefIndex = (state) =>
+  getDataEntryState(state).activeChildDefIndex;
 
 // record page
 const selectRecordPageSelectorMenuOpen = (state) =>
@@ -258,6 +275,15 @@ export const DataEntrySelectors = {
 
   useCurrentPageEntity: () =>
     useSelector((state) => selectCurrentPageEntity(state), Objects.isEqual),
+
+  useCurrentPageEntityRelevantChildDefs: () =>
+    useSelector(
+      (state) => selectCurrentPageEntityRelevantChildDefs(state),
+      Objects.isEqual
+    ),
+
+  useCurrentPageEntityActiveChildIndex: () =>
+    useSelector((state) => selectCurrentPageEntityActiveChildDefIndex(state)),
 
   // page selector
   selectRecordPageSelectorMenuOpen,

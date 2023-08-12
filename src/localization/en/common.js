@@ -15,6 +15,7 @@ export default {
   search: "Search",
   selectAnItem: "Select an item",
   srs: "SRS",
+  textCopiedToClipboard: "Text copied to clipboard",
   true: "True",
   yes: "Yes",
 };

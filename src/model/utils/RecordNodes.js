@@ -6,6 +6,7 @@ import {
   Records,
   Surveys,
 } from "@openforis/arena-core";
+import { SurveyDefs } from "./SurveyNodeDefs";
 
 const EMPTY_VALUE = "---EMPTY---";
 
@@ -21,26 +22,38 @@ const getNodeName = ({ survey, record, nodeUuid }) => {
   return null;
 };
 
-const getEntityKeyValuesByNameFormatted = ({ survey, record, entity }) => {
+const getEntitySummaryValuesByNameFormatted = ({
+  survey,
+  record,
+  entity,
+  onlyKeys = true,
+  lang,
+}) => {
   const entityDef = Surveys.getNodeDefByUuid({
     survey,
     uuid: entity.nodeDefUuid,
   });
-  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
-
-  const keyNodes = Records.getEntityKeyNodes({
+  const summaryDefs = SurveyDefs.getEntitySummaryDefs({
     survey,
+    entityDef,
     record,
-    entity,
+    onlyKeys,
   });
-  return keyDefs.reduce((acc, keyDef, index) => {
-    const keyNode = keyNodes[index];
-    acc[NodeDefs.getName(keyDef)] =
+  return summaryDefs.reduce((acc, summaryDef) => {
+    const summaryNode = Records.getChild(entity, summaryDef.uuid)(record);
+    let formattedValue =
       NodeValueFormatter.format({
         survey,
-        nodeDef: keyDef,
-        value: keyNode?.value,
-      }) || EMPTY_VALUE;
+        nodeDef: summaryDef,
+        value: summaryNode?.value,
+        showLabel: true,
+        lang,
+      }) ?? EMPTY_VALUE;
+    if (typeof formattedValue === "object") {
+      formattedValue = JSON.stringify(formattedValue);
+    }
+    acc[NodeDefs.getName(summaryDef)] = formattedValue;
+
     return acc;
   }, {});
 };
@@ -121,7 +134,7 @@ const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
 
 export const RecordNodes = {
   getNodeName,
-  getEntityKeyValuesByNameFormatted,
+  getEntitySummaryValuesByNameFormatted,
   getApplicableChildrenEntityDefs,
   getSiblingNode,
   getCoordinateDistanceTarget,

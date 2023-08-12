@@ -7,6 +7,12 @@ export {
 } from "./dataEntry";
 
 export {
+  DeviceInfoActions,
+  DeviceInfoReducer,
+  DeviceInfoSelectors,
+} from "./deviceInfo";
+
+export {
   RemoteConnectionActions,
   RemoteConnectionReducer,
   RemoteConnectionSelectors,
@@ -22,7 +28,14 @@ export { StoreUtils } from "./storeUtils";
 
 export {
   SurveyActions,
+  SurveyActionTypes,
   SurveyReducer,
   SurveySelectors,
   SurveyState,
 } from "./survey";
+
+export {
+  SurveyOptionsActions,
+  SurveyOptionsReducer,
+  SurveyOptionsSelectors,
+} from "./surveyOptions";

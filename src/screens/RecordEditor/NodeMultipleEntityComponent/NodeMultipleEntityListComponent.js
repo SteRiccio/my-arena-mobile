@@ -10,14 +10,16 @@ import {
   DataEntrySelectors,
   SurveySelectors,
 } from "state";
+import { SurveyDefs } from "model/utils/SurveyNodeDefs";
 import { RecordNodes } from "model/utils/RecordNodes";
+
 import styles from "./styles";
 
 export const NodeMultipleEntityListComponent = (props) => {
+  const { entityDef, parentEntityUuid } = props;
+
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
-  const { entityDef, parentEntityUuid } =
-    DataEntrySelectors.useCurrentPageEntity();
 
   if (__DEV__) {
     console.log(
@@ -26,11 +28,17 @@ export const NodeMultipleEntityListComponent = (props) => {
     );
   }
 
+  const entityDefUuid = entityDef.uuid;
   const survey = SurveySelectors.useCurrentSurvey();
-  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
   const record = DataEntrySelectors.useRecord();
+  const summaryDefs = SurveyDefs.getEntitySummaryDefs({
+    survey,
+    record,
+    entityDef,
+    onlyKeys: false,
+  });
   const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
-  const entities = Records.getChildren(parentEntity, entityDef.uuid)(record);
+  const entities = Records.getChildren(parentEntity, entityDefUuid)(record);
 
   const nodeDefLabel = NodeDefs.getLabelOrName(entityDef, lang);
 
@@ -43,12 +51,12 @@ export const NodeMultipleEntityListComponent = (props) => {
       dispatch(
         DataEntryActions.selectCurrentPageEntity({
           parentEntityUuid,
-          entityDefUuid: entityDef.uuid,
+          entityDefUuid,
           entityUuid: uuid,
         })
       );
     },
-    [entityDef]
+    [parentEntityUuid, entityDefUuid]
   );
 
   const onDeleteSelectedNodeUuids = useCallback((nodeUuids) => {
@@ -65,10 +73,12 @@ export const NodeMultipleEntityListComponent = (props) => {
   const entityToRow = (entity) => ({
     key: entity.uuid,
     uuid: entity.uuid,
-    ...RecordNodes.getEntityKeyValuesByNameFormatted({
+    ...RecordNodes.getEntitySummaryValuesByNameFormatted({
       survey,
       record,
       entity,
+      onlyKeys: false,
+      lang,
     }),
   });
 
@@ -85,7 +95,7 @@ export const NodeMultipleEntityListComponent = (props) => {
       {rows.length > 0 && (
         <DataTable
           columns={[
-            ...keyDefs.map((keyDef) => ({
+            ...summaryDefs.map((keyDef) => ({
               key: NodeDefs.getName(keyDef),
               header: NodeDefs.getLabelOrName(keyDef, lang),
             })),
