@@ -11,7 +11,8 @@
       "navigation/*": ["navigation/*"],
       "screens/*": ["screens/*"],
       "service/*": ["service/*"],
-      "state/*": ["state/*"]
+      "state/*": ["state/*"],
+      "utils/*": ["utils/*"]
     }
   },
   "include": ["src/**/*"]

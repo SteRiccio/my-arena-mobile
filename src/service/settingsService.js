@@ -4,11 +4,13 @@ import { AsyncStorageUtils } from "./asyncStorage/AsyncStorageUtils";
 import { asyncStorageKeys } from "./asyncStorage/asyncStorageKeys";
 import { API } from "./api";
 import { ThemesSettings } from "model";
+import { SystemUtils } from "utils";
 
 const defaultServerUrl = "https://www.openforis-arena.org";
 
 const defaultSettings = {
   animationsEnabled: true,
+  fullScreen: false,
   locationAccuracyThreshold: 3,
   locationAccuracyWatchTimeout: 120,
   serverUrlType: "default",
@@ -26,6 +28,16 @@ const fetchSettings = async () => {
     };
   }
   return INSTANCE;
+};
+
+const updateSetting = async ({ key, value }) => {
+  const settingsPrev = await fetchSettings();
+  const settingsNext = { ...settingsPrev, [key]: value };
+  await saveSettings(settingsNext);
+  if (key === "fullScreen") {
+    await SystemUtils.setFullScreen(value);
+  }
+  return settingsNext;
 };
 
 const saveSettings = async (settings) => {
@@ -51,6 +63,7 @@ const testServerUrl = async (serverUrl) => {
 export const SettingsService = {
   defaultServerUrl,
   fetchSettings,
+  updateSetting,
   saveSettings,
 
   getCredentials,
