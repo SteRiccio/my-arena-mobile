@@ -1,21 +1,80 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 import { NodeDefs, NodeValues } from "@openforis/arena-core";
 
-import { Autocomplete, Text, VView } from "components";
-import { SurveySelectors } from "state/survey";
+import { Autocomplete, HView, Text, VView, View } from "components";
+import { SurveySelectors } from "state";
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
 
 const SelectedTaxon = (props) => {
   const { taxon } = props;
   const { code, scientificName } = taxon.props;
+  const {
+    scientificName: scientificNameUnlisted,
+    vernacularName,
+    vernacularNameLangCode,
+  } = taxon;
+
+  const vernacularNamePart = vernacularName
+    ? `
+${vernacularName} (${vernacularNameLangCode})`
+    : "";
 
   return (
-    <Text
-      style={{ flex: 1, fontSize: 18 }}
-      textKey={`(${code}) ${scientificName}`}
-    />
+    <Text numberOfLines={2} style={{ flex: 1 }} variant="bodyLarge">
+      {`${
+        scientificNameUnlisted ?? scientificName
+      } (${code})${vernacularNamePart}`}
+    </Text>
   );
+};
+
+const preparePartForSearch = (part) => part.toLocaleLowerCase();
+
+const extractPartsForSearch = (value) =>
+  value?.split(" ").map(preparePartForSearch) ?? [];
+
+const filterOptions =
+  ({ unlistedTaxon, unknownTaxon }) =>
+  (taxa, { getOptionLabel, inputValue }) => {
+    if (inputValue.trim().length === 0) {
+      return [];
+    }
+    const inputValueParts = extractPartsForSearch(inputValue);
+    const taxaFiltered = taxa.filter((taxon) => {
+      const { vernacularName } = taxon;
+      const { code } = taxon.props;
+      const codeForSearch = preparePartForSearch(code);
+      const vernacularNameParts = extractPartsForSearch(vernacularName);
+
+      const optionLabel = getOptionLabel(taxon);
+      const optionLabelParts = extractPartsForSearch(optionLabel);
+      return inputValueParts.every(
+        (inputValuePart) =>
+          codeForSearch.startsWith(inputValuePart) ||
+          optionLabelParts.some((part) => part.startsWith(inputValuePart)) ||
+          vernacularNameParts.some((part) => part.startsWith(inputValuePart))
+      );
+    });
+    if (taxaFiltered.length === 0) {
+      taxaFiltered.push(unlistedTaxon, unknownTaxon);
+    }
+    return taxaFiltered;
+  };
+
+const createTaxonValue = ({ taxon, inputValue, unlistedTaxon }) => {
+  let value = null;
+  if (taxon) {
+    value = { taxonUuid: taxon.uuid };
+    if (taxon.vernacularNameUuid) {
+      value["vernacularNameUuid"] = taxon.vernacularNameUuid;
+    }
+    if (inputValue && taxon.props.code === unlistedTaxon?.props?.code) {
+      // keep unlisted scientific name
+      value["scientificName"] = inputValue;
+    }
+  }
+  return value;
 };
 
 export const NodeTaxonComponent = (props) => {
@@ -37,34 +96,80 @@ export const NodeTaxonComponent = (props) => {
 
   const taxa = useMemo(() => {
     const allTaxa = Object.values(survey.refData?.taxonIndex || {});
-    return allTaxa.filter((taxon) => taxon.taxonomyUuid === taxonomyUuid);
+    return allTaxa.reduce((acc, taxon) => {
+      if (taxon.taxonomyUuid !== taxonomyUuid) {
+        return acc;
+      }
+      acc.push(taxon);
+      const vernacularNamesByLang = taxon.vernacularNames;
+      const vernacularNamesArray = Object.values(vernacularNamesByLang);
+      if (vernacularNamesArray.length > 0) {
+        vernacularNamesArray.forEach((vernacularNameObjects) => {
+          vernacularNameObjects.forEach((vernacularNameObj) => {
+            const { name: vernacularName, lang: vernacularNameLangCode } =
+              vernacularNameObj.props;
+            acc.push({
+              ...taxon,
+              vernacularName,
+              vernacularNameLangCode,
+              vernacularNameUuid: vernacularNameObj.uuid,
+            });
+          });
+        });
+      }
+      return acc;
+    }, []);
   }, [survey, taxonomyUuid]);
 
-  const itemLabelFunction = (taxon) => {
+  const unlistedTaxon = taxa.find((taxon) => taxon.props.code === "UNL");
+  const unknownTaxon = taxa.find((taxon) => taxon.props.code === "UNK");
+
+  const itemLabelExtractor = useCallback((taxon) => {
     const { code, scientificName } = taxon.props;
     return `(${code}) ${scientificName}`;
-  };
-
-  const [selectedTaxon, setSelectedTaxon] = useState(
-    value &&
-      taxa.find((taxon) => taxon.uuid === NodeValues.getValueTaxonUuid(value))
-  );
-
-  const onSelectedItemsChange = useCallback((selection) => {
-    const selectedTaxonNext = selection[0];
-    setSelectedTaxon(selectedTaxonNext);
-    updateNodeValue(
-      selectedTaxonNext ? { taxonUuid: selectedTaxonNext.uuid } : null
-    );
   }, []);
+
+  const itemDescriptionExtractor = useCallback((taxon) => {
+    const { vernacularName, vernacularNameLangCode } = taxon;
+    return vernacularName
+      ? `${vernacularName} (${vernacularNameLangCode})`
+      : undefined;
+  }, []);
+
+  const selectedTaxon = useMemo(() => {
+    if (!value) return null;
+    const {
+      scientificName, // unlisted scientific name
+      vernacularNameUuid,
+    } = value;
+    const taxon = taxa.find(
+      (taxon) =>
+        taxon.uuid === NodeValues.getValueTaxonUuid(value) &&
+        taxon.vernacularNameUuid === vernacularNameUuid
+    );
+    return scientificName ? { ...taxon, scientificName } : taxon;
+  }, [value]);
+
+  const onSelectedItemsChange = useCallback(
+    (selection, inputValue) => {
+      const taxon = selection[0];
+      const valueNext = createTaxonValue({ taxon, inputValue, unlistedTaxon });
+      updateNodeValue(valueNext);
+    },
+    [updateNodeValue]
+  );
 
   return (
     <VView>
-      {!selectedTaxon && <Text textKey="Taxon not selected" />}
-      {selectedTaxon && <SelectedTaxon taxon={selectedTaxon} />}
+      <View style={{ height: 60 }}>
+        {!selectedTaxon && <Text textKey="dataEntry:taxon.taxonNotSelected" />}
+        {selectedTaxon && <SelectedTaxon taxon={selectedTaxon} />}
+      </View>
       <Autocomplete
-        itemKeyExtractor={(item) => item?.uuid}
-        itemLabelExtractor={itemLabelFunction}
+        filterOptions={filterOptions({ unlistedTaxon, unknownTaxon })}
+        itemKeyExtractor={(item) => `${item?.uuid}_${item?.vernacularNameUuid}`}
+        itemLabelExtractor={itemLabelExtractor}
+        itemDescriptionExtractor={itemDescriptionExtractor}
         items={taxa}
         onFocus={onFocus}
         onSelectedItemsChange={onSelectedItemsChange}

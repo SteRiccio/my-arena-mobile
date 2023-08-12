@@ -48,6 +48,9 @@ export default {
     x: "X",
     y: "Y",
   },
+  taxon: {
+    taxonNotSelected: "--- Taxon not selected ---",
+  },
   // file attribute (image)
   chooseAPicture: "Choose a picture",
   pictureDeleteConfirmMessage: "Delete the existing picture?",
