@@ -40,13 +40,13 @@ const determineRecordSyncStatus = ({
   const dateModifiedLocal = new Date(recordSummaryLocal.dateModified);
   const dateModifiedRemote = Dates.parseISO(recordSummaryRemote.dateModified);
 
-  if (dateModifiedLocal === dateModifiedRemote) {
+  if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
+    return RecordSyncStatus.modifiedLocally;
+  } else if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
+    return RecordSyncStatus.modifiedRemotely;
+  } else {
     return RecordSyncStatus.notModified;
   }
-  if (dateModifiedLocal > dateModifiedRemote) {
-    return RecordSyncStatus.modifiedLocally;
-  }
-  return RecordSyncStatus.modifiedRemotely;
 };
 
 const fetchRecordsWithSyncStatus = async ({ survey }) => {
@@ -71,7 +71,11 @@ const fetchRecordsWithSyncStatus = async ({ survey }) => {
 const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
   const surveyRemoteId = survey.remoteId;
   const formData = new FormData();
-  formData.append("file", { uri: fileUri, name: 'arena-mobile-data.zip', type: 'application/zip' });
+  formData.append("file", {
+    uri: fileUri,
+    name: "arena-mobile-data.zip",
+    type: "application/zip",
+  });
   formData.append("cycle", cycle);
 
   const { data } = await RemoteService.postMultipartData(
