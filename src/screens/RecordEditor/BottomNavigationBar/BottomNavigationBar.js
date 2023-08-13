@@ -5,8 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { Button, HView, View } from "components";
-import { RecordEditViewMode } from "model";
-import { useKeyboardIsVisible } from "hooks";
+import { RecordEditViewMode, RecordPageNavigator } from "model";
 import {
   DataEntryActions,
   DataEntrySelectors,
@@ -15,7 +14,6 @@ import {
 } from "state";
 
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
-import { RecordPageNavigator } from "../../../model/RecordPageNavigator";
 import { SingleNodeNavigationButton } from "./SingleNodeNavigationButton";
 
 import styles from "./styles";
@@ -23,7 +21,6 @@ import styles from "./styles";
 export const BottomNavigationBar = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const keyboardVisible = useKeyboardIsVisible();
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
 
@@ -61,10 +58,6 @@ export const BottomNavigationBar = () => {
   const childDefs = DataEntrySelectors.useCurrentPageEntityRelevantChildDefs();
   const activeChildIndex =
     DataEntrySelectors.useCurrentPageEntityActiveChildIndex();
-
-  if (viewMode !== RecordEditViewMode.oneNode && keyboardVisible) {
-    return null;
-  }
 
   const activeChildIsLastChild = activeChildIndex + 1 === childDefs.length;
 

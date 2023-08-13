@@ -4,8 +4,8 @@ import { NodeDefType, NodeDefs, Objects } from "@openforis/arena-core";
 
 import { SystemUtils } from "utils";
 import { HView, IconButton, TextInput } from "components";
+import { useToast } from "hooks";
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
-import { Toasts } from "components/Toasts";
 
 export const NodeTextComponent = (props) => {
   const { nodeDef, nodeUuid, style } = props;
@@ -17,6 +17,8 @@ export const NodeTextComponent = (props) => {
   const isNumeric = [NodeDefType.decimal, NodeDefType.integer].includes(
     nodeDef.type
   );
+
+  const toaster = useToast();
 
   const editable = !NodeDefs.isReadOnly(nodeDef);
   const multiline =
@@ -47,7 +49,7 @@ export const NodeTextComponent = (props) => {
 
   const onCopyPress = () => {
     if (SystemUtils.copyValueToClipboard(uiValue)) {
-      Toasts.show('common:textCopiedToClipboard')
+      toaster.show("common:textCopiedToClipboard");
     }
   };
 
@@ -71,7 +73,13 @@ export const NodeTextComponent = (props) => {
         onChange={updateNodeValue}
         value={uiValue}
       />
-      {!editable && <IconButton icon="content-copy" onPress={onCopyPress} />}
+      {!editable && (
+        <IconButton
+          disabled={Objects.isEmpty(uiValue)}
+          icon="content-copy"
+          onPress={onCopyPress}
+        />
+      )}
     </HView>
   );
 };
