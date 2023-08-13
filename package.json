@@ -1,6 +1,6 @@
 {
   "name": "myarenamobile",
-  "version": "0.9.21",
+  "version": "0.9.22",
   "main": "AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -53,7 +53,6 @@
     "react-native-screens": "~3.20.0",
     "react-native-side-drawer": "^2.1.0",
     "react-native-system-navigation-bar": "^2.6.1",
-    "react-native-toast-message": "^2.1.6",
     "react-native-version-number": "^0.3.6",
     "react-native-web": "~0.18.10",
     "react-native-zip-archive": "^6.0.9",
