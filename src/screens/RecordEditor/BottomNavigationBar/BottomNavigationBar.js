@@ -6,7 +6,6 @@ import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { Button, HView, View } from "components";
 import { RecordEditViewMode } from "model";
-import { useKeyboardIsVisible } from "hooks";
 import {
   DataEntryActions,
   DataEntrySelectors,
@@ -23,7 +22,6 @@ import styles from "./styles";
 export const BottomNavigationBar = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const keyboardVisible = useKeyboardIsVisible();
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
 
@@ -61,10 +59,6 @@ export const BottomNavigationBar = () => {
   const childDefs = DataEntrySelectors.useCurrentPageEntityRelevantChildDefs();
   const activeChildIndex =
     DataEntrySelectors.useCurrentPageEntityActiveChildIndex();
-
-  if (viewMode !== RecordEditViewMode.oneNode && keyboardVisible) {
-    return null;
-  }
 
   const activeChildIsLastChild = activeChildIndex + 1 === childDefs.length;
 
