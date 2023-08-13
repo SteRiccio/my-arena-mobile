@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { Button, HView, View } from "components";
-import { RecordEditViewMode } from "model";
+import { RecordEditViewMode, RecordPageNavigator } from "model";
 import {
   DataEntryActions,
   DataEntrySelectors,
@@ -14,7 +14,6 @@ import {
 } from "state";
 
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
-import { RecordPageNavigator } from "../../../model/RecordPageNavigator";
 import { SingleNodeNavigationButton } from "./SingleNodeNavigationButton";
 
 import styles from "./styles";

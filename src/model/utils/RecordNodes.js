@@ -2,6 +2,7 @@ import {
   NodeDefs,
   NodeValueFormatter,
   Nodes,
+  Objects,
   RecordExpressionEvaluator,
   Records,
   Surveys,
@@ -41,16 +42,18 @@ const getEntitySummaryValuesByNameFormatted = ({
   });
   return summaryDefs.reduce((acc, summaryDef) => {
     const summaryNode = Records.getChild(entity, summaryDef.uuid)(record);
-    let formattedValue =
-      NodeValueFormatter.format({
-        survey,
-        nodeDef: summaryDef,
-        value: summaryNode?.value,
-        showLabel: true,
-        lang,
-      }) ?? EMPTY_VALUE;
+    let formattedValue = NodeValueFormatter.format({
+      survey,
+      nodeDef: summaryDef,
+      value: summaryNode?.value,
+      showLabel: true,
+      lang,
+    });
     if (typeof formattedValue === "object") {
       formattedValue = JSON.stringify(formattedValue);
+    }
+    if (Objects.isEmpty(formattedValue)) {
+      formattedValue = EMPTY_VALUE;
     }
     acc[NodeDefs.getName(summaryDef)] = formattedValue;
 
