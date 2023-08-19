@@ -15,8 +15,9 @@ import { ConfirmActions } from "state/confirm";
 import { RecordFileService } from "service/recordFileService";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
+import { ImageUtils } from "./imageUtils";
 
-export const useNodeImageComponent = ({ nodeUuid }) => {
+export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
   const dispatch = useDispatch();
 
   const { request: requestCameraPermission } = useRequestCameraPermission();
@@ -46,24 +47,33 @@ export const useNodeImageComponent = ({ nodeUuid }) => {
 
   const onImageSelected = useCallback(
     async (result) => {
-      if (!result.canceled) {
-        const asset = result.assets?.[0];
-        if (!asset) return;
+      if (result.canceled) return;
 
-        const sourceFileUri = asset.uri;
-        setPickedImageUri(sourceFileUri);
+      const asset = result.assets?.[0];
+      if (!asset) return;
 
-        const info = await FileSystem.getInfoAsync(sourceFileUri);
+      const sourceFileUri = asset.uri;
+      setPickedImageUri(sourceFileUri);
 
-        const fileName = sourceFileUri.substring(
-          sourceFileUri.lastIndexOf("/") + 1
-        );
-        const fileSize = info.size;
-        const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
-        await updateNodeValue(valueUpdated, sourceFileUri);
-      }
+      const info = await FileSystem.getInfoAsync(sourceFileUri);
+      const fileSize = info.size;
+      // const maxSize = nodeDef.props.maxSize * Math.pow(1024, 2); // max size is in MB
+      // if (fileSize > maxSize) {
+      // if (true) {
+      //   const res = await ImageUtils.resizeToFit({
+      //     fileUri: sourceFileUri,
+      //     maxSize,
+      //   });
+      //   console.log(res);
+      // }
+
+      const fileName = sourceFileUri.substring(
+        sourceFileUri.lastIndexOf("/") + 1
+      );
+      const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
+      await updateNodeValue(valueUpdated, sourceFileUri);
     },
-    [fileUuid]
+    [fileUuid, nodeDef]
   );
 
   const openImageLibrary = useCallback(async () => {

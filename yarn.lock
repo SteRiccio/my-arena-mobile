@@ -1163,6 +1163,11 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     to-fast-properties "^2.0.0"
 
+"@bam.tech/react-native-image-resizer@^3.0.5":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@bam.tech/react-native-image-resizer/-/react-native-image-resizer-3.0.5.tgz#6661ba020de156268f73bdc92fbb93ef86f88a13"
+  integrity sha512-u5QGUQGGVZiVCJ786k9/kd7pPRZ6eYfJCYO18myVCH8FbVI7J8b5GT2Svjj2x808DlWeqfaZOOzxPqo27XYvrQ==
+
 "@callstack/react-theme-provider@^3.0.8":
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-3.0.8.tgz#d0d7ac71e422133c5f7b78f4c4aa1bc57f156f50"
@@ -4389,11 +4394,6 @@ expo-modules-core@1.2.7:
   dependencies:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
-
-expo-permissions@~14.1.1:
-  version "14.1.2"
-  resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-14.1.2.tgz#59ccf152d5da44b4958fc45238595b1b4282a978"
-  integrity sha512-NcozPs0cPDe65/Kc7yhSbdGcdpEIeEK1VcUlhRmOrC3kEahwlIdmyLdfhtuuUggaB75Wlo7VOGMZrsNHTWOVHw==
 
 expo-pwa@0.0.126:
   version "0.0.126"

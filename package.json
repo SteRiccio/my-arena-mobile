@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@bam.tech/react-native-image-resizer": "^3.0.5",
     "@expo/webpack-config": "^18.0.1",
     "@miblanchard/react-native-slider": "^2.3.1",
     "@openforis/arena-core": "^0.0.157",
@@ -29,7 +30,6 @@
     "expo-image-picker": "~14.1.1",
     "expo-location": "~15.1.1",
     "expo-media-library": "~15.2.3",
-    "expo-permissions": "~14.1.1",
     "expo-sensors": "~12.1.1",
     "expo-sharing": "~11.2.2",
     "expo-sqlite": "~11.1.1",
