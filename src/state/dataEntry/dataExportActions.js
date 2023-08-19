@@ -122,6 +122,8 @@ export const exportRecords =
       );
     } else if (status === JobStatus.succeeded) {
       const { outputFileUri } = result || {};
+      const outputFileInfo = await Files.getInfo(outputFileUri);
+      const { fileSize } = outputFileInfo;
 
       const availableExportTypes = [
         exportType.remote,
@@ -133,6 +135,7 @@ export const exportRecords =
         ConfirmActions.show({
           titleKey: "dataEntry:dataExport.selectTarget",
           messageKey: "dataEntry:dataExport.selectTargetMessage",
+          messageParams: { fileSize: Files.toHumanReadableFileSize(fileSize) },
           onConfirm: ({ selectedSingleChoiceValue }) => {
             dispatch(
               onExportConfirmed({ selectedSingleChoiceValue, outputFileUri })

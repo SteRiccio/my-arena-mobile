@@ -7,6 +7,8 @@ const MIME_TYPES = {
   zip: "application/zip ",
 };
 
+const getInfo = async (fileUri) => FileSystem.getInfoAsync(fileUri);
+
 const moveFileToDownloadFolder = async (fileUri) => {
   const permissionsResponse = await MediaLibrary.requestPermissionsAsync(true);
   if (!permissionsResponse.granted) {
@@ -29,9 +31,38 @@ const shareFile = async ({ url, mimeType, dialogTitle }) => {
   await Sharing.shareAsync(url, { mimeType, dialogTitle });
 };
 
+const toHumanReadableFileSize = (
+  bytes,
+  { si = true, decimalPlaces = 1 } = {}
+) => {
+  const threshold = si ? 1000 : 1024;
+
+  if (Math.abs(bytes) < threshold) {
+    return bytes + " B";
+  }
+
+  const units = si
+    ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+    : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+  let unitIndex = -1;
+  const ratio = 10 ** decimalPlaces;
+
+  do {
+    bytes /= threshold;
+    ++unitIndex;
+  } while (
+    Math.round(Math.abs(bytes) * ratio) / ratio >= threshold &&
+    unitIndex < units.length - 1
+  );
+
+  return bytes.toFixed(decimalPlaces) + " " + units[unitIndex];
+};
+
 export const Files = {
   MIME_TYPES,
+  getInfo,
   isSharingAvailable,
   shareFile,
   moveFileToDownloadFolder,
+  toHumanReadableFileSize,
 };

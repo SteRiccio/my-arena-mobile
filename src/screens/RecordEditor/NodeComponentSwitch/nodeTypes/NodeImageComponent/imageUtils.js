@@ -1,6 +1,7 @@
 import { Image } from "react-native";
-import * as FileSystem from "expo-file-system";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
+
+import { Files } from "utils";
 
 const _resizeToFitMaxSize = async ({
   fileUri,
@@ -61,7 +62,7 @@ const _resizeToFitMaxSize = async ({
 };
 
 const resizeToFitMaxSize = async ({ fileUri, maxSize }) => {
-  const info = await FileSystem.getInfoAsync(fileUri);
+  const info = await Files.getInfo(fileUri);
   if (info.size <= maxSize) return null;
 
   return new Promise((resolve) => {
