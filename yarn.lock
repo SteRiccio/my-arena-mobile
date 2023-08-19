@@ -4366,6 +4366,11 @@ expo-location@~15.1.1:
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-15.1.1.tgz#9289ca687afbdb73d847cc8c821ab66746eb9d47"
   integrity sha512-hoKRlmi6Ya+NeZ72Zt385SDcSsIDpJI60TCBVO+Hc9xfKA9Hyminyyo5WiwI8J03igmPTCl8Y37MxBNKY9AWkg==
 
+expo-media-library@~15.2.3:
+  version "15.2.3"
+  resolved "https://registry.yarnpkg.com/expo-media-library/-/expo-media-library-15.2.3.tgz#188f3c77f58b354f0ea6250f6756ac1e1a226291"
+  integrity sha512-Oz8b8Xsvfj7YcutUBtI84NUIqSnt7iCM5HZ5DyKoWKKiDK/+aUuj3RXNQELG8jUw6pQPgEwgbZ1+J8SdH/y9jw==
+
 expo-modules-autolinking@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/expo-modules-autolinking/-/expo-modules-autolinking-1.2.0.tgz#3ead115510a43fe196fc0498586b6133bd573209"
@@ -4385,6 +4390,11 @@ expo-modules-core@1.2.7:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-permissions@~14.1.1:
+  version "14.1.2"
+  resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-14.1.2.tgz#59ccf152d5da44b4958fc45238595b1b4282a978"
+  integrity sha512-NcozPs0cPDe65/Kc7yhSbdGcdpEIeEK1VcUlhRmOrC3kEahwlIdmyLdfhtuuUggaB75Wlo7VOGMZrsNHTWOVHw==
+
 expo-pwa@0.0.126:
   version "0.0.126"
   resolved "https://registry.yarnpkg.com/expo-pwa/-/expo-pwa-0.0.126.tgz#2d554a4a671eb25a3560eb99d46de65634de52dd"
@@ -4401,6 +4411,11 @@ expo-sensors@~12.1.1:
   integrity sha512-b5vaz1vAXO9kPXZ06a0hxoSkL4VXtJyEb6Qatpu7jLgThhzKcHOWjOHFvr/hqB4nat6uaRLXii+F1CwcoBMnpQ==
   dependencies:
     invariant "^2.2.4"
+
+expo-sharing@~11.2.2:
+  version "11.2.2"
+  resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-11.2.2.tgz#7d9e387f1a902e6dd6838c22d9599dae9e7432cf"
+  integrity sha512-4Lhm1eS/CFIzX+JPuxMUTWBt9rv/WdvJvpQ9y+71bL/9w9dhvsdt9tv0SsNZATz4hk0tbrYD8ZEUsgiHiT1KkQ==
 
 expo-sqlite@~11.1.1:
   version "11.1.1"
@@ -7649,7 +7664,7 @@ prompts@^2.3.2, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@15.8.1, prop-types@^15.7.2:
+prop-types@*, prop-types@15.8.1, prop-types@^15.5.7, prop-types@^15.7.2:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -7927,6 +7942,13 @@ react-native-version-number@^0.3.6:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/react-native-version-number/-/react-native-version-number-0.3.6.tgz#dd8b1435fc217df0a166d7e4a61fdc993f3e7437"
   integrity sha512-TdyXiK90NiwmSbmAUlUBOV6WI1QGoqtvZZzI5zQY4fKl67B3ZrZn/h+Wy/OYIKKFMfePSiyfeIs8LtHGOZ/NgA==
+
+react-native-view-more-text@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-view-more-text/-/react-native-view-more-text-2.2.0.tgz#517bc1f891b53d1a94686d24370739193a6ec19b"
+  integrity sha512-8l/HhIieWA13Fg1Vt5eNNcicykqZ1IbmD/ozrejg5HtB9D/yluW/dCjapGwU/Wt+fLlT43MPBAxrEGPO/g+Aug==
+  dependencies:
+    prop-types "^15.5.7"
 
 react-native-web@~0.18.10:
   version "0.18.12"

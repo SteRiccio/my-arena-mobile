@@ -13,6 +13,12 @@ export default StyleSheet.create({
     flexGrow: 1,
     fontSize: 20,
   },
+  nodeDefDescriptionViewMoreText: {
+    textAlign: "justify",
+  },
+  nodeDefDescriptionText: {
+    fontStyle: "italic",
+  },
   internalContainer: {
     width: "100%",
   },

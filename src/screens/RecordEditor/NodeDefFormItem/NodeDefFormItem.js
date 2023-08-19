@@ -1,5 +1,6 @@
 import React from "react";
 import { View } from "react-native";
+import ViewMoreText from "react-native-view-more-text";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
@@ -36,6 +37,7 @@ export const NodeDefFormItem = (props) => {
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   const labelOrName = NodeDefs.getLabelOrName(nodeDef, lang);
+  const description = nodeDef.props?.descriptions?.[lang];
 
   const internalComponent = (
     <VView
@@ -45,9 +47,17 @@ export const NodeDefFormItem = (props) => {
       ]}
     >
       <View style={styles.nodeDefLabelContainer}>
-        <Text style={styles.nodeDefLabel} textKey={labelOrName} />
+        <Text style={styles.nodeDefLabel}>{labelOrName}</Text>
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
       </View>
+      {!Objects.isEmpty(description) && (
+        <ViewMoreText
+          textStyle={styles.nodeDefDescriptionViewMoreText}
+          numberOfLines={2}
+        >
+          <Text style={styles.nodeDefDescriptionText}>{description}</Text>
+        </ViewMoreText>
+      )}
       <View
         style={[
           styles.internalContainer,
