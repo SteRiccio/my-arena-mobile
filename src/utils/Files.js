@@ -1,4 +1,3 @@
-import * as Permissions from "expo-permissions";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 
@@ -9,22 +8,19 @@ const MIME_TYPES = {
 };
 
 const moveFileToDownloadFolder = async (fileUri) => {
-  const perm = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-  if (perm.status != "granted") {
-    return;
+  const permissionsResponse = await MediaLibrary.requestPermissionsAsync(true);
+  if (!permissionsResponse.granted) {
+    return false;
   }
 
-  try {
-    const asset = await MediaLibrary.createAssetAsync(fileUri);
-    const album = await MediaLibrary.getAlbumAsync(DOWNLOAD_FOLDER);
-    if (album == null) {
-      await MediaLibrary.createAlbumAsync(DOWNLOAD_FOLDER, asset, false);
-    } else {
-      await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-    }
-  } catch (e) {
-    handleError(e);
+  const asset = await MediaLibrary.createAssetAsync(fileUri);
+  const album = await MediaLibrary.getAlbumAsync(DOWNLOAD_FOLDER);
+  if (album == null) {
+    await MediaLibrary.createAlbumAsync(DOWNLOAD_FOLDER, asset, false);
+  } else {
+    await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
   }
+  return true;
 };
 
 const isSharingAvailable = async () => Sharing.isAvailableAsync();

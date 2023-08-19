@@ -19,7 +19,6 @@ import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
-import { i18n } from "localization";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
@@ -32,8 +31,6 @@ const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
 const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
-
-const { t } = i18n;
 
 const getMaxDateModified = (nodes) =>
   Object.values(nodes).reduce((acc, node) => {

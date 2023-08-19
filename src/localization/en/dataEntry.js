@@ -58,6 +58,7 @@ export default {
     "Delete the existing picture and take a new one?",
 
   dataExport: {
+    error: "Error exporting data. Details: {{details}}",
     selectTarget: "Select export target",
     selectTargetMessage:
       "Export file size: {{fileSize}}.\n Select the target of the export:",

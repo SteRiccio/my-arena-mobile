@@ -12,6 +12,8 @@ export {
   DeviceInfoSelectors,
 } from "./deviceInfo";
 
+export { MessageActions } from "./message";
+
 export {
   RemoteConnectionActions,
   RemoteConnectionReducer,
