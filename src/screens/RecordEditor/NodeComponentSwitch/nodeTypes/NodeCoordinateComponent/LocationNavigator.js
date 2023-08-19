@@ -112,7 +112,7 @@ export const LocationNavigator = (props) => {
         (location) => {
           const { coords } = location;
           const { latitude: y, longitude: x, accuracy: accuracyNew } = coords;
-          const angleRads = Math.atan2(y - targetPoint.y, x - targetPoint.x);
+          const angleRads = Math.atan2(targetPoint.y - y, targetPoint.x - x);
           const angleToTargetNew = (radsToDegrees(angleRads) + 90) % 360;
           const currentLocationPoint = PointFactory.createInstance({ x, y });
           const distanceNew = Points.distance(
