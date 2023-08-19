@@ -5,7 +5,8 @@ import { NodeDefType, NodeDefs, Objects } from "@openforis/arena-core";
 import { SystemUtils } from "utils";
 import { HView, IconButton, TextInput } from "components";
 import { useToast } from "hooks";
-import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
+import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
+import { useStyles } from "./styles";
 
 export const NodeTextComponent = (props) => {
   const { nodeDef, nodeUuid, style } = props;
@@ -13,6 +14,8 @@ export const NodeTextComponent = (props) => {
   if (__DEV__) {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
   }
+
+  const styles = useStyles();
 
   const isNumeric = [NodeDefType.decimal, NodeDefType.integer].includes(
     nodeDef.type
@@ -60,12 +63,8 @@ export const NodeTextComponent = (props) => {
         error={invalidValue}
         keyboardType={isNumeric ? "numeric" : undefined}
         style={[
-          {
-            display: "flex",
-            flex: 1,
-            alignSelf: "stretch",
-            ...(applicable ? {} : { backgroundColor: "lightgray" }),
-          },
+          styles.textInput,
+          applicable ? {} : styles.notApplicable,
           style,
         ]}
         multiline={multiline}
