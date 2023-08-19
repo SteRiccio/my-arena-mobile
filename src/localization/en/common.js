@@ -5,6 +5,7 @@ export default {
   confirm: "Confirm",
   done: "Done",
   empty: "--- EMPTY ---",
+  export: "Export",
   false: "False",
   info: "Info",
   label: "Label",
