@@ -80,7 +80,7 @@ export const useNodeImageComponent = ({ nodeUuid }) => {
     if (pickedImageUri) {
       dispatch(
         ConfirmActions.show({
-          messageKey: "dataEntry:pictureDeleteConfirmMessage",
+          messageKey: "dataEntry:pictureDeleteAndTakeNewOneConfirmMessage",
           onConfirm: openImageLibrary,
         })
       );
@@ -100,7 +100,7 @@ export const useNodeImageComponent = ({ nodeUuid }) => {
     if (pickedImageUri) {
       dispatch(
         ConfirmActions.show({
-          messageKey: "dataEntry:pictureDeleteConfirmMessage",
+          messageKey: "dataEntry:pictureDeleteAndTakeNewOneConfirmMessage",
           onConfirm: openCamera,
         })
       );

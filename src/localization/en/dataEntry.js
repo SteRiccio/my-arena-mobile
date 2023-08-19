@@ -54,4 +54,18 @@ export default {
   // file attribute (image)
   chooseAPicture: "Choose a picture",
   pictureDeleteConfirmMessage: "Delete the existing picture?",
+  pictureDeleteAndTakeNewOneConfirmMessage:
+    "Delete the existing picture and take a new one?",
+
+  dataExport: {
+    selectTarget: "Select export target",
+    selectTargetMessage:
+      "Export file size: {{fileSize}}.\n Select the target of the export:",
+    target: {
+      remote: "Remote server",
+      local: "Local folder (Download)",
+      share: "Share file",
+    },
+    shareExportedFile: "Share exported file",
+  },
 };
