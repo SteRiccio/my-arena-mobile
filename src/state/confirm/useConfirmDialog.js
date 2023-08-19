@@ -11,12 +11,16 @@ export const useConfirmDialog = () => {
   const dispatch = useDispatch();
 
   const confirmState = useSelector((state) => state.confirm);
+
   const [state, setState] = useState(defaultLocalState);
 
   const { selectedSingleChoiceValue } = state;
 
   useEffect(() => {
-    setState(defaultLocalState);
+    setState({
+      ...defaultLocalState,
+      selectedSingleChoiceValue: confirmState.defaultSingleChoiceValue,
+    });
   }, [confirmState]);
 
   const confirm = useCallback(() => {

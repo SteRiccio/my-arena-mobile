@@ -125,7 +125,7 @@ export const exportRecords =
 
       const availableExportTypes = [
         exportType.remote,
-        exportType.local,
+        // exportType.local,
         ...((await Files.isSharingAvailable()) ? [exportType.share] : []),
       ];
 
@@ -142,6 +142,7 @@ export const exportRecords =
             value: type,
             label: `dataEntry:dataExport.target.${type}`,
           })),
+          defaultSingleChoiceValue: exportType.remote,
           confirmButtonTextKey: "common:export",
         })
       );

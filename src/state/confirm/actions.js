@@ -11,6 +11,7 @@ const show =
     onConfirm,
     onCancel = undefined,
     singleChoiceOptions = [],
+    defaultSingleChoiceValue = null,
   }) =>
   (dispatch) => {
     dispatch({
@@ -24,6 +25,7 @@ const show =
         onConfirm,
         onCancel,
         singleChoiceOptions,
+        defaultSingleChoiceValue,
       },
     });
   };

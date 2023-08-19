@@ -12,6 +12,8 @@ export {
   DeviceInfoSelectors,
 } from "./deviceInfo";
 
+export { JobMonitorActions } from "./jobMonitor";
+
 export { MessageActions } from "./message";
 
 export {
