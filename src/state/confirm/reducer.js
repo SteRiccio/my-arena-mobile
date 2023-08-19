@@ -6,10 +6,11 @@ const initialState = {
   titleKey: "common:confirm",
   cancelButtonTextKey: "common:cancel",
   confirmButtonTextKey: "common:confirm",
+  singleChoiceOptions: [],
 };
 
 const actionHandlers = {
-  [ConfirmActions.CONFIRM_SHOW]: ({ state, action }) => ({
+  [ConfirmActions.CONFIRM_SHOW]: ({ action }) => ({
     ...action.payload,
     isOpen: true,
   }),

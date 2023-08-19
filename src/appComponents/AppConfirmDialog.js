@@ -1,9 +1,9 @@
 import React from "react";
-import { Dialog, Portal } from "react-native-paper";
+import { Dialog, Portal, RadioButton } from "react-native-paper";
 
 import { useConfirmDialog } from "state/confirm/useConfirmDialog";
 
-import { Button, Text } from "components";
+import { Button, Text, VView } from "components";
 import { useTranslation } from "localization";
 
 export const AppConfirmDialog = () => {
@@ -11,12 +11,15 @@ export const AppConfirmDialog = () => {
 
   const {
     isOpen,
-    confirm,
     cancel,
+    cancelButtonTextKey,
+    confirm,
+    confirmButtonTextKey,
     messageKey,
     messageParams,
-    cancelButtonTextKey,
-    confirmButtonTextKey,
+    onSingleChoiceOptionChange,
+    selectedSingleChoiceValue,
+    singleChoiceOptions,
     titleKey,
   } = useConfirmDialog();
 
@@ -30,6 +33,22 @@ export const AppConfirmDialog = () => {
             textKey={messageKey}
             textParams={messageParams}
           />
+          {singleChoiceOptions?.length > 0 && (
+            <RadioButton.Group
+              onValueChange={onSingleChoiceOptionChange}
+              value={selectedSingleChoiceValue}
+            >
+              <VView transparent>
+                {singleChoiceOptions.map((option) => (
+                  <RadioButton.Item
+                    key={option.value}
+                    label={t(option.label)}
+                    value={option.value}
+                  />
+                ))}
+              </VView>
+            </RadioButton.Group>
+          )}
         </Dialog.Content>
         <Dialog.Actions>
           <Button

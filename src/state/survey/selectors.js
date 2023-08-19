@@ -16,6 +16,11 @@ const selectCurrentSurveyRootDef = (state) => {
   return Surveys.getNodeDefRoot({ survey });
 };
 
+const selectIsNodeDefEnumerator = (nodeDef) => (state) => {
+  const survey = selectCurrentSurvey(state);
+  return Surveys.isNodeDefEnumerator({ survey, nodeDef });
+};
+
 const selectSurveysLocal = (state) => getSurveyState(state).surveysLocal;
 
 const selectCurrentSurveyPreferredLang = (state) =>
@@ -30,5 +35,7 @@ export const SurveySelectors = {
   useCurrentSurveyPreferredLang: () =>
     useSelector(selectCurrentSurveyPreferredLang),
   useCurrentSurveyRootDef: () => useSelector(selectCurrentSurveyRootDef),
+  useIsNodeDefEnumerator: (nodeDef) =>
+    useSelector(selectIsNodeDefEnumerator(nodeDef)),
   useSurveysLocal: () => useSelector(selectSurveysLocal),
 };

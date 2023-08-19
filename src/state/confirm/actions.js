@@ -10,6 +10,7 @@ const show =
     messageParams = {},
     onConfirm,
     onCancel = undefined,
+    singleChoiceOptions = [],
   }) =>
   (dispatch) => {
     dispatch({
@@ -22,16 +23,19 @@ const show =
         messageParams,
         onConfirm,
         onCancel,
+        singleChoiceOptions,
       },
     });
   };
 
-const confirm = () => (dispatch, getState) => {
-  const state = getState();
-  const { onConfirm } = state.confirm;
-  onConfirm();
-  dispatch({ type: CONFIRM_HIDE });
-};
+const confirm =
+  ({ selectedSingleChoiceValue }) =>
+  (dispatch, getState) => {
+    const state = getState();
+    const { onConfirm } = state.confirm;
+    onConfirm({ selectedSingleChoiceValue });
+    dispatch({ type: CONFIRM_HIDE });
+  };
 
 const cancel = () => (dispatch, getState) => {
   const state = getState();
