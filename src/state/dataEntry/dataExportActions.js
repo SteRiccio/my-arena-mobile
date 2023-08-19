@@ -1,4 +1,4 @@
-import { JobStatus, Surveys, Validations } from "@openforis/arena-core";
+import { JobStatus, Surveys } from "@openforis/arena-core";
 
 import { AuthService, RecordService, WebSocketService } from "service";
 import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerationJob";
@@ -7,6 +7,7 @@ import { i18n } from "localization";
 import { ConfirmActions, JobMonitorActions, MessageActions } from "state";
 import { SurveySelectors } from "../survey";
 import { Files } from "utils";
+import { Validations } from "model/utils/Validations";
 
 const { t } = i18n;
 
