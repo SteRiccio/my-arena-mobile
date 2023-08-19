@@ -35,6 +35,7 @@ export const NodeCodeMultipleCheckboxComponent = (props) => {
           disabled={!editable}
           checked={selectedItems.includes(item)}
           onPress={() => onItemSelect(item)}
+          style={styles.item}
         />
       ))}
     </HView>

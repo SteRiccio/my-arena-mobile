@@ -4,6 +4,9 @@ import { NodeCodeSingleRadioComponent } from "./NodeCodeSingleRadioComponent";
 import { NodeCodeMultipleCheckboxComponent } from "./NodeCodeMultipleCheckboxComponent";
 import { useNodeCodeComponentLocalState } from "./useNodeCodeComponentLocalState";
 import { NodeCodeAutocompleteComponent } from "./NodeCodeAutocompleteComponent";
+import { DataEntrySelectors } from "state/dataEntry";
+import { SurveySelectors } from "state/survey";
+import { NodeCodeReadOnlyValue } from "./NodeCodeReadOnlyValue";
 
 const MAX_VISIBLE_ITEMS = 10;
 
@@ -27,9 +30,24 @@ export const NodeCodeComponent = (props) => {
     nodeDef,
   });
 
-  const editable = !NodeDefs.isReadOnly(nodeDef);
+  const cycle = DataEntrySelectors.useRecordCycle();
+  const isNodeDefEnumerator = SurveySelectors.useIsNodeDefEnumerator(nodeDef);
+  const editable = !NodeDefs.isReadOnly(nodeDef) && !isNodeDefEnumerator;
 
-  if (items.length > MAX_VISIBLE_ITEMS) {
+  if (!editable) {
+    return (
+      <NodeCodeReadOnlyValue
+        nodeDef={nodeDef}
+        itemLabelFunction={itemLabelFunction}
+        selectedItems={selectedItems}
+      />
+    );
+  }
+
+  if (
+    items.length > MAX_VISIBLE_ITEMS ||
+    NodeDefs.getLayoutRenderType(cycle)(nodeDef) === "dropdown"
+  ) {
     return (
       <NodeCodeAutocompleteComponent
         editable={editable}
