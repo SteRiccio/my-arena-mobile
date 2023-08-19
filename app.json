@@ -3,7 +3,7 @@
     "name": "My Arena Mobile",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "0.9.22",
+    "version": "0.9.23",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,7 +22,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 22
+      "versionCode": 23
     },
     "ios": {
       "supportsTablet": true
