@@ -74,10 +74,10 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
           error,
           uri: resizedFileUri,
           size: resizedFileSize,
-        } = await ImageUtils.resizeToFitMaxSize({
+        } = (await ImageUtils.resizeToFitMaxSize({
           fileUri: sourceFileUri,
           maxSize,
-        });
+        })) || {};
 
         if (!error && resizedFileUri) {
           fileUri = resizedFileUri;

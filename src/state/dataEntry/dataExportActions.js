@@ -122,8 +122,7 @@ export const exportRecords =
       );
     } else if (status === JobStatus.succeeded) {
       const { outputFileUri } = result || {};
-      const outputFileInfo = await Files.getInfo(outputFileUri);
-      const { fileSize } = outputFileInfo;
+      const { size: fileSize } = await Files.getInfo(outputFileUri);
 
       const availableExportTypes = [
         exportType.remote,
