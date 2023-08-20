@@ -92,67 +92,75 @@ export const exportRecords =
     // const jobUuid = remoteJob?.uuid
     // dispatch(JobMonitorActions.start({jobUuid, titleKey: 'dataEntry:exportData'}))
 
-    const user = await AuthService.fetchUser();
-    // TODO if user is null, do login
+    try {
+      const user = await AuthService.fetchUser();
+      // TODO if user is null, do login
 
-    const job = new RecordsExportFileGenerationJob({
-      survey,
-      recordUuids,
-      user,
-    });
-    await job.start();
-    const { summary } = job;
-    const { errors, result, status } = summary;
+      const job = new RecordsExportFileGenerationJob({
+        survey,
+        recordUuids,
+        user,
+      });
+      await job.start();
+      const { summary } = job;
+      const { errors, result, status } = summary;
 
-    if (status === JobStatus.failed) {
-      const validationErrors = Object.values(errors).map((item) => item.error);
-      const details = validationErrors
-        .map((validationError) =>
-          Validations.getJointErrorText({
-            validation: validationError,
-            t,
+      if (status === JobStatus.failed) {
+        const validationErrors = Object.values(errors).map(
+          (item) => item.error
+        );
+        const details = validationErrors
+          .map((validationError) =>
+            Validations.getJointErrorText({
+              validation: validationError,
+              t,
+            })
+          )
+          .join(";\n");
+        dispatch(
+          MessageActions.setMessage({
+            content: "dataEntry:errorGeneratingRecordsExportFile",
+            contentParams: { details },
           })
-        )
-        .join(";\n");
-      dispatch(
-        MessageActions.setMessage({
-          content: "dataEntry:errorGeneratingRecordsExportFile",
-          contentParams: { details },
-        })
-      );
-    } else if (status === JobStatus.succeeded) {
-      const { outputFileUri } = result || {};
-      const { size: fileSize } = await Files.getInfo(outputFileUri);
+        );
+      } else if (status === JobStatus.succeeded) {
+        const { outputFileUri } = result || {};
+        const { size: fileSize } = await Files.getInfo(outputFileUri);
 
-      const availableExportTypes = [
-        exportType.remote,
-        // exportType.local,
-        ...((await Files.isSharingAvailable()) ? [exportType.share] : []),
-      ];
+        const availableExportTypes = [
+          exportType.remote,
+          // exportType.local,
+          ...((await Files.isSharingAvailable()) ? [exportType.share] : []),
+        ];
 
-      dispatch(
-        ConfirmActions.show({
-          titleKey: "dataEntry:dataExport.selectTarget",
-          messageKey: "dataEntry:dataExport.selectTargetMessage",
-          messageParams: { fileSize: Files.toHumanReadableFileSize(fileSize) },
-          onConfirm: ({ selectedSingleChoiceValue }) => {
-            dispatch(
-              onExportConfirmed({ selectedSingleChoiceValue, outputFileUri })
-            );
-          },
-          singleChoiceOptions: availableExportTypes.map((type) => ({
-            value: type,
-            label: `dataEntry:dataExport.target.${type}`,
-          })),
-          defaultSingleChoiceValue: exportType.remote,
-          confirmButtonTextKey: "common:export",
-        })
-      );
-    } else {
-      dispatch(
-        MessageActions.setMessage({
-          content: `Job status: ${status}`,
-        })
-      );
+        dispatch(
+          ConfirmActions.show({
+            titleKey: "dataEntry:dataExport.selectTarget",
+            messageKey: "dataEntry:dataExport.selectTargetMessage",
+            messageParams: {
+              fileSize: Files.toHumanReadableFileSize(fileSize),
+            },
+            onConfirm: ({ selectedSingleChoiceValue }) => {
+              dispatch(
+                onExportConfirmed({ selectedSingleChoiceValue, outputFileUri })
+              );
+            },
+            singleChoiceOptions: availableExportTypes.map((type) => ({
+              value: type,
+              label: `dataEntry:dataExport.target.${type}`,
+            })),
+            defaultSingleChoiceValue: exportType.remote,
+            confirmButtonTextKey: "common:export",
+          })
+        );
+      } else {
+        dispatch(
+          MessageActions.setMessage({
+            content: `Job status: ${status}`,
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(handleError(error));
     }
   };
