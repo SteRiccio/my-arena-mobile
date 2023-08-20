@@ -37,7 +37,7 @@ export const NodeImageComponent = (props) => {
         <Button
           icon="view-gallery"
           onPress={onPictureChoosePress}
-          textKey="dataEntry:chooseAPicture"
+          textKey="dataEntry:fileAttributeImage.chooseAPicture"
         />
 
         {pickedImageUri && (

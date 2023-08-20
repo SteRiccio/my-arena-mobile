@@ -15,7 +15,7 @@ const _resizeToFitMaxSize = async ({
 
   const stack = [0.5];
 
-  while (stack.length) {
+  while (stack.length > 0) {
     let currentScale = stack.pop();
 
     let currentMaxWidth = Math.floor(width * currentScale);
@@ -55,6 +55,7 @@ const _resizeToFitMaxSize = async ({
     } catch (error) {
       // Oops, something went wrong. Check that the filename is correct and
       // inspect err to get more details.
+      return { error };
     }
     tryings = tryings + 1;
   }
@@ -75,5 +76,5 @@ const resizeToFitMaxSize = async ({ fileUri, maxSize }) => {
 };
 
 export const ImageUtils = {
-  resizeToFit: resizeToFitMaxSize,
+  resizeToFitMaxSize,
 };

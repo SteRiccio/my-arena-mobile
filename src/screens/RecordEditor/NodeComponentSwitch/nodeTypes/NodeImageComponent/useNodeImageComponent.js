@@ -8,6 +8,7 @@ import { UUIDs } from "@openforis/arena-core";
 import {
   useRequestCameraPermission,
   useRequestMediaLibraryPermission,
+  useToast,
 } from "hooks";
 
 import { SurveySelectors } from "state/survey";
@@ -16,9 +17,12 @@ import { RecordFileService } from "service/recordFileService";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
 import { ImageUtils } from "./imageUtils";
+import { Files } from "utils";
 
 export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
   const dispatch = useDispatch();
+
+  const toaster = useToast();
 
   const { request: requestCameraPermission } = useRequestCameraPermission();
 
@@ -27,6 +31,8 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
 
   const survey = SurveySelectors.useCurrentSurvey();
   const surveyId = survey.id;
+
+  const maxSize = (nodeDef.props.maxSize ?? 10) * Math.pow(1024, 2); // max size is in MB
 
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
@@ -55,25 +61,37 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
       const sourceFileUri = asset.uri;
       setPickedImageUri(sourceFileUri);
 
-      const info = await FileSystem.getInfoAsync(sourceFileUri);
-      const fileSize = info.size;
-      // const maxSize = nodeDef.props.maxSize * Math.pow(1024, 2); // max size is in MB
-      // if (fileSize > maxSize) {
-      // if (true) {
-      //   const res = await ImageUtils.resizeToFit({
-      //     fileUri: sourceFileUri,
-      //     maxSize,
-      //   });
-      //   console.log(res);
-      // }
-
       const fileName = sourceFileUri.substring(
         sourceFileUri.lastIndexOf("/") + 1
       );
+      const { size: sourceFileSize } = await Files.getInfo(sourceFileUri);
+      let fileUri = sourceFileUri;
+      let fileSize = sourceFileSize;
+
+      if (sourceFileSize > maxSize) {
+        // resize image
+        const {
+          error,
+          uri: resizedFileUri,
+          size: resizedFileSize,
+        } = await ImageUtils.resizeToFitMaxSize({
+          fileUri: sourceFileUri,
+          maxSize,
+        });
+
+        if (!error && resizedFileUri) {
+          fileUri = resizedFileUri;
+          fileSize = resizedFileSize;
+
+          toaster.show("dataEntry:fileAttributeImage.pictureResizedToSize", {
+            size: Files.toHumanReadableFileSize(resizedFileSize),
+          });
+        }
+      }
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
-      await updateNodeValue(valueUpdated, sourceFileUri);
+      await updateNodeValue(valueUpdated, fileUri);
     },
-    [fileUuid, nodeDef]
+    [fileUuid, maxSize]
   );
 
   const openImageLibrary = useCallback(async () => {
@@ -110,7 +128,8 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
     if (pickedImageUri) {
       dispatch(
         ConfirmActions.show({
-          messageKey: "dataEntry:pictureDeleteAndTakeNewOneConfirmMessage",
+          messageKey:
+            "dataEntry:fileAttributeImage.pictureDeleteAndTakeNewOneConfirmMessage",
           onConfirm: openCamera,
         })
       );
@@ -122,7 +141,7 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
   const onDeletePress = useCallback(async () => {
     dispatch(
       ConfirmActions.show({
-        messageKey: "dataEntry:pictureDeleteConfirmMessage",
+        messageKey: "dataEntry:fileAttributeImage.pictureDeleteConfirmMessage",
         onConfirm: async () => {
           await updateNodeValue(null);
         },
