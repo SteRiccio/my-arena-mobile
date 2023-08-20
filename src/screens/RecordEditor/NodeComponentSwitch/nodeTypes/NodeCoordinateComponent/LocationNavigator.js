@@ -34,8 +34,17 @@ const getArrowImageByAngle = (angle) => {
   return arrowUpGreen;
 };
 
-const radsToDegrees = (rads) =>
-  (rads >= 0 ? rads : rads + 2 * Math.PI) * (180 / Math.PI);
+const radsToDegrees = (rads) => {
+  let degrees = rads * (180 / Math.PI);
+  degrees = -(degrees + 90);
+  while (degrees < 0) degrees += 360;
+  return degrees;
+};
+
+const calculateAngleBetweenPoints = (point1, point2) => {
+  const angleRads = Math.atan2(point1.y - point2.y, point1.x - point2.x);
+  return radsToDegrees(angleRads);
+};
 
 const formatNumber = (num, decimals = 2) =>
   Objects.isEmpty(num) ? "-" : num.toFixed(decimals);
@@ -72,8 +81,8 @@ export const LocationNavigator = (props) => {
   const { heading, magnetometerAvailable } = useMagnetometerHeading();
 
   const { currentLocation, angleToTarget, accuracy, distance } = state;
-  const currentLocationX = currentLocation?.coords?.longitude;
-  const currentLocationY = currentLocation?.coords?.latitude;
+  const { longitude: currentLocationX, latitude: currentLocationY } =
+    currentLocation?.coords || {};
 
   const arrowToTargetVisible =
     distance >= arrowToTargetVisibleDistanceThreshold;
@@ -112,9 +121,11 @@ export const LocationNavigator = (props) => {
         (location) => {
           const { coords } = location;
           const { latitude: y, longitude: x, accuracy: accuracyNew } = coords;
-          const angleRads = Math.atan2(targetPoint.y - y, targetPoint.x - x);
-          const angleToTargetNew = (radsToDegrees(angleRads) + 90) % 360;
           const currentLocationPoint = PointFactory.createInstance({ x, y });
+          const angleToTargetNew = calculateAngleBetweenPoints(
+            currentLocationPoint,
+            targetPoint
+          );
           const distanceNew = Points.distance(
             currentLocationPoint,
             targetPoint,
