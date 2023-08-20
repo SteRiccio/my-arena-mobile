@@ -127,7 +127,11 @@ export const RecordsList = () => {
 
   const onExportPress = useCallback(() => {
     const newRecordsUuids = records
-      .filter((record) => record.syncStatus === RecordSyncStatus.new)
+      .filter((record) =>
+        [RecordSyncStatus.new, RecordSyncStatus.modifiedLocally].includes(
+          record.syncStatus
+        )
+      )
       .map((record) => record.uuid);
     dispatch(DataEntryActions.exportRecords({ recordUuids: newRecordsUuids }));
   }, [records]);

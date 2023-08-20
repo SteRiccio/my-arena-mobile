@@ -1,7 +1,8 @@
 import { Dates, NodeDefs, Objects, Surveys } from "@openforis/arena-core";
 import { RemoteService } from "./remoteService";
 import { RecordRepository } from "./repository/recordRepository";
-import { RecordSyncStatus } from "model/RecordSyncStatus";
+import { RecordSyncStatus } from "model";
+import { Files } from "utils";
 
 const { fetchRecord, fetchRecords, insertRecord, updateRecord, deleteRecords } =
   RecordRepository;
@@ -74,9 +75,10 @@ const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
   formData.append("file", {
     uri: fileUri,
     name: "arena-mobile-data.zip",
-    type: "application/zip",
+    type: Files.MIME_TYPES.zip,
   });
   formData.append("cycle", cycle);
+  formData.append("conflictResolutionStrategy", "overwriteIfUpdated");
 
   const { data } = await RemoteService.postMultipartData(
     `api/mobile/survey/${surveyRemoteId}`,

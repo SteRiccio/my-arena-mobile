@@ -1,5 +1,6 @@
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
 
 const DOWNLOAD_FOLDER = "Download";
 
