@@ -29,9 +29,9 @@ const targetLocationBoxWidth = compassImageSize * 0.7;
 const targetLocationMarkerHeight = height / 26;
 
 const getArrowImageByAngle = (angle) => {
-  if (angle > 45) return arrowUpRed;
-  if (angle > 20) return arrowUpOrange;
-  return arrowUpGreen;
+  if (angle <= 20 || 360 - angle <= 20) return arrowUpGreen;
+  if (angle <= 45 || 360 - angle <= 45) return arrowUpOrange;
+  return arrowUpRed;
 };
 
 const radsToDegrees = (rads) => {
