@@ -7,7 +7,6 @@ if (!global.crypto) {
 
 import {
   Dates,
-  JobStatus,
   NodeDefs,
   NodeDefType,
   RecordFactory,
@@ -20,24 +19,18 @@ import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
-import { i18n } from "localization";
 
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { ConfirmActions } from "state/confirm";
-import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerationJob";
-import { AuthService, WebSocketService } from "service";
-import { MessageActions } from "state/message";
-import { JobMonitorActions } from "state/jobMonitor";
-import { Validations } from "model/utils/Validations";
+
+import { exportRecords } from "./dataExportActions";
 
 const RECORD_SET = "RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
 const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
-
-const { t } = i18n;
 
 const getMaxDateModified = (nodes) =>
   Object.values(nodes).reduce((acc, node) => {
@@ -277,79 +270,6 @@ const navigateToRecordsList =
         },
       })
     );
-  };
-
-const exportRecords =
-  ({ recordUuids }) =>
-  async (dispatch, getState) => {
-    const state = getState();
-    const survey = SurveySelectors.selectCurrentSurvey(state);
-    const cycle =
-      survey.props.defaultCycleKey || Surveys.getLastCycleKey(survey);
-
-    //  const fileUri = "content://com.android.externalstorage.documents/tree/primary%3ADownload/document/primary%3ADownload%2Farena_mobile_export_testi_4_2023-07-10_08-02-48.zip";
-    // const fileInfo = await getInfoAsync(fileUri);
-    // console.log(fileInfo)
-
-    // const remoteJob = await RecordService.uploadRecordsToRemoteServer({
-    //       survey,
-    //       cycle,
-    //       fileUri,
-    //     });
-    // const jobUuid = remoteJob?.uuid
-    // dispatch(JobMonitorActions.start({jobUuid, titleKey: 'dataEntry:exportData'}))
-
-    const user = await AuthService.fetchUser();
-    // TODO if user is null, do login
-
-    const job = new RecordsExportFileGenerationJob({
-      survey,
-      recordUuids,
-      user,
-    });
-    await job.start();
-    const { summary } = job;
-    const { errors, result, status } = summary;
-
-    if (status === JobStatus.failed) {
-      const validationErrors = Object.values(errors).map((item) => item.error);
-      const details = validationErrors
-        .map((validationError) =>
-          Validations.getJointErrorText({
-            validation: validationError,
-            t,
-          })
-        )
-        .join(";\n");
-      dispatch(
-        MessageActions.setMessage({
-          content: "dataEntry:errorGeneratingRecordsExportFile",
-          contentParams: { details },
-        })
-      );
-    } else if (status === JobStatus.succeeded) {
-      const { outputFileUri } = result || {};
-
-      const remoteJob = await RecordService.uploadRecordsToRemoteServer({
-        survey,
-        cycle,
-        fileUri: outputFileUri,
-      });
-
-      dispatch(
-        JobMonitorActions.start({
-          jobUuid: remoteJob.uuid,
-          titleKey: "dataEntry:exportData",
-          onClose: () => WebSocketService.close(),
-        })
-      );
-    } else {
-      dispatch(
-        MessageActions.setMessage({
-          content: `Job status: ${status}`,
-        })
-      );
-    }
   };
 
 export const DataEntryActions = {

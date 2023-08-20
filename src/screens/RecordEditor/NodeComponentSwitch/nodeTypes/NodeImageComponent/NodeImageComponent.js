@@ -17,7 +17,7 @@ export const NodeImageComponent = (props) => {
     onOpenCameraPress,
     onPictureChoosePress,
     pickedImageUri,
-  } = useNodeImageComponent({ nodeUuid });
+  } = useNodeImageComponent({ nodeDef, nodeUuid });
 
   return (
     <HView style={styles.container}>
@@ -37,7 +37,7 @@ export const NodeImageComponent = (props) => {
         <Button
           icon="view-gallery"
           onPress={onPictureChoosePress}
-          textKey="dataEntry:chooseAPicture"
+          textKey="dataEntry:fileAttributeImage.chooseAPicture"
         />
 
         {pickedImageUri && (

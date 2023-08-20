@@ -3,15 +3,13 @@ import { View as RNView } from "react-native";
 import { useTheme } from "react-native-paper";
 
 export const View = (props) => {
-  const { children, style, ...otherProps } = props;
+  const { children, style, transparent, ...otherProps } = props;
 
   const theme = useTheme();
+  const backgroundColor = transparent ? "transparent" : theme.colors.background;
 
   return (
-    <RNView
-      style={[{ backgroundColor: theme.colors.background }, style]}
-      {...otherProps}
-    >
+    <RNView style={[{ backgroundColor }, style]} {...otherProps}>
       {children}
     </RNView>
   );
@@ -19,4 +17,5 @@ export const View = (props) => {
 
 View.defaultProps = {
   style: {},
+  transparent: false,
 };

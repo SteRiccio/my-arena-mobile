@@ -19,7 +19,7 @@ const arrowUpOrange = require("../../../../../../assets/arrow_up_orange.png");
 const arrowUpRed = require("../../../../../../assets/arrow_up_red.png");
 const circleGreen = require("../../../../../../assets/circle_green.png");
 
-const arrowToTargetVisibleDistanceThreshold = 10;
+const arrowToTargetVisibleDistanceThreshold = 30;
 
 const { height, width } = Dimensions.get("window");
 
@@ -28,8 +28,23 @@ const arrowToTargetHeight = compassImageSize * 0.7;
 const targetLocationBoxWidth = compassImageSize * 0.7;
 const targetLocationMarkerHeight = height / 26;
 
-const radsToDegrees = (rads) =>
-  (rads >= 0 ? rads : rads + 2 * Math.PI) * (180 / Math.PI);
+const getArrowImageByAngle = (angle) => {
+  if (angle <= 20 || 360 - angle <= 20) return arrowUpGreen;
+  if (angle <= 45 || 360 - angle <= 45) return arrowUpOrange;
+  return arrowUpRed;
+};
+
+const radsToDegrees = (rads) => {
+  let degrees = rads * (180 / Math.PI);
+  degrees = -(degrees + 90);
+  while (degrees < 0) degrees += 360;
+  return degrees;
+};
+
+const calculateAngleBetweenPoints = (point1, point2) => {
+  const angleRads = Math.atan2(point1.y - point2.y, point1.x - point2.x);
+  return radsToDegrees(angleRads);
+};
 
 const formatNumber = (num, decimals = 2) =>
   Objects.isEmpty(num) ? "-" : num.toFixed(decimals);
@@ -66,8 +81,8 @@ export const LocationNavigator = (props) => {
   const { heading, magnetometerAvailable } = useMagnetometerHeading();
 
   const { currentLocation, angleToTarget, accuracy, distance } = state;
-  const currentLocationX = currentLocation?.coords?.longitude;
-  const currentLocationY = currentLocation?.coords?.latitude;
+  const { longitude: currentLocationX, latitude: currentLocationY } =
+    currentLocation?.coords || {};
 
   const arrowToTargetVisible =
     distance >= arrowToTargetVisibleDistanceThreshold;
@@ -87,12 +102,7 @@ export const LocationNavigator = (props) => {
   let angleToTargetDifference = angleToTarget - heading;
   if (angleToTargetDifference < 0) angleToTargetDifference += 360;
 
-  const arrowToTargetSource =
-    angleToTargetDifference > 45
-      ? arrowUpRed
-      : angleToTargetDifference > 20
-      ? arrowUpOrange
-      : arrowUpGreen;
+  const arrowToTargetSource = getArrowImageByAngle(angleToTargetDifference);
 
   const updateState = (params) => {
     setState((statePrev) => ({ ...statePrev, ...params }));
@@ -111,9 +121,11 @@ export const LocationNavigator = (props) => {
         (location) => {
           const { coords } = location;
           const { latitude: y, longitude: x, accuracy: accuracyNew } = coords;
-          const angleRads = Math.atan2(y - targetPoint.y, x - targetPoint.x);
-          const angleToTargetNew = radsToDegrees(angleRads);
           const currentLocationPoint = PointFactory.createInstance({ x, y });
+          const angleToTargetNew = calculateAngleBetweenPoints(
+            currentLocationPoint,
+            targetPoint
+          );
           const distanceNew = Points.distance(
             currentLocationPoint,
             targetPoint,

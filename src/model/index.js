@@ -5,3 +5,5 @@ export { JobMobile } from "./JobMobile";
 export { RecordEditViewMode } from "./RecordEditViewMode";
 
 export { RecordPageNavigator } from "./RecordPageNavigator";
+
+export { RecordSyncStatus } from "./RecordSyncStatus";

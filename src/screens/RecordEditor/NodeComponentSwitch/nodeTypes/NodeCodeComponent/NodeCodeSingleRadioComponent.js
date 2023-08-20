@@ -13,8 +13,9 @@ export const NodeCodeSingleRadioComponent = (props) => {
         {items.map((item) => (
           <RadioButton.Item
             key={item.uuid}
-            label={itemLabelFunction(item)}
             disabled={!editable}
+            label={itemLabelFunction(item)}
+            style={styles.item}
             value={item.uuid}
           />
         ))}

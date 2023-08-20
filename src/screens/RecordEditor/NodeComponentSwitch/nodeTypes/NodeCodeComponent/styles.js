@@ -1,5 +1,12 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  container: { flexWrap: "wrap" },
+  container: {
+    marginLeft: 10,
+    flexWrap: "wrap",
+  },
+  item: {
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+  },
 });
