@@ -1,13 +1,17 @@
 import { AuthService, SettingsService } from "service";
 import { i18n } from "localization";
 
-import { MessageActions } from "../message/actions";
-import { SettingsActions } from "../settings/actions";
+import { ConfirmActions } from "../confirm";
+import { MessageActions } from "../message";
+import { SettingsActions } from "../settings";
 
-const LOGGED_IN = "LOGGED_IN";
 const LOGGED_OUT = "LOGGED_OUT";
+const USER_SET = "USER_SET";
 
-const checkLoggedIn = () => {};
+const checkLoggedIn = () => async (dispatch) => {
+  const user = await AuthService.fetchUser();
+  dispatch({ type: RemoteConnectionActions.USER_SET, user });
+};
 
 const login =
   ({ serverUrl, email, password }) =>
@@ -26,7 +30,7 @@ const login =
       dispatch(
         MessageActions.setMessage({ content: "authService:loginSuccessful" })
       );
-      dispatch({ type: LOGGED_IN, user });
+      dispatch({ type: USER_SET, user });
     } else if (error) {
       const details = i18n.t(error);
       dispatch(
@@ -38,7 +42,26 @@ const login =
     }
   };
 
+const _doLogout = async (dispatch) => {
+  await AuthService.logout();
+  dispatch({ type: RemoteConnectionActions.USER_SET, user: null });
+};
+
+const logout = () => (dispatch) => {
+  dispatch(
+    ConfirmActions.show({
+      confirmButtonTextKey: "authService:logout",
+      messageKey: "authService:logoutConfirmMessage",
+      titleKey: "authService:Logout",
+      onConfirm: () => dispatch(_doLogout),
+    })
+  );
+};
+
 export const RemoteConnectionActions = {
+  LOGGED_OUT,
+  USER_SET,
   checkLoggedIn,
   login,
+  logout,
 };

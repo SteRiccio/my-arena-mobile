@@ -3,19 +3,22 @@ import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
 import { useAssets } from "expo-asset";
 
+import { DateFormats, Dates } from "@openforis/arena-core";
+
 import { Button, FieldSet, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveySelectors } from "state/survey";
 import { useAppInfo } from "hooks/useAppInfo";
+import { LoginInfo } from "appComponents/LoginInfo";
 
 import styles from "./styles";
-import { DateFormats, Dates } from "@openforis/arena-core";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
   const [logo] = useAssets(require("../../../assets/icon.png"));
 
+  const surveySelected = !!survey;
   const surveyName = survey?.props.name;
   const surveyLabelInDefaultLanguage = survey?.props.labels?.["en"] ?? "";
   const surveyTitle = `${surveyLabelInDefaultLanguage} [${surveyName}]`;
@@ -38,7 +41,10 @@ export const HomeScreen = () => {
         })}
         )
       </Text>
-      {survey && (
+
+      <LoginInfo />
+
+      {surveySelected && (
         <>
           <FieldSet
             heading="surveys:currentSurvey"
@@ -46,16 +52,18 @@ export const HomeScreen = () => {
           >
             <VView>
               <Text textKey={surveyTitle} variant="titleMedium" />
+              <Button
+                textKey="dataEntry:goToDataEntry"
+                onPress={() => navigation.navigate(screenKeys.recordsList)}
+              />
             </VView>
           </FieldSet>
-          <Button
-            textKey="dataEntry:goToDataEntry"
-            onPress={() => navigation.navigate(screenKeys.recordsList)}
-          />
         </>
       )}
       <Button
-        textKey="surveys:manageSurveys"
+        textKey={
+          surveySelected ? "surveys:manageSurveys" : "surveys:selectSurvey"
+        }
         style={{ marginTop: 40 }}
         onPress={() => navigation.navigate(screenKeys.surveysListLocal)}
       />

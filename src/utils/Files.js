@@ -10,6 +10,15 @@ const MIME_TYPES = {
 
 const getInfo = async (fileUri) => FileSystem.getInfoAsync(fileUri);
 
+const getSize = async (fileUri, ignoreErrors = true) => {
+  try {
+    return (await getInfo(fileUri)).size;
+  } catch (error) {
+    if (ignoreErrors) return -1;
+    throw error;
+  }
+};
+
 const moveFileToDownloadFolder = async (fileUri) => {
   const permissionsResponse = await MediaLibrary.requestPermissionsAsync(true);
   if (!permissionsResponse.granted) {
@@ -62,6 +71,7 @@ const toHumanReadableFileSize = (
 export const Files = {
   MIME_TYPES,
   getInfo,
+  getSize,
   isSharingAvailable,
   shareFile,
   moveFileToDownloadFolder,

@@ -5,4 +5,6 @@ export default {
     invalidCredentials: "Invalid Email or Password",
   },
   loginSuccessful: "Login successful!",
+  logout: "Logout",
+  logoutConfirmMessage: "Are you sure you want to logout?",
 };

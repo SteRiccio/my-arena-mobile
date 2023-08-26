@@ -5,9 +5,8 @@ import * as Location from "expo-location";
 
 import { Objects, PointFactory, Points } from "@openforis/arena-core";
 
-import { useTranslation } from "localization";
 import { useMagnetometerHeading } from "hooks";
-import { Button, HView, Text, View, VView } from "components";
+import { Button, FormItem, HView, Text, View, VView } from "components";
 import { SurveySelectors } from "state/survey";
 
 import styles from "./locationNavigatorStyles";
@@ -48,17 +47,6 @@ const calculateAngleBetweenPoints = (point1, point2) => {
 
 const formatNumber = (num, decimals = 2) =>
   Objects.isEmpty(num) ? "-" : num.toFixed(decimals);
-
-const FormItem = ({ labelKey, children }) => {
-  const { t } = useTranslation();
-  const label = `${t(labelKey)}:`;
-  return (
-    <HView style={{ alignItems: "baseline" }}>
-      <Text variant="labelLarge">{label}</Text>
-      <Text variant="bodyLarge">{children}</Text>
-    </HView>
-  );
-};
 
 export const LocationNavigator = (props) => {
   const { targetPoint, onDismiss, onUseCurrentLocation } = props;

@@ -4,10 +4,25 @@ import { useDispatch } from "react-redux";
 import { DowngradeError, initialize as initializeDb } from "db";
 import { Text, View } from "components";
 import { SettingsService, SurveyService } from "service";
-import { DeviceInfoActions, SettingsActions, SurveyActions } from "state";
+import {
+  DeviceInfoActions,
+  RemoteConnectionActions,
+  SettingsActions,
+  SurveyActions,
+} from "state";
 import { SystemUtils } from "utils";
 
 import styles from "./styles";
+
+// Crypto (for internal UUIDs generation)
+import * as Crypto from "expo-crypto";
+if (!global.crypto) {
+  global.crypto = Crypto;
+}
+
+// Axios
+import axios from "axios";
+axios.defaults.timeout = 30000;
 
 export const AppInitializer = (props) => {
   const { children } = props;
@@ -42,6 +57,8 @@ export const AppInitializer = (props) => {
       }
 
       await dispatch(SurveyActions.fetchAndSetLocalSurveys());
+
+      dispatch(RemoteConnectionActions.checkLoggedIn());
 
       console.log("App initialized");
     };
