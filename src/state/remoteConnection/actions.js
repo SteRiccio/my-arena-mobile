@@ -9,8 +9,24 @@ const LOGGED_OUT = "LOGGED_OUT";
 const USER_SET = "USER_SET";
 
 const checkLoggedIn = () => async (dispatch) => {
-  const user = await AuthService.fetchUser();
-  dispatch({ type: RemoteConnectionActions.USER_SET, user });
+  const settings = await SettingsService.fetchSettings();
+  const { serverUrl, email, password } = settings;
+  if (!serverUrl || !email || !password) return;
+
+  try {
+    const user = await AuthService.fetchUser();
+    dispatch({ type: RemoteConnectionActions.USER_SET, user });
+  } catch (error) {
+    // session expired
+    const { user } = await AuthService.login({
+      serverUrl,
+      email,
+      password,
+    });
+    if (user) {
+      dispatch({ type: USER_SET, user });
+    }
+  }
 };
 
 const login =

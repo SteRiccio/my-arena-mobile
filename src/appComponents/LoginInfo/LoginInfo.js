@@ -1,17 +1,23 @@
 import { useDispatch } from "react-redux";
 
-import { Button, FieldSet, FormItem, VView } from "components";
+import { Button, FieldSet, FormItem, Text, VView } from "components";
+import { useIsNetworkConnected } from "hooks";
 import {
   RemoteConnectionActions,
   RemoteConnectionSelectors,
-} from "state/remoteConnection";
+  SettingsSelectors,
+} from "state";
 import { ConnectionToRemoteServerButton } from "../ConnectionToRemoteServerButton";
 
 import styles from "./styles";
 
 export const LoginInfo = () => {
   const dispatch = useDispatch();
+
+  const networkAvailable = useIsNetworkConnected();
   const user = RemoteConnectionSelectors.useLoggedInUser();
+  const settings = SettingsSelectors.useSettings();
+  const { email } = settings;
 
   if (user) {
     return (
@@ -31,6 +37,12 @@ export const LoginInfo = () => {
   return (
     <FieldSet heading="loginInfo:notLoggedIn">
       <VView>
+        {email && !networkAvailable && (
+          <Text
+            numberOfLines={3}
+            textKey="loginInfo:cannotVerifyLoginInformation"
+          />
+        )}
         <ConnectionToRemoteServerButton />
       </VView>
     </FieldSet>
