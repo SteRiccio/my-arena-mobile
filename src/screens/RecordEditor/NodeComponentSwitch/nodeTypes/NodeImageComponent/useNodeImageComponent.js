@@ -31,7 +31,7 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const surveyId = survey.id;
 
-  const maxSize = (nodeDef.props.maxSize ?? 10) * Math.pow(1024, 2); // max size is in MB
+  const maxSize = (nodeDef.props.maxSize ?? 10) * Math.pow(1024, 2); // nodeDef maxSize is in MB
 
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,

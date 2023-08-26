@@ -10,22 +10,34 @@ const _resizeToFitMaxSize = async ({
   size: sourceSize,
   maxSize,
   maxTryings = 5,
+  minSuccessfullSizeRatio = 1, // = max size
+  maxSuccessfullSizeRatio = 1.05, // = max size - 5%
 }) => {
   let tryings = 1;
   let uri, width, height;
 
   let size = sourceSize;
-  let sizeRatio = maxSize / size;
 
   const generateSuccessfulResult = () => ({ uri, size, height, width });
 
-  const stack = [sizeRatio];
+  let sizeRatio = maxSize / size;
+
+  if (
+    sizeRatio >= minSuccessfullSizeRatio &&
+    sizeRatio <= maxSuccessfullSizeRatio
+  ) {
+    return generateSuccessfulResult();
+  }
+
+  let scale = 1;
+  const calculateNextScale = () => scale * sizeRatio; // scale * size ratio
+
+  const stack = [calculateNextScale()];
 
   while (stack.length > 0) {
-    let scale = stack.pop();
+    scale = stack.pop();
 
-    let currentMaxWidth = Math.floor(sourceWidth * scale);
-    // let currentMaxHeight = Math.floor(sourceHeight * currentScale);
+    const currentMaxWidth = Math.floor(sourceWidth * scale);
 
     try {
       const {
@@ -44,13 +56,15 @@ const _resizeToFitMaxSize = async ({
       size = await Files.getSize(resizedImageUri);
       sizeRatio = maxSize / size;
 
-      if (size === maxSize) {
-        // quite rare...
+      if (
+        sizeRatio >= minSuccessfullSizeRatio &&
+        sizeRatio <= maxSuccessfullSizeRatio
+      ) {
         return generateSuccessfulResult();
       }
-      if (size > maxSize) {
+      if (sizeRatio < 1) {
         // always try to resize to fit max size
-        stack.push(scale * sizeRatio); // scale * size ratio
+        stack.push(calculateNextScale());
       } else if (tryings < maxTryings) {
         stack.push(scale * 1.25); // scale + 25%
       } else {
