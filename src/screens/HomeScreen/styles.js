@@ -4,12 +4,16 @@ export default StyleSheet.create({
   appTitle: {
     margin: 20,
   },
+  appVersionName: {
+    marginBottom: 20,
+  },
+
   container: {
     flex: 1,
     alignItems: "center",
     padding: 10,
   },
-  logo: { width: 200, height: 200 },
+  logo: { width: 50, height: 50 },
   currentSurveyFieldset: {
     width: "90%",
   },

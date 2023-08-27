@@ -8,6 +8,7 @@ export { Divider } from "./Divider";
 export { Dropdown } from "./Dropdown";
 export { Fade } from "./Fade";
 export { FieldSet } from "./FieldSet";
+export { FormItem } from "./FormItem";
 export { HView } from "./HView";
 export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";

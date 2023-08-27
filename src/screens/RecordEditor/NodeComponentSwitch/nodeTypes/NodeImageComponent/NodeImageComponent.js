@@ -1,6 +1,6 @@
 import { Image } from "react-native";
 
-import { Button, HView, IconButton, VView, View } from "components";
+import { Button, HView, IconButton, Loader, VView, View } from "components";
 import { useNodeImageComponent } from "./useNodeImageComponent";
 
 import styles from "./styles";
@@ -17,12 +17,14 @@ export const NodeImageComponent = (props) => {
     onOpenCameraPress,
     onPictureChoosePress,
     pickedImageUri,
+    resizing,
   } = useNodeImageComponent({ nodeDef, nodeUuid });
 
   return (
     <HView style={styles.container}>
       <View style={styles.imageContainer}>
-        {pickedImageUri && (
+        {resizing && <Loader />}
+        {!resizing && pickedImageUri && (
           <Image source={{ uri: pickedImageUri }} style={styles.image} />
         )}
       </View>

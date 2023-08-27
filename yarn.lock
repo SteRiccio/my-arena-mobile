@@ -1163,11 +1163,6 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     to-fast-properties "^2.0.0"
 
-"@bam.tech/react-native-image-resizer@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@bam.tech/react-native-image-resizer/-/react-native-image-resizer-3.0.5.tgz#6661ba020de156268f73bdc92fbb93ef86f88a13"
-  integrity sha512-u5QGUQGGVZiVCJ786k9/kd7pPRZ6eYfJCYO18myVCH8FbVI7J8b5GT2Svjj2x808DlWeqfaZOOzxPqo27XYvrQ==
-
 "@callstack/react-theme-provider@^3.0.8":
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-3.0.8.tgz#d0d7ac71e422133c5f7b78f4c4aa1bc57f156f50"
@@ -1175,11 +1170,6 @@
   dependencies:
     deepmerge "^3.2.0"
     hoist-non-react-statics "^3.3.0"
-
-"@esri/proj-codes@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@esri/proj-codes/-/proj-codes-3.1.0.tgz#c9602ad72a3ba2c0435f8fa547c0d2f00fbb5c4f"
-  integrity sha512-XySw4hYBq5It+zlXlESl3/Hr0xFGkbwaif5o8SJTiGfcWapU4LRh6JLey9Sg2BZGqS8IxpJENMEUl9J87t7adA==
 
 "@expo/bunyan@4.0.0", "@expo/bunyan@^4.0.0":
   version "4.0.0"
@@ -1738,15 +1728,14 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@openforis/arena-core@^0.0.158":
-  version "0.0.158"
-  resolved "https://npm.pkg.github.com/download/@openforis/arena-core/0.0.158/f62fe84a2fe1bb447fa63ad7c36887c0e830bf7c#f62fe84a2fe1bb447fa63ad7c36887c0e830bf7c"
-  integrity sha512-G/E8BGSljX/i67N8v+kbRlbw1In7CYnN4G0RCxp2L6++X42PhIV+VX0HvZk65n0/hFLYbdh1PJoSopXx0SfrZA==
+"@openforis/arena-core@^0.0.162":
+  version "0.0.162"
+  resolved "https://npm.pkg.github.com/download/@openforis/arena-core/0.0.162/163c55f3869146c349925afe253429a8fe46441f#163c55f3869146c349925afe253429a8fe46441f"
+  integrity sha512-4aZ5aVBmI2vyIF4eAFOfpbiqRxROZ3WoXIRw1LreRShgRWxNsoQtgNS5XcCHO+WAqOZ8ed0l3z7b+ea/ZX5KMA==
   dependencies:
-    "@esri/proj-codes" "^3.1.0"
     "@jsep-plugin/regex" "^1.0.3"
     bignumber.js "^9.1.1"
-    date-fns "^2.29.3"
+    date-fns "^2.30.0"
     jsep "^1.3.8"
     lodash.differencewith "^4.5.0"
     lodash.frompairs "^4.0.1"
@@ -3801,7 +3790,7 @@ dag-map@~1.0.0:
   resolved "https://registry.yarnpkg.com/dag-map/-/dag-map-1.0.2.tgz#e8379f041000ed561fc515475c1ed2c85eece8d7"
   integrity sha512-+LSAiGFwQ9dRnRdOeaj7g47ZFJcOUPukAP8J3A3fuZ1g9Y44BG+P1sgApjLXTQPOzC4+7S9Wr8kXsfpINM4jpw==
 
-date-fns@^2.29.3:
+date-fns@^2.30.0:
   version "2.30.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.30.0.tgz#f367e644839ff57894ec6ac480de40cae4b0f4d0"
   integrity sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==
@@ -4353,6 +4342,13 @@ expo-image-loader@~4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/expo-image-loader/-/expo-image-loader-4.1.1.tgz#efadbb17de1861106864820194900f336dd641b6"
   integrity sha512-ciEHVokU0f6w0eTxdRxLCio6tskMsjxWIoV92+/ZD37qePUJYMfEphPhu1sruyvMBNR8/j5iyOvPFVGTfO8oxA==
+
+expo-image-manipulator@~11.1.1:
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/expo-image-manipulator/-/expo-image-manipulator-11.1.1.tgz#bb54df80e98abc9798876e3f70596a5b880168c9"
+  integrity sha512-W9LfJK/IL7EhhkkC1JQnEX/1S9B09rcGasJiQjXc2s1bEsrQnqXvXEv7shUW8b/L8rE+ynf+XvvDE+YIDL7oFg==
+  dependencies:
+    expo-image-loader "~4.1.0"
 
 expo-image-picker@~14.1.1:
   version "14.1.1"

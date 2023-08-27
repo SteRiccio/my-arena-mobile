@@ -27,7 +27,21 @@ const login = async ({ serverUrl: serverUrlParam, email, password }) => {
   }
 };
 
+const logout = async () => {
+  const serverUrl = await RemoteService.getServerUrl();
+  try {
+    const res = await API.post(serverUrl, "/auth/logout");
+    return res?.data;
+  } catch (err) {
+    if (!err.response) {
+      return { error: "authService:error.invalidServerUrl" };
+    }
+    return { error: err };
+  }
+};
+
 export const AuthService = {
   fetchUser,
   login,
+  logout,
 };

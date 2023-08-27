@@ -1,56 +1,75 @@
 import { Image } from "react-native";
-import ImageResizer from "@bam.tech/react-native-image-resizer";
+import * as ImageManipulator from "expo-image-manipulator";
 
 import { Files } from "utils";
 
 const _resizeToFitMaxSize = async ({
   fileUri,
-  width,
-  height,
+  width: sourceWidth,
+  // height: sourceHeight,
+  size: sourceSize,
   maxSize,
-  maxTryings = 5,
+  maxTryings = 10,
+  minSuccessfullSizeRatio = 1, // = max size
+  maxSuccessfullSizeRatio = 1.05, // = max size - 5%
 }) => {
   let tryings = 1;
-  let currentDestUri, currentSize;
+  let uri, width, height;
 
-  const stack = [0.5];
+  let size = sourceSize;
+
+  const generateSuccessfulResult = () => ({ uri, size, height, width });
+
+  let sizeRatio = maxSize / size;
+
+  if (
+    sizeRatio >= minSuccessfullSizeRatio &&
+    sizeRatio <= maxSuccessfullSizeRatio
+  ) {
+    return generateSuccessfulResult();
+  }
+
+  let scale = 1;
+  const calculateNextScale = () => scale * sizeRatio; // scale * size ratio
+
+  const stack = [calculateNextScale()];
 
   while (stack.length > 0) {
-    let currentScale = stack.pop();
+    scale = stack.pop();
 
-    let currentMaxWidth = Math.floor(width * currentScale);
-    let currentMaxHeight = Math.floor(height * currentScale);
+    const currentMaxWidth = Math.floor(sourceWidth * scale);
 
     try {
       const {
-        uri: destUri,
-        path,
-        name,
-        size,
-      } = await ImageResizer.createResizedImage(
-        fileUri, // path to the file to resize
-        currentMaxWidth,
-        currentMaxHeight,
-        "JPEG", // compressFormat
-        90, // quality
-        null, // rotation
-        null, // output path
-        true,
-        { onlyScaleDown: true }
+        uri: resizedImageUri,
+        height: resizedImageHeight,
+        width: resizedImageWidth,
+      } = await ImageManipulator.manipulateAsync(
+        fileUri,
+        [{ resize: { width: currentMaxWidth } }],
+        { compress: 0.9 }
       );
-      currentDestUri = destUri;
-      currentSize = size;
 
-      if (size === maxSize) {
-        // quite rare...
-        return { uri: currentDestUri, size: currentSize };
+      uri = resizedImageUri;
+      height = resizedImageHeight;
+      width = resizedImageWidth;
+      size = await Files.getSize(resizedImageUri);
+      sizeRatio = maxSize / size;
+
+      if (
+        sizeRatio >= minSuccessfullSizeRatio &&
+        sizeRatio <= maxSuccessfullSizeRatio
+      ) {
+        return generateSuccessfulResult();
       }
-      if (size > maxSize) {
+      if (
+        tryings < maxTryings ||
         // always try to resize to fit max size
-        stack.push(currentScale * 0.5);
-      } else if (tryings < maxTryings) {
+        sizeRatio < 1
+      ) {
+        stack.push(calculateNextScale());
+      } else {
         // stop if max tryings reached and current size is less than maxSize
-        stack.push(currentScale * 1.5);
       }
     } catch (error) {
       // Oops, something went wrong. Check that the filename is correct and
@@ -59,17 +78,18 @@ const _resizeToFitMaxSize = async ({
     }
     tryings = tryings + 1;
   }
-  return { uri: currentDestUri, size: currentSize };
+  return generateSuccessfulResult();
 };
 
 const resizeToFitMaxSize = async ({ fileUri, maxSize }) => {
   const info = await Files.getInfo(fileUri);
-  if (info.size <= maxSize) return null;
+  const { size } = info;
+  if (size <= maxSize) return null;
 
   return new Promise((resolve) => {
     Image.getSize(fileUri, (width, height) => {
-      _resizeToFitMaxSize({ fileUri, width, height, maxSize }).then((result) =>
-        resolve(result)
+      _resizeToFitMaxSize({ fileUri, width, height, size, maxSize }).then(
+        (result) => resolve(result)
       );
     });
   });

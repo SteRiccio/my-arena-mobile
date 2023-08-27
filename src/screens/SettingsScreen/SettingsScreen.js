@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 
 import { Objects } from "@openforis/arena-core";
 
+import { ConnectionToRemoteServerButton } from "appComponents/ConnectionToRemoteServerButton";
 import {
-  Button,
   Divider,
   HView,
   ScrollView,
@@ -17,7 +16,6 @@ import {
   VView,
 } from "components";
 import { SettingsActions, SettingsSelectors } from "state";
-import { screenKeys } from "../screenKeys";
 import { SettingsModel } from "./SettingsModel";
 
 import styles from "./styles";
@@ -100,7 +98,6 @@ const SettingsItem = (props) => {
 
 export const SettingsScreen = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
   const settingsStored = SettingsSelectors.useSettings();
 
@@ -131,12 +128,7 @@ export const SettingsScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <VView>
-        <Button
-          textKey="settings:connectionToRemoteServer"
-          onPress={() => {
-            navigation.navigate(screenKeys.settingsRemoteConnection);
-          }}
-        />
+        <ConnectionToRemoteServerButton />
         {settingsPropertiesEntries.map(([key, prop], index) => (
           <VView key={key} style={styles.settingsItemWrapper}>
             <SettingsItem

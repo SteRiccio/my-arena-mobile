@@ -4,7 +4,7 @@ import { RemoteConnectionActions } from "./actions";
 const initialState = {};
 
 const actionHandlers = {
-  [RemoteConnectionActions.LOGGED_IN]: ({ state, action }) => ({
+  [RemoteConnectionActions.USER_SET]: ({ state, action }) => ({
     ...state,
     user: action.user,
   }),

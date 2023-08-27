@@ -35,7 +35,7 @@ const confirm =
   (dispatch, getState) => {
     const state = getState();
     const { onConfirm } = state.confirm;
-    onConfirm({ selectedSingleChoiceValue });
+    onConfirm?.({ selectedSingleChoiceValue });
     dispatch({ type: CONFIRM_HIDE });
   };
 

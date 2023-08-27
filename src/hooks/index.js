@@ -1,5 +1,6 @@
 export { useAppInfo as useDeviceInfo } from "./useAppInfo";
 export { useEffectiveTheme } from "./useEffectiveTheme";
+export { useIsNetworkConnected } from "./useIsNetworkConnected";
 export { useKeyboardIsVisible } from "./useKeyboardIsVisible";
 export { useMagnetometerHeading } from "./useMagnetometerHeading";
 export { useNavigationFocus } from "./useNavigationFocus";

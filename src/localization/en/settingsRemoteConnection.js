@@ -1,5 +1,6 @@
 export default {
   email: "Email",
+  login: "Login",
   password: "Password",
   serverUrl: "Server URL",
   serverUrlNotValid: "Server URL not valid",
@@ -8,6 +9,5 @@ export default {
     custom: "Custom",
   },
   testUrl: "Test URL",
-  login: "Login",
   title: "Connection to remote server",
 };
