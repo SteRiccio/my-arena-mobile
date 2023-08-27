@@ -9,7 +9,7 @@ const _resizeToFitMaxSize = async ({
   // height: sourceHeight,
   size: sourceSize,
   maxSize,
-  maxTryings = 5,
+  maxTryings = 10,
   minSuccessfullSizeRatio = 1, // = max size
   maxSuccessfullSizeRatio = 1.05, // = max size - 5%
 }) => {
@@ -62,11 +62,12 @@ const _resizeToFitMaxSize = async ({
       ) {
         return generateSuccessfulResult();
       }
-      if (sizeRatio < 1) {
+      if (
+        tryings < maxTryings ||
         // always try to resize to fit max size
+        sizeRatio < 1
+      ) {
         stack.push(calculateNextScale());
-      } else if (tryings < maxTryings) {
-        stack.push(scale * 1.25); // scale + 25%
       } else {
         // stop if max tryings reached and current size is less than maxSize
       }

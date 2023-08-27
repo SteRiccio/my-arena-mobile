@@ -40,6 +40,7 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
   const { fileUuid } = value || {};
 
   const [pickedImageUri, setPickedImageUri] = useState(null);
+  const [resizing, setResizing] = useState(false);
 
   useEffect(() => {
     const fileUri = fileUuid
@@ -58,7 +59,6 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
       if (!asset) return;
 
       const sourceFileUri = asset.uri;
-      setPickedImageUri(sourceFileUri);
 
       const fileName = sourceFileUri.substring(
         sourceFileUri.lastIndexOf("/") + 1
@@ -69,6 +69,7 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
 
       if (sourceFileSize > maxSize) {
         // resize image
+        setResizing(true);
         const {
           error,
           uri: resizedFileUri,
@@ -86,7 +87,9 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
             size: Files.toHumanReadableFileSize(resizedFileSize),
           });
         }
+        setResizing(false);
       }
+      setPickedImageUri(fileUri);
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
       await updateNodeValue(valueUpdated, fileUri);
     },
@@ -153,5 +156,6 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
     onOpenCameraPress,
     onPictureChoosePress,
     pickedImageUri,
+    resizing,
   };
 };
