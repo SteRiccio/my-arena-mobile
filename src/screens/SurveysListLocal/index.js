@@ -1,1 +1,1 @@
-export { SurveysListLocal } from "./SurveysListLocal";
+export { SurveysListLocal as default } from "./SurveysListLocal";

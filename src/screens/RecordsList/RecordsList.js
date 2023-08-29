@@ -153,18 +153,21 @@ export const RecordsList = () => {
       return acc;
     }, {});
 
+    const formatDateToDateTimeDisplay = (date) =>
+      typeof date === "string"
+        ? Dates.convertDate({
+            dateStr: date,
+            formatFrom: DateFormats.datetimeISO,
+            formatTo: DateFormats.datetimeDisplay,
+          })
+        : Dates.format(date, DateFormats.datetimeDisplay);
+
     return {
       ...record,
       key: record.uuid,
       ...valuesByKey,
-      dateCreated: Dates.format(
-        record.dateCreated,
-        DateFormats.datetimeDisplay
-      ),
-      dateModified: Dates.format(
-        record.dateModified,
-        DateFormats.datetimeDisplay
-      ),
+      dateCreated: formatDateToDateTimeDisplay(record.dateCreated),
+      dateModified: formatDateToDateTimeDisplay(record.dateModified),
     };
   };
 

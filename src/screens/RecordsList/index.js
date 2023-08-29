@@ -1,1 +1,1 @@
-export { RecordsList } from "./RecordsList";
+export { RecordsList as default } from "./RecordsList";
