@@ -24,6 +24,13 @@ const properties = {
     type: propertyType.boolean,
     labelKey: "settings:animationsEnabled",
   },
+  fontScale: {
+    type: propertyType.slider,
+    labelKey: "settings:fontScale",
+    minValue: 0.7,
+    maxValue: 1.6,
+    step: 0.3,
+  },
   locationAccuracyThreshold: {
     type: propertyType.numeric,
     labelKey: "settings:locationAccuracyThreshold",

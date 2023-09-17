@@ -3,7 +3,7 @@
     "name": "My Arena Mobile",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "0.9.25",
+    "version": "0.9.26",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,7 +22,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 25
+      "versionCode": 26
     },
     "ios": {
       "supportsTablet": true
@@ -34,7 +34,6 @@
       "eas": {
         "projectId": "012cdbda-2ceb-4767-923c-f7be51666f1d"
       }
-    },
-    "jsEngine": "jsc"
+    }
   }
 }
