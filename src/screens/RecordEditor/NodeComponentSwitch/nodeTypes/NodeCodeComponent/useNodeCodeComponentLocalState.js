@@ -12,7 +12,7 @@ import {
 import { SurveyService } from "service/surveyService";
 
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
-import { useItemsFilter } from "./useItemsFilter";
+import { useItemsFilter } from "../useItemsFilter";
 
 export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const dispatch = useDispatch();
