@@ -1,10 +1,15 @@
 import { useCallback, useMemo } from "react";
 
-import { NodeDefs, NodeValues } from "@openforis/arena-core";
+import { NodeDefs, NodeValues, Objects } from "@openforis/arena-core";
 
-import { Autocomplete, HView, Text, VView, View } from "components";
-import { SurveySelectors } from "state";
-import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
+import { Autocomplete, Text, VView, View } from "components";
+import { DataEntrySelectors, SurveySelectors } from "state";
+import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
+import { useItemsFilter } from "../useItemsFilter";
+import { useTaxa } from "./useTaxa";
+
+const unlistedCode = "UNL";
+const unknownCode = "UNK";
 
 const SelectedTaxon = (props) => {
   const { taxon } = props;
@@ -94,35 +99,23 @@ export const NodeTaxonComponent = (props) => {
 
   const taxonomyUuid = NodeDefs.getTaxonomyUuid(nodeDef);
 
-  const taxa = useMemo(() => {
-    const allTaxa = Object.values(survey.refData?.taxonIndex || {});
-    return allTaxa.reduce((acc, taxon) => {
-      if (taxon.taxonomyUuid !== taxonomyUuid) {
-        return acc;
-      }
-      acc.push(taxon);
-      const vernacularNamesByLang = taxon.vernacularNames;
-      const vernacularNamesArray = Object.values(vernacularNamesByLang);
-      if (vernacularNamesArray.length > 0) {
-        vernacularNamesArray.forEach((vernacularNameObjects) => {
-          vernacularNameObjects.forEach((vernacularNameObj) => {
-            const { name: vernacularName, lang: vernacularNameLangCode } =
-              vernacularNameObj.props;
-            acc.push({
-              ...taxon,
-              vernacularName,
-              vernacularNameLangCode,
-              vernacularNameUuid: vernacularNameObj.uuid,
-            });
-          });
-        });
-      }
-      return acc;
-    }, []);
-  }, [survey, taxonomyUuid]);
+  const _taxa = useTaxa({ survey, taxonomyUuid });
+  let taxa = _taxa;
+  if (!Objects.isEmpty(nodeDef.propsAdvanced?.itemsFilter)) {
+    const record = DataEntrySelectors.useRecord();
+    taxa = useItemsFilter({
+      survey,
+      nodeDef,
+      record,
+      parentNode,
+      items: _taxa,
+      alwaysIncludeItemFunction: (item) =>
+        [unlistedCode, unknownCode].includes(item.props.code),
+    });
+  }
 
-  const unlistedTaxon = taxa.find((taxon) => taxon.props.code === "UNL");
-  const unknownTaxon = taxa.find((taxon) => taxon.props.code === "UNK");
+  const unlistedTaxon = taxa.find((taxon) => taxon.props.code === unlistedCode);
+  const unknownTaxon = taxa.find((taxon) => taxon.props.code === unknownCode);
 
   const itemLabelExtractor = useCallback((taxon) => {
     const { code, scientificName } = taxon.props;

@@ -1,1 +1,1 @@
-export { RecordEditor } from "./RecordEditor";
+export { RecordEditor as default } from "./RecordEditor";

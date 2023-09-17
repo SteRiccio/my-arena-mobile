@@ -1,12 +1,23 @@
-import {
-  HomeScreen,
-  SettingsRemoteConnectionScreen,
-  RecordEditor,
-  RecordsList,
-  SettingsScreen,
-  SurveysListLocal,
-  SurveysListRemote,
-} from "screens";
+// import { lazy } from "react";
+
+import HomeScreen from "./HomeScreen";
+
+import RecordEditor from "./RecordEditor";
+import RecordsList from "./RecordsList";
+import SettingsScreen from "./SettingsScreen";
+import SettingsRemoteConnectionScreen from "./SettingsRemoteConnectionScreen";
+import SurveysListLocal from "./SurveysListLocal";
+import SurveysListRemote from "./SurveysListRemote";
+
+// const RecordEditor = lazy(() => import("./RecordEditor"));
+// const RecordsList = lazy(() => import("./RecordsList"));
+// const SettingsScreen = lazy(() => import("./SettingsScreen"));
+// const SettingsRemoteConnectionScreen = lazy(() =>
+//   import("./SettingsRemoteConnectionScreen")
+// );
+// const SurveysListLocal = lazy(() => import("./SurveysListLocal"));
+// const SurveysListRemote = lazy(() => import("./SurveysListRemote"));
+
 import { screenKeys } from "./screenKeys";
 
 const screenDefaults = {

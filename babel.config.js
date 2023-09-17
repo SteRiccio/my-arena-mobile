@@ -4,12 +4,18 @@ module.exports = function (api) {
     presets: ["babel-preset-expo", "module:metro-react-native-babel-preset"],
     plugins: [
       [
-        require.resolve("babel-plugin-module-resolver"),
+        "module-resolver",
         {
           root: ["./src"],
         },
       ],
       "react-native-reanimated/plugin",
+      "transform-remove-strict-mode",
     ],
+    env: {
+      production: {
+        plugins: ["react-native-paper/babel"],
+      },
+    },
   };
 };

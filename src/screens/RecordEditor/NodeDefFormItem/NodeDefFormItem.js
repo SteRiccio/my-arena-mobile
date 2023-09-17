@@ -47,7 +47,9 @@ export const NodeDefFormItem = (props) => {
       ]}
     >
       <View style={styles.nodeDefLabelContainer}>
-        <Text style={styles.nodeDefLabel}>{labelOrName}</Text>
+        <Text style={styles.nodeDefLabel} variant="titleLarge">
+          {labelOrName}
+        </Text>
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
       </View>
       {!Objects.isEmpty(description) && (

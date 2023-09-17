@@ -1,1 +1,1 @@
-export { SurveysListRemote } from "./SurveysListRemote";
+export { SurveysListRemote as default } from "./SurveysListRemote";

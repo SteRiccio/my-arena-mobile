@@ -1,1 +1,1 @@
-export { SettingsRemoteConnectionScreen } from "./SettingsRemoteConnectionScreen";
+export { SettingsRemoteConnectionScreen as default } from "./SettingsRemoteConnectionScreen";
