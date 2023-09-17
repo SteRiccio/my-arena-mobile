@@ -1,18 +1,30 @@
 import { useSelector } from "react-redux";
 import { useColorScheme } from "react-native";
+import { MD3DarkTheme, DefaultTheme } from "react-native-paper";
 
 import { Themes, ThemesSettings } from "model";
 import { SettingsSelectors } from "state";
 
+const defaultFontSize = 16;
+
 export const useEffectiveTheme = () => {
   const colorScheme = useColorScheme();
 
-  const themeSetting = useSelector((state) => {
-    const settings = SettingsSelectors.selectSettings(state);
-    return settings.theme;
-  });
+  let { theme: themeSetting = ThemesSettings.auto, fontScale = 1 } =
+    SettingsSelectors.useSettings();
+
   if (themeSetting === ThemesSettings.auto) {
-    return colorScheme === "dark" ? Themes.dark : Themes.light;
+    themeSetting = colorScheme === "dark" ? Themes.dark : Themes.light;
   }
-  return themeSetting;
+  const theme = themeSetting === Themes.dark ? MD3DarkTheme : DefaultTheme;
+  const { fonts } = theme;
+  const fontsResized = Object.entries(fonts).reduce((acc, [fontKey, font]) => {
+    const fontResized = {
+      ...font,
+      fontSize: Math.floor(font.fontSize ?? defaultFontSize * fontScale),
+    };
+    acc[fontKey] = fontResized;
+    return acc;
+  }, {});
+  return { ...theme, fonts: fontsResized };
 };

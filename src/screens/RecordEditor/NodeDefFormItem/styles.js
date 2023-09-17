@@ -11,7 +11,6 @@ export default StyleSheet.create({
   },
   nodeDefLabel: {
     flexGrow: 1,
-    fontSize: 20,
   },
   nodeDefDescriptionViewMoreText: {
     textAlign: "justify",

@@ -10,6 +10,7 @@ const defaultServerUrl = "https://www.openforis-arena.org";
 
 const defaultSettings = {
   animationsEnabled: true,
+  fontScale: 1,
   fullScreen: false,
   locationAccuracyThreshold: 3,
   locationAccuracyWatchTimeout: 120,

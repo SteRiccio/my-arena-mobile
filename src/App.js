@@ -2,12 +2,7 @@ import React from "react";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import {
-  MD3DarkTheme,
-  DefaultTheme,
-  Provider as PaperProvider,
-  ThemeProvider,
-} from "react-native-paper";
+import { Provider as PaperProvider, ThemeProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 
 import { AppConfirmDialog } from "appComponents/AppConfirmDialog";
@@ -16,7 +11,6 @@ import { JobMonitorDialog } from "appComponents/JobMonitorDialog";
 import { AppToast } from "appComponents/AppToast";
 
 import { View } from "components";
-import { Themes } from "model";
 import { AppStack } from "navigation/AppStack";
 import { rootReducer } from "state/reducers";
 import { useEffectiveTheme } from "hooks";
@@ -28,8 +22,7 @@ import styles from "appStyles";
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const AppInnerContainer = () => {
-  const themeSetting = useEffectiveTheme();
-  const theme = themeSetting === Themes.dark ? MD3DarkTheme : DefaultTheme;
+  const theme = useEffectiveTheme();
 
   return (
     <PaperProvider theme={theme}>

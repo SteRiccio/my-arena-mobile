@@ -2,6 +2,7 @@ export default {
   title: "Settings",
   animationsEnabled: "Animations enabled",
   connectionToRemoteServer: "Connection to remote server",
+  fontScale: "Font scale (BETA): {{value}}",
   fullScreen: "Full screen",
   locationAccuracyThreshold: "Location accuracy threshold (meters)",
   locationAccuracyWatchTimeout:
