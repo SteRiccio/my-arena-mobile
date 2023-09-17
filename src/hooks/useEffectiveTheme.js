@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { useColorScheme } from "react-native";
 import { MD3DarkTheme, DefaultTheme } from "react-native-paper";
 

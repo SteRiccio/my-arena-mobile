@@ -31,7 +31,6 @@ export const useItemsFilter = ({
           item,
         });
       } catch (error) {
-        // TODO throw error?
         return false;
       }
     });
