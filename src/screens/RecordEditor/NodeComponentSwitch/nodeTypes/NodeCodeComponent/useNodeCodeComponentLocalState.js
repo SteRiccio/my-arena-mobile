@@ -1,11 +1,18 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 
-import { CategoryItems, NodeDefs, NodeValues } from "@openforis/arena-core";
+import {
+  CategoryItems,
+  NodeDefs,
+  NodeValues,
+  Objects,
+  Records,
+} from "@openforis/arena-core";
 
 import { SurveyService } from "service/surveyService";
 
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
+import { useItemsFilter } from "./useItemsFilter";
 
 export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const dispatch = useDispatch();
@@ -18,17 +25,43 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const survey = SurveySelectors.useCurrentSurvey();
+  const categoryUuid = NodeDefs.getCategoryUuid(nodeDef);
+  const parentCodeDefUuid = nodeDef.props.parentCodeDefUuid;
+  let parentItemUuid = null;
 
-  const items = useMemo(
+  if (parentCodeDefUuid) {
+    const record = DataEntrySelectors.useRecord();
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+    const parentCodeAttribute = Records.getParentCodeAttribute({
+      parentNode,
+      nodeDef,
+    })(record);
+    parentItemUuid = NodeValues.getItemUuid(parentCodeAttribute);
+  }
+
+  const _items = useMemo(
     () =>
       SurveyService.fetchCategoryItems({
         survey,
-        categoryUuid: nodeDef.props.categoryUuid,
-        parentItemUuid: null,
+        categoryUuid,
+        parentItemUuid,
       }),
-    [survey, nodeDef]
+    [survey, nodeDef, parentItemUuid]
   );
 
+  let items = _items;
+
+  if (!Objects.isEmpty(nodeDef.propsAdvanced?.itemsFilter)) {
+    const record = DataEntrySelectors.useRecord();
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+    items = useItemsFilter({
+      survey,
+      nodeDef,
+      record,
+      parentNode,
+      items: _items,
+    });
+  }
   const selectedItems = useMemo(
     () =>
       items.filter((item) =>
