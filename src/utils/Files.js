@@ -8,6 +8,8 @@ const MIME_TYPES = {
   zip: "application/zip ",
 };
 
+const jsonToString = (obj) => JSON.stringify(obj, null, 2);
+
 const getInfo = async (fileUri) => FileSystem.getInfoAsync(fileUri);
 
 const getSize = async (fileUri, ignoreErrors = true) => {
@@ -17,6 +19,11 @@ const getSize = async (fileUri, ignoreErrors = true) => {
     if (ignoreErrors) return -1;
     throw error;
   }
+};
+
+const readJsonFromFile = async ({ fileUri }) => {
+  const content = await FileSystem.readAsStringAsync(fileUri);
+  return JSON.parse(content);
 };
 
 const moveFileToDownloadFolder = async (fileUri) => {
@@ -34,6 +41,12 @@ const moveFileToDownloadFolder = async (fileUri) => {
   }
   return true;
 };
+
+const writeStringToFile = async ({ content, fileUri }) =>
+  FileSystem.writeAsStringAsync(fileUri, content);
+
+const writeJsonToFile = async ({ content, fileUri }) =>
+  writeStringToFile({ content: jsonToString(content), fileUri });
 
 const isSharingAvailable = async () => Sharing.isAvailableAsync();
 
@@ -72,8 +85,11 @@ export const Files = {
   MIME_TYPES,
   getInfo,
   getSize,
+  readJsonFromFile,
   isSharingAvailable,
   shareFile,
   moveFileToDownloadFolder,
+  writeJsonToFile,
+  writeStringToFile,
   toHumanReadableFileSize,
 };
