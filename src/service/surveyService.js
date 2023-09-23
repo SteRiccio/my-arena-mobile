@@ -1,16 +1,32 @@
 import { Surveys } from "@openforis/arena-core";
 
 import { SurveyRepository } from "./repository/surveyRepository";
+import { SurveyFSRepository } from "./repository/surveyFSRepository";
 import { RemoteService } from "./remoteService";
 import demoSurvey from "./simple_survey.json";
 
 const {
   fetchSurveySummaries: fetchSurveySummariesLocal,
-  fetchSurveyById,
   insertSurvey,
   updateSurvey,
-  deleteSurveys,
 } = SurveyRepository;
+
+const _insertSurvey = async (survey) => {
+  const surveyDb = await insertSurvey(survey);
+  return SurveyFSRepository.saveSurveyFile(surveyDb);
+};
+
+const _updateSurvey = async ({ id, survey }) => {
+  const surveyDb = await updateSurvey({ id, survey });
+  return SurveyFSRepository.saveSurveyFile(surveyDb);
+};
+
+const fetchSurveyById = async (surveyId) => {
+  const surveyDb = await SurveyRepository.fetchSurveyById(surveyId);
+  return surveyDb.props
+    ? surveyDb
+    : SurveyFSRepository.readSurveyFile({ surveyId: surveyDb.id });
+};
 
 const fetchCategoryItems = ({
   survey,
@@ -44,18 +60,25 @@ const fetchSurveyRemoteById = async ({ id, cycle = null }) => {
   return survey;
 };
 
-const importDemoSurvey = async () => {
-  await insertSurvey(demoSurvey);
-};
+const importDemoSurvey = async () => _insertSurvey(demoSurvey);
 
 const importSurveyRemote = async ({ id }) => {
   const survey = await fetchSurveyRemoteById({ id });
-  return insertSurvey(survey);
+  return _insertSurvey(survey);
 };
 
 const updateSurveyRemote = async ({ surveyId, surveyRemoteId }) => {
   const survey = await fetchSurveyRemoteById({ id: surveyRemoteId });
-  return updateSurvey({ id: surveyId, survey });
+  return _updateSurvey({ id: surveyId, survey });
+};
+
+const deleteSurveys = async (surveyIds) => {
+  await SurveyRepository.deleteSurveys(surveyIds);
+  await Promise.all(
+    surveyIds.map((surveyId) =>
+      SurveyFSRepository.deleteSurveyFile({ surveyId })
+    )
+  );
 };
 
 export const SurveyService = {
