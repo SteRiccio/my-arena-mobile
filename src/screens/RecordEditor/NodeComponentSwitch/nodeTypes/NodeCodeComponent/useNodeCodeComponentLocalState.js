@@ -7,12 +7,27 @@ import {
   NodeValues,
   Objects,
   Records,
+  Surveys,
 } from "@openforis/arena-core";
 
 import { SurveyService } from "service/surveyService";
 
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { useItemsFilter } from "../useItemsFilter";
+
+const findParentItemUuid = ({ nodeDef, parentNodeUuid }) => {
+  if (!nodeDef.props.parentCodeDefUuid) return null;
+
+  const record = DataEntrySelectors.useRecord();
+  const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+  const parentCodeAttribute = Records.getParentCodeAttribute({
+    parentNode,
+    nodeDef,
+  })(record);
+  return parentCodeAttribute
+    ? NodeValues.getItemUuid(parentCodeAttribute)
+    : null;
+};
 
 export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const dispatch = useDispatch();
@@ -26,28 +41,21 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
 
   const survey = SurveySelectors.useCurrentSurvey();
   const categoryUuid = NodeDefs.getCategoryUuid(nodeDef);
-  const parentCodeDefUuid = nodeDef.props.parentCodeDefUuid;
-  let parentItemUuid = null;
+  const parentItemUuid = findParentItemUuid({ nodeDef, parentNodeUuid });
 
-  if (parentCodeDefUuid) {
-    const record = DataEntrySelectors.useRecord();
-    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
-    const parentCodeAttribute = Records.getParentCodeAttribute({
-      parentNode,
+  const _items = useMemo(() => {
+    const levelIndex = Surveys.getNodeDefCategoryLevelIndex({
+      survey,
       nodeDef,
-    })(record);
-    parentItemUuid = NodeValues.getItemUuid(parentCodeAttribute);
-  }
-
-  const _items = useMemo(
-    () =>
-      SurveyService.fetchCategoryItems({
-        survey,
-        categoryUuid,
-        parentItemUuid,
-      }),
-    [survey, nodeDef, parentItemUuid]
-  );
+    });
+    return levelIndex > 0 && !parentItemUuid
+      ? []
+      : SurveyService.fetchCategoryItems({
+          survey,
+          categoryUuid,
+          parentItemUuid,
+        });
+  }, [survey, nodeDef, parentItemUuid]);
 
   let items = _items;
 

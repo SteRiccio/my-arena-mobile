@@ -1,11 +1,9 @@
 import LZString from "lz-string";
 
 import { DbUtils, dbClient } from "db";
+import { Objects } from "@openforis/arena-core";
 
 const insertSurvey = async (survey) => {
-  const surveyJson = JSON.stringify(survey);
-  const content = LZString.compressToBase64(surveyJson);
-
   const { insertId } = await dbClient.executeSql(
     `INSERT INTO survey (server_url, remote_id, uuid, name, label, content, date_created, date_modified)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -15,7 +13,7 @@ const insertSurvey = async (survey) => {
       survey.uuid,
       survey.props.name,
       survey.props.labels?.["en"],
-      content,
+      "", // always save empty content (stored in FS)
       survey.dateCreated,
       survey.dateModified,
     ]
@@ -26,22 +24,20 @@ const insertSurvey = async (survey) => {
 };
 
 const updateSurvey = async ({ id, survey }) => {
-  const surveyJson = JSON.stringify(survey);
-  const content = LZString.compressToBase64(surveyJson);
-
   await dbClient.executeSql(
     `UPDATE survey SET name = ?, label = ?, content = ?, date_created = ?, date_modified = ?
      WHERE id = ?`,
     [
       survey.props.name,
       survey.props.labels?.["en"],
-      content,
+      "", // always set content to empty (stored in FS)
       survey.dateCreated,
       survey.dateModified,
       id,
     ]
   );
   survey.remoteId = survey.id;
+  survey.id = id;
   return survey;
 };
 
@@ -51,8 +47,9 @@ const fetchSurveyById = async (id) => {
     [id]
   );
   const { content, remote_id: remoteId } = row;
-  const surveyJsonString = LZString.decompressFromBase64(content);
-  const survey = JSON.parse(surveyJsonString);
+  const survey = Objects.isEmpty(content)
+    ? {}
+    : JSON.parse(LZString.decompressFromBase64(content));
   survey.id = id;
   survey.remoteId = remoteId;
   return survey;

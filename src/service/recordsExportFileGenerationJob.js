@@ -12,6 +12,7 @@ import {
 } from "@openforis/arena-core";
 
 import { JobMobile } from "model";
+import { Files } from "utils/Files";
 
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
@@ -20,8 +21,6 @@ const RECORDS_FOLDER_NAME = "records";
 const RECORDS_SUMMARY_JSON_FILENAME = "records.json";
 const FILES_FOLDER_NAME = "files";
 const FILES_SUMMARY_JSON_FILENAME = "files.json";
-
-const toJson = (obj) => JSON.stringify(obj, null, 2);
 
 export class RecordsExportFileGenerationJob extends JobMobile {
   constructor({ survey, recordUuids, user }) {
@@ -49,15 +48,11 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       // set total
       this.summary.total = recordsToExport.length;
 
-      const recordsSummaryJson = toJson(
-        recordsToExport.map(({ uuid, cycle }) => ({ uuid, cycle }))
-      );
-
       const tempRecordsSummaryJsonFileUri = `${tempRecordsFolderUri}/${RECORDS_SUMMARY_JSON_FILENAME}`;
-      await FileSystem.writeAsStringAsync(
-        tempRecordsSummaryJsonFileUri,
-        recordsSummaryJson
-      );
+      await Files.writeJsonToFile({
+        content: recordsToExport.map(({ uuid, cycle }) => ({ uuid, cycle })),
+        fileUri: tempRecordsSummaryJsonFileUri,
+      });
 
       const nodeDefsFile = Object.values(survey.nodeDefs).filter(
         (nodeDef) => NodeDefs.getType(nodeDef) === NodeDefType.file
@@ -73,7 +68,10 @@ export class RecordsExportFileGenerationJob extends JobMobile {
         }
 
         const tempRecordFileUri = `${tempRecordsFolderUri}/${uuid}.json`;
-        await FileSystem.writeAsStringAsync(tempRecordFileUri, toJson(record));
+        await Files.writeJsonToFile({
+          content: record,
+          fileUri: tempRecordFileUri,
+        });
 
         if (!Objects.isEmpty(nodeDefsFile)) {
           const { recordFiles } = await this.writeRecordFiles({
@@ -89,12 +87,11 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       });
 
       if (files.length > 0) {
-        const filesSummaryJson = toJson(files);
         const tempFilesSummaryJsonFileUri = `${tempFolderUri}/${FILES_FOLDER_NAME}/${FILES_SUMMARY_JSON_FILENAME}`;
-        await FileSystem.writeAsStringAsync(
-          tempFilesSummaryJsonFileUri,
-          filesSummaryJson
-        );
+        await Files.writeJsonToFile({
+          content: files,
+          fileUri: tempFilesSummaryJsonFileUri,
+        });
       }
 
       const outputFileName = `recordsExport-${Dates.nowFormattedForStorage()}.zip`;
