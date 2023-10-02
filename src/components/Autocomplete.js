@@ -3,6 +3,7 @@ import {
   Autocomplete as RNPAutocomplete,
   AutocompleteScrollView,
 } from "react-native-paper-autocomplete";
+import { useTheme } from "react-native-paper";
 
 import { useTranslation } from "localization";
 
@@ -25,6 +26,7 @@ export const Autocomplete = (props) => {
     selectedItems,
   } = props;
 
+  const theme = useTheme();
   const { t } = useTranslation();
   const inputValueRef = useRef(null);
 
@@ -67,6 +69,8 @@ export const Autocomplete = (props) => {
         getOptionValue={itemKeyExtractor}
         inputProps={{
           placeholder: t("common:search"),
+          textColor: theme.colors.secondary,
+          selectionColor: theme.colors.onSecondary,
           onChange: onInputChange,
         }}
         multiple={multiple}

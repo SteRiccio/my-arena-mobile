@@ -1,5 +1,5 @@
 export default {
-  appTitle: "My Arena Mobile",
+  appTitle: "Arena Mobile Experiments",
   cancel: "Cancel",
   close: "Close",
   confirm: "Confirm",
