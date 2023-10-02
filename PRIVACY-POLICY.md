@@ -2,7 +2,7 @@ Privacy Policy
 ----------------
 
 ### Introduction  
-This privacy policy governs your use of the software application My Arena Mobile (“Application”) for mobile devices that was created by Stefano Ricci.
+This privacy policy governs your use of the software application Arena Mobile Experiments (“Application”) for mobile devices that was created by Stefano Ricci.
 
 ### What information does the Application obtain and how is it used?
 The Application obtains the information you provide when you use it (location, pictures, audio) and the collection of this information is always triggered by the user. Registration is not needed and we do not retain any information about how you use the Application.
