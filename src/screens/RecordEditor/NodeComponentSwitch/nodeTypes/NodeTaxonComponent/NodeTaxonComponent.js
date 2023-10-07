@@ -71,8 +71,7 @@ export const NodeTaxonComponent = (props) => {
     return scientificName ? { ...taxon, scientificName } : taxon;
   }, [taxa, value]);
 
-  const selectedTaxonContainerHeight =
-    selectedTaxon && selectedTaxon.vernacularName ? 60 : 30;
+  const selectedTaxonContainerHeight = selectedTaxon?.vernacularName ? 60 : 30;
 
   return (
     <VView>

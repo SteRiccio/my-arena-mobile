@@ -37,6 +37,7 @@ export const NodeTaxonEditDialog = (props) => {
 };
 
 NodeTaxonEditDialog.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
   onDismiss: PropTypes.func.isRequired,
   parentNodeUuid: PropTypes.string,
   taxa: PropTypes.array.isRequired,

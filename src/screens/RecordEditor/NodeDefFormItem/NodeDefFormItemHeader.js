@@ -1,4 +1,5 @@
 import ViewMoreText from "react-native-view-more-text";
+import PropTypes from "prop-types";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
@@ -36,4 +37,9 @@ export const NodeDefFormItemHeader = (props) => {
       )}
     </>
   );
+};
+
+NodeDefFormItemHeader.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
 };
