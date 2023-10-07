@@ -32,6 +32,10 @@ export default {
     oneNode: "One node",
   },
 
+  code: {
+    selectItem: "Select item",
+    selectItem_plural: "Select items",
+  },
   coordinate: {
     accuracy: "Accuracy",
     angleToTargetLocation: "Angle to target",
@@ -49,6 +53,7 @@ export default {
     y: "Y",
   },
   taxon: {
+    search: "Search taxon",
     taxonNotSelected: "--- Taxon not selected ---",
   },
   fileAttributeImage: {

@@ -157,7 +157,7 @@ export const RecordsList = () => {
       typeof date === "string"
         ? Dates.convertDate({
             dateStr: date,
-            formatFrom: DateFormats.datetimeISO,
+            formatFrom: DateFormats.datetimeStorage,
             formatTo: DateFormats.datetimeDisplay,
           })
         : Dates.format(date, DateFormats.datetimeDisplay);

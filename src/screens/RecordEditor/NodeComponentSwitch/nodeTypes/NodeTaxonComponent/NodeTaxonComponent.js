@@ -1,95 +1,38 @@
-import { useCallback, useMemo } from "react";
+import { useMemo, useState } from "react";
+import PropTypes from "prop-types";
 
 import { NodeDefs, NodeValues, Objects } from "@openforis/arena-core";
 
-import { Autocomplete, Text, VView, View } from "components";
-import { DataEntrySelectors, SurveySelectors } from "state";
+import { Button, Text, VView, View } from "components";
+import { Taxa } from "model/Taxa";
+import {
+  DataEntrySelectors,
+  SurveyOptionsSelectors,
+  SurveySelectors,
+} from "state";
+
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { useItemsFilter } from "../useItemsFilter";
 import { useTaxa } from "./useTaxa";
-
-const unlistedCode = "UNL";
-const unknownCode = "UNK";
-
-const SelectedTaxon = (props) => {
-  const { taxon } = props;
-  const { code, scientificName } = taxon.props;
-  const {
-    scientificName: scientificNameUnlisted,
-    vernacularName,
-    vernacularNameLangCode,
-  } = taxon;
-
-  const vernacularNamePart = vernacularName
-    ? `
-${vernacularName} (${vernacularNameLangCode})`
-    : "";
-
-  return (
-    <Text numberOfLines={2} style={{ flex: 1 }} variant="bodyLarge">
-      {`${
-        scientificNameUnlisted ?? scientificName
-      } (${code})${vernacularNamePart}`}
-    </Text>
-  );
-};
-
-const preparePartForSearch = (part) => part.toLocaleLowerCase();
-
-const extractPartsForSearch = (value) =>
-  value?.split(" ").map(preparePartForSearch) ?? [];
-
-const filterOptions =
-  ({ unlistedTaxon, unknownTaxon }) =>
-  (taxa, { getOptionLabel, inputValue }) => {
-    if (inputValue.trim().length === 0) {
-      return [];
-    }
-    const inputValueParts = extractPartsForSearch(inputValue);
-    const taxaFiltered = taxa.filter((taxon) => {
-      const { vernacularName } = taxon;
-      const { code } = taxon.props;
-      const codeForSearch = preparePartForSearch(code);
-      const vernacularNameParts = extractPartsForSearch(vernacularName);
-
-      const optionLabel = getOptionLabel(taxon);
-      const optionLabelParts = extractPartsForSearch(optionLabel);
-      return inputValueParts.every(
-        (inputValuePart) =>
-          codeForSearch.startsWith(inputValuePart) ||
-          optionLabelParts.some((part) => part.startsWith(inputValuePart)) ||
-          vernacularNameParts.some((part) => part.startsWith(inputValuePart))
-      );
-    });
-    if (taxaFiltered.length === 0) {
-      taxaFiltered.push(unlistedTaxon, unknownTaxon);
-    }
-    return taxaFiltered;
-  };
-
-const createTaxonValue = ({ taxon, inputValue, unlistedTaxon }) => {
-  let value = null;
-  if (taxon) {
-    value = { taxonUuid: taxon.uuid };
-    if (taxon.vernacularNameUuid) {
-      value["vernacularNameUuid"] = taxon.vernacularNameUuid;
-    }
-    if (inputValue && taxon.props.code === unlistedTaxon?.props?.code) {
-      // keep unlisted scientific name
-      value["scientificName"] = inputValue;
-    }
-  }
-  return value;
-};
+import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
+import { TaxonPreview } from "./TaxonPreview";
+import { RecordEditViewMode } from "model/RecordEditViewMode";
+import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
 
 export const NodeTaxonComponent = (props) => {
-  const { nodeDef, nodeUuid, onFocus } = props;
+  const { nodeDef, nodeUuid, parentNodeUuid } = props;
 
   if (__DEV__) {
     console.log(
       `rendering NodeTaxonComponent for ${NodeDefs.getName(nodeDef)}`
     );
   }
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+
+  const openEditDialog = () => setEditDialogOpen(true);
+  const closeEditDialog = () => setEditDialogOpen(false);
 
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
@@ -110,24 +53,9 @@ export const NodeTaxonComponent = (props) => {
       parentNode,
       items: _taxa,
       alwaysIncludeItemFunction: (item) =>
-        [unlistedCode, unknownCode].includes(item.props.code),
+        [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
     });
   }
-
-  const unlistedTaxon = taxa.find((taxon) => taxon.props.code === unlistedCode);
-  const unknownTaxon = taxa.find((taxon) => taxon.props.code === unknownCode);
-
-  const itemLabelExtractor = useCallback((taxon) => {
-    const { code, scientificName } = taxon.props;
-    return `(${code}) ${scientificName}`;
-  }, []);
-
-  const itemDescriptionExtractor = useCallback((taxon) => {
-    const { vernacularName, vernacularNameLangCode } = taxon;
-    return vernacularName
-      ? `${vernacularName} (${vernacularNameLangCode})`
-      : undefined;
-  }, []);
 
   const selectedTaxon = useMemo(() => {
     if (!value) return null;
@@ -141,33 +69,43 @@ export const NodeTaxonComponent = (props) => {
         taxon.vernacularNameUuid === vernacularNameUuid
     );
     return scientificName ? { ...taxon, scientificName } : taxon;
-  }, [value]);
+  }, [taxa, value]);
 
-  const onSelectedItemsChange = useCallback(
-    (selection, inputValue) => {
-      const taxon = selection[0];
-      const valueNext = createTaxonValue({ taxon, inputValue, unlistedTaxon });
-      updateNodeValue(valueNext);
-    },
-    [updateNodeValue]
-  );
+  const selectedTaxonContainerHeight = selectedTaxon?.vernacularName ? 60 : 30;
 
   return (
     <VView>
-      <View style={{ height: 60 }}>
-        {!selectedTaxon && <Text textKey="dataEntry:taxon.taxonNotSelected" />}
-        {selectedTaxon && <SelectedTaxon taxon={selectedTaxon} />}
+      <View style={{ height: selectedTaxonContainerHeight }}>
+        {selectedTaxon ? (
+          <TaxonPreview taxon={selectedTaxon} />
+        ) : (
+          <Text textKey="dataEntry:taxon.taxonNotSelected" />
+        )}
       </View>
-      <Autocomplete
-        filterOptions={filterOptions({ unlistedTaxon, unknownTaxon })}
-        itemKeyExtractor={(item) => `${item?.uuid}_${item?.vernacularNameUuid}`}
-        itemLabelExtractor={itemLabelExtractor}
-        itemDescriptionExtractor={itemDescriptionExtractor}
-        items={taxa}
-        onFocus={onFocus}
-        onSelectedItemsChange={onSelectedItemsChange}
-        selectedItems={[]}
-      />
+      {viewMode === RecordEditViewMode.oneNode && (
+        <NodeTaxonAutocomplete taxa={taxa} updateNodeValue={updateNodeValue} />
+      )}
+      {viewMode === RecordEditViewMode.form && (
+        <>
+          <Button textKey="dataEntry:taxon.search" onPress={openEditDialog} />
+          {editDialogOpen && (
+            <NodeTaxonEditDialog
+              onDismiss={closeEditDialog}
+              nodeDef={nodeDef}
+              parentNodeUuid={parentNodeUuid}
+              selectedTaxon={selectedTaxon}
+              taxa={taxa}
+              updateNodeValue={updateNodeValue}
+            />
+          )}
+        </>
+      )}
     </VView>
   );
+};
+
+NodeTaxonComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  nodeUuid: PropTypes.string,
+  parentNodeUuid: PropTypes.string,
 };

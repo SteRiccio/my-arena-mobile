@@ -1,17 +1,19 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 
 import { Autocomplete } from "components";
 
-export const NodeCodeAutocompleteComponent = (props) => {
+export const NodeCodeAutocomplete = (props) => {
   const {
     itemLabelFunction,
     items,
+    focusOnMount,
+    multiple,
     onFocus,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
     selectedItems,
-    multiple,
   } = props;
 
   const onSelectedItemsChange = useCallback(
@@ -39,6 +41,7 @@ export const NodeCodeAutocompleteComponent = (props) => {
 
   return (
     <Autocomplete
+      focusOnMount={focusOnMount}
       itemKeyExtractor={(item) => item?.uuid}
       itemLabelExtractor={itemLabelFunction}
       items={items}
@@ -48,4 +51,23 @@ export const NodeCodeAutocompleteComponent = (props) => {
       selectedItems={selectedItems}
     />
   );
+};
+
+NodeCodeAutocomplete.propTypes = {
+  itemLabelFunction: PropTypes.func.isRequired,
+  items: PropTypes.array,
+  focusOnMount: PropTypes.bool,
+  multiple: PropTypes.bool,
+  onFocus: PropTypes.func,
+  onItemAdd: PropTypes.func.isRequired,
+  onItemRemove: PropTypes.func.isRequired,
+  onSingleValueChange: PropTypes.func.isRequired,
+  selectedItems: PropTypes.array,
+};
+
+NodeCodeAutocomplete.defaultProps = {
+  items: [],
+  focusOnMount: false,
+  multiple: false,
+  selectedItems: [],
 };

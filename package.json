@@ -1,6 +1,6 @@
 {
-  "name": "mam",
-  "version": "0.9.27",
+  "name": "arena-mobile-experiments",
+  "version": "0.9.29",
   "main": "AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -11,7 +11,7 @@
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
     "@miblanchard/react-native-slider": "^2.3.1",
-    "@openforis/arena-core": "^0.0.162",
+    "@openforis/arena-core": "^0.0.169",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-clipboard/clipboard": "^1.11.2",
     "@react-native-community/datetimepicker": "7.2.0",
@@ -36,6 +36,7 @@
     "expo-status-bar": "~1.6.0",
     "i18next": "^23.2.11",
     "lz-string": "^1.5.0",
+    "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-i18next": "^13.0.2",
@@ -48,7 +49,7 @@
     "react-native-open-maps": "^0.4.3",
     "react-native-pager-view": "6.2.0",
     "react-native-paper": "^5.9.1",
-    "react-native-paper-autocomplete": "^0.11.7",
+    "react-native-paper-autocomplete": "^0.12.0",
     "react-native-paper-dropdown": "^1.0.7",
     "react-native-paper-select": "^1.0.2",
     "react-native-reanimated": "~3.3.0",

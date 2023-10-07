@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import { VirtualizedList } from "react-native";
 
 import { NodeDefs } from "@openforis/arena-core";
 
 import { DataEntrySelectors } from "state";
 
+import { View } from "components/View";
 import { NodeDefFormItem } from "../../../NodeDefFormItem";
 
 import styles from "./styles";
+
+const Separator = () => <View style={styles.separator} />;
 
 export const NodeEntityFormComponent = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -41,6 +45,7 @@ export const NodeEntityFormComponent = (props) => {
       getItemCount={() => childrenDefs.length}
       getItem={(_data, index) => childrenDefs[index]}
       initialNumToRender={10}
+      ItemSeparatorComponent={<Separator />}
       keyExtractor={(childDef) => childDef.uuid}
       renderItem={({ item: childDef }) => (
         <NodeDefFormItem
@@ -69,4 +74,9 @@ export const NodeEntityFormComponent = (props) => {
     //   </VView>
     // </ScrollView>
   );
+};
+
+NodeEntityFormComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
 };

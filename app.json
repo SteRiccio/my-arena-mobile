@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "MAM",
-    "slug": "mam",
+    "name": "Arena Mobile Experiments",
+    "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "0.9.27",
+    "version": "0.9.29",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,7 +22,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 27
+      "versionCode": 29
     },
     "ios": {
       "supportsTablet": true

@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 import { Button as RNButton } from "react-native-paper";
 
 import { useTranslation } from "localization";
@@ -9,11 +10,12 @@ export const Button = (props) => {
     loading,
     onPress: onPressProp,
     textKey,
+    textParams,
     ...otherProps
   } = props;
 
   const { t } = useTranslation();
-  const text = t(textKey);
+  const text = t(textKey, textParams);
 
   const onPress = useCallback(
     (event) => {
@@ -30,6 +32,21 @@ export const Button = (props) => {
       {children}
     </RNButton>
   );
+};
+
+Button.propTypes = {
+  children: PropTypes.node,
+  loading: PropTypes.bool,
+  mode: PropTypes.oneOf([
+    "text",
+    "outlined",
+    "contained",
+    "elevated",
+    "contained-tonal ",
+  ]),
+  onPress: PropTypes.func,
+  textKey: PropTypes.string,
+  textParams: PropTypes.object,
 };
 
 Button.defaultProps = {
