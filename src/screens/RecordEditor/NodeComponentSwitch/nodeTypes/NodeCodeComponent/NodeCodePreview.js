@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 import { Chip } from "react-native-paper";
 
+import { NodeDefs } from "@openforis/arena-core";
+
 import { Button } from "components/Button";
 import { HView } from "components/HView";
-import { NodeDefs } from "@openforis/arena-core";
 
 export const NodeCodePreview = (props) => {
   const { itemLabelFunction, nodeDef, openEditDialog, selectedItems } = props;
@@ -11,7 +12,11 @@ export const NodeCodePreview = (props) => {
   return (
     <HView style={{ flexWrap: "wrap" }}>
       {selectedItems.map((item) => (
-        <Chip onPress={openEditDialog} style={{ margin: 2, padding: 4 }}>
+        <Chip
+          key={item.uuid}
+          onPress={openEditDialog}
+          style={{ margin: 2, padding: 4 }}
+        >
           {itemLabelFunction(item)}
         </Chip>
       ))}

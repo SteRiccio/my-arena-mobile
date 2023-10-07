@@ -93,7 +93,7 @@ export const Autocomplete = (props) => {
 };
 
 Autocomplete.propTypes = {
-  filterOptions: PropTypes.func.isRequired,
+  filterOptions: PropTypes.func,
   focusOnMount: PropTypes.bool,
   itemKeyExtractor: PropTypes.func,
   itemLabelExtractor: PropTypes.func,

@@ -37,6 +37,13 @@ export const Button = (props) => {
 Button.propTypes = {
   children: PropTypes.node,
   loading: PropTypes.bool,
+  mode: PropTypes.oneOf([
+    "text",
+    "outlined",
+    "contained",
+    "elevated",
+    "contained-tonal ",
+  ]),
   onPress: PropTypes.func,
   textKey: PropTypes.string,
   textParams: PropTypes.object,

@@ -70,6 +70,5 @@ NodeCodeEditDialog.propTypes = {
 NodeCodeEditDialog.defaultProps = {
   editable: true,
   items: [],
-  multiple: false,
   selectedItems: [],
 };

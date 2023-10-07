@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import PropTypes from "prop-types";
 
 import { NodeDefs, NodeValues, Objects } from "@openforis/arena-core";
 
@@ -76,8 +77,11 @@ export const NodeTaxonComponent = (props) => {
   return (
     <VView>
       <View style={{ height: selectedTaxonContainerHeight }}>
-        {!selectedTaxon && <Text textKey="dataEntry:taxon.taxonNotSelected" />}
-        {selectedTaxon && <TaxonPreview taxon={selectedTaxon} />}
+        {selectedTaxon ? (
+          <TaxonPreview taxon={selectedTaxon} />
+        ) : (
+          <Text textKey="dataEntry:taxon.taxonNotSelected" />
+        )}
       </View>
       {viewMode === RecordEditViewMode.oneNode && (
         <NodeTaxonAutocomplete taxa={taxa} updateNodeValue={updateNodeValue} />
@@ -99,4 +103,10 @@ export const NodeTaxonComponent = (props) => {
       )}
     </VView>
   );
+};
+
+NodeTaxonComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  nodeUuid: PropTypes.string,
+  parentNodeUuid: PropTypes.string,
 };

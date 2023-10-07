@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 
 import { NodeEditDialog } from "../NodeEditDialog";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
@@ -26,7 +27,18 @@ export const NodeTaxonEditDialog = (props) => {
       onDismiss={onDismiss}
       parentNodeUuid={parentNodeUuid}
     >
-      <NodeTaxonAutocomplete focusOnMount taxa={taxa} updateNodeValue={updateNodeValue} />
+      <NodeTaxonAutocomplete
+        focusOnMount
+        taxa={taxa}
+        updateNodeValue={updateNodeValue}
+      />
     </NodeEditDialog>
   );
+};
+
+NodeTaxonEditDialog.propTypes = {
+  onDismiss: PropTypes.func.isRequired,
+  parentNodeUuid: PropTypes.string,
+  taxa: PropTypes.array.isRequired,
+  updateNodeValue: PropTypes.func.isRequired,
 };
