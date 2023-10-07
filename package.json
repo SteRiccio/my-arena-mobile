@@ -1,6 +1,6 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "0.9.28",
+  "version": "0.9.29",
   "main": "AppEntry.js",
   "scripts": {
     "start": "expo start",
