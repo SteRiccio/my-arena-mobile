@@ -8,10 +8,12 @@ import {
   CloseIconButton,
   Dropdown,
   HView,
+  IconButton,
   Text,
   View,
 } from "components";
 import { RecordEditViewMode } from "model";
+import { screenKeys } from "screens/screenKeys";
 import {
   DataEntryActions,
   DataEntrySelectors,
@@ -69,13 +71,19 @@ export const RecordEditorDrawer = () => {
         }
         value={viewMode}
       />
-      <Button
-        icon="format-list-bulleted"
-        textKey="dataEntry:listOfRecords"
-        onPress={() =>
-          dispatch(DataEntryActions.navigateToRecordsList({ navigation }))
-        }
-      />
+      <HView style={styles.buttonBar} transparent>
+        <Button
+          icon="format-list-bulleted"
+          textKey="dataEntry:listOfRecords"
+          onPress={() =>
+            dispatch(DataEntryActions.navigateToRecordsList({ navigation }))
+          }
+        />
+        <IconButton
+          icon="cog"
+          onPress={() => navigation.navigate(screenKeys.settings)}
+        />
+      </HView>
     </View>
   );
 };

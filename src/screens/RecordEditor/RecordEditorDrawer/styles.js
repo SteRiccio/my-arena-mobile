@@ -21,5 +21,10 @@ export const useStyles = () => {
     closeButton: {
       alignSelf: "flex-end",
     },
+    buttonBar: {
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
   });
 };
