@@ -7632,10 +7632,10 @@ react-native-pager-view@6.2.0:
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-6.2.0.tgz#51380d93fbe47f6380dc71d613a787bf27a4ca37"
   integrity sha512-pf9OnL/Tkr+5s4Gjmsn7xh91PtJLDa6qxYa/bmtUhd/+s4cQdWQ8DIFoOFghwZIHHHwVdWtoXkp6HtpjN+r20g==
 
-react-native-paper-autocomplete@^0.11.7:
-  version "0.11.7"
-  resolved "https://registry.yarnpkg.com/react-native-paper-autocomplete/-/react-native-paper-autocomplete-0.11.7.tgz#d98090cc05663788ad4081bcc7a65feb0ec0bf67"
-  integrity sha512-d6Uk6iTOVKSU9n+asOmAJROxxxcjeKAN3qlkyX+aItErk2vE/+dKNX/jgbC17YHCwSfHrVotLrbuRheonh91qg==
+react-native-paper-autocomplete@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/react-native-paper-autocomplete/-/react-native-paper-autocomplete-0.12.0.tgz#ccdc4c69c71f1fc6e5f806544729b2114752587e"
+  integrity sha512-6QgXYLInI7xeaUlyrtQP65nf5sMuwnmqjhTEmBh5gVrB97URO4M2mz3DOzn3f83ddtRzX10w0T2zpvZwqy3Z+w==
   dependencies:
     color "3.1.3"
 
