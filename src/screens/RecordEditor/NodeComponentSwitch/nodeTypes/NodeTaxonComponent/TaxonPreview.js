@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { Text } from "components/Text";
 
 export const TaxonPreview = (props) => {
@@ -25,4 +27,8 @@ ${vernacularName} (${vernacularNameLangCode})`;
       {`${scientificNameShown} (${code})${vernacularNamePart}`}
     </Text>
   );
+};
+
+TaxonPreview.propTypes = {
+  taxon: PropTypes.object.isRequired,
 };

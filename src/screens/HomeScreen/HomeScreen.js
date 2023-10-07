@@ -45,20 +45,18 @@ export const HomeScreen = () => {
       <LoginInfo />
 
       {surveySelected && (
-        <>
-          <FieldSet
-            heading="surveys:currentSurvey"
-            style={styles.currentSurveyFieldset}
-          >
-            <VView>
-              <Text textKey={surveyTitle} variant="titleMedium" />
-              <Button
-                textKey="dataEntry:goToDataEntry"
-                onPress={() => navigation.navigate(screenKeys.recordsList)}
-              />
-            </VView>
-          </FieldSet>
-        </>
+        <FieldSet
+          heading="surveys:currentSurvey"
+          style={styles.currentSurveyFieldset}
+        >
+          <VView>
+            <Text textKey={surveyTitle} variant="titleMedium" />
+            <Button
+              textKey="dataEntry:goToDataEntry"
+              onPress={() => navigation.navigate(screenKeys.recordsList)}
+            />
+          </VView>
+        </FieldSet>
       )}
       <Button
         textKey={

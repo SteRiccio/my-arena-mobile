@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { View } from "react-native";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
@@ -69,4 +70,10 @@ export const NodeDefFormItem = (props) => {
   }
 
   return visible ? internalComponent : null;
+};
+
+NodeDefFormItem.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
+  onFocus: PropTypes.func,
 };

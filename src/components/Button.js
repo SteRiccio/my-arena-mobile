@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 import { Button as RNButton } from "react-native-paper";
 
 import { useTranslation } from "localization";
@@ -31,6 +32,14 @@ export const Button = (props) => {
       {children}
     </RNButton>
   );
+};
+
+Button.propTypes = {
+  children: PropTypes.node,
+  loading: PropTypes.bool,
+  onPress: PropTypes.func,
+  textKey: PropTypes.string,
+  textParams: PropTypes.object,
 };
 
 Button.defaultProps = {

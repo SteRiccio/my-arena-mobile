@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { NodeDefs } from "@openforis/arena-core";
 
 import {
@@ -121,4 +123,9 @@ export const NodeCodeComponent = (props) => {
       value={selectedItemUuid}
     />
   );
+};
+
+NodeCodeComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
 };

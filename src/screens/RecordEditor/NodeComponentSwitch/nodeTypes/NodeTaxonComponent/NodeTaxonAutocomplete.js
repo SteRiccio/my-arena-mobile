@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 
 import { Autocomplete } from "components/Autocomplete";
 import { Taxa } from "model/Taxa";
@@ -100,4 +101,10 @@ export const NodeTaxonAutocomplete = (props) => {
       selectedItems={[]}
     />
   );
+};
+
+NodeTaxonAutocomplete.propTypes = {
+  focusOnMount: PropTypes.bool,
+  taxa: PropTypes.array.isRequired,
+  updateNodeValue: PropTypes.func.isRequired,
 };

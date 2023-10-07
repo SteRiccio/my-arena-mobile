@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import {
   Autocomplete as RNPAutocomplete,
   AutocompleteScrollView,
@@ -91,10 +92,25 @@ export const Autocomplete = (props) => {
   );
 };
 
+Autocomplete.propTypes = {
+  filterOptions: PropTypes.func.isRequired,
+  focusOnMount: PropTypes.bool,
+  itemKeyExtractor: PropTypes.func,
+  itemLabelExtractor: PropTypes.func,
+  itemDescriptionExtractor: PropTypes.func,
+  items: PropTypes.array,
+  multiple: PropTypes.bool,
+  onFocus: PropTypes.func,
+  onSelectedItemsChange: PropTypes.func.isRequired,
+  selectedItems: PropTypes.array,
+};
+
 Autocomplete.defaultProps = {
   focusOnMount: false,
   itemKeyExtractor: (item) => item?.key,
   itemLabelExtractor: (item) => item?.label,
   itemDescriptionExtractor: (item) => item?.description,
+  items: [],
   multiple: false,
+  selectedItems: [],
 };

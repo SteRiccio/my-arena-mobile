@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import { VirtualizedList } from "react-native";
 
 import { NodeDefs } from "@openforis/arena-core";
@@ -73,4 +74,9 @@ export const NodeEntityFormComponent = (props) => {
     //   </VView>
     // </ScrollView>
   );
+};
+
+NodeEntityFormComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
 };

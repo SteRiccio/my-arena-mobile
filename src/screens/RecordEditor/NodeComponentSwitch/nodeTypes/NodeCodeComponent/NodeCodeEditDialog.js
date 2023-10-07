@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
@@ -51,4 +52,24 @@ export const NodeCodeEditDialog = (props) => {
       />
     </NodeEditDialog>
   );
+};
+
+NodeCodeEditDialog.propTypes = {
+  editable: PropTypes.bool,
+  itemLabelFunction: PropTypes.func.isRequired,
+  items: PropTypes.array,
+  nodeDef: PropTypes.object,
+  onDismiss: PropTypes.func,
+  onItemAdd: PropTypes.func.isRequired,
+  onItemRemove: PropTypes.func.isRequired,
+  onSingleValueChange: PropTypes.func.isRequired,
+  parentNodeUuid: PropTypes.string,
+  selectedItems: PropTypes.array,
+};
+
+NodeCodeEditDialog.defaultProps = {
+  editable: true,
+  items: [],
+  multiple: false,
+  selectedItems: [],
 };

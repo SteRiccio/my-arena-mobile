@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { Modal, Portal } from "react-native-paper";
 
 import { useTranslation } from "localization";
@@ -33,6 +34,15 @@ export const NodeEditDialog = (props) => {
       </Modal>
     </Portal>
   );
+};
+
+NodeEditDialog.propTypes = {
+  children: PropTypes.node,
+  doneButtonLabel: PropTypes.string,
+  nodeDef: PropTypes.object.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+  onDone: PropTypes.func.isRequired,
+  parentNodeUuid: PropTypes.string,
 };
 
 NodeEditDialog.defaultProps = {
