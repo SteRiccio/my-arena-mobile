@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import {
@@ -31,6 +31,8 @@ const findParentItemUuid = ({ nodeDef, parentNodeUuid }) => {
 
 export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const dispatch = useDispatch();
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const { nodes } = DataEntrySelectors.useRecordChildNodes({
     parentEntityUuid: parentNodeUuid,
@@ -153,12 +155,18 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
     [nodes]
   );
 
+  const openEditDialog = () => setEditDialogOpen(true);
+  const closeEditDialog = () => setEditDialogOpen(false);
+
   return {
+    closeEditDialog,
+    editDialogOpen,
     items,
     itemLabelFunction,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
+    openEditDialog,
     selectedItems,
     selectedItemUuid,
   };

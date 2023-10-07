@@ -9,11 +9,12 @@ export const Button = (props) => {
     loading,
     onPress: onPressProp,
     textKey,
+    textParams,
     ...otherProps
   } = props;
 
   const { t } = useTranslation();
-  const text = t(textKey);
+  const text = t(textKey, textParams);
 
   const onPress = useCallback(
     (event) => {

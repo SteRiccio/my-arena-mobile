@@ -2,16 +2,17 @@ import React, { useCallback } from "react";
 
 import { Autocomplete } from "components";
 
-export const NodeCodeAutocompleteComponent = (props) => {
+export const NodeCodeAutocomplete = (props) => {
   const {
     itemLabelFunction,
     items,
+    focusOnMount,
+    multiple,
     onFocus,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
     selectedItems,
-    multiple,
   } = props;
 
   const onSelectedItemsChange = useCallback(
@@ -39,6 +40,7 @@ export const NodeCodeAutocompleteComponent = (props) => {
 
   return (
     <Autocomplete
+      focusOnMount={focusOnMount}
       itemKeyExtractor={(item) => item?.uuid}
       itemLabelExtractor={itemLabelFunction}
       items={items}

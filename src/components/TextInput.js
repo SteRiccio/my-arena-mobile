@@ -29,6 +29,7 @@ export const TextInput = (props) => {
   const showAsReadOnly = !editable && nonEditableStyleVisible;
 
   const label = t(labelKey);
+  const placeholder = t(placeholderKey);
 
   const notEditableStyle = { backgroundColor: theme.colors.surfaceVariant };
 
@@ -47,7 +48,7 @@ export const TextInput = (props) => {
       numberOfLines={numberOfLines}
       onChangeText={onChange}
       onPressIn={onPressIn}
-      placeholder={placeholderKey}
+      placeholder={placeholder}
       secureTextEntry={secureTextEntry}
       style={style}
       theme={theme}

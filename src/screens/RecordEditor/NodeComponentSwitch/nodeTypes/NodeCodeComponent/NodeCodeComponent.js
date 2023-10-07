@@ -1,28 +1,39 @@
 import { NodeDefs } from "@openforis/arena-core";
 
+import {
+  DataEntrySelectors,
+  SurveyOptionsSelectors,
+  SurveySelectors,
+} from "state";
+
+import { RecordEditViewMode } from "model/RecordEditViewMode";
+
+import { useNodeCodeComponentLocalState } from "./useNodeCodeComponentLocalState";
 import { NodeCodeSingleRadioComponent } from "./NodeCodeSingleRadioComponent";
 import { NodeCodeMultipleCheckboxComponent } from "./NodeCodeMultipleCheckboxComponent";
-import { useNodeCodeComponentLocalState } from "./useNodeCodeComponentLocalState";
-import { NodeCodeAutocompleteComponent } from "./NodeCodeAutocompleteComponent";
-import { DataEntrySelectors } from "state/dataEntry";
-import { SurveySelectors } from "state/survey";
 import { NodeCodeReadOnlyValue } from "./NodeCodeReadOnlyValue";
+import { NodeCodeEditDialog } from "./NodeCodeEditDialog";
+import { NodeCodePreview } from "./NodeCodePreview";
+import { NodeCodeAutocomplete } from "./NodeCodeAutocomplete";
 
 const MAX_VISIBLE_ITEMS = 10;
 
 export const NodeCodeComponent = (props) => {
-  const { parentNodeUuid, nodeDef, onFocus } = props;
+  const { parentNodeUuid, nodeDef } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeCodeComponent for ${NodeDefs.getName(nodeDef)}`);
   }
 
   const {
+    closeEditDialog,
+    editDialogOpen,
     itemLabelFunction,
     items,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
+    openEditDialog,
     selectedItems,
     selectedItemUuid,
   } = useNodeCodeComponentLocalState({
@@ -32,7 +43,10 @@ export const NodeCodeComponent = (props) => {
 
   const cycle = DataEntrySelectors.useRecordCycle();
   const isNodeDefEnumerator = SurveySelectors.useIsNodeDefEnumerator(nodeDef);
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
+
   const editable = !NodeDefs.isReadOnly(nodeDef) && !isNodeDefEnumerator;
+  const multiple = NodeDefs.isMultiple(nodeDef);
 
   if (!editable) {
     return (
@@ -48,39 +62,63 @@ export const NodeCodeComponent = (props) => {
     items.length > MAX_VISIBLE_ITEMS ||
     NodeDefs.getLayoutRenderType(cycle)(nodeDef) === "dropdown"
   ) {
+    if (viewMode === RecordEditViewMode.form) {
+      return (
+        <>
+          <NodeCodePreview
+            itemLabelFunction={itemLabelFunction}
+            nodeDef={nodeDef}
+            openEditDialog={openEditDialog}
+            selectedItems={selectedItems}
+          />
+          {editDialogOpen && (
+            <NodeCodeEditDialog
+              editable={editable}
+              itemLabelFunction={itemLabelFunction}
+              items={items}
+              nodeDef={nodeDef}
+              onDismiss={closeEditDialog}
+              onItemAdd={onItemAdd}
+              onItemRemove={onItemRemove}
+              onSingleValueChange={onSingleValueChange}
+              parentNodeUuid={parentNodeUuid}
+              selectedItems={selectedItems}
+            />
+          )}
+        </>
+      );
+    }
     return (
-      <NodeCodeAutocompleteComponent
-        editable={editable}
+      <NodeCodeAutocomplete
         itemLabelFunction={itemLabelFunction}
         items={items}
-        onFocus={onFocus}
         onItemAdd={onItemAdd}
         onItemRemove={onItemRemove}
         onSingleValueChange={onSingleValueChange}
         selectedItems={selectedItems}
-        multiple={NodeDefs.isMultiple(nodeDef)}
+        multiple={multiple}
       />
     );
   }
-  if (NodeDefs.isSingle(nodeDef)) {
+  if (multiple) {
     return (
-      <NodeCodeSingleRadioComponent
+      <NodeCodeMultipleCheckboxComponent
         editable={editable}
         itemLabelFunction={itemLabelFunction}
         items={items}
-        onChange={onSingleValueChange}
-        value={selectedItemUuid}
+        onItemAdd={onItemAdd}
+        onItemRemove={onItemRemove}
+        selectedItems={selectedItems}
       />
     );
   }
   return (
-    <NodeCodeMultipleCheckboxComponent
+    <NodeCodeSingleRadioComponent
       editable={editable}
       itemLabelFunction={itemLabelFunction}
       items={items}
-      onItemAdd={onItemAdd}
-      onItemRemove={onItemRemove}
-      selectedItems={selectedItems}
+      onChange={onSingleValueChange}
+      value={selectedItemUuid}
     />
   );
 };
