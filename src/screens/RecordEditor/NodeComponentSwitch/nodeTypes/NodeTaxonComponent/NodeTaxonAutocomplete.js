@@ -3,15 +3,18 @@ import React, { useCallback } from "react";
 import { Autocomplete } from "components/Autocomplete";
 import { Taxa } from "model/Taxa";
 
-const createTaxonValue = ({ taxon, inputValue, unlistedTaxon }) => {
+const createTaxonValue = ({ taxon, inputValue }) => {
   let value = null;
   if (taxon) {
     value = { taxonUuid: taxon.uuid };
     if (taxon.vernacularNameUuid) {
       value["vernacularNameUuid"] = taxon.vernacularNameUuid;
     }
-    if (inputValue && taxon.props.code === unlistedTaxon?.props?.code) {
-      // keep unlisted scientific name
+    if (
+      inputValue &&
+      [Taxa.unknownCode, Taxa.unlistedCode].includes(taxon.props.code)
+    ) {
+      // keep scientific name for unlisted/unknown taxa
       value["scientificName"] = inputValue;
     }
   }
@@ -64,7 +67,7 @@ export const NodeTaxonAutocomplete = (props) => {
   const onSelectedItemsChange = useCallback(
     (selection, inputValue) => {
       const taxon = selection[0];
-      const valueNext = createTaxonValue({ taxon, inputValue, unlistedTaxon });
+      const valueNext = createTaxonValue({ taxon, inputValue });
       updateNodeValue(valueNext);
     },
     [updateNodeValue]
