@@ -26,7 +26,7 @@ const OpenDropdownButton = (props) => {
 OpenDropdownButton.propTypes = {
   onPress: PropTypes.func.isRequired,
   textKey: PropTypes.string,
-  testParams: PropTypes.object,
+  textParams: PropTypes.object,
 };
 
 OpenDropdownButton.defaultProps = {
