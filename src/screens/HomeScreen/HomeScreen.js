@@ -36,7 +36,7 @@ export const HomeScreen = () => {
         v{deviceInfo.version} [{deviceInfo.buildNumber}] (
         {Dates.convertDate({
           dateStr: deviceInfo.lastUpdateTime,
-          formatFrom: DateFormats.datetimeISO,
+          formatFrom: DateFormats.datetimeStorage,
           formatTo: DateFormats.dateDisplay,
         })}
         )
