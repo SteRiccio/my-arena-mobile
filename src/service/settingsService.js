@@ -21,7 +21,7 @@ const defaultSettings = {
 
 let INSTANCE = null;
 
-const systemSettingUpdaterByKey = {
+const systemSettingApplierByKey = {
   ["fullScreen"]: async ({ value }) => SystemUtils.setFullScreen(value),
   ["keepScreenAwake"]: async ({ value }) =>
     SystemUtils.setKeepScreenAwake(value),
@@ -41,7 +41,7 @@ const updateSetting = async ({ key, value }) => {
   const settingsPrev = await fetchSettings();
   const settingsNext = { ...settingsPrev, [key]: value };
   await saveSettings(settingsNext);
-  await systemSettingUpdaterByKey[key]?.({ key, value });
+  await systemSettingApplierByKey[key]?.({ key, value });
   return settingsNext;
 };
 
