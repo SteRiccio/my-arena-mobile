@@ -1,7 +1,6 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import { configureStore } from "@reduxjs/toolkit";
 import { Provider as PaperProvider, ThemeProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 
@@ -15,11 +14,11 @@ import { AppStack } from "navigation/AppStack";
 import { rootReducer } from "state/reducers";
 import { useEffectiveTheme } from "hooks";
 
-import { AppInitializer } from "./AppInitializer";
+import { AppInitializer } from "./src/AppInitializer";
 
 import styles from "appStyles";
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+const store = configureStore({ reducer: rootReducer });
 
 const AppInnerContainer = () => {
   const theme = useEffectiveTheme();

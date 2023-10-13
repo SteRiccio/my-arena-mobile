@@ -47,6 +47,9 @@ export const AppInitializer = (props) => {
       if (settings.fullScreen) {
         await SystemUtils.setFullScreen(settings.fullScreen);
       }
+      if (settings.keepScreenAwake) {
+        await SystemUtils.setKeepScreenAwake(settings.keepScreenAwake);
+      }
 
       await initializeDb();
 

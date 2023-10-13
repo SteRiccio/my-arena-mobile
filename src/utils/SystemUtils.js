@@ -1,5 +1,6 @@
 import SystemNavigationBar from "react-native-system-navigation-bar";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 
 const setFullScreen = async (fullScreen) => {
   try {
@@ -10,6 +11,14 @@ const setFullScreen = async (fullScreen) => {
     }
   } catch (e) {
     // ignore it (not available)
+  }
+};
+
+const setKeepScreenAwake = async (keepScreenAwake) => {
+  if (keepScreenAwake) {
+    await activateKeepAwakeAsync();
+  } else {
+    deactivateKeepAwake();
   }
 };
 
@@ -25,5 +34,6 @@ const copyValueToClipboard = (value) => {
 
 export const SystemUtils = {
   setFullScreen,
+  setKeepScreenAwake,
   copyValueToClipboard,
 };
