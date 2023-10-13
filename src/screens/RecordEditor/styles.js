@@ -1,15 +1,21 @@
 import { StyleSheet } from "react-native";
+import { BaseStyles } from "utils/BaseStyles";
 
+const internalContainerWrapperInTablet = {
+  ...BaseStyles.fullWidthAndHeight,
+};
 export default StyleSheet.create({
   externalContainerInTablet: {
     flex: 1,
   },
   drawerWrapperInTablet: {
-    height: "100%",
+    ...BaseStyles.fullHeight,
     width: "40%",
   },
-  internalContainerWrapperInTablet: {
-    height: "100%",
+  internalContainerWrapperInTablet,
+
+  internalContainerWrapperInTabletPageSelectorOpen: {
+    ...internalContainerWrapperInTablet,
     width: "60%",
   },
   internalContainer: {

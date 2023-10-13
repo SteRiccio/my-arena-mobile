@@ -4,6 +4,7 @@ import HomeScreen from "./HomeScreen";
 
 import RecordEditor from "./RecordEditor";
 import RecordsList from "./RecordsList";
+import RecordValidationReport from "./RecordValidationReport";
 import SettingsScreen from "./SettingsScreen";
 import SettingsRemoteConnectionScreen from "./SettingsRemoteConnectionScreen";
 import SurveysListLocal from "./SurveysListLocal";
@@ -43,6 +44,12 @@ export const screens = {
     hasBack: false,
     hasDrawer: true,
     component: RecordEditor,
+  },
+
+  [screenKeys.recordValidationReport]: {
+    ...screenDefaults,
+    title: "dataEntry:recordValidationReport",
+    component: RecordValidationReport,
   },
   [screenKeys.settings]: {
     ...screenDefaults,
