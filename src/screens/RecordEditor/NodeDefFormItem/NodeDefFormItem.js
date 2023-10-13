@@ -17,7 +17,7 @@ import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch"
 
 import { NodeDefFormItemHeader } from "./NodeDefFormItemHeader";
 
-import styles from "./styles.js";
+import { useStyles } from "./styles.js";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid, onFocus } = props;
@@ -25,6 +25,7 @@ export const NodeDefFormItem = (props) => {
   if (__DEV__) {
     console.log(`Rendering form item ${nodeDef.props.name}`);
   }
+  const styles = useStyles();
   const settings = SettingsSelectors.useSettings();
 
   const alwaysVisible = Objects.isEmpty(NodeDefs.getApplicable(nodeDef));
@@ -35,10 +36,10 @@ export const NodeDefFormItem = (props) => {
   });
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
-  const internalComponent = (
+  const formItemComponent = (
     <VView
       style={[
-        styles.externalContainer,
+        styles.formItem,
         viewMode === RecordEditViewMode.oneNode ? { flex: 1 } : {},
       ]}
     >
@@ -62,14 +63,14 @@ export const NodeDefFormItem = (props) => {
   );
 
   if (alwaysVisible) {
-    return internalComponent;
+    return formItemComponent;
   }
 
   if (settings.animationsEnabled && viewMode !== RecordEditViewMode.oneNode) {
-    return <Fade visible={visible}>{internalComponent}</Fade>;
+    return <Fade visible={visible}>{formItemComponent}</Fade>;
   }
 
-  return visible ? internalComponent : null;
+  return visible ? formItemComponent : null;
 };
 
 NodeDefFormItem.propTypes = {

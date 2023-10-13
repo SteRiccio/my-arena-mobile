@@ -9,11 +9,12 @@ import { Text } from "components/Text";
 import { View } from "components/View";
 
 import { NodeValidationIcon } from "../NodeValidationIcon";
-import styles from "./styles";
+import { useStyles } from "./styles";
 
 export const NodeDefFormItemHeader = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
+  const styles = useStyles();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const labelOrName = NodeDefs.getLabelOrName(nodeDef, lang);

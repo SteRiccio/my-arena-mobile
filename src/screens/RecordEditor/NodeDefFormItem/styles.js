@@ -1,24 +1,33 @@
 import { StyleSheet } from "react-native";
+import { useTheme } from "react-native-paper";
 
-export default StyleSheet.create({
-  externalContainer: {
-    width: "100%",
-  },
-  nodeDefLabelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-  },
-  nodeDefLabel: {
-    flexGrow: 1,
-  },
-  nodeDefDescriptionViewMoreText: {
-    textAlign: "justify",
-  },
-  nodeDefDescriptionText: {
-    fontStyle: "italic",
-  },
-  internalContainer: {
-    width: "100%",
-  },
-});
+export const useStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    formItem: {
+      width: "100%",
+      paddingTop: 8,
+      paddingBottom: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.primary,
+    },
+    nodeDefLabelContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      width: "100%",
+    },
+    nodeDefLabel: {
+      flexGrow: 1,
+    },
+    nodeDefDescriptionViewMoreText: {
+      textAlign: "justify",
+    },
+    nodeDefDescriptionText: {
+      fontStyle: "italic",
+    },
+    internalContainer: {
+      width: "100%",
+    },
+  });
+};
