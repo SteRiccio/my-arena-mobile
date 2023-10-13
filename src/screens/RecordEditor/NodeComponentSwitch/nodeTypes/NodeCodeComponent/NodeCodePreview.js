@@ -54,7 +54,7 @@ export const NodeCodePreview = (props) => {
           ))}
           <OpenDropdownButton
             onPress={openEditDialog}
-            textParams={{ count: multiple ? 2 : 1 }}
+            textParams={{ count: 2 }}
           />
         </>
       ) : (

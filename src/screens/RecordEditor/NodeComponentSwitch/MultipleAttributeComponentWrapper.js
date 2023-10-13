@@ -71,7 +71,7 @@ export const MultipleAttributeComponentWrapper = (props) => {
   return (
     <VView>
       {nodes.map((node) => (
-        <HView>
+        <HView key={node.uuid}>
           <SingleAttributeComponentSwitch
             nodeDef={nodeDef}
             nodeUuid={node.uuid}

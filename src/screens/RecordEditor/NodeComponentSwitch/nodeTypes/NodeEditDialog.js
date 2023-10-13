@@ -41,7 +41,7 @@ NodeEditDialog.propTypes = {
   doneButtonLabel: PropTypes.string,
   nodeDef: PropTypes.object.isRequired,
   onDismiss: PropTypes.func.isRequired,
-  onDone: PropTypes.func.isRequired,
+  onDone: PropTypes.func,
   parentNodeUuid: PropTypes.string,
 };
 
