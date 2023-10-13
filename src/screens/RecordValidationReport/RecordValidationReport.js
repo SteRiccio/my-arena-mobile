@@ -4,8 +4,8 @@ import { useTranslation } from "localization";
 import { DataEntrySelectors } from "state/dataEntry";
 import { SurveySelectors } from "state/survey";
 
-import { Button, DataTable, Text, VView } from "components";
-import { NodeDefs, Nodes, Records, Surveys } from "@openforis/arena-core";
+import { DataTable, Text, VView } from "components";
+import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
 import styles from "./styles";
 
 const getNodePath = ({ survey, record, nodeUuid, lang }) => {
