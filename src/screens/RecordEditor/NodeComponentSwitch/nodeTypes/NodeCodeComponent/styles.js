@@ -10,12 +10,12 @@ export default StyleSheet.create({
     paddingVertical: 4,
   },
   previewItem: {
-    margin: 2,
-    padding: 4,
+    margin: 0,
+    padding: 0,
   },
   openDropdownButton: {
     borderRadius: 6,
-    padding: 2,
-    margin: 2,
+    padding: 0,
+    margin: 0,
   },
 });

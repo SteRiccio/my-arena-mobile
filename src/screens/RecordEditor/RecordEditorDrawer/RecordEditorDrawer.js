@@ -60,6 +60,12 @@ export const RecordEditorDrawer = () => {
         <PagesNavigationTree />
       )}
 
+      <Button
+        icon="alert"
+        textKey="dataEntry:validationReport"
+        onPress={() => navigation.navigate(screenKeys.recordValidationReport)}
+      />
+
       <Dropdown
         items={Object.values(RecordEditViewMode).map((mode) => ({
           value: mode,

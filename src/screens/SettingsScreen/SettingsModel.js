@@ -20,6 +20,10 @@ const properties = {
     type: propertyType.boolean,
     labelKey: "settings:fullScreen",
   },
+  keepScreenAwake: {
+    type: propertyType.boolean,
+    labelKey: "settings:keepScreenAwake",
+  },
   animationsEnabled: {
     type: propertyType.boolean,
     labelKey: "settings:animationsEnabled",

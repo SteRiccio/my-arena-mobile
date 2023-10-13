@@ -52,7 +52,13 @@ export const RecordEditor = () => {
           <RecordEditorDrawer />
         </View>
       )}
-      <View style={styles.internalContainerWrapperInTablet}>
+      <View
+        style={
+          pageSelectorOpen
+            ? styles.internalContainerWrapperInTabletPageSelectorOpen
+            : styles.internalContainerWrapperInTablet
+        }
+      >
         {internalContainer}
       </View>
     </HView>

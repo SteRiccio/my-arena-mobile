@@ -16,9 +16,10 @@ import {
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
 import { SingleNodeNavigationButton } from "./SingleNodeNavigationButton";
 
-import styles from "./styles";
+import { useStyles } from "./styles";
 
 export const BottomNavigationBar = () => {
+  const styles = useStyles();
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
@@ -89,7 +90,7 @@ export const BottomNavigationBar = () => {
 
   return (
     <HView style={styles.container}>
-      <View>
+      <View transparent>
         {listOfRecordsButtonVisible && (
           <Button
             icon="format-list-bulleted"
@@ -112,7 +113,7 @@ export const BottomNavigationBar = () => {
           />
         )}
       </View>
-      <View>
+      <View transparent>
         {nextPageButtonVisible && (
           <NodePageNavigationButton
             icon="chevron-right"

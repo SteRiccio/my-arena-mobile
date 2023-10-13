@@ -49,7 +49,7 @@ export const HomeScreen = () => {
           heading="surveys:currentSurvey"
           style={styles.currentSurveyFieldset}
         >
-          <VView>
+          <VView style={styles.currentSurveyFieldsetContainer}>
             <Text textKey={surveyTitle} variant="titleMedium" />
             <Button
               textKey="dataEntry:goToDataEntry"

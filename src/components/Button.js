@@ -42,7 +42,7 @@ Button.propTypes = {
     "outlined",
     "contained",
     "elevated",
-    "contained-tonal ",
+    "contained-tonal",
   ]),
   onPress: PropTypes.func,
   textKey: PropTypes.string,
