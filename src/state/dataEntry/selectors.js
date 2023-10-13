@@ -152,8 +152,15 @@ const selectChildDefs =
       nodeDef,
       cycle,
       includeAnalysis: false,
-    }) // only child defs in same page
-      .filter((childDef) => !NodeDefs.getLayoutProps(cycle)(childDef).pageUuid);
+    }) // only child defs not hidden in mobile and in same page
+      .filter((childDef) => {
+        const layoutProps = NodeDefs.getLayoutProps(cycle)(childDef);
+        return (
+          !childDef.props.hidden &&
+          !layoutProps.hiddenInMobile &&
+          !layoutProps.pageUuid
+        );
+      });
     return childDefs;
   };
 

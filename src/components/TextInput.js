@@ -60,22 +60,22 @@ export const TextInput = (props) => {
 };
 
 TextInput.propTypes = {
-  autoCapitalize: PropTypes.bool,
-    disabled: PropTypes.bool,
-    editable: PropTypes.bool,
-    error: PropTypes.bool,
-    keyboardType: PropTypes.string,
-    label: PropTypes.string,
-    nonEditableStyleVisible: PropTypes.bool,
-    multiline: PropTypes.bool,
-    numberOfLines: PropTypes.number,
-    placeholder: PropTypes.string,
-    onChange: PropTypes.func,
-    onPressIn: PropTypes.func,
-    secureTextEntry: PropTypes.bool,
-    style: PropTypes.object,
-    value: PropTypes.string,
-}
+  autoCapitalize: PropTypes.string,
+  disabled: PropTypes.bool,
+  editable: PropTypes.bool,
+  error: PropTypes.bool,
+  keyboardType: PropTypes.string,
+  label: PropTypes.string,
+  nonEditableStyleVisible: PropTypes.bool,
+  multiline: PropTypes.bool,
+  numberOfLines: PropTypes.number,
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
+  onPressIn: PropTypes.func,
+  secureTextEntry: PropTypes.bool,
+  style: PropTypes.oneOf([PropTypes.object, PropTypes.array]),
+  value: PropTypes.string,
+};
 
 TextInput.defaultProps = {
   disabled: false,

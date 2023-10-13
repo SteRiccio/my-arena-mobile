@@ -35,12 +35,6 @@ const removeNodesFlags = (nodes) => {
   });
 };
 
-const getMaxDateModified = (nodes) =>
-  Object.values(nodes).reduce((acc, node) => {
-    const dateModified = Dates.parseISO(node.dateModified);
-    return Math.max(acc, dateModified);
-  }, new Date());
-
 const createNewRecord =
   ({ navigation }) =>
   async (dispatch, getState) => {
@@ -59,7 +53,6 @@ const createNewRecord =
     });
 
     record.surveyId = survey.id;
-    record.dateModified = getMaxDateModified(nodes);
     removeNodesFlags(nodes);
 
     record = await RecordService.insertRecord({ survey, record });
@@ -86,7 +79,6 @@ const addNewEntity = async (dispatch, getState) => {
       nodeDef,
     });
 
-  record.dateModified = getMaxDateModified(nodesCreated);
   removeNodesFlags(nodesCreated);
 
   const nodeCreated = Object.values(nodesCreated).find(
@@ -116,7 +108,6 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
     nodeUuids,
   });
 
-  record.dateModified = new Date();
   removeNodesFlags(nodes);
 
   await RecordService.updateRecord({ survey, record: recordUpdated });
@@ -168,7 +159,6 @@ const updateAttribute =
         value,
       });
 
-    record.dateModified = new Date();
     removeNodesFlags(nodesUpdated);
 
     if (NodeDefs.getType(nodeDef) === NodeDefType.file) {

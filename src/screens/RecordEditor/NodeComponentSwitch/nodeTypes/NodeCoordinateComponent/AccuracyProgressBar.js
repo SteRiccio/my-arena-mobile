@@ -1,6 +1,8 @@
 import { ProgressBar } from "components";
 
 const calculateProgress = ({ accuracy, accuracyThreshold }) => {
+  if (!accuracy) return { progress: 0.25, color: "red" };
+
   if (accuracy <= accuracyThreshold) return { progress: 1, color: "green" };
 
   if (accuracy < 10) return { progress: 0.75, color: "orange" };
