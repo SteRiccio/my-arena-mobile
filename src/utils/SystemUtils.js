@@ -4,11 +4,7 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 
 const setFullScreen = async (fullScreen) => {
   try {
-    if (fullScreen) {
-      await SystemNavigationBar.stickyImmersive();
-    } else {
-      await SystemNavigationBar.navigationShow();
-    }
+    await SystemNavigationBar.stickyImmersive(fullScreen);
   } catch (e) {
     // ignore it (not available)
   }
