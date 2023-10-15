@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 
-import { NodeEditDialog } from "../NodeEditDialog";
+import { NodeEditDialogInternal } from "../NodeEditDialogInternal";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
 
 export const NodeTaxonEditDialog = (props) => {
@@ -22,7 +22,7 @@ export const NodeTaxonEditDialog = (props) => {
   );
 
   return (
-    <NodeEditDialog
+    <NodeEditDialogInternal
       nodeDef={nodeDef}
       onDismiss={onDismiss}
       parentNodeUuid={parentNodeUuid}
@@ -32,7 +32,7 @@ export const NodeTaxonEditDialog = (props) => {
         taxa={taxa}
         updateNodeValue={updateNodeValue}
       />
-    </NodeEditDialog>
+    </NodeEditDialogInternal>
   );
 };
 

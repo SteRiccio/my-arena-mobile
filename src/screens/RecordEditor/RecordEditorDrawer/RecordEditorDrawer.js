@@ -62,7 +62,7 @@ export const RecordEditorDrawer = () => {
 
       <Button
         icon="alert"
-        textKey="dataEntry:validationReport"
+        textKey="dataEntry:validationReport.title"
         onPress={() => navigation.navigate(screenKeys.recordValidationReport)}
       />
 

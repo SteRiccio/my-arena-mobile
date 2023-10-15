@@ -26,6 +26,12 @@ export default {
     notInEntryStepAnymore:
       "Not in entry step anymore (in cleansing or analysis step)",
   },
+
+  validationReport: {
+    title: "Validation report",
+    noErrorsFound: 'Kudos, no errors found!'
+  },
+
   viewModeLabel: "View mode",
   viewMode: {
     form: "Form",
