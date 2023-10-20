@@ -41,7 +41,6 @@ export const NodeCodeEditDialog = (props) => {
     >
       <NodeCodeAutocomplete
         editable={editable}
-        focusOnMount
         itemLabelFunction={itemLabelFunction}
         items={items}
         onItemAdd={onItemAdd}

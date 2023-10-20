@@ -40,6 +40,7 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   });
 
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const cycle = DataEntrySelectors.useRecordCycle();
 
   const survey = SurveySelectors.useCurrentSurvey();
   const categoryUuid = NodeDefs.getCategoryUuid(nodeDef);
@@ -87,12 +88,9 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
     (item) => {
       if (!item) return "";
 
-      const label = CategoryItems.getLabelOrCode(item, lang);
-      const code = CategoryItems.getCode(item);
-      if (label === code) {
-        return code;
-      }
-      return `${label} (${code})`;
+      return NodeDefs.isCodeShown(cycle)(nodeDef)
+        ? CategoryItems.getLabelWithCode(item, lang)
+        : CategoryItems.getLabel(item, lang, true);
     },
     [nodeDef]
   );
