@@ -9,13 +9,7 @@ import { Button, VView } from "components";
 import { NodeDefFormItem } from "screens/RecordEditor/NodeDefFormItem";
 
 export const NodeEditDialog = (props) => {
-  const {
-    doneButtonLabel,
-    nodeDef,
-    onDismiss,
-    onDone,
-    parentNodeUuid,
-  } = props;
+  const { doneButtonLabel, nodeDef, onDismiss, onDone, parentNodeUuid } = props;
 
   const { t } = useTranslation();
 
@@ -32,7 +26,6 @@ export const NodeEditDialog = (props) => {
 };
 
 NodeEditDialog.propTypes = {
-  children: PropTypes.node,
   doneButtonLabel: PropTypes.string,
   nodeDef: PropTypes.object.isRequired,
   onDismiss: PropTypes.func.isRequired,

@@ -59,7 +59,7 @@ const setCredentials = async (server, email, password) =>
 
 const testServerUrl = async (serverUrl) => {
   try {
-    return API.test(serverUrl, "guest/");
+    return await API.test(serverUrl, "guest/");
   } catch (error) {
     return false;
   }
