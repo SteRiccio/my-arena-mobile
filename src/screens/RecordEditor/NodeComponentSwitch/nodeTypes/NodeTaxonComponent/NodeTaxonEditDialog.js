@@ -27,11 +27,7 @@ export const NodeTaxonEditDialog = (props) => {
       onDismiss={onDismiss}
       parentNodeUuid={parentNodeUuid}
     >
-      <NodeTaxonAutocomplete
-        focusOnMount
-        taxa={taxa}
-        updateNodeValue={updateNodeValue}
-      />
+      <NodeTaxonAutocomplete taxa={taxa} updateNodeValue={updateNodeValue} />
     </NodeEditDialogInternal>
   );
 };
