@@ -6,10 +6,17 @@ import { useTranslation } from "localization";
 
 import { Button, VView } from "components";
 
-import { NodeDefFormItem } from "screens/RecordEditor/NodeDefFormItem";
+import { NodeDefFormItemHeader } from "screens/RecordEditor/NodeDefFormItem/NodeDefFormItemHeader";
 
-export const NodeEditDialog = (props) => {
-  const { doneButtonLabel, nodeDef, onDismiss, onDone, parentNodeUuid } = props;
+export const NodeEditDialogInternal = (props) => {
+  const {
+    children,
+    doneButtonLabel,
+    nodeDef,
+    onDismiss,
+    onDone,
+    parentNodeUuid,
+  } = props;
 
   const { t } = useTranslation();
 
@@ -17,7 +24,11 @@ export const NodeEditDialog = (props) => {
     <Portal>
       <Modal visible onDismiss={onDismiss}>
         <VView style={{ height: "100%" }}>
-          <NodeDefFormItem nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
+          <NodeDefFormItemHeader
+            nodeDef={nodeDef}
+            parentNodeUuid={parentNodeUuid}
+          />
+          {children}
           <Button onPress={onDone ?? onDismiss}>{t(doneButtonLabel)}</Button>
         </VView>
       </Modal>
@@ -25,7 +36,8 @@ export const NodeEditDialog = (props) => {
   );
 };
 
-NodeEditDialog.propTypes = {
+NodeEditDialogInternal.propTypes = {
+  children: PropTypes.node,
   doneButtonLabel: PropTypes.string,
   nodeDef: PropTypes.object.isRequired,
   onDismiss: PropTypes.func.isRequired,
@@ -33,6 +45,6 @@ NodeEditDialog.propTypes = {
   parentNodeUuid: PropTypes.string,
 };
 
-NodeEditDialog.defaultProps = {
+NodeEditDialogInternal.defaultProps = {
   doneButtonLabel: "common:close",
 };

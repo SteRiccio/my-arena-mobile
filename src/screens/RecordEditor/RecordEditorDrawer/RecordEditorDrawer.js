@@ -12,6 +12,7 @@ import {
   Text,
   View,
 } from "components";
+import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { RecordEditViewMode } from "model";
 import { screenKeys } from "screens/screenKeys";
 import {
@@ -62,7 +63,7 @@ export const RecordEditorDrawer = () => {
 
       <Button
         icon="alert"
-        textKey="dataEntry:validationReport"
+        textKey="dataEntry:validationReport.title"
         onPress={() => navigation.navigate(screenKeys.recordValidationReport)}
       />
 
@@ -77,6 +78,9 @@ export const RecordEditorDrawer = () => {
         }
         value={viewMode}
       />
+
+      <GpsLockingEnabledWarning />
+
       <HView style={styles.buttonBar} transparent>
         <Button
           icon="format-list-bulleted"

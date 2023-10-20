@@ -20,10 +20,6 @@ if (!global.crypto) {
   global.crypto = Crypto;
 }
 
-// Axios
-import axios from "axios";
-axios.defaults.timeout = 30000;
-
 export const AppInitializer = (props) => {
   const { children } = props;
 
@@ -49,6 +45,10 @@ export const AppInitializer = (props) => {
       }
       if (settings.keepScreenAwake) {
         await SystemUtils.setKeepScreenAwake(settings.keepScreenAwake);
+      }
+
+      if (settings.locationGpsLocked) {
+        await dispatch(SettingsActions.startGpsLocking());
       }
 
       await initializeDb();

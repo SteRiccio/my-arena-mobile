@@ -5,7 +5,7 @@ import { NodeDefs } from "@openforis/arena-core";
 
 import { NodeCodeAutocomplete } from "./NodeCodeAutocomplete";
 import { useCallback } from "react";
-import { NodeEditDialog } from "../NodeEditDialog";
+import { NodeEditDialogInternal } from "../NodeEditDialogInternal";
 
 export const NodeCodeEditDialog = (props) => {
   const {
@@ -34,14 +34,13 @@ export const NodeCodeEditDialog = (props) => {
   );
 
   return (
-    <NodeEditDialog
+    <NodeEditDialogInternal
       nodeDef={nodeDef}
       onDismiss={onDismiss}
       parentNodeUuid={parentNodeUuid}
     >
       <NodeCodeAutocomplete
         editable={editable}
-        focusOnMount
         itemLabelFunction={itemLabelFunction}
         items={items}
         onItemAdd={onItemAdd}
@@ -50,7 +49,7 @@ export const NodeCodeEditDialog = (props) => {
         selectedItems={selectedItems}
         multiple={multiple}
       />
-    </NodeEditDialog>
+    </NodeEditDialogInternal>
   );
 };
 

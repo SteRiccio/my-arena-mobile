@@ -73,7 +73,7 @@ TextInput.propTypes = {
   onChange: PropTypes.func,
   onPressIn: PropTypes.func,
   secureTextEntry: PropTypes.bool,
-  style: PropTypes.oneOf([PropTypes.object, PropTypes.array]),
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   value: PropTypes.string,
 };
 

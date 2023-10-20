@@ -1,3 +1,7 @@
+import { useState } from "react";
+
+import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
+
 import { Validations } from "model/utils/Validations";
 import { useTranslation } from "localization";
 
@@ -5,7 +9,9 @@ import { DataEntrySelectors } from "state/dataEntry";
 import { SurveySelectors } from "state/survey";
 
 import { DataTable, Text, VView } from "components";
-import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
+
+import { NodeEditDialog } from "screens/RecordEditor/NodeComponentSwitch/nodeTypes/NodeEditDialog";
+
 import styles from "./styles";
 
 const getNodePath = ({ survey, record, nodeUuid, lang }) => {
@@ -37,31 +43,64 @@ export const RecordValidationReport = () => {
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
+  const [state, setState] = useState({
+    editDialogOpen: false,
+    dialogNodeDef: null,
+    dialogNodeUuid: null,
+    dialogParentNodeUuid: null,
+  });
+
+  const {
+    editDialogOpen,
+    dialogNodeDef,
+    dialogNodeUuid,
+    dialogParentNodeUuid,
+  } = state;
 
   const { validation } = record;
 
   const items = Object.entries(validation.fields).reduce(
     (acc, [nodeUuid, validationResult]) => {
+      const node = Records.getNodeByUuid(nodeUuid)(record);
+      if (!node) return acc;
+
+      const nodeDef = Surveys.getNodeDefByUuid({
+        survey,
+        uuid: node.nodeDefUuid,
+      });
+      const parentNodeUuid = node.parentUuid;
       const path = getNodePath({ survey, record, nodeUuid, lang });
       const error = Validations.getJointErrorText({
         validation: validationResult,
         t,
         customMessageLang: lang,
       });
-      acc.push({ key: nodeUuid, path, error });
+      acc.push({ key: nodeUuid, nodeDef, parentNodeUuid, path, error });
       return acc;
     },
     []
   );
 
-  const onRowPress = () => {};
+  const onRowPress = (item) => {
+    const {
+      key: dialogNodeUuid,
+      nodeDef: dialogNodeDef,
+      parentNodeUuid: dialogParentNodeUuid,
+    } = item;
+    setState({
+      editDialogOpen: true,
+      dialogNodeDef,
+      dialogNodeUuid,
+      dialogParentNodeUuid,
+    });
+  };
 
   return (
     <VView style={styles.container}>
       {items.length === 0 && (
         <Text
-          textKey="dataEntry:validationReport.noItemsFound"
-          variant="labelLarge"
+          textKey="dataEntry:validationReport.noErrorsFound"
+          variant="titleLarge"
         />
       )}
       {items.length > 0 && (
@@ -78,6 +117,14 @@ export const RecordValidationReport = () => {
           ]}
           onRowPress={onRowPress}
           rows={items}
+        />
+      )}
+      {editDialogOpen && (
+        <NodeEditDialog
+          nodeDef={dialogNodeDef}
+          nodeUuid={dialogNodeUuid}
+          parentNodeUuid={dialogParentNodeUuid}
+          onDismiss={() => setState({ editDialogOpen: false })}
         />
       )}
     </VView>

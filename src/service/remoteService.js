@@ -8,7 +8,7 @@ const statusToErrorKey = {
 
 const handleError = ({ error }) => {
   if (error.response) {
-    const status = error?.response?.status;
+    const status = error.response?.status;
     const errorKey = statusToErrorKey[status] || error.errorMessage;
     return { errorKey };
   } else {

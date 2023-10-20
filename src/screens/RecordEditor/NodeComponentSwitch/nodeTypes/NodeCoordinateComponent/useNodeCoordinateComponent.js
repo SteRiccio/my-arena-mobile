@@ -12,12 +12,20 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
+import { NumberUtils } from "utils/NumberUtils";
 import { RecordNodes } from "model/utils/RecordNodes";
 import { DataEntrySelectors, SettingsSelectors, SurveySelectors } from "state";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 
 const stringToNumber = (str) => Numbers.toNumber(str);
-const numberToString = (num) => (Objects.isEmpty(num) ? "" : String(num));
+const numberToString = (num, roundToDecimals = NaN) => {
+  if (Objects.isEmpty(num)) return "";
+  return String(
+    Number.isNaN(roundToDecimals)
+      ? num
+      : NumberUtils.roundToDecimals(num, roundToDecimals)
+  );
+};
 
 const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   const { coords } = location;
@@ -39,10 +47,10 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   };
 
   includedExtraFields.forEach((field) => {
-    result[field] = String(coords[field]);
+    result[field] = numberToString(coords[field], 2);
   });
   // always include accuracy
-  result["accuracy"] = String(Math.floor(accuracy * 100) / 100);
+  result["accuracy"] = numberToString(accuracy, 2);
   return result;
 };
 
@@ -229,22 +237,22 @@ export const useNodeCoordinateComponent = (props) => {
     stopGps();
   }, []);
 
-  const showCompassNavigator = useCallback(
-    () =>
+  const setCompassNavigatorVisible = useCallback(
+    (visible) =>
       setState((statePrev) => ({
         ...statePrev,
-        compassNavigatorVisible: true,
+        compassNavigatorVisible: visible,
       })),
     []
   );
 
+  const showCompassNavigator = useCallback(
+    () => setCompassNavigatorVisible(true),
+    [setCompassNavigatorVisible]
+  );
   const hideCompassNavigator = useCallback(
-    () =>
-      setState((statePrev) => ({
-        ...statePrev,
-        compassNavigatorVisible: false,
-      })),
-    []
+    () => setCompassNavigatorVisible(false),
+    [setCompassNavigatorVisible]
   );
 
   const onCompassNavigatorUseCurrentLocation = useCallback(

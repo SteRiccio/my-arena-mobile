@@ -48,7 +48,7 @@ export const screens = {
 
   [screenKeys.recordValidationReport]: {
     ...screenDefaults,
-    title: "dataEntry:recordValidationReport",
+    title: "dataEntry:validationReport.title",
     component: RecordValidationReport,
   },
   [screenKeys.settings]: {

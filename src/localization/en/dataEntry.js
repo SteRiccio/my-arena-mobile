@@ -12,6 +12,7 @@ export default {
   formLanguage: "Form language:",
   goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",
+  gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
   listOfRecords: "List of records",
   newRecord: "New record",
   noRecordsFound: "No records found",
@@ -26,6 +27,12 @@ export default {
     notInEntryStepAnymore:
       "Not in entry step anymore (in cleansing or analysis step)",
   },
+
+  validationReport: {
+    title: "Validation report",
+    noErrorsFound: "Kudos, no errors found!",
+  },
+
   viewModeLabel: "View mode",
   viewMode: {
     form: "Form",
@@ -37,13 +44,13 @@ export default {
     selectItem_plural: "Select items",
   },
   coordinate: {
-    accuracy: "Accuracy",
+    accuracy: "Accuracy (m)",
     angleToTargetLocation: "Angle to target",
     currentLocation: "Current location",
-    distance: "Distance",
-    altitude: "Altitude",
-    altitudeAccuracy: "Altitude accuracy",
-    heading: "Heading",
+    distance: "Distance (m)",
+    altitude: "Altitude (m)",
+    altitudeAccuracy: "Altitude accuracy (m)",
+    heading: "Heading (deg)",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
     startGPS: "Start GPS",

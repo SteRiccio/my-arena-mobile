@@ -71,18 +71,18 @@ const fetchRecordsWithSyncStatus = async ({ survey }) => {
 
 const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
   const surveyRemoteId = survey.remoteId;
-  const formData = new FormData();
-  formData.append("file", {
-    uri: fileUri,
-    name: "arena-mobile-data.zip",
-    type: Files.MIME_TYPES.zip,
-  });
-  formData.append("cycle", cycle);
-  formData.append("conflictResolutionStrategy", "overwriteIfUpdated");
-
+  const params = {
+    file: {
+      uri: fileUri,
+      name: "arena-mobile-data.zip",
+      type: Files.MIME_TYPES.zip,
+    },
+    cycle,
+    conflictResolutionStrategy: "overwriteIfUpdated",
+  };
   const { data } = await RemoteService.postMultipartData(
     `api/mobile/survey/${surveyRemoteId}`,
-    formData
+    params
   );
   const { job } = data;
   return job;

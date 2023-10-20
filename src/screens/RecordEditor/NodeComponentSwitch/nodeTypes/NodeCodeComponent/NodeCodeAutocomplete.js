@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 
 import { Autocomplete } from "components";
 
+import { SurveySelectors } from "state/survey";
+
 export const NodeCodeAutocomplete = (props) => {
   const {
     itemLabelFunction,
@@ -15,6 +17,8 @@ export const NodeCodeAutocomplete = (props) => {
     onSingleValueChange,
     selectedItems,
   } = props;
+
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const onSelectedItemsChange = useCallback(
     (selectedItemsUpdated) => {
@@ -44,6 +48,7 @@ export const NodeCodeAutocomplete = (props) => {
       focusOnMount={focusOnMount}
       itemKeyExtractor={(item) => item?.uuid}
       itemLabelExtractor={itemLabelFunction}
+      itemDescriptionExtractor={(item) => item?.props?.descriptions?.[lang]}
       items={items}
       multiple={multiple}
       onFocus={onFocus}

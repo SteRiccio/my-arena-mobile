@@ -1,3 +1,5 @@
+import * as Location from "expo-location";
+
 import { SettingsService } from "service";
 
 const SETTINGS_SET = "SETTINGS_SET";
@@ -16,11 +18,37 @@ const updateSetting =
   async (dispatch) => {
     const settingsUpdated = await SettingsService.updateSetting({ key, value });
     dispatch(setSettings(settingsUpdated));
+
+    if (key === "locationGpsLocked") {
+      dispatch(value ? startGpsLocking() : stopGpsLocking());
+    }
   };
 
 const updateSettings = (settings) => async (dispatch) => {
   await SettingsService.saveSettings(settings);
   dispatch(setSettings(settings));
+};
+
+let gpsLockingSubscription = null;
+
+const startGpsLocking = () => async (_dispatch) => {
+  const foregroundPermission =
+    await Location.requestForegroundPermissionsAsync();
+  if (!foregroundPermission.granted) {
+    return;
+  }
+  gpsLockingSubscription = await Location.watchPositionAsync(
+    {
+      accuracy: Location.Accuracy.BestForNavigation,
+      distanceInterval: 0,
+      timeInterval: 10,
+    },
+    (_location) => {}
+  );
+};
+
+const stopGpsLocking = () => async (_dispatch) => {
+  gpsLockingSubscription?.remove();
 };
 
 export const SettingsActions = {
@@ -29,4 +57,7 @@ export const SettingsActions = {
   initSettings,
   updateSetting,
   updateSettings,
+
+  startGpsLocking,
+  stopGpsLocking,
 };

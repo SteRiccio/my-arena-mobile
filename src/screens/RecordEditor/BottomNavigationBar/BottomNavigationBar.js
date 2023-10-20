@@ -70,7 +70,7 @@ export const BottomNavigationBar = () => {
 
   const singleNodesButtonsVisible =
     viewMode === RecordEditViewMode.oneNode &&
-    childDefs?.length > 0 &&
+    childDefs.length > 0 &&
     (!NodeDefs.isMultiple(entityDef) || entityUuid);
 
   const prevPageButtonVisible = pageButtonsVisible && prevEntityPointer;

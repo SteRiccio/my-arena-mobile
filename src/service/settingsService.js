@@ -14,6 +14,7 @@ const defaultSettings = {
   fullScreen: false,
   locationAccuracyThreshold: 3,
   locationAccuracyWatchTimeout: 120,
+  locationGpsLocked: false,
   serverUrlType: "default",
   serverUrl: defaultServerUrl,
   theme: ThemesSettings.auto,
@@ -58,8 +59,7 @@ const setCredentials = async (server, email, password) =>
 
 const testServerUrl = async (serverUrl) => {
   try {
-    await API.get(serverUrl, "guest/");
-    return true;
+    return await API.test(serverUrl, "guest/");
   } catch (error) {
     return false;
   }

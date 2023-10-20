@@ -9,8 +9,7 @@ export const OpenMapButton = (props) => {
 
   const pointLatLng = useMemo(
     () => Points.toLatLong(point, srsIndex),
-    [point],
-    srsIndex
+    [point, srsIndex]
   );
 
   const { y: latitude, x: longitude } = pointLatLng ?? {};
