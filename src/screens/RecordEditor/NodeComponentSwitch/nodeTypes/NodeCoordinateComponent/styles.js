@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   formItem: { alignItems: "center" },
   formItemLabel: {
+    width: 100,
     fontSize: 14,
     marginRight: 10,
   },
@@ -10,7 +11,7 @@ export default StyleSheet.create({
     alignItems: "baseline",
   },
   numericTextInput: {
-    width: 180,
+    width: 150,
     alignSelf: "stretch",
   },
   accuracyField: {

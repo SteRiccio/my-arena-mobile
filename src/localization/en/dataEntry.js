@@ -29,7 +29,7 @@ export default {
 
   validationReport: {
     title: "Validation report",
-    noErrorsFound: 'Kudos, no errors found!'
+    noErrorsFound: "Kudos, no errors found!",
   },
 
   viewModeLabel: "View mode",
@@ -43,13 +43,13 @@ export default {
     selectItem_plural: "Select items",
   },
   coordinate: {
-    accuracy: "Accuracy",
+    accuracy: "Accuracy (m)",
     angleToTargetLocation: "Angle to target",
     currentLocation: "Current location",
-    distance: "Distance",
-    altitude: "Altitude",
-    altitudeAccuracy: "Altitude accuracy",
-    heading: "Heading",
+    distance: "Distance (m)",
+    altitude: "Altitude (m)",
+    altitudeAccuracy: "Altitude accuracy (m)",
+    heading: "Heading (deg)",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
     startGPS: "Start GPS",
