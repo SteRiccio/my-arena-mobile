@@ -7,7 +7,6 @@ import { useTranslation } from "localization";
 import { Button, VView } from "components";
 
 import { NodeDefFormItemHeader } from "screens/RecordEditor/NodeDefFormItem/NodeDefFormItemHeader";
-import { NodeDefFormItem } from "screens/RecordEditor/NodeDefFormItem";
 
 export const NodeEditDialogInternal = (props) => {
   const {

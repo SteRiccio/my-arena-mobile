@@ -237,11 +237,14 @@ export const useNodeCoordinateComponent = (props) => {
     stopGps();
   }, []);
 
-  const setCompassNavigatorVisible = (visible) =>
-    setState((statePrev) => ({
-      ...statePrev,
-      compassNavigatorVisible: visible,
-    }));
+  const setCompassNavigatorVisible = useCallback(
+    (visible) =>
+      setState((statePrev) => ({
+        ...statePrev,
+        compassNavigatorVisible: visible,
+      })),
+    []
+  );
 
   const showCompassNavigator = useCallback(
     () => setCompassNavigatorVisible(true),

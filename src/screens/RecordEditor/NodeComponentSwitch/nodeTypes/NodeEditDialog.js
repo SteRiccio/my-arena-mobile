@@ -10,7 +10,6 @@ import { NodeDefFormItem } from "screens/RecordEditor/NodeDefFormItem";
 
 export const NodeEditDialog = (props) => {
   const {
-    children,
     doneButtonLabel,
     nodeDef,
     onDismiss,
