@@ -118,7 +118,14 @@ export const SurveysListRemote = () => {
         <Searchbar value={searchValue} onChange={onSearchValueChange} />
       )}
       {surveysFiltered.length === 0 && (
-        <Text textKey="surveys:noAvailableSurveysFound" variant="labelLarge" />
+        <Text
+          textKey={
+            surveys.length > 0
+              ? "surveys:noSurveysMatchYourSearch"
+              : "surveys:noAvailableSurveysFound"
+          }
+          variant="labelLarge"
+        />
       )}
       {surveysFiltered.length > 0 && (
         <>

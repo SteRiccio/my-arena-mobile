@@ -82,6 +82,7 @@ const deleteSurveys = async (surveyIds) => {
 };
 
 export const SurveyService = {
+  fetchSurveyRemoteById,
   fetchSurveySummariesLocal,
   fetchSurveySummariesRemote,
   fetchSurveyById,
