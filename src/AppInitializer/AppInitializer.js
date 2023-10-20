@@ -20,10 +20,6 @@ if (!global.crypto) {
   global.crypto = Crypto;
 }
 
-// Axios
-import axios from "axios";
-axios.defaults.timeout = 30000;
-
 export const AppInitializer = (props) => {
   const { children } = props;
 
