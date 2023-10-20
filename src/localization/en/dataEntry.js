@@ -12,6 +12,7 @@ export default {
   formLanguage: "Form language:",
   goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",
+  gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
   listOfRecords: "List of records",
   newRecord: "New record",
   noRecordsFound: "No records found",

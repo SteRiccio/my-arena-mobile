@@ -14,6 +14,7 @@ const defaultSettings = {
   fullScreen: false,
   locationAccuracyThreshold: 3,
   locationAccuracyWatchTimeout: 120,
+  locationGpsLocked: false,
   serverUrlType: "default",
   serverUrl: defaultServerUrl,
   theme: ThemesSettings.auto,

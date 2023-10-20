@@ -237,22 +237,19 @@ export const useNodeCoordinateComponent = (props) => {
     stopGps();
   }, []);
 
-  const showCompassNavigator = useCallback(
-    () =>
-      setState((statePrev) => ({
-        ...statePrev,
-        compassNavigatorVisible: true,
-      })),
-    []
-  );
+  const setCompassNavigatorVisible = (visible) =>
+    setState((statePrev) => ({
+      ...statePrev,
+      compassNavigatorVisible: visible,
+    }));
 
+  const showCompassNavigator = useCallback(
+    () => setCompassNavigatorVisible(true),
+    [setCompassNavigatorVisible]
+  );
   const hideCompassNavigator = useCallback(
-    () =>
-      setState((statePrev) => ({
-        ...statePrev,
-        compassNavigatorVisible: false,
-      })),
-    []
+    () => setCompassNavigatorVisible(false),
+    [setCompassNavigatorVisible]
   );
 
   const onCompassNavigatorUseCurrentLocation = useCallback(

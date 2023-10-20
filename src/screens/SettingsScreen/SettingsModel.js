@@ -46,6 +46,11 @@ const properties = {
     maxValue: 300,
     step: 30,
   },
+  locationGpsLocked: {
+    type: propertyType.boolean,
+    labelKey: "settings:locationGpsLocked.label",
+    descriptionKey: "settings:locationGpsLocked.description",
+  },
 };
 
 export const SettingsModel = {

@@ -5,11 +5,12 @@ import { useAssets } from "expo-asset";
 
 import { DateFormats, Dates } from "@openforis/arena-core";
 
+import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
+import { LoginInfo } from "appComponents/LoginInfo";
 import { Button, FieldSet, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveySelectors } from "state/survey";
 import { useAppInfo } from "hooks/useAppInfo";
-import { LoginInfo } from "appComponents/LoginInfo";
 
 import styles from "./styles";
 
@@ -43,6 +44,8 @@ export const HomeScreen = () => {
       </Text>
 
       <LoginInfo />
+
+      <GpsLockingEnabledWarning />
 
       {surveySelected && (
         <FieldSet

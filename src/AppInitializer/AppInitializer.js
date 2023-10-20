@@ -47,6 +47,10 @@ export const AppInitializer = (props) => {
         await SystemUtils.setKeepScreenAwake(settings.keepScreenAwake);
       }
 
+      if (settings.locationGpsLocked) {
+        await dispatch(SettingsActions.startGpsLocking());
+      }
+
       await initializeDb();
 
       // initialize local surveys
