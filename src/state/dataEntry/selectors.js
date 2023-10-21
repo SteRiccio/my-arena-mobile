@@ -4,6 +4,7 @@ import {
   NodeDefs,
   NodeDefType,
   Nodes,
+  NodeValues,
   Objects,
   Records,
   RecordValidations,
@@ -164,6 +165,23 @@ const selectChildDefs =
     return childDefs;
   };
 
+const selectRecordCodeParentItemUuid =
+  (state) =>
+  ({ nodeDef, parentNodeUuid }) => {
+    const parentCodeDefUuid = NodeDefs.getParentCodeDefUuid(nodeDef);
+    if (!parentCodeDefUuid) return null;
+
+    const record = selectRecord(state);
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+    const parentCodeAttribute = Records.getParentCodeAttribute({
+      parentNode,
+      nodeDef,
+    })(record);
+    return parentCodeAttribute
+      ? NodeValues.getItemUuid(parentCodeAttribute)
+      : null;
+  };
+
 const selectCurrentPageEntity = (state) => {
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = selectRecord(state);
@@ -278,6 +296,11 @@ export const DataEntrySelectors = {
           nodeDefUuid,
         }),
       Objects.isEqual
+    ),
+
+  useRecordCodeParentItemUuid: ({ parentNodeUuid, nodeDef }) =>
+    useSelector((state) =>
+      selectRecordCodeParentItemUuid(state)({ parentNodeUuid, nodeDef })
     ),
 
   useCurrentPageEntity: () =>
