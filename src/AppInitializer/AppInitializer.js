@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 
 import { DowngradeError, initialize as initializeDb } from "db";
 import { Text, View } from "components";
-import { SettingsService, SurveyService } from "service";
+import { PreferencesService, SettingsService, SurveyService } from "service";
 import {
   DeviceInfoActions,
   RemoteConnectionActions,
@@ -60,6 +60,13 @@ export const AppInitializer = (props) => {
       }
 
       await dispatch(SurveyActions.fetchAndSetLocalSurveys());
+
+      const currentSurveyId = await PreferencesService.getCurrentSurveyId();
+      if (currentSurveyId) {
+        dispatch(
+          SurveyActions.fetchAndSetCurrentSurvey({ surveyId: currentSurveyId })
+        );
+      }
 
       dispatch(RemoteConnectionActions.checkLoggedIn());
 

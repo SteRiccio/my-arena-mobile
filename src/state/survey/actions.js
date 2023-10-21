@@ -1,5 +1,5 @@
 import { screenKeys } from "screens/screenKeys";
-import { SurveyService } from "service";
+import { PreferencesService, SurveyService } from "service";
 import { SurveyActionTypes } from "./actionTypes";
 
 const {
@@ -9,10 +9,11 @@ const {
 } = SurveyActionTypes;
 
 const setCurrentSurvey =
-  ({ survey, navigation }) =>
-  (dispatch) => {
+  ({ survey, navigation = null }) =>
+  async (dispatch) => {
     dispatch({ type: CURRENT_SURVEY_SET, survey });
-    navigation.navigate(screenKeys.recordsList);
+    await PreferencesService.setCurrentSurveyId(survey.id);
+    navigation?.navigate(screenKeys.recordsList);
   };
 
 const setCurrentSurveyPreferredLanguage =
@@ -22,10 +23,12 @@ const setCurrentSurveyPreferredLanguage =
   };
 
 const fetchAndSetCurrentSurvey =
-  ({ surveyId, navigation }) =>
+  ({ surveyId, navigation = null }) =>
   async (dispatch) => {
     const survey = await SurveyService.fetchSurveyById(surveyId);
-    dispatch(setCurrentSurvey({ survey, navigation }));
+    if (survey) {
+      dispatch(setCurrentSurvey({ survey, navigation }));
+    }
   };
 
 const fetchAndSetLocalSurveys = () => async (dispatch) => {
@@ -66,6 +69,7 @@ const deleteSurveys = (surveyIds) => async (dispatch, getState) => {
   // reset current survey if among deleted ones
   if (surveyIds.includes(surveyState.currentSurvey?.id)) {
     dispatch({ type: CURRENT_SURVEY_SET, survey: null });
+    await PreferencesService.clearCurrentSurveyId();
   }
 };
 
