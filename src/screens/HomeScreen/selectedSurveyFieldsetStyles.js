@@ -1,10 +1,17 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  currentSurveyFieldset: {
+  fieldset: {
     width: "90%",
   },
-  currentSurveyFieldsetContainer: {
+  internalContainer: {
     gap: 10,
+  },
+  titleContainer: {
+    width: "100%",
+    justifyContent: "space-between",
+  },
+  updateStatusIconButton: {
+    alignSelf: "flex-end",
   },
 });

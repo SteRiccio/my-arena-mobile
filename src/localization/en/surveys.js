@@ -19,6 +19,10 @@ export default {
   selectSurvey: "Select a survey",
   surveysInTheCloud: "Surveys in the cloud",
   surveysInTheDevice: "Surveys in the device",
+  updateStatus: {
+    error: "Error retrieving update status",
+    upToDate: "Survey up-to-date",
+  },
   updateSurvey: "Update survey",
   updateSurveyConfirmMessage:
     'Survey "{{surveyName}}" already in this device. Update it?',

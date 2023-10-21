@@ -1,6 +1,7 @@
 import { screenKeys } from "screens/screenKeys";
 import { PreferencesService, SurveyService } from "service";
 import { SurveyActionTypes } from "./actionTypes";
+import { ConfirmActions } from "..";
 
 const {
   CURRENT_SURVEY_SET,
@@ -51,13 +52,31 @@ const importSurveyRemote =
   };
 
 const updateSurveyRemote =
-  ({ surveyId, surveyRemoteId, navigation }) =>
+  ({
+    surveyId,
+    surveyName,
+    surveyRemoteId,
+    navigation,
+    onConfirm = null,
+    onComplete = null,
+  }) =>
   async (dispatch) => {
-    const survey = await SurveyService.updateSurveyRemote({
-      surveyId,
-      surveyRemoteId,
-    });
-    dispatch(_onSurveyInsertOrUpdate({ survey, navigation }));
+    dispatch(
+      ConfirmActions.show({
+        confirmButtonTextKey: "surveys:updateSurvey",
+        messageKey: "surveys:updateSurveyConfirmMessage",
+        messageParams: { surveyName },
+        onConfirm: async () => {
+          onConfirm?.();
+          const survey = await SurveyService.updateSurveyRemote({
+            surveyId,
+            surveyRemoteId,
+          });
+          dispatch(_onSurveyInsertOrUpdate({ survey, navigation }));
+          onComplete?.();
+        },
+      })
+    );
   };
 
 const deleteSurveys = (surveyIds) => async (dispatch, getState) => {
