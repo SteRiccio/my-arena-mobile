@@ -31,9 +31,9 @@ const properties = {
   fontScale: {
     type: propertyType.slider,
     labelKey: "settings:fontScale",
-    minValue: 0.7,
+    minValue: 0.6,
     maxValue: 1.6,
-    step: 0.3,
+    step: 0.2,
   },
   locationAccuracyThreshold: {
     type: propertyType.numeric,

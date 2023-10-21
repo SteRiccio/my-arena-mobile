@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { Objects } from "@openforis/arena-core";
+import { Numbers, Objects } from "@openforis/arena-core";
 
 import { ConnectionToRemoteServerButton } from "appComponents/ConnectionToRemoteServerButton";
 import {
@@ -19,8 +19,13 @@ import { SettingsActions, SettingsSelectors } from "state";
 import { SettingsModel } from "./SettingsModel";
 
 import styles from "./styles";
+import { NumberUtils } from "utils/NumberUtils";
 
 const settingsPropertiesEntries = Object.entries(SettingsModel.properties);
+
+const numberToString = (value) => (Objects.isEmpty(value) ? "" : String(value));
+const stringToNumber = (value) =>
+  Objects.isEmpty(value) ? NaN : Number(value);
 
 const SettingsFormItem = (props) => {
   const { settingKey, labelKey, labelParams, children } = props;
@@ -36,6 +41,18 @@ const SettingsItem = (props) => {
   const { settings, settingKey, prop, onPropValueChange } = props;
   const { type, labelKey, options } = prop;
   const value = settings[settingKey];
+
+  const [error, setError] = useState(false);
+
+  const onValueChange = useCallback(
+    (val) => {
+      if (val !== value) {
+        onPropValueChange({ key: settingKey })(val);
+      }
+    },
+    [onPropValueChange, value]
+  );
+
   switch (type) {
     case SettingsModel.propertyType.boolean:
       return (
@@ -47,20 +64,21 @@ const SettingsItem = (props) => {
           }}
         >
           <Text textKey={labelKey} />
-          <Switch
-            value={value}
-            onChange={onPropValueChange({ key: settingKey })}
-          />
+          <Switch value={value} onChange={onValueChange} />
         </HView>
       );
     case SettingsModel.propertyType.numeric:
       return (
         <SettingsFormItem settingsKey={settingKey} labelKey={labelKey}>
           <TextInput
-            value={Objects.isEmpty(value) ? "" : String(value)}
-            onChange={(value) =>
-              onPropValueChange({ key: settingKey })(Number(value))
-            }
+            error={error}
+            keyboardType="numeric"
+            onChange={(val) => {
+              const valueNext = stringToNumber(val);
+              setError(numberToString(valueNext) !== val);
+              onValueChange(valueNext);
+            }}
+            defaultValue={numberToString(value)}
           />
         </SettingsFormItem>
       );
@@ -69,7 +87,7 @@ const SettingsItem = (props) => {
         <SettingsFormItem settingsKey={settingKey} labelKey={labelKey}>
           <SegmentedButtons
             buttons={options}
-            onChange={onPropValueChange({ key: settingKey })}
+            onChange={onValueChange}
             value={value}
           />
         </SettingsFormItem>
@@ -87,7 +105,9 @@ const SettingsItem = (props) => {
             maxValue={maxValue}
             step={step}
             value={value}
-            onValueChange={onPropValueChange({ key: settingKey })}
+            onValueChange={(values) =>
+              onValueChange(NumberUtils.roundToDecimals(values[0], 2))
+            }
           />
         </SettingsFormItem>
       );
