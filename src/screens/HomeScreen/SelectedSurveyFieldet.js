@@ -16,15 +16,17 @@ import { useToast } from "hooks/useToast";
 import { useDispatch } from "react-redux";
 
 const updateStatusKeys = {
-  loading: "loading",
-  upToDate: "upToDate",
-  notUpToDate: "notUpToDate",
   error: "error",
+  loading: "loading",
+  networkNotAvailable: "networkNotAvailable",
+  notUpToDate: "notUpToDate",
+  upToDate: "upToDate",
 };
 
 const iconByUpdateStatus = {
   [updateStatusKeys.loading]: "loading",
   [updateStatusKeys.upToDate]: "check",
+  [updateStatusKeys.networkNotAvailable]: "alert",
   [updateStatusKeys.notUpToDate]: "alert",
   [updateStatusKeys.error]: "alert-circle",
 };
@@ -42,6 +44,9 @@ const UpdateStatusIcon = ({ updateStatus }) => {
     switch (updateStatus) {
       case updateStatusKeys.error:
         toaster.show("surveys:updateStatus.error");
+        break;
+      case updateStatusKeys.networkNotAvailable:
+        toaster.show("surveys:updateStatus.networkNotAvailable");
         break;
       case updateStatusKeys.upToDate:
         toaster.show("surveys:updateStatus.upToDate");
@@ -106,7 +111,9 @@ export const SelectedSurveyFieldset = () => {
         setUpdateStatus(updateStatusKeys.upToDate);
       }
     };
-    if (networkAvailable && survey) {
+    if (!networkAvailable) {
+      setUpdateStatus(updateStatusKeys.networkNotAvailable);
+    } else if (survey) {
       checkLastPublishDate();
     }
   }, [networkAvailable, survey]);
