@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export default styles = StyleSheet.create({
+export default StyleSheet.create({
   container: { borderWidth: 1, borderRadius: 10 },
   headerButton: {
     width: "100%",
