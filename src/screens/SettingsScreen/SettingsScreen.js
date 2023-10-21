@@ -95,7 +95,7 @@ const SettingsItem = (props) => {
     case SettingsModel.propertyType.boolean:
       return (
         <SettingsFormItem
-          settingsKey={settingKey}
+          settingKey={settingKey}
           labelKey={labelKey}
           descriptionKey={descriptionKey}
           direction="horizontal"
@@ -106,7 +106,7 @@ const SettingsItem = (props) => {
     case SettingsModel.propertyType.numeric:
       return (
         <SettingsFormItem
-          settingsKey={settingKey}
+          settingKey={settingKey}
           labelKey={labelKey}
           descriptionKey={descriptionKey}
         >
@@ -124,7 +124,7 @@ const SettingsItem = (props) => {
       );
     case SettingsModel.propertyType.options:
       return (
-        <SettingsFormItem settingsKey={settingKey} labelKey={labelKey}>
+        <SettingsFormItem settingKey={settingKey} labelKey={labelKey}>
           <SegmentedButtons
             buttons={options}
             onChange={onValueChange}
@@ -136,7 +136,7 @@ const SettingsItem = (props) => {
       const { minValue, maxValue, step } = prop;
       return (
         <SettingsFormItem
-          settingsKey={settingKey}
+          settingKey={settingKey}
           labelKey={labelKey}
           labelParams={{ value }}
         >
@@ -158,7 +158,7 @@ const SettingsItem = (props) => {
 
 SettingsItem.propTypes = {
   settings: PropTypes.object.isRequired,
-  settingsKey: PropTypes.string.isRequired,
+  settingKey: PropTypes.string.isRequired,
   prop: PropTypes.object.isRequired,
   onPropValueChange: PropTypes.func.isRequired,
 };
