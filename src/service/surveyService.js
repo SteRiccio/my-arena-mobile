@@ -52,6 +52,20 @@ const fetchSurveySummariesRemote = async () => {
   }
 };
 
+const fetchSurveySummaryRemote = async ({ id, name }) => {
+  try {
+    const { data } = await RemoteService.get("api/surveys", {
+      draft: false,
+      search: name,
+    });
+    const { list: surveys } = data;
+    const survey = surveys.find((s) => s.id === id);
+    return survey;
+  } catch (error) {
+    return RemoteService.handleError({ error });
+  }
+};
+
 const fetchSurveyRemoteById = async ({ id, cycle = null }) => {
   const { data } = await RemoteService.get(`api/mobile/survey/${id}`, {
     cycle,
@@ -85,6 +99,7 @@ export const SurveyService = {
   fetchSurveyRemoteById,
   fetchSurveySummariesLocal,
   fetchSurveySummariesRemote,
+  fetchSurveySummaryRemote,
   fetchSurveyById,
   importDemoSurvey,
   importSurveyRemote,

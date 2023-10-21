@@ -7,10 +7,11 @@ import { DateFormats, Dates } from "@openforis/arena-core";
 
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { LoginInfo } from "appComponents/LoginInfo";
-import { Button, FieldSet, Text, VView } from "components";
+import { Button, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveySelectors } from "state/survey";
 import { useAppInfo } from "hooks/useAppInfo";
+import { SelectedSurveyFieldset } from "./SelectedSurveyFieldet";
 
 import styles from "./styles";
 
@@ -20,9 +21,6 @@ export const HomeScreen = () => {
   const [logo] = useAssets(require("../../../assets/icon.png"));
 
   const surveySelected = !!survey;
-  const surveyName = survey?.props.name;
-  const surveyLabelInDefaultLanguage = survey?.props.labels?.["en"] ?? "";
-  const surveyTitle = `${surveyLabelInDefaultLanguage} [${surveyName}]`;
   const deviceInfo = useAppInfo();
 
   return (
@@ -47,20 +45,8 @@ export const HomeScreen = () => {
 
       <GpsLockingEnabledWarning />
 
-      {surveySelected && (
-        <FieldSet
-          heading="surveys:currentSurvey"
-          style={styles.currentSurveyFieldset}
-        >
-          <VView style={styles.currentSurveyFieldsetContainer}>
-            <Text textKey={surveyTitle} variant="titleMedium" />
-            <Button
-              textKey="dataEntry:goToDataEntry"
-              onPress={() => navigation.navigate(screenKeys.recordsList)}
-            />
-          </VView>
-        </FieldSet>
-      )}
+      {surveySelected && <SelectedSurveyFieldset />}
+
       <Button
         textKey={
           surveySelected ? "surveys:manageSurveys" : "surveys:selectSurvey"

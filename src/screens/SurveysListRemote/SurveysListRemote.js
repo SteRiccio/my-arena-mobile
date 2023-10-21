@@ -65,20 +65,13 @@ export const SurveysListRemote = () => {
       if (localSurveyWithSameUuid) {
         // update existing survey
         dispatch(
-          ConfirmActions.show({
-            confirmButtonTextKey: "surveys:updateSurvey",
-            messageKey: "surveys:updateSurveyConfirmMessage",
-            messageParams: { surveyName },
-            onConfirm: () => {
-              setState((statePrev) => ({ ...statePrev, loading: true }));
-              dispatch(
-                SurveyActions.updateSurveyRemote({
-                  surveyId: localSurveyWithSameUuid.id,
-                  surveyRemoteId: surveySummary.id,
-                  navigation,
-                })
-              );
-            },
+          SurveyActions.updateSurveyRemote({
+            surveyId: localSurveyWithSameUuid.id,
+            surveyRemoteId: surveySummary.id,
+            surveyName,
+            navigation,
+            onConfirm: () =>
+              setState((statePrev) => ({ ...statePrev, loading: true })),
           })
         );
       } else {

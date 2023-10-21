@@ -103,7 +103,6 @@ export const NodeCoordinateComponent = (props) => {
                 textKey="dataEntry:coordinate.accuracy"
               />
               <Text style={styles.accuracyField} textKey={accuracy} />
-              <Text style={styles.formItemLabel} textKey="m" />
             </HView>
           )
       }
