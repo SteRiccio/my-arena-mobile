@@ -7,17 +7,10 @@ export default StyleSheet.create({
   appVersionName: {
     marginBottom: 20,
   },
-
   container: {
     flex: 1,
     alignItems: "center",
     padding: 10,
   },
   logo: { width: 50, height: 50 },
-  currentSurveyFieldset: {
-    width: "90%",
-  },
-  currentSurveyFieldsetContainer: {
-    gap: 10,
-  },
 });
