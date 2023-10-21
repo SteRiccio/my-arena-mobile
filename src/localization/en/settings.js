@@ -10,8 +10,9 @@ export default {
     "Location accuracy watch timeout: {{value}} seconds",
   locationGpsLocked: {
     label: "GPS locked (BETA)",
-    description:
-      "Warning: battery consumption will increase! GPS signal will be locked when the application is running. It will help to get a better accuracy in a Coordinate attribute.",
+    description: `Warning: battery consumption will increase! 
+GPS signal will be locked when the application is running. 
+It will help to get a better accuracy in a coordinate attributes.`,
   },
   theme: {
     label: "Theme",

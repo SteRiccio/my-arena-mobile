@@ -14,12 +14,13 @@ import {
   Text,
   TextInput,
   VView,
+  View,
 } from "components";
 import { SettingsActions, SettingsSelectors } from "state";
 import { SettingsModel } from "./SettingsModel";
+import { NumberUtils } from "utils/NumberUtils";
 
 import styles from "./styles";
-import { NumberUtils } from "utils/NumberUtils";
 
 const settingsPropertiesEntries = Object.entries(SettingsModel.properties);
 
@@ -28,18 +29,45 @@ const stringToNumber = (value) =>
   Objects.isEmpty(value) ? NaN : Number(value);
 
 const SettingsFormItem = (props) => {
-  const { settingKey, labelKey, labelParams, children } = props;
+  const {
+    settingKey,
+    labelKey,
+    labelParams,
+    descriptionKey,
+    descriptionParams,
+    direction,
+    children,
+  } = props;
+
+  const style =
+    direction === "vertical"
+      ? styles.settingsFormItemVertical
+      : styles.settingsFormItemHorizontal;
+
   return (
-    <VView key={settingKey}>
-      <Text textKey={labelKey} textParams={labelParams} />
+    <View key={settingKey} style={style}>
+      <VView style={{ flex: 1 }}>
+        <Text textKey={labelKey} textParams={labelParams} />
+        {descriptionKey && (
+          <Text
+            variant="labelMedium"
+            textKey={descriptionKey}
+            textParams={descriptionParams}
+          />
+        )}
+      </VView>
       {children}
-    </VView>
+    </View>
   );
+};
+
+SettingsFormItem.defaultProps = {
+  direction: "vertical",
 };
 
 const SettingsItem = (props) => {
   const { settings, settingKey, prop, onPropValueChange } = props;
-  const { type, labelKey, options } = prop;
+  const { type, labelKey, descriptionKey, options } = prop;
   const value = settings[settingKey];
 
   const [error, setError] = useState(false);
@@ -56,20 +84,22 @@ const SettingsItem = (props) => {
   switch (type) {
     case SettingsModel.propertyType.boolean:
       return (
-        <HView
-          key={settingKey}
-          style={{
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
+        <SettingsFormItem
+          settingsKey={settingKey}
+          labelKey={labelKey}
+          descriptionKey={descriptionKey}
+          direction="horizontal"
         >
-          <Text textKey={labelKey} />
           <Switch value={value} onChange={onValueChange} />
-        </HView>
+        </SettingsFormItem>
       );
     case SettingsModel.propertyType.numeric:
       return (
-        <SettingsFormItem settingsKey={settingKey} labelKey={labelKey}>
+        <SettingsFormItem
+          settingsKey={settingKey}
+          labelKey={labelKey}
+          descriptionKey={descriptionKey}
+        >
           <TextInput
             error={error}
             keyboardType="numeric"

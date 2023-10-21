@@ -6,6 +6,16 @@ export default StyleSheet.create({
     padding: 10,
   },
   settingsItemWrapper: {
-    marginVertical: 10,
+    marginVertical: 4,
+    borderBottomWidth: 1,
+  },
+  settingsFormItemVertical: {
+    flexDirection: "column",
+  },
+  settingsFormItemHorizontal: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
