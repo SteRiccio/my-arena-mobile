@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
-import { Numbers, Objects } from "@openforis/arena-core";
+import { Objects } from "@openforis/arena-core";
 
 import { ConnectionToRemoteServerButton } from "appComponents/ConnectionToRemoteServerButton";
 import {
   Divider,
-  HView,
   ScrollView,
   SegmentedButtons,
   Slider,
@@ -63,6 +63,16 @@ const SettingsFormItem = (props) => {
 
 SettingsFormItem.defaultProps = {
   direction: "vertical",
+};
+
+SettingsFormItem.propTypes = {
+  settingKey: PropTypes.string.isRequired,
+  labelKey: PropTypes.string,
+  labelParams: PropTypes.object,
+  descriptionKey: PropTypes.string,
+  descriptionParams: PropTypes.object,
+  direction: PropTypes.string,
+  children: PropTypes.node,
 };
 
 const SettingsItem = (props) => {
@@ -144,6 +154,13 @@ const SettingsItem = (props) => {
     default:
       return null;
   }
+};
+
+SettingsItem.propTypes = {
+  settings: PropTypes.object.isRequired,
+  settingsKey: PropTypes.string.isRequired,
+  prop: PropTypes.object.isRequired,
+  onPropValueChange: PropTypes.func.isRequired,
 };
 
 export const SettingsScreen = () => {

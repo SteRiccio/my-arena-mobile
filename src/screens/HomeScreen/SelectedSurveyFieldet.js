@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useNavigation } from "@react-navigation/native";
 
 import { Dates, Surveys } from "@openforis/arena-core";
@@ -67,6 +68,10 @@ const UpdateStatusIcon = ({ updateStatus }) => {
       onPress={onPress}
     />
   );
+};
+
+UpdateStatusIcon.propTypes = {
+  updateStatus: PropTypes.string.isRequired,
 };
 
 export const SelectedSurveyFieldset = () => {
