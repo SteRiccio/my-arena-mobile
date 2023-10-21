@@ -3,15 +3,14 @@ import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
 import { useAssets } from "expo-asset";
 
-import { DateFormats, Dates } from "@openforis/arena-core";
 
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { LoginInfo } from "appComponents/LoginInfo";
 import { Button, Text, VView } from "components";
 import { screenKeys } from "../screenKeys";
 import { SurveySelectors } from "state/survey";
-import { useAppInfo } from "hooks/useAppInfo";
 import { SelectedSurveyFieldset } from "./SelectedSurveyFieldet";
+import { VersionNumberInfo } from "./VersionNumberInfo";
 
 import styles from "./styles";
 
@@ -21,7 +20,6 @@ export const HomeScreen = () => {
   const [logo] = useAssets(require("../../../assets/icon.png"));
 
   const surveySelected = !!survey;
-  const deviceInfo = useAppInfo();
 
   return (
     <VView style={styles.container}>
@@ -31,15 +29,8 @@ export const HomeScreen = () => {
         variant="displaySmall"
         textKey="common:appTitle"
       />
-      <Text style={styles.appVersionName} variant="labelSmall">
-        v{deviceInfo.version} [{deviceInfo.buildNumber}] (
-        {Dates.convertDate({
-          dateStr: deviceInfo.lastUpdateTime,
-          formatFrom: DateFormats.datetimeStorage,
-          formatTo: DateFormats.dateDisplay,
-        })}
-        )
-      </Text>
+
+      <VersionNumberInfo />
 
       <LoginInfo />
 
