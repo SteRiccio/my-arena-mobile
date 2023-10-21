@@ -54,14 +54,14 @@ const test = async (serverUrl, uri, params = {}) => {
   return response.ok;
 };
 
-const post = async (serverUrl, uri, data, config = {}) => {
+const post = async (serverUrl, uri, data, options = {}) => {
   const formData = Object.entries(data).reduce((acc, [key, value]) => {
     acc.append(key, value);
     return acc;
   }, new FormData());
 
   const response = await fetchWithTimeout(getUrl({ serverUrl, uri }), {
-    ...config,
+    ...options,
     method: "POST",
     body: formData,
   });
