@@ -15,20 +15,6 @@ import { SurveyService } from "service/surveyService";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import { useItemsFilter } from "../useItemsFilter";
 
-const findParentItemUuid = ({ nodeDef, parentNodeUuid }) => {
-  if (!nodeDef.props.parentCodeDefUuid) return null;
-
-  const record = DataEntrySelectors.useRecord();
-  const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
-  const parentCodeAttribute = Records.getParentCodeAttribute({
-    parentNode,
-    nodeDef,
-  })(record);
-  return parentCodeAttribute
-    ? NodeValues.getItemUuid(parentCodeAttribute)
-    : null;
-};
-
 export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const dispatch = useDispatch();
 
@@ -44,7 +30,10 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
 
   const survey = SurveySelectors.useCurrentSurvey();
   const categoryUuid = NodeDefs.getCategoryUuid(nodeDef);
-  const parentItemUuid = findParentItemUuid({ nodeDef, parentNodeUuid });
+  const parentItemUuid = DataEntrySelectors.useRecordCodeParentItemUuid({
+    nodeDef,
+    parentNodeUuid,
+  });
 
   const _items = useMemo(() => {
     const levelIndex = Surveys.getNodeDefCategoryLevelIndex({

@@ -20,7 +20,9 @@ export default {
   surveysInTheCloud: "Surveys in the cloud",
   surveysInTheDevice: "Surveys in the device",
   updateStatus: {
-    error: "Error retrieving update status",
+    error: "Error retrieving survey update status",
+    networkNotAvailable:
+      "Cannot verify survey udpate status: network not available",
     upToDate: "Survey up-to-date",
   },
   updateSurvey: "Update survey",
