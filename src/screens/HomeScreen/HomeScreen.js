@@ -3,7 +3,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
 import { useAssets } from "expo-asset";
 
-
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { LoginInfo } from "appComponents/LoginInfo";
 import { Button, Text, VView } from "components";
