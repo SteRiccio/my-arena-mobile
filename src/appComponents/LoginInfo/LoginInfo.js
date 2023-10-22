@@ -26,6 +26,7 @@ export const LoginInfo = () => {
           <FormItem labelKey="loginInfo:name">{user.name}</FormItem>
           <FormItem labelKey="loginInfo:email">{user.email}</FormItem>
           <Button
+            mode="contained-tonal"
             style={styles.logoutButton}
             textKey="loginInfo:logout"
             onPress={() => dispatch(RemoteConnectionActions.logout())}

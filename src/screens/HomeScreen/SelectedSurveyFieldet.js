@@ -26,7 +26,7 @@ const updateStatusKeys = {
 const iconByUpdateStatus = {
   [updateStatusKeys.loading]: "loading",
   [updateStatusKeys.upToDate]: "check",
-  [updateStatusKeys.networkNotAvailable]: "alert",
+  [updateStatusKeys.networkNotAvailable]: "sync-alert",
   [updateStatusKeys.notUpToDate]: "alert",
   [updateStatusKeys.error]: "alert-circle",
 };
