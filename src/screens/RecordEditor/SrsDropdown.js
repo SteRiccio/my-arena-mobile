@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Dropdown } from "components";
+import { Dropdown, Text } from "components";
 import { SurveySelectors } from "state";
 
 export const SrsDropdown = (props) => {
@@ -12,8 +12,11 @@ export const SrsDropdown = (props) => {
 
   const items = srss.map((srs) => ({ value: srs.code, label: srs.name }));
 
-  const selectedValue = value ? value : singleSrs ? srss[0].code : undefined;
+  const selectedValue = value ?? singleSrs ? srss[0].code : undefined;
 
+  if (singleSrs) {
+    return <Text>{srss[0].name}</Text>;
+  }
   return (
     <Dropdown
       disabled={!editable || singleSrs}
