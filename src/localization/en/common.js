@@ -18,6 +18,7 @@ export default {
   search: "Search",
   selectAnItem: "Select an item",
   srs: "SRS",
+  swipeToConfirm: "Swipe to confirm",
   textCopiedToClipboard: "Text copied to clipboard",
   true: "True",
   yes: "Yes",

@@ -12,6 +12,8 @@ const show =
     onCancel = undefined,
     singleChoiceOptions = [],
     defaultSingleChoiceValue = null,
+    swipeToConfirm = false,
+    swipeToConfirmTitleKey = "common:swipeToConfirm",
   }) =>
   (dispatch) => {
     dispatch({
@@ -26,6 +28,8 @@ const show =
         onCancel,
         singleChoiceOptions,
         defaultSingleChoiceValue,
+        swipeToConfirm,
+        swipeToConfirmTitleKey,
       },
     });
   };

@@ -41,6 +41,7 @@ export const SurveysListLocal = () => {
           await dispatch(SurveyActions.deleteSurveys(surveyIds));
           await loadSurveys();
         },
+        swipeToConfirm: true,
       })
     );
   }, []);

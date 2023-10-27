@@ -5,6 +5,7 @@ import { ConfirmActions } from "./actions";
 
 const defaultLocalState = {
   selectedSingleChoiceValue: null,
+  swipeConfirmed: false,
 };
 
 export const useConfirmDialog = () => {
@@ -14,7 +15,7 @@ export const useConfirmDialog = () => {
 
   const [state, setState] = useState(defaultLocalState);
 
-  const { selectedSingleChoiceValue } = state;
+  const { selectedSingleChoiceValue, swipeConfirmed } = state;
 
   useEffect(() => {
     setState({
@@ -38,6 +39,13 @@ export const useConfirmDialog = () => {
     }));
   }, []);
 
+  const setSwipeConfirmed = useCallback(() => {
+    setState((statePrev) => ({
+      ...statePrev,
+      swipeConfirmed: true,
+    }));
+  }, []);
+
   return {
     ...confirmState,
     confirm,
@@ -45,5 +53,7 @@ export const useConfirmDialog = () => {
 
     onSingleChoiceOptionChange,
     selectedSingleChoiceValue,
+    setSwipeConfirmed,
+    swipeConfirmed,
   };
 };
