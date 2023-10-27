@@ -44,10 +44,7 @@ export const NodeCoordinateComponent = (props) => {
   const createNumericFieldFormItem = useCallback(
     ({ fieldKey, labelStyle = styles.formItemLabel }) => (
       <HView key={fieldKey} style={styles.formItem}>
-        <Text
-          style={labelStyle}
-          textKey={`dataEntry:coordinate.${fieldKey}`}
-        />
+        <Text style={labelStyle} textKey={`dataEntry:coordinate.${fieldKey}`} />
         <TextInput
           editable={editable}
           keyboardType="numeric"
@@ -66,7 +63,7 @@ export const NodeCoordinateComponent = (props) => {
   return (
     <VView>
       <HView style={{ alignItems: "center" }}>
-        <VView>
+        <VView style={{ flex: 1 }}>
           {createNumericFieldFormItem({ fieldKey: "x" })}
           {createNumericFieldFormItem({ fieldKey: "y" })}
         </VView>
@@ -91,7 +88,10 @@ export const NodeCoordinateComponent = (props) => {
         />
       </HView>
       {includedExtraFields.map((fieldKey) =>
-        createNumericFieldFormItem({ fieldKey, labelStyle: styles.extraFieldFormItemLabel })
+        createNumericFieldFormItem({
+          fieldKey,
+          labelStyle: styles.extraFieldFormItemLabel,
+        })
       )}
       {
         // always show accuracy (as read-only if not included in extra fields)
