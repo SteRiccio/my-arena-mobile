@@ -30,7 +30,6 @@ export const AppConfirmDialog = () => {
 
   const theme = useTheme();
 
-  console.log("===swipe confirmed", swipeConfirmed);
   return (
     <Portal>
       <Dialog visible={isOpen} onDismiss={cancel}>

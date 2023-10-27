@@ -1,6 +1,7 @@
 import * as Location from "expo-location";
 
 import { SettingsService } from "service";
+import { ToastActions } from "..";
 
 const SETTINGS_SET = "SETTINGS_SET";
 
@@ -16,11 +17,21 @@ const initSettings = () => async (dispatch) => {
 const updateSetting =
   ({ key, value }) =>
   async (dispatch) => {
-    const settingsUpdated = await SettingsService.updateSetting({ key, value });
-    dispatch(setSettings(settingsUpdated));
+    let canPersist = true;
 
     if (key === "locationGpsLocked") {
-      dispatch(value ? startGpsLocking() : stopGpsLocking());
+      if (value) {
+        canPersist = await dispatch(startGpsLocking());
+      } else {
+        _stopGpsLocking();
+      }
+    }
+    if (canPersist) {
+      const settingsUpdated = await SettingsService.updateSetting({
+        key,
+        value,
+      });
+      dispatch(setSettings(settingsUpdated));
     }
   };
 
@@ -31,11 +42,16 @@ const updateSettings = (settings) => async (dispatch) => {
 
 let gpsLockingSubscription = null;
 
-const startGpsLocking = () => async (_dispatch) => {
+const _startGpsLocking = async () => {
   const foregroundPermission =
     await Location.requestForegroundPermissionsAsync();
-  if (!foregroundPermission.granted) {
-    return;
+
+  const providerStatus = await Location.getProviderStatusAsync();
+  if (
+    !providerStatus.locationServicesEnabled ||
+    !foregroundPermission.granted
+  ) {
+    return false;
   }
   gpsLockingSubscription = await Location.watchPositionAsync(
     {
@@ -45,10 +61,25 @@ const startGpsLocking = () => async (_dispatch) => {
     },
     (_location) => {}
   );
+  return true;
 };
 
-const stopGpsLocking = () => async (_dispatch) => {
+const startGpsLocking = () => async (dispatch) => {
+  const started = await _startGpsLocking();
+  if (!started) {
+    dispatch(
+      ToastActions.show({ textKey: "settings:locationGpsLocked.error" })
+    );
+  }
+  return started;
+};
+
+const _stopGpsLocking = () => {
   gpsLockingSubscription?.remove();
+};
+
+const stopGpsLocking = () => (_dispatch) => {
+  return _stopGpsLocking();
 };
 
 export const SettingsActions = {
