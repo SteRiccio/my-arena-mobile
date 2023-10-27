@@ -46,7 +46,6 @@ export const AppInitializer = (props) => {
       if (settings.keepScreenAwake) {
         await SystemUtils.setKeepScreenAwake(settings.keepScreenAwake);
       }
-
       if (settings.locationGpsLocked) {
         await dispatch(SettingsActions.startGpsLocking());
       }

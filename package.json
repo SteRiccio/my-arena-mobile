@@ -1,6 +1,6 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "0.9.35",
+  "version": "0.9.36",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -10,7 +10,7 @@
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
     "@miblanchard/react-native-slider": "^2.3.1",
-    "@openforis/arena-core": "^0.0.172",
+    "@openforis/arena-core": "^0.0.173",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-clipboard/clipboard": "^1.11.2",
     "@react-native-community/datetimepicker": "7.2.0",
