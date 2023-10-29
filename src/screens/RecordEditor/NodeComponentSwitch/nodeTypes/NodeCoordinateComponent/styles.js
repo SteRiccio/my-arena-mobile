@@ -14,7 +14,8 @@ export default StyleSheet.create({
     alignItems: "baseline",
   },
   numericTextInput: {
-    width: 180,
+    flex: 1,
+    maxWidth: 180,
     alignSelf: "stretch",
   },
   accuracyField: {

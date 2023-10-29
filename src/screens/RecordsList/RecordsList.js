@@ -121,6 +121,7 @@ export const RecordsList = () => {
           await dispatch(DataEntryActions.deleteRecords(recordUuids));
           await loadRecords();
         },
+        swipeToConfirm: true,
       })
     );
   }, []);
