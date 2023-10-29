@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 
@@ -25,31 +25,32 @@ export const Breadcrumbs = () => {
   const { entityUuid, parentEntityUuid, entityDef } = currentPageEntity;
   const actualEntityUuid = entityUuid || parentEntityUuid;
 
-  const itemLabelFunction = ({
-    nodeDef,
-    survey = null,
-    record = null,
-    entity = null,
-    parentEntity = null,
-  }) => {
-    let label = NodeDefs.getLabelOrName(nodeDef, lang);
+  const itemLabelFunction = useCallback(
+    ({
+      nodeDef,
+      survey = null,
+      record = null,
+      entity = null,
+      parentEntity = null,
+    }) => {
+      let label = NodeDefs.getLabelOrName(nodeDef, lang);
 
-    if (
-      NodeDefs.isRoot(nodeDef) ||
-      (NodeDefs.isMultiple(nodeDef) && parentEntity)
-    ) {
-      const keyValuesByName = RecordNodes.getEntitySummaryValuesByNameFormatted(
-        {
-          survey,
-          record,
-          entity,
-        }
-      );
-      return label + `[${Object.values(keyValuesByName)}]`;
-    }
-
-    return label;
-  };
+      if (
+        NodeDefs.isRoot(nodeDef) ||
+        (NodeDefs.isMultiple(nodeDef) && parentEntity)
+      ) {
+        const keyValuesByName =
+          RecordNodes.getEntitySummaryValuesByNameFormatted({
+            survey,
+            record,
+            entity,
+          });
+        return label + `[${Object.values(keyValuesByName)}]`;
+      }
+      return label;
+    },
+    [lang]
+  );
 
   useEffect(() => {
     // scroll to the end (right)

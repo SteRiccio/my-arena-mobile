@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
-import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
+import { NodeDefs, Records } from "@openforis/arena-core";
 
 import { Button, DataTable, Text, VView } from "components";
 import {
@@ -68,7 +68,7 @@ export const NodeMultipleEntityListComponent = (props) => {
         },
       })
     );
-  });
+  }, []);
 
   const entityToRow = (entity) => ({
     key: entity.uuid,

@@ -11,7 +11,7 @@ export const NodeTimeComponent = (props) => {
   if (__DEV__) {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
   }
-  const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
+  const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
 
