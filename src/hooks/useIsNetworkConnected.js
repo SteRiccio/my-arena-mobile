@@ -9,7 +9,7 @@ export const useIsNetworkConnected = () => {
       setConnected(netInfoState.isConnected);
     });
     return unsubscribe;
-  });
+  }, []);
 
   return connected;
 };

@@ -13,7 +13,7 @@ export const useAppInfo = () => {
         lastUpdateTime: Dates.formatForStorage(lastUpdateTime),
       });
     });
-  });
+  }, []);
 
   return state;
 };

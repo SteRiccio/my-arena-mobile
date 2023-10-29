@@ -1,4 +1,10 @@
-import { Objects, Records, Surveys } from "@openforis/arena-core";
+import {
+  DateFormats,
+  Dates,
+  Objects,
+  Records,
+  Surveys,
+} from "@openforis/arena-core";
 
 import { DbUtils, dbClient } from "db";
 
@@ -92,6 +98,20 @@ const deleteRecords = async ({ surveyId, recordUuids }) => {
   return dbClient.executeSql(sql, [surveyId]);
 };
 
+const fixDatetime = (dateStr) => {
+  if (!dateStr) return dateStr;
+
+  const formatFrom = [
+    DateFormats.datetimeStorage,
+    DateFormats.datetimeDefault,
+  ].find((frmt) => Dates.isValidDateInFormat(dateStr, frmt));
+
+  if (!formatFrom || formatFrom === DateFormats.datetimeStorage) return dateStr;
+
+  const parsed = Dates.parse(dateStr, formatFrom);
+  return Dates.formatForStorage(parsed);
+};
+
 const rowToRecord = ({ survey }) => {
   const rootDef = Surveys.getNodeDefRoot({ survey });
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
@@ -102,6 +122,18 @@ const rowToRecord = ({ survey }) => {
       : Objects.camelize(row, { skip: ["content"] });
 
     result.id = row.id;
+
+    // fix record dates format
+    result.dateModified = fixDatetime(result.dateModified);
+    result.dateCreated = fixDatetime(result.dateCreated);
+
+    // fix node dates format
+    Records.getNodesArray(result).forEach((node) => {
+      node.dateCreated = fixDatetime(node.dateCreated);
+      node.dateModified = fixDatetime(node.dateModified);
+    });
+
+    // camelize key attribute columns
     keysColumns.forEach((keyCol, index) => {
       const keyValue = JSON.parse(row[keyCol]);
       const keyDef = keyDefs[index];
