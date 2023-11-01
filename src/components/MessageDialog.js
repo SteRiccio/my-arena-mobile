@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Dialog, Portal } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
@@ -48,6 +49,17 @@ export const MessageDialog = (props) => {
       </Dialog>
     </Portal>
   );
+};
+
+MessageDialog.propTypes = {
+  content: PropTypes.string,
+  contentParams: PropTypes.object,
+  details: PropTypes.string,
+  detailsParams: PropTypes.object,
+  doneButtonLabel: PropTypes.string,
+  onDismiss: PropTypes.func,
+  onDone: PropTypes.func,
+  title: PropTypes.string,
 };
 
 MessageDialog.defaultProps = {

@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import PropTypes from "prop-types";
 
 import { MessageActions } from "state/message";
 import { useDispatch } from "react-redux";
@@ -21,4 +22,9 @@ export const ErrorFallbackComponent = (props) => {
   }, [error]);
 
   return null;
+};
+
+ErrorFallbackComponent.propTypes = {
+  error: PropTypes.object.isRequired,
+  resetError: PropTypes.func.isRequired,
 };
