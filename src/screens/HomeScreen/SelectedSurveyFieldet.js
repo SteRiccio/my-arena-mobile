@@ -58,7 +58,7 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   );
 };
 
-UpdateStatusIcon.propTypes = {
+SurveyUpdateStatusIcon.propTypes = {
   updateStatus: PropTypes.string.isRequired,
 };
 
