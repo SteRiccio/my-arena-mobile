@@ -6,12 +6,16 @@ export const ScrollView = (props) => {
     persistentScrollbar,
     children,
     style: styleProp,
+    transparent,
     ...otherProps
   } = props;
 
   const theme = useTheme();
 
-  const style = [{ backgroundColor: theme.colors.background }, styleProp];
+  const style = [
+    { backgroundColor: transparent ? "transparent" : theme.colors.background },
+    styleProp,
+  ];
 
   return (
     <RNScrollView

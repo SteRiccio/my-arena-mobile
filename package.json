@@ -1,6 +1,6 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "0.9.37",
+  "version": "0.9.38",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -43,6 +43,7 @@
     "react-native-collapsible": "^1.6.1",
     "react-native-dots-pagination": "^0.3.0",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-error-boundary": "^1.2.3",
     "react-native-final-tree-view": "^3.0.0",
     "react-native-keychain": "^8.1.1",
     "react-native-open-maps": "^0.4.3",
