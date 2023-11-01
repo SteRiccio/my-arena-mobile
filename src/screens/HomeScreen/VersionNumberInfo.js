@@ -9,7 +9,7 @@ export const VersionNumberInfo = () => {
   const deviceInfo = useAppInfo();
 
   return (
-    <Text style={styles.appVersionName} variant="labelSmall">
+    <Text style={styles.appVersionName} variant="labelLarge">
       v{deviceInfo.version} [{deviceInfo.buildNumber}] (
       {Dates.convertDate({
         dateStr: deviceInfo.lastUpdateTime,

@@ -162,7 +162,7 @@ export const SettingsRemoteConnectionScreen = () => {
           {!serverUrlVerified && (
             <Button
               disabled={!networkAvailable}
-              style={{ margin: 10 }}
+              style={styles.testUrlButton}
               textKey="settingsRemoteConnection:testUrl"
               onPress={onTestUrlPress}
             />
@@ -186,7 +186,8 @@ export const SettingsRemoteConnectionScreen = () => {
         <Button
           disabled={!networkAvailable}
           onPress={onLogin}
-          style={{ margin: 20 }}
+          style={styles.loginButton}
+          labelStyle={styles.loginButtonLabel}
           textKey="settingsRemoteConnection:login"
         />
       </VView>

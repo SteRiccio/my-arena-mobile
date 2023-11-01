@@ -125,11 +125,16 @@ export const SelectedSurveyFieldset = () => {
   return (
     <FieldSet heading="surveys:currentSurvey" style={styles.fieldset}>
       <VView style={styles.internalContainer}>
-        <HView style={styles.titleContainer}>
-          <Text textKey={surveyTitle} variant="titleMedium" />
+        <HView style={styles.surveyTitleContainer}>
+          <Text
+            style={styles.surveyTitle}
+            textKey={surveyTitle}
+            variant="titleMedium"
+          />
           <UpdateStatusIcon updateStatus={updateStatus} />
         </HView>
         <Button
+          style={styles.goToDataEntryButton}
           textKey="dataEntry:goToDataEntry"
           onPress={() => navigation.navigate(screenKeys.recordsList)}
         />

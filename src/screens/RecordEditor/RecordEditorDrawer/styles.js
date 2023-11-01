@@ -5,12 +5,14 @@ export const useStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
-    titleText: {
-      flex: 1,
-    },
     titleContainer: {
       backgroundColor: "transparent",
-      alignItems: "center",
+      alignItems: "flex-start",
+      borderBottomWidth: 2,
+    },
+    titleText: {
+      flex: 1,
+      margin: 6,
     },
     pagesNavigatorContainer: {
       flex: 0.8,
@@ -18,9 +20,7 @@ export const useStyles = () => {
       padding: 10,
       borderWidth: 1,
     },
-    closeButton: {
-      alignSelf: "flex-end",
-    },
+    closeButton: {},
     buttonBar: {
       width: "100%",
       alignItems: "center",

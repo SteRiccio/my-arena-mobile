@@ -42,6 +42,7 @@ export const RecordEditorDrawer = () => {
     <View style={styles.pagesNavigatorContainer}>
       <HView style={styles.titleContainer}>
         <Text
+          numberOfLines={1}
           variant="headlineMedium"
           style={styles.titleText}
           textKey={
