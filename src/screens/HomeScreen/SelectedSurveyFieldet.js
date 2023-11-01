@@ -1,57 +1,41 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { Dates, Surveys } from "@openforis/arena-core";
 
-import { Button, FieldSet, HView, IconButton, Text, VView } from "components";
+import { Button, FieldSet, HView, Text, VView } from "components";
+import { UpdateStatusIcon } from "components/UpdateStatusIcon";
 import { SurveyActions, SurveySelectors } from "state/survey";
 import { SurveyService } from "service/surveyService";
 import { useIsNetworkConnected } from "hooks/useIsNetworkConnected";
+import { useToast } from "hooks/useToast";
+import { UpdateStatus } from "model/UpdateStatus";
 
 import { screenKeys } from "../screenKeys";
 
 import styles from "./selectedSurveyFieldsetStyles";
-import { useToast } from "hooks/useToast";
-import { useDispatch } from "react-redux";
 
-const updateStatusKeys = {
-  error: "error",
-  loading: "loading",
-  networkNotAvailable: "networkNotAvailable",
-  notUpToDate: "notUpToDate",
-  upToDate: "upToDate",
-};
-
-const iconByUpdateStatus = {
-  [updateStatusKeys.loading]: "loading",
-  [updateStatusKeys.upToDate]: "check",
-  [updateStatusKeys.networkNotAvailable]: "sync-alert",
-  [updateStatusKeys.notUpToDate]: "alert",
-  [updateStatusKeys.error]: "alert-circle",
-};
-
-const UpdateStatusIcon = ({ updateStatus }) => {
+const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const toaster = useToast();
   const survey = SurveySelectors.useCurrentSurvey();
   const [loading, setLoading] = useState(false);
 
-  const icon = loading ? "loading" : iconByUpdateStatus[updateStatus];
-
   const onPress = () => {
     switch (updateStatus) {
-      case updateStatusKeys.error:
+      case UpdateStatus.error:
         toaster.show("surveys:updateStatus.error");
         break;
-      case updateStatusKeys.networkNotAvailable:
+      case UpdateStatus.networkNotAvailable:
         toaster.show("surveys:updateStatus.networkNotAvailable");
         break;
-      case updateStatusKeys.upToDate:
+      case UpdateStatus.upToDate:
         toaster.show("surveys:updateStatus.upToDate");
         break;
-      case updateStatusKeys.notUpToDate:
+      case UpdateStatus.notUpToDate:
         dispatch(
           SurveyActions.updateSurveyRemote({
             surveyId: survey.id,
@@ -66,16 +50,15 @@ const UpdateStatusIcon = ({ updateStatus }) => {
     }
   };
   return (
-    <IconButton
-      disabled={loading}
-      icon={icon}
-      style={styles.updateStatusIconButton}
+    <UpdateStatusIcon
+      loading={loading}
+      updateStatus={updateStatus}
       onPress={onPress}
     />
   );
 };
 
-UpdateStatusIcon.propTypes = {
+SurveyUpdateStatusIcon.propTypes = {
   updateStatus: PropTypes.string.isRequired,
 };
 
@@ -91,8 +74,7 @@ export const SelectedSurveyFieldset = () => {
   const surveyTitle = surveyLabelInDefaultLanguage
     ? `${surveyLabelInDefaultLanguage} [${surveyName}]`
     : surveyName;
-
-  const [updateStatus, setUpdateStatus] = useState(updateStatusKeys.loading);
+  const [updateStatus, setUpdateStatus] = useState(UpdateStatus.loading);
 
   useEffect(() => {
     const checkLastPublishDate = async () => {
@@ -101,20 +83,20 @@ export const SelectedSurveyFieldset = () => {
         name: surveyName,
       });
       if (!surveyRemote) {
-        setUpdateStatus(updateStatusKeys.error);
+        setUpdateStatus(UpdateStatus.error);
       } else if (
         Dates.isAfter(
           surveyRemote?.datePublished ?? surveyRemote?.dateModified,
           survey.datePublished ?? survey.dateModified
         )
       ) {
-        setUpdateStatus(updateStatusKeys.notUpToDate);
+        setUpdateStatus(UpdateStatus.notUpToDate);
       } else {
-        setUpdateStatus(updateStatusKeys.upToDate);
+        setUpdateStatus(UpdateStatus.upToDate);
       }
     };
     if (!networkAvailable) {
-      setUpdateStatus(updateStatusKeys.networkNotAvailable);
+      setUpdateStatus(UpdateStatus.networkNotAvailable);
     } else if (survey) {
       checkLastPublishDate();
     }
@@ -131,7 +113,7 @@ export const SelectedSurveyFieldset = () => {
             textKey={surveyTitle}
             variant="titleMedium"
           />
-          <UpdateStatusIcon updateStatus={updateStatus} />
+          <SurveyUpdateStatusIcon updateStatus={updateStatus} />
         </HView>
         <Button
           style={styles.goToDataEntryButton}
