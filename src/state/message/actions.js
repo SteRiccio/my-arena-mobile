@@ -6,9 +6,26 @@ const dismissMessage = () => (dispatch) => {
 };
 
 const setMessage =
-  ({ content, contentParams }) =>
+  ({
+    content,
+    contentParams = null,
+    details = null,
+    detailsParams = null,
+    onDismiss = null,
+    title = "common:info",
+  }) =>
   (dispatch) => {
-    dispatch({ type: MESSAGE_SET, content, contentParams });
+    dispatch({
+      type: MESSAGE_SET,
+      payload: {
+        content,
+        contentParams,
+        details,
+        detailsParams,
+        onDismiss,
+        title,
+      },
+    });
   };
 
 export const MessageActions = {

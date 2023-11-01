@@ -6,7 +6,10 @@ export const VView = (props) => {
   const { children, style, ...otherProps } = props;
 
   return (
-    <View style={[{ flexDirection: "column" }, style]} {...otherProps}>
+    <View
+      style={[{ display: "flex", flexDirection: "column" }, style]}
+      {...otherProps}
+    >
       {children}
     </View>
   );

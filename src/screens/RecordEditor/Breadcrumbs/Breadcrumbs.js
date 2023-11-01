@@ -44,6 +44,7 @@ export const Breadcrumbs = () => {
             survey,
             record,
             entity,
+            lang,
           });
         return label + `[${Object.values(keyValuesByName)}]`;
       }
@@ -98,7 +99,7 @@ export const Breadcrumbs = () => {
       currentEntity = parentEntity;
     }
     return _items;
-  }, [entityDef, actualEntityUuid, itemLabelFunction]);
+  }, [record, entityDef, actualEntityUuid, itemLabelFunction]);
 
   const onItemPress = ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
     dispatch(

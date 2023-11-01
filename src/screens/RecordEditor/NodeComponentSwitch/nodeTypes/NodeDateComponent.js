@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+import PropTypes from "prop-types";
+
 import { DateFormats, Dates, Objects } from "@openforis/arena-core";
 
 import { DatePicker } from "components";
@@ -10,7 +12,7 @@ export const NodeDateComponent = (props) => {
   if (__DEV__) {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
   }
-  const { applicable, value, updateNodeValue } = useNodeComponentLocalState({
+  const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
 
@@ -28,4 +30,9 @@ export const NodeDateComponent = (props) => {
   return (
     <DatePicker editable={editable} onChange={onChange} value={dateValue} />
   );
+};
+
+NodeDateComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  nodeUuid: PropTypes.string.isRequired,
 };

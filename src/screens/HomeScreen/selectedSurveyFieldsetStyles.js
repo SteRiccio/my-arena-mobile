@@ -6,10 +6,18 @@ export default StyleSheet.create({
   },
   internalContainer: {
     gap: 10,
+    alignItems: "center",
   },
-  titleContainer: {
+  surveyTitleContainer: {
     width: "100%",
     justifyContent: "space-between",
+  },
+  surveyTitle: {
+    flex: 1,
+    textAlign: "justify",
+  },
+  goToDataEntryButton: {
+    // alignSelf: "center",
   },
   updateStatusIconButton: {
     alignSelf: "flex-end",

@@ -6,8 +6,7 @@ const initialState = {};
 const actionHandlers = {
   [MessageActions.MESSAGE_SET]: ({ state, action }) => ({
     ...state,
-    content: action.content,
-    contentParams: action.contentParams,
+    ...action.payload,
   }),
   [MessageActions.MESSAGE_DISMISSED]: () => ({
     ...initialState,

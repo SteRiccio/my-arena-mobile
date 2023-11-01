@@ -37,7 +37,7 @@ const login =
       email,
       password,
     });
-    const { user, error } = res;
+    const { user, error, message } = res;
     if (user) {
       const settings = await SettingsService.fetchSettings();
       const settingsUpdated = { ...settings, serverUrl, email, password };
@@ -47,11 +47,19 @@ const login =
         MessageActions.setMessage({ content: "authService:loginSuccessful" })
       );
       dispatch({ type: USER_SET, user });
-    } else if (error) {
-      const details = i18n.t(error);
+    } else if (message || error) {
+      const errorKeySuffix = [
+        "validationErrors.user.userNotFound",
+        "validationErrors.user.emailInvalid",
+      ].includes(message)
+        ? "invalidCredentials"
+        : "generic";
+      const errorKey = `authService:error.${errorKeySuffix}`;
+      const details = i18n.t(error ?? message);
+
       dispatch(
         MessageActions.setMessage({
-          content: "authService:error.generic",
+          content: errorKey,
           contentParams: { details },
         })
       );

@@ -30,6 +30,7 @@ const getEntitySummaryValuesByNameFormatted = ({
   onlyKeys = true,
   lang,
 }) => {
+  const cycle = record.cycle;
   const entityDef = Surveys.getNodeDefByUuid({
     survey,
     uuid: entity.nodeDefUuid,
@@ -42,13 +43,17 @@ const getEntitySummaryValuesByNameFormatted = ({
   });
   return summaryDefs.reduce((acc, summaryDef) => {
     const summaryNode = Records.getChild(entity, summaryDef.uuid)(record);
-    let formattedValue = NodeValueFormatter.format({
-      survey,
-      nodeDef: summaryDef,
-      value: summaryNode?.value,
-      showLabel: true,
-      lang,
-    });
+    let formattedValue = summaryNode
+      ? NodeValueFormatter.format({
+          survey,
+          cycle,
+          nodeDef: summaryDef,
+          node: summaryNode,
+          value: summaryNode.value,
+          showLabel: true,
+          lang,
+        })
+      : "";
     if (typeof formattedValue === "object") {
       formattedValue = JSON.stringify(formattedValue);
     }
