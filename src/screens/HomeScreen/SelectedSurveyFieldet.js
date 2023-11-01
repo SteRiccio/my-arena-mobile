@@ -88,7 +88,9 @@ export const SelectedSurveyFieldset = () => {
 
   const surveyName = Surveys.getName(survey);
   const surveyLabelInDefaultLanguage = Surveys.getLabel(lang)(survey);
-  const surveyTitle = `${surveyLabelInDefaultLanguage} [${surveyName}]`;
+  const surveyTitle = surveyLabelInDefaultLanguage
+    ? `${surveyLabelInDefaultLanguage} [${surveyName}]`
+    : surveyName;
 
   const [updateStatus, setUpdateStatus] = useState(updateStatusKeys.loading);
 
