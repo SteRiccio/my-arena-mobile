@@ -18,24 +18,31 @@ import {
   HView,
   Loader,
   LoadingIcon,
+  MenuButton,
   Text,
   VView,
 } from "components";
-import { useNavigationFocus } from "hooks";
+import { useIsNetworkConnected, useNavigationFocus } from "hooks";
 import { useTranslation } from "localization";
 import { RecordService } from "service";
-import { ConfirmActions, DataEntryActions, SurveySelectors } from "state";
+import {
+  ConfirmActions,
+  DataEntryActions,
+  MessageActions,
+  SurveySelectors,
+} from "state";
 import { RecordSyncStatus } from "model/RecordSyncStatus";
 
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
+
 import styles from "./styles";
-import { MessageActions } from "state/message";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const networkAvailable = useIsNetworkConnected();
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
@@ -126,7 +133,7 @@ export const RecordsList = () => {
     );
   }, []);
 
-  const onExportPress = useCallback(() => {
+  const onExportNewOrUpdatedRecordsPress = useCallback(() => {
     const newRecordsUuids = records
       .filter((record) =>
         [RecordSyncStatus.new, RecordSyncStatus.modifiedLocally].includes(
@@ -135,6 +142,16 @@ export const RecordsList = () => {
       )
       .map((record) => record.uuid);
     dispatch(DataEntryActions.exportRecords({ recordUuids: newRecordsUuids }));
+  }, [records]);
+
+  const onExportAllRecordsPress = useCallback(() => {
+    const recordsUuids = records.map((record) => record.uuid);
+    dispatch(
+      DataEntryActions.exportRecords({
+        recordUuids: recordsUuids,
+        onlyLocally: true,
+      })
+    );
   }, [records]);
 
   const recordToRow = (record) => {
@@ -234,19 +251,26 @@ export const RecordsList = () => {
           style={styles.newRecordButton}
           textKey="dataEntry:newRecord"
         />
-        {!syncStatusFetched && records.length > 0 && (
-          <Button
-            loading={syncStatusLoading}
-            onPress={loadRecordsWithSyncStatus}
-            style={styles.checkSyncStatusButton}
-            textKey="dataEntry:checkSyncStatus"
-          />
-        )}
-        {syncStatusFetched && (
-          <Button
-            onPress={onExportPress}
-            style={styles.exportButton}
-            textKey="dataEntry:exportData"
+        {records.length > 0 && (
+          <MenuButton
+            icon="download"
+            items={[
+              {
+                label: "dataEntry:checkSyncStatus",
+                disabled: !networkAvailable,
+                onPress: loadRecordsWithSyncStatus,
+              },
+              {
+                label: "dataEntry:exportNewOrUpdatedRecords",
+                disabled: !syncStatusFetched,
+                onPress: onExportNewOrUpdatedRecordsPress,
+              },
+              {
+                label: "dataEntry:exportAllRecordsLocally",
+                onPress: onExportAllRecordsPress,
+              },
+            ]}
+            style={styles.exportDataMenuButton}
           />
         )}
       </HView>

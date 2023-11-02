@@ -8,6 +8,7 @@ import {
   ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
+  DeviceInfoSelectors,
   SurveySelectors,
 } from "state";
 import { SurveyDefs } from "model/utils/SurveyNodeDefs";
@@ -31,11 +32,14 @@ export const NodeMultipleEntityListComponent = (props) => {
   const entityDefUuid = entityDef.uuid;
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
+  const isTablet = DeviceInfoSelectors.useIsTablet();
+
   const summaryDefs = SurveyDefs.getEntitySummaryDefs({
     survey,
     record,
     entityDef,
     onlyKeys: false,
+    maxSummaryDefs: isTablet ? 5 : 3,
   });
   const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
   const entities = Records.getChildren(parentEntity, entityDefUuid)(record);

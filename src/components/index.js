@@ -14,6 +14,7 @@ export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
 export { Loader } from "./Loader";
 export { LoadingIcon } from "./LoadingIcon";
+export { MenuButton } from "./MenuButton";
 export { MessageDialog } from "./MessageDialog";
 export { ProgressBar } from "./ProgressBar";
 export { ScrollView } from "./ScrollView";

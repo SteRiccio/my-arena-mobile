@@ -33,7 +33,7 @@ Text.propTypes = {
   children: PropTypes.node,
   numberOfLines: PropTypes.number,
   selectable: PropTypes.bool,
-  style: PropTypes.oneOfType(PropTypes.object, PropTypes.array),
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   textKey: PropTypes.string,
   textParams: PropTypes.object,
   variant: PropTypes.oneOf([

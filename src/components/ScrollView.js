@@ -32,6 +32,6 @@ export const ScrollView = (props) => {
 ScrollView.propTypes = {
   children: PropTypes.node,
   persistentScrollbar: PropTypes.bool,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   transparent: PropTypes.bool,
 };

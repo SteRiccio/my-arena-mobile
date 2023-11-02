@@ -75,7 +75,7 @@ const onExportConfirmed =
   };
 
 export const exportRecords =
-  ({ recordUuids }) =>
+  ({ recordUuids, onlyLocally = false }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
@@ -93,7 +93,7 @@ export const exportRecords =
     // dispatch(JobMonitorActions.start({jobUuid, titleKey: 'dataEntry:exportData'}))
 
     try {
-      const user = await AuthService.fetchUser();
+      const user = onlyLocally ? null : await AuthService.fetchUser();
       // TODO if user is null, do login
 
       const job = new RecordsExportFileGenerationJob({
@@ -128,7 +128,7 @@ export const exportRecords =
         // const { size: fileSize } = await Files.getInfo(outputFileUri);
 
         const availableExportTypes = [
-          exportType.remote,
+          ...(onlyLocally ? [] : [exportType.remote]),
           // exportType.local,
           ...((await Files.isSharingAvailable()) ? [exportType.share] : []),
         ];
