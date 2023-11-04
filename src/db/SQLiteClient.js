@@ -1,9 +1,5 @@
-// import SQLite from "react-native-sqlite-storage";
 import * as SQLite from "expo-sqlite";
 
-// SQLite.enablePromise(true);
-
-/** Database downgrade error */
 export class DowngradeError extends Error {
   constructor() {
     super();
@@ -11,17 +7,12 @@ export class DowngradeError extends Error {
   }
 }
 
-/** Interface to SQLiteClient client. */
 export default class SQLiteClient {
   constructor(name, migrations, debug = false) {
     this.name = name;
     this.migrations = migrations;
     this.privateDb = null;
     this.privateConnected = false;
-
-    // if (debug === true) {
-    //   SQLite.DEBUG(debug);
-    // }
   }
 
   get connected() {
@@ -70,11 +61,6 @@ export default class SQLiteClient {
     }
     try {
       console.log("=== DB connection start ===");
-
-      // this.privateDb = await SQLite.openDatabase({
-      //   name: this.name,
-      //   location: "default",
-      // });
 
       this.privateDb = SQLite.openDatabase(this.name);
 
