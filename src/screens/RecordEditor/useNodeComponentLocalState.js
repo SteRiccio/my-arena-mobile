@@ -6,6 +6,10 @@ import { DataEntryActions, DataEntrySelectors, StoreUtils } from "state";
 
 const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
 
+const isNodeValueEqual = (nodeValueA, nodeValueB) =>
+  Objects.isEqual(nodeValueA, nodeValueB) ||
+  (Objects.isEmpty(nodeValueA) && Objects.isEmpty(nodeValueB));
+
 export const useNodeComponentLocalState = ({
   nodeUuid,
   updateDelay = 0,
@@ -39,10 +43,7 @@ export const useNodeComponentLocalState = ({
 
     const dirty = dirtyRef.current;
 
-    if (
-      Objects.isEqual(nodeValue, nodeValueFromUI) ||
-      (Objects.isEmpty(nodeValue) && Objects.isEmpty(nodeValueFromUI))
-    ) {
+    if (isNodeValueEqual(nodeValue, nodeValueFromUI)) {
       if (dirty) {
         // node value updated according to user needs: set dirty to false
         dirtyRef.current = false;
