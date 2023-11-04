@@ -4,7 +4,7 @@ const JOB_MONITOR_START = "JOB_MONITOR_START";
 const JOB_MONITOR_UPDATE = "JOB_MONITOR_UPDATE";
 const JOB_MONITOR_END = "JOB_MONITOR_END";
 
-const getJobMonitorState = state => state.jobMonitor;
+const getJobMonitorState = (state) => state.jobMonitor;
 
 const start =
   ({
@@ -34,30 +34,31 @@ const start =
       },
     });
 
-    const ws = await WebSocketService.open()
+    const ws = await WebSocketService.open();
 
-    ws.on(WebSocketService.EVENTS.jobUpdate, job => {
-      // if (jobUuid === job?.uuid) {
-        const {progressPercent, status} = job
-        dispatch({type: JOB_MONITOR_UPDATE, payload: {
-          progressPercent, 
-          status
-        }})
-      // }
-    })
+    ws.on(WebSocketService.EVENTS.jobUpdate, (job) => {
+      const { progressPercent, status } = job;
+      dispatch({
+        type: JOB_MONITOR_UPDATE,
+        payload: {
+          progressPercent,
+          status,
+        },
+      });
+    });
   };
 
 const cancel = () => (dispatch, getState) => {
   const state = getState();
-  const jobMonitorState = getJobMonitorState(state)
+  const jobMonitorState = getJobMonitorState(state);
   const { onCancel } = jobMonitorState;
   onCancel?.();
-  dispatch(close())
+  dispatch(close());
 };
 
 const close = () => (dispatch, getState) => {
   const state = getState();
-  const jobMonitorState = getJobMonitorState(state)
+  const jobMonitorState = getJobMonitorState(state);
   const { onClose } = jobMonitorState;
   onClose?.();
   dispatch({ type: JOB_MONITOR_END });

@@ -23,11 +23,8 @@ export const SurveyLanguageSelector = () => {
     label: langLabelFn(langCode),
   }));
 
-  const selectedValue = preferredLang
-    ? preferredLang
-    : singleLanguage
-    ? languages[0]
-    : undefined;
+  const selectedValue =
+    preferredLang ?? singleLanguage ? languages[0] : undefined;
 
   const onChange = useCallback((selectedLang) => {
     dispatch(

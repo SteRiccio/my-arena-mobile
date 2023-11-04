@@ -23,13 +23,7 @@ export const AppStack = () => {
             <Stack.Screen
               key={key}
               name={key}
-              component={
-                component
-                // (props) => (
-                // <Suspense fallback={<Loader />}>
-                //   <Component {...props} />
-                // </Suspense>
-              }
+              component={component}
               options={options}
             />
           );
