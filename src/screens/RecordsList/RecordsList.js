@@ -256,16 +256,19 @@ export const RecordsList = () => {
             icon="download"
             items={[
               {
+                key: "checkSyncStatus",
                 label: "dataEntry:checkSyncStatus",
                 disabled: !networkAvailable,
                 onPress: loadRecordsWithSyncStatus,
               },
               {
+                key: "exportNewOrUpdatedRecords",
                 label: "dataEntry:exportNewOrUpdatedRecords",
                 disabled: !syncStatusFetched,
                 onPress: onExportNewOrUpdatedRecordsPress,
               },
               {
+                key: "exportAllRecords",
                 label: "dataEntry:exportAllRecordsLocally",
                 onPress: onExportAllRecordsPress,
               },

@@ -17,6 +17,7 @@ export const MenuButton = (props) => {
 
   return (
     <Menu
+      style={style}
       visible={visible}
       onDismiss={closeMenu}
       anchor={
@@ -27,8 +28,9 @@ export const MenuButton = (props) => {
         )
       }
     >
-      {items.map(({ disabled, icon, label, onPress }) => (
+      {items.map(({ key, disabled, icon, label, onPress }) => (
         <Menu.Item
+          key={key}
           disabled={disabled}
           leadingIcon={icon}
           onPress={onPress}

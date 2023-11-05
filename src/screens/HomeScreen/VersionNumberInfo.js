@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 
 import { DateFormats, Dates } from "@openforis/arena-core";
 
-import { HView, Text, UpdateStatusIcon, View } from "components";
+import { HView, Text, UpdateStatusIcon } from "components";
 import { useAppInfo, useIsNetworkConnected, useToast } from "hooks";
 import { ConfirmActions } from "state/confirm";
 import { UpdateStatus } from "model/UpdateStatus";

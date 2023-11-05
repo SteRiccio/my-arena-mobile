@@ -30,20 +30,22 @@ export const NodeImageComponent = (props) => {
       </View>
 
       <VView style={styles.buttonsContainer}>
-        <IconButton
-          icon="camera"
-          onPress={onOpenCameraPress}
-          style={styles.cameraButton}
-          size={40}
-        />
-        <Button
-          icon="view-gallery"
-          onPress={onPictureChoosePress}
-          textKey="dataEntry:fileAttributeImage.chooseAPicture"
-        />
-
-        {pickedImageUri && (
+        {pickedImageUri ? (
           <IconButton icon="trash-can-outline" onPress={onDeletePress} />
+        ) : (
+          <>
+            <IconButton
+              icon="camera"
+              onPress={onOpenCameraPress}
+              style={styles.cameraButton}
+              size={40}
+            />
+            <Button
+              icon="view-gallery"
+              onPress={onPictureChoosePress}
+              textKey="dataEntry:fileAttributeImage.chooseAPicture"
+            />
+          </>
         )}
       </VView>
     </HView>
