@@ -22,7 +22,7 @@ export const VersionNumberInfo = () => {
 
   useEffect(() => {
     if (networkAvailable) {
-      checkVersion({})
+      checkVersion()
         .then((result) => {
           const { error, needsUpdate, url } = result ?? {};
           if (error) {
@@ -85,10 +85,12 @@ export const VersionNumberInfo = () => {
         })}
         )
       </Text>
-      <UpdateStatusIcon
-        updateStatus={updateStatus}
-        onPress={onUpdateStatusIconPress}
-      />
+      {updateStatus !== UpdateStatus.error && (
+        <UpdateStatusIcon
+          updateStatus={updateStatus}
+          onPress={onUpdateStatusIconPress}
+        />
+      )}
     </HView>
   );
 };
