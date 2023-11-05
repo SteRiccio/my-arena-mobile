@@ -38,10 +38,11 @@ export const HomeScreen = () => {
       {surveySelected && <SelectedSurveyFieldset />}
 
       <Button
+        mode={surveySelected ? "contained-tonal" : "contained"}
         textKey={
           surveySelected ? "surveys:manageSurveys" : "surveys:selectSurvey"
         }
-        style={{ marginTop: 40 }}
+        style={styles.manageSurveysButton}
         onPress={() => navigation.navigate(screenKeys.surveysListLocal)}
       />
     </VView>
