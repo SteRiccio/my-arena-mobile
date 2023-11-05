@@ -97,8 +97,6 @@ const selectRecordNodePointerVisibility =
   };
 
 const _cleanupAttributeValue = ({ value, attributeDef }) => {
-  if (!value) return value;
-
   if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
     const additionalFields =
       NodeDefs.getCoordinateAdditionalFields(attributeDef);

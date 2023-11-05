@@ -22,7 +22,6 @@ export const useTreeData = () => {
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const record = DataEntrySelectors.useRecord();
-  // const cycle = DataEntrySelectors.useRecordCycle();
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
   const {
     entityDef: currentEntityDef,

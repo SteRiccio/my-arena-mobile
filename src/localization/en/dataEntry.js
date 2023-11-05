@@ -9,6 +9,8 @@ export default {
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
   exportData: "Export data",
+  exportAllRecordsLocally: "Export all records locally",
+  exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
   goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",

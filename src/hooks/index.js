@@ -1,4 +1,4 @@
-export { useAppInfo as useDeviceInfo } from "./useAppInfo";
+export { useAppInfo } from "./useAppInfo";
 export { useEffectiveTheme } from "./useEffectiveTheme";
 export { useIsNetworkConnected } from "./useIsNetworkConnected";
 export { useKeyboardIsVisible } from "./useKeyboardIsVisible";

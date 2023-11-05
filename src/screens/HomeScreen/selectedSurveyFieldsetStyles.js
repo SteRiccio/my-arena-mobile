@@ -11,6 +11,7 @@ export default StyleSheet.create({
   surveyTitleContainer: {
     width: "100%",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   surveyTitle: {
     flex: 1,

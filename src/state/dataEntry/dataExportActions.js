@@ -74,27 +74,67 @@ const onExportConfirmed =
     }
   };
 
+const _onExportFileGenerationError = ({ errors, dispatch }) => {
+  const validationErrors = Object.values(errors).map((item) => item.error);
+  const details = validationErrors
+    .map((validationError) =>
+      Validations.getJointErrorText({
+        validation: validationError,
+        t,
+      })
+    )
+    .join(";\n");
+  dispatch(
+    MessageActions.setMessage({
+      content: "dataEntry:errorGeneratingRecordsExportFile",
+      contentParams: { details },
+    })
+  );
+};
+
+const _onExportFileGenerationSucceeded = async ({
+  result,
+  onlyLocally,
+  dispatch,
+}) => {
+  const { outputFileUri } = result || {};
+  // const { size: fileSize } = await Files.getInfo(outputFileUri);
+  const availableExportTypes = [
+    ...(onlyLocally ? [] : [exportType.remote]),
+    // exportType.local,
+    ...((await Files.isSharingAvailable()) ? [exportType.share] : []),
+  ];
+
+  dispatch(
+    ConfirmActions.show({
+      titleKey: "dataEntry:dataExport.selectTarget",
+      messageKey: "dataEntry:dataExport.selectTargetMessage",
+      // messageParams: {
+      //   fileSize: Files.toHumanReadableFileSize(fileSize),
+      // },
+      onConfirm: ({ selectedSingleChoiceValue }) => {
+        dispatch(
+          onExportConfirmed({ selectedSingleChoiceValue, outputFileUri })
+        );
+      },
+      singleChoiceOptions: availableExportTypes.map((type) => ({
+        value: type,
+        label: `dataEntry:dataExport.target.${type}`,
+      })),
+      defaultSingleChoiceValue: exportType.remote,
+      confirmButtonTextKey: "common:export",
+    })
+  );
+};
+
 export const exportRecords =
-  ({ recordUuids }) =>
+  ({ recordUuids, onlyLocally = false }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
 
-    //  const fileUri = "content://com.android.externalstorage.documents/tree/primary%3ADownload/document/primary%3ADownload%2Farena_mobile_export_testi_4_2023-07-10_08-02-48.zip";
-    // const fileInfo = await getInfoAsync(fileUri);
-    // console.log(fileInfo)
-
-    // const remoteJob = await RecordService.uploadRecordsToRemoteServer({
-    //       survey,
-    //       cycle,
-    //       fileUri,
-    //     });
-    // const jobUuid = remoteJob?.uuid
-    // dispatch(JobMonitorActions.start({jobUuid, titleKey: 'dataEntry:exportData'}))
-
     try {
-      const user = await AuthService.fetchUser();
-      // TODO if user is null, do login
+      const user = onlyLocally ? {} : await AuthService.fetchUser();
 
       const job = new RecordsExportFileGenerationJob({
         survey,
@@ -106,53 +146,13 @@ export const exportRecords =
       const { errors, result, status } = summary;
 
       if (status === JobStatus.failed) {
-        const validationErrors = Object.values(errors).map(
-          (item) => item.error
-        );
-        const details = validationErrors
-          .map((validationError) =>
-            Validations.getJointErrorText({
-              validation: validationError,
-              t,
-            })
-          )
-          .join(";\n");
-        dispatch(
-          MessageActions.setMessage({
-            content: "dataEntry:errorGeneratingRecordsExportFile",
-            contentParams: { details },
-          })
-        );
+        _onExportFileGenerationError({ errors, dispatch });
       } else if (status === JobStatus.succeeded) {
-        const { outputFileUri } = result || {};
-        // const { size: fileSize } = await Files.getInfo(outputFileUri);
-
-        const availableExportTypes = [
-          exportType.remote,
-          // exportType.local,
-          ...((await Files.isSharingAvailable()) ? [exportType.share] : []),
-        ];
-
-        dispatch(
-          ConfirmActions.show({
-            titleKey: "dataEntry:dataExport.selectTarget",
-            messageKey: "dataEntry:dataExport.selectTargetMessage",
-            // messageParams: {
-            //   fileSize: Files.toHumanReadableFileSize(fileSize),
-            // },
-            onConfirm: ({ selectedSingleChoiceValue }) => {
-              dispatch(
-                onExportConfirmed({ selectedSingleChoiceValue, outputFileUri })
-              );
-            },
-            singleChoiceOptions: availableExportTypes.map((type) => ({
-              value: type,
-              label: `dataEntry:dataExport.target.${type}`,
-            })),
-            defaultSingleChoiceValue: exportType.remote,
-            confirmButtonTextKey: "common:export",
-          })
-        );
+        await _onExportFileGenerationSucceeded({
+          result,
+          onlyLocally,
+          dispatch,
+        });
       } else {
         dispatch(
           MessageActions.setMessage({

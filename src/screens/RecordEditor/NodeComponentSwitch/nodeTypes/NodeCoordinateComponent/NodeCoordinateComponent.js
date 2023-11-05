@@ -96,15 +96,11 @@ export const NodeCoordinateComponent = (props) => {
       {
         // always show accuracy (as read-only if not included in extra fields)
         !Objects.isEmpty(accuracy) &&
-          !includedExtraFields.includes("accuracy") && (
-            <HView style={styles.accuracyFormItem}>
-              <Text
-                style={styles.formItemLabel}
-                textKey="dataEntry:coordinate.accuracy"
-              />
-              <Text style={styles.accuracyField} textKey={accuracy} />
-            </HView>
-          )
+          !includedExtraFields.includes("accuracy") &&
+          createNumericFieldFormItem({
+            fieldKey: "accuracy",
+            labelStyle: styles.extraFieldFormItemLabel,
+          })
       }
       {watchingLocation && (
         <VView style={{ margin: 4 }}>

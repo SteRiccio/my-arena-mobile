@@ -7,9 +7,7 @@ const fetchUser = async () => {
 };
 
 const login = async ({ serverUrl: serverUrlParam, email, password }) => {
-  const serverUrl = serverUrlParam
-    ? serverUrlParam
-    : await RemoteService.getServerUrl();
+  const serverUrl = serverUrlParam ?? (await RemoteService.getServerUrl());
   try {
     const res = await API.post(serverUrl, "/auth/login", {
       email,

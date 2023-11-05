@@ -18,10 +18,7 @@ export default StyleSheet.create({
   newRecordButton: {
     alignSelf: "center",
   },
-  checkSyncStatusButton: {
-    alignSelf: "flex-end",
-  },
-  exportButton: {
+  exportDataMenuButton: {
     alignSelf: "flex-end",
   },
 });

@@ -43,7 +43,7 @@ export const SingleAttributeComponentSwitch = (props) => {
     nodeDef,
   });
 
-  const nodeUuid = nodeUuidProp ? nodeUuidProp : nodes[0]?.uuid;
+  const nodeUuid = nodeUuidProp ?? nodes[0]?.uuid;
 
   return component ? (
     React.createElement(component, {

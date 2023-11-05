@@ -13,4 +13,5 @@ export default StyleSheet.create({
     padding: 10,
   },
   logo: { width: 50, height: 50 },
+  manageSurveysButton: { marginTop: 40 },
 });

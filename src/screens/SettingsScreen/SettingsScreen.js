@@ -172,17 +172,6 @@ export const SettingsScreen = () => {
 
   const { settings } = state;
 
-  // const { serverUrl } = settings;
-  // const [credentials, setCredentials] = useState({});
-
-  // const fetchCredentials = useCallback(async () => {
-  //   setCredentials(await SettingsService.getCredentials());
-  // }, []);
-
-  // useEffect(() => {
-  //   fetchCredentials();
-  // }, [serverUrl]);
-
   const onPropValueChange =
     ({ key }) =>
     (value) => {

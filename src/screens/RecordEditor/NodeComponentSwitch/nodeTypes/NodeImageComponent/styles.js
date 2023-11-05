@@ -16,6 +16,7 @@ export default StyleSheet.create({
   buttonsContainer: {
     flex: 0.5,
     alignItems: "center",
+    justifyContent: "center",
   },
   cameraButton: {
     width: 75,

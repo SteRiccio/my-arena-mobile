@@ -63,7 +63,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       await Promises.each(recordsToExport, async (recordSummary) => {
         const { id: recordId, uuid } = recordSummary;
         const record = await RecordService.fetchRecord({ survey, recordId });
-        if (!record.ownerUuid) {
+        if (!record.ownerUuid && user) {
           record.ownerUuid = user.uuid;
         }
 
