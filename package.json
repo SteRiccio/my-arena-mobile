@@ -1,6 +1,6 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "0.9.39",
+  "version": "0.9.40",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
