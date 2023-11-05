@@ -1,6 +1,7 @@
 export { Autocomplete } from "./Autocomplete";
 export { Button } from "./Button";
 export { Checkbox } from "./Checkbox";
+export { CloseIconButton } from "./CloseIconButton";
 export { CollapsiblePanel } from "./CollapsiblePanel";
 export { DataTable } from "./DataTable";
 export { DatePicker } from "./DatePicker";
@@ -29,7 +30,7 @@ export { TextInput } from "./TextInput";
 export { TextInputPassword } from "./TextInputPassword";
 export { TimePicker } from "./TimePicker";
 export { Tooltip } from "./Tooltip";
+export { UpdateStatusIcon } from "./UpdateStatusIcon";
 export { View } from "./View";
 export { VView } from "./VView";
-export { CloseIconButton } from "./CloseIconButton";
 export { WarningIconButton } from "./WarningIconButton";

@@ -1,3 +1,4 @@
+import app from "./app";
 import authService from "./authService";
 import common from "./common";
 import dataEntry from "./dataEntry";
@@ -9,6 +10,7 @@ import surveys from "./surveys";
 import validation from "./validation";
 
 export default {
+  app,
   authService,
   common,
   dataEntry,
