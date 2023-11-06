@@ -25,7 +25,7 @@ export const HomeScreen = () => {
       {logo && <Image source={logo} style={styles.logo} />}
       <Text
         style={styles.appTitle}
-        variant="displaySmall"
+        variant="headlineSmall"
         textKey="common:appTitle"
       />
 
