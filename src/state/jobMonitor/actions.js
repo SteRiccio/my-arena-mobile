@@ -1,3 +1,4 @@
+import { JobStatus } from "@openforis/arena-core";
 import { WebSocketService } from "service";
 
 const JOB_MONITOR_START = "JOB_MONITOR_START";
@@ -45,6 +46,9 @@ const start =
           status,
         },
       });
+      if (status === JobStatus.succeeded && onJobComplete) {
+        onJobComplete();
+      }
     });
   };
 
