@@ -3512,7 +3512,7 @@ clone@^2.1.2:
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
   integrity sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==
 
-color-convert@^1.9.0, color-convert@^1.9.1, color-convert@^1.9.3:
+color-convert@^1.9.0, color-convert@^1.9.3:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
   integrity sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==
@@ -3536,21 +3536,13 @@ color-name@^1.0.0, color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
-color-string@^1.5.4, color-string@^1.6.0:
+color-string@^1.6.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.9.1.tgz#4467f9146f036f855b764dfb5bf8582bf342c7a4"
   integrity sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==
   dependencies:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
-
-color@3.1.3:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/color/-/color-3.1.3.tgz#ca67fb4e7b97d611dcde39eceed422067d91596e"
-  integrity sha512-xgXAcTHa2HeFCGLE9Xs/R82hujGtu9Jd9x4NW3T34+OMs7VoPsjwzRczKHvTAHeJwWFwX5j15+MgAppE8ztObQ==
-  dependencies:
-    color-convert "^1.9.1"
-    color-string "^1.5.4"
 
 color@^3.1.2:
   version "3.2.1"
@@ -7637,13 +7629,6 @@ react-native-pager-view@6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-6.2.0.tgz#51380d93fbe47f6380dc71d613a787bf27a4ca37"
   integrity sha512-pf9OnL/Tkr+5s4Gjmsn7xh91PtJLDa6qxYa/bmtUhd/+s4cQdWQ8DIFoOFghwZIHHHwVdWtoXkp6HtpjN+r20g==
-
-react-native-paper-autocomplete@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/react-native-paper-autocomplete/-/react-native-paper-autocomplete-0.12.0.tgz#ccdc4c69c71f1fc6e5f806544729b2114752587e"
-  integrity sha512-6QgXYLInI7xeaUlyrtQP65nf5sMuwnmqjhTEmBh5gVrB97URO4M2mz3DOzn3f83ddtRzX10w0T2zpvZwqy3Z+w==
-  dependencies:
-    color "3.1.3"
 
 react-native-paper-dropdown@^1.0.7:
   version "1.0.7"

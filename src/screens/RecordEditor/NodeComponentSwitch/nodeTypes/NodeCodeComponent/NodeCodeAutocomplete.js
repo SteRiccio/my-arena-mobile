@@ -1,17 +1,16 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 
-import { Autocomplete } from "components";
+import { SelectableListWithFilter } from "components";
 
 import { SurveySelectors } from "state/survey";
 
 export const NodeCodeAutocomplete = (props) => {
   const {
+    editable,
     itemLabelFunction,
     items,
-    focusOnMount,
     multiple,
-    onFocus,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
@@ -44,14 +43,13 @@ export const NodeCodeAutocomplete = (props) => {
   );
 
   return (
-    <Autocomplete
-      focusOnMount={focusOnMount}
+    <SelectableListWithFilter
+      editable={editable}
       itemKeyExtractor={(item) => item?.uuid}
       itemLabelExtractor={itemLabelFunction}
       itemDescriptionExtractor={(item) => item?.props?.descriptions?.[lang]}
       items={items}
       multiple={multiple}
-      onFocus={onFocus}
       onSelectedItemsChange={onSelectedItemsChange}
       selectedItems={selectedItems}
     />

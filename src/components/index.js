@@ -1,4 +1,3 @@
-export { Autocomplete } from "./Autocomplete";
 export { Button } from "./Button";
 export { Checkbox } from "./Checkbox";
 export { CloseIconButton } from "./CloseIconButton";
@@ -22,6 +21,7 @@ export { ScrollView } from "./ScrollView";
 export { SegmentedButtons } from "./SegmentedButtons";
 export { Searchbar } from "./Searchbar";
 export { Select } from "./Select";
+export { SelectableListWithFilter } from "./SelectableListWithFilter";
 export { Slider } from "./Slider";
 export { Snackbar } from "./Snackbar";
 export { Switch } from "./Switch";

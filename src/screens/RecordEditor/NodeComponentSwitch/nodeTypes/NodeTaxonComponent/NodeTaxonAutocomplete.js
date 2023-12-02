@@ -1,8 +1,23 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 
-import { Autocomplete } from "components/Autocomplete";
+import { SelectableListWithFilter } from "components";
+
 import { Taxa } from "model/Taxa";
+
+const itemKeyExtractor = (item) => `${item?.uuid}_${item?.vernacularNameUuid}`;
+
+const itemLabelExtractor = (taxon) => {
+  const { code, scientificName } = taxon.props;
+  return `(${code}) ${scientificName}`;
+};
+
+const itemDescriptionExtractor = (taxon) => {
+  const { vernacularName, vernacularNameLangCode } = taxon;
+  return vernacularName
+    ? `${vernacularName} (${vernacularNameLangCode})`
+    : undefined;
+};
 
 const createTaxonValue = ({ taxon, inputValue }) => {
   let value = null;
@@ -27,28 +42,40 @@ const preparePartForSearch = (part) => part.toLocaleLowerCase();
 const extractPartsForSearch = (value) =>
   value?.split(" ").map(preparePartForSearch) ?? [];
 
-const filterOptions =
+const filterItems =
   ({ unlistedTaxon, unknownTaxon }) =>
-  (taxa, { getOptionLabel, inputValue }) => {
-    if (inputValue.trim().length === 0) {
+  ({ items: taxa, filterInputValue }) => {
+    if ((filterInputValue?.trim().length ?? 0) === 0) {
       return [];
     }
-    const inputValueParts = extractPartsForSearch(inputValue);
-    const taxaFiltered = taxa.filter((taxon) => {
+    const inputValueParts = extractPartsForSearch(filterInputValue);
+    const taxaFiltered = [];
+    const limit = 30;
+    for (
+      let index = 0;
+      index < taxa.length && taxaFiltered.length < limit;
+      index++
+    ) {
+      const taxon = taxa[index];
+
       const { vernacularName } = taxon;
       const { code } = taxon.props;
       const codeForSearch = preparePartForSearch(code);
       const vernacularNameParts = extractPartsForSearch(vernacularName);
 
-      const optionLabel = getOptionLabel(taxon);
-      const optionLabelParts = extractPartsForSearch(optionLabel);
-      return inputValueParts.every(
+      const itemLabel = itemLabelExtractor(taxon);
+      const itemLabelParts = extractPartsForSearch(itemLabel);
+
+      const match = inputValueParts.every(
         (inputValuePart) =>
           codeForSearch.startsWith(inputValuePart) ||
-          optionLabelParts.some((part) => part.startsWith(inputValuePart)) ||
+          itemLabelParts.some((part) => part.startsWith(inputValuePart)) ||
           vernacularNameParts.some((part) => part.startsWith(inputValuePart))
       );
-    });
+      if (match) {
+        taxaFiltered.push(taxon);
+      }
+    }
     if (taxaFiltered.length === 0) {
       taxaFiltered.push(unlistedTaxon, unknownTaxon);
     }
@@ -56,7 +83,7 @@ const filterOptions =
   };
 
 export const NodeTaxonAutocomplete = (props) => {
-  const { focusOnMount, taxa, updateNodeValue } = props;
+  const { taxa, updateNodeValue } = props;
 
   const unlistedTaxon = taxa.find(
     (taxon) => taxon.props.code === Taxa.unlistedCode
@@ -74,25 +101,9 @@ export const NodeTaxonAutocomplete = (props) => {
     [updateNodeValue]
   );
 
-  const itemKeyExtractor = (item) =>
-    `${item?.uuid}_${item?.vernacularNameUuid}`;
-
-  const itemLabelExtractor = (taxon) => {
-    const { code, scientificName } = taxon.props;
-    return `(${code}) ${scientificName}`;
-  };
-
-  const itemDescriptionExtractor = (taxon) => {
-    const { vernacularName, vernacularNameLangCode } = taxon;
-    return vernacularName
-      ? `${vernacularName} (${vernacularNameLangCode})`
-      : undefined;
-  };
-
   return (
-    <Autocomplete
-      filterOptions={filterOptions({ unlistedTaxon, unknownTaxon })}
-      focusOnMount={focusOnMount}
+    <SelectableListWithFilter
+      filterItems={filterItems({ unlistedTaxon, unknownTaxon })}
       itemKeyExtractor={itemKeyExtractor}
       itemLabelExtractor={itemLabelExtractor}
       itemDescriptionExtractor={itemDescriptionExtractor}
