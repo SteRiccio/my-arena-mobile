@@ -1,10 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Chip } from "react-native-paper";
 import PropTypes from "prop-types";
+import debounce from "lodash.debounce";
 
 import { Arrays, Objects } from "@openforis/arena-core";
 
-import { Button, IconButton, Text, TextInput, VView, View } from "components";
+import {
+  IconButton,
+  LoadingIcon,
+  Text,
+  TextInput,
+  VView,
+  View,
+} from "components";
 import { SelectableList } from "./SelectableList";
 
 import styles from "./styles";
@@ -24,6 +32,7 @@ export const SelectableListWithFilter = (props) => {
     itemDescriptionExtractor,
     items,
     itemsCountToShowFilter,
+    maxItemsToShow,
     multiple,
     onSelectedItemsChange,
     selectedItems,
@@ -32,11 +41,16 @@ export const SelectableListWithFilter = (props) => {
   const inputValueRef = useRef(null);
 
   const filterVisible = items.length > itemsCountToShowFilter;
+  const debounceFiltering = items.length > maxItemsToShow;
 
   const calculateItemsFiltered = useCallback(() => {
     if (!filterVisible) return items;
 
     const filterInputValue = inputValueRef.current;
+
+    if (Objects.isEmpty(filterInputValue)) {
+      return items.slice(0, maxItemsToShow);
+    }
 
     if (filterItems) {
       return filterItems({ items, filterInputValue });
@@ -51,19 +65,46 @@ export const SelectableListWithFilter = (props) => {
     );
   }, [filterItems, filterVisible, items, selectedItems]);
 
-  const [itemsFiltered, setItemsFiltered] = useState(calculateItemsFiltered());
+  const [state, setState] = useState({
+    loading: false,
+    itemsFiltered: calculateItemsFiltered(),
+  });
+  const { loading, itemsFiltered } = state;
 
   const updateItemsFiltered = useCallback(() => {
     const itemsFilteredNext = calculateItemsFiltered();
-    if (!Objects.isEqual(itemsFilteredNext, itemsFiltered)) {
-      setItemsFiltered(itemsFilteredNext);
+    if (!Objects.isEqual(itemsFiltered, itemsFilteredNext)) {
+      setState((statePrev) => ({
+        ...statePrev,
+        loading: false,
+        itemsFiltered: itemsFilteredNext,
+      }));
+    } else if (debounceFiltering) {
+      setState((statePrev) => ({
+        ...statePrev,
+        loading: false,
+      }));
     }
-  }, [calculateItemsFiltered, itemsFiltered]);
+  }, [calculateItemsFiltered]);
+
+  const updateItemsFilteredDebouced = useMemo(
+    () => debounce(updateItemsFiltered, 500),
+    [updateItemsFiltered]
+  );
 
   const onFilterInputChange = useCallback(
     (text) => {
       inputValueRef.current = text;
-      updateItemsFiltered();
+      if (debounceFiltering) {
+        setState((statePrev) => ({
+          ...statePrev,
+          loading: true,
+          itemsFiltered: [],
+        }));
+        updateItemsFilteredDebouced();
+      } else {
+        updateItemsFiltered();
+      }
     },
     [updateItemsFiltered]
   );
@@ -72,7 +113,7 @@ export const SelectableListWithFilter = (props) => {
     (selectedItemsNext) => {
       onSelectedItemsChange(selectedItemsNext, inputValueRef.current);
     },
-    [onSelectedItemsChange, updateItemsFiltered]
+    [onSelectedItemsChange]
   );
 
   const onListSelectionChange = useCallback(
@@ -122,14 +163,24 @@ export const SelectableListWithFilter = (props) => {
             ))}
           </View>
 
-          <Text
-            variant="titleMedium"
-            textKey={multiple ? "common:selectNewItems" : "common:selectAnItem"}
-          />
-          <TextInput
-            onChange={onFilterInputChange}
-            placeholder="common:filter"
-          />
+          {(multiple || selectedItems.length === 0) && (
+            <Text
+              variant="titleMedium"
+              textKey={
+                multiple ? "common:selectNewItems" : "common:selectAnItem"
+              }
+            />
+          )}
+          <TextInput onChange={onFilterInputChange} label="common:filter" />
+
+          {loading && <LoadingIcon />}
+
+          {!loading && itemsFiltered.length === 0 && (
+            <Text
+              variant="titleMedium"
+              textKey="common:noItemsMatchingSearch"
+            />
+          )}
         </>
       )}
 
@@ -174,7 +225,8 @@ SelectableListWithFilter.defaultProps = {
   itemLabelExtractor: (item) => item?.label,
   itemDescriptionExtractor: (item) => item?.description,
   items: [],
-  itemsCountToShowFilter: 20,
+  itemsCountToShowFilter: 10,
+  maxItemsToShow: 50,
   multiple: false,
   selectedItems: [],
 };

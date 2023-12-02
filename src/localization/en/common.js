@@ -20,6 +20,7 @@ export default {
   name: "Name",
   networkNotAvailable: "Network not available!",
   no: "No",
+  noItemsMatchingSearch: "There is no item matching your search",
   path: "Path",
   search: "Search",
   selectAnItem: "Select an item",

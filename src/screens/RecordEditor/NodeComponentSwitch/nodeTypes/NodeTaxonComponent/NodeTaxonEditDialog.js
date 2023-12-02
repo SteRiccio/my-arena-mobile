@@ -9,6 +9,7 @@ export const NodeTaxonEditDialog = (props) => {
     nodeDef,
     onDismiss,
     parentNodeUuid,
+    selectedTaxon,
     taxa,
     updateNodeValue: updateNodeValueProp,
   } = props;
@@ -27,7 +28,11 @@ export const NodeTaxonEditDialog = (props) => {
       onDismiss={onDismiss}
       parentNodeUuid={parentNodeUuid}
     >
-      <NodeTaxonAutocomplete taxa={taxa} updateNodeValue={updateNodeValue} />
+      <NodeTaxonAutocomplete
+        selectedTaxon={selectedTaxon}
+        taxa={taxa}
+        updateNodeValue={updateNodeValue}
+      />
     </NodeEditDialogInternal>
   );
 };
@@ -36,6 +41,7 @@ NodeTaxonEditDialog.propTypes = {
   nodeDef: PropTypes.object.isRequired,
   onDismiss: PropTypes.func.isRequired,
   parentNodeUuid: PropTypes.string,
+  selectedTaxon: PropTypes.object,
   taxa: PropTypes.array.isRequired,
   updateNodeValue: PropTypes.func.isRequired,
 };

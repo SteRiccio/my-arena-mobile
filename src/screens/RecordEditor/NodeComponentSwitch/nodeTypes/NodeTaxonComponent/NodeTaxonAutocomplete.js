@@ -83,7 +83,7 @@ const filterItems =
   };
 
 export const NodeTaxonAutocomplete = (props) => {
-  const { taxa, updateNodeValue } = props;
+  const { selectedTaxon, taxa, updateNodeValue } = props;
 
   const unlistedTaxon = taxa.find(
     (taxon) => taxon.props.code === Taxa.unlistedCode
@@ -109,13 +109,14 @@ export const NodeTaxonAutocomplete = (props) => {
       itemDescriptionExtractor={itemDescriptionExtractor}
       items={taxa}
       onSelectedItemsChange={onSelectedItemsChange}
-      selectedItems={[]}
+      selectedItems={selectedTaxon ? [selectedTaxon] : []}
     />
   );
 };
 
 NodeTaxonAutocomplete.propTypes = {
   focusOnMount: PropTypes.bool,
+  selectedTaxon: PropTypes.object,
   taxa: PropTypes.array.isRequired,
   updateNodeValue: PropTypes.func.isRequired,
 };
