@@ -1,12 +1,41 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { List as RNPList, RadioButton } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { Arrays } from "@openforis/arena-core";
 
 import { Checkbox } from "components";
 
 import styles from "./styles";
+
+const ListItemIcon = (props) => {
+  const { multiple, checked, editable, onItemSelect, item } = props;
+
+  if (multiple)
+    return (
+      <Checkbox
+        checked={checked}
+        disabled={!editable}
+        onPress={() => onItemSelect(item)}
+      />
+    );
+  return (
+    <RadioButton.Item
+      status={checked ? "checked" : "unchecked"}
+      disabled={!editable}
+      onPress={() => onItemSelect(item)}
+    />
+  );
+};
+
+ListItemIcon.propTypes = {
+  multiple: PropTypes.bool.isRequired,
+  checked: PropTypes.bool.isRequired,
+  editable: PropTypes.bool.isRequired,
+  onItemSelect: PropTypes.func.isRequired,
+  item: PropTypes.object.isRequired,
+};
 
 export const SelectableList = (props) => {
   const {
@@ -45,21 +74,15 @@ export const SelectableList = (props) => {
           disabled={!editable}
           title={itemLabelExtractor(item)}
           description={itemDescriptionExtractor(item)}
-          left={() =>
-            multiple ? (
-              <Checkbox
-                checked={checked}
-                disabled={!editable}
-                onPress={() => onItemSelect(item)}
-              />
-            ) : (
-              <RadioButton.Item
-                status={checked ? "checked" : "unchecked"}
-                disabled={!editable}
-                onPress={() => onItemSelect(item)}
-              />
-            )
-          }
+          left={() => (
+            <ListItemIcon
+              multiple={multiple}
+              checked={checked}
+              editable={editable}
+              onItemSelect={onItemSelect}
+              item={item}
+            />
+          )}
           onPress={() => onItemSelect(item)}
           removeClippedSubviews
           style={styles.item}
@@ -84,4 +107,16 @@ export const SelectableList = (props) => {
       style={style}
     />
   );
+};
+
+SelectableList.propTypes = {
+  editable: PropTypes.bool,
+  itemKeyExtractor: PropTypes.func,
+  itemLabelExtractor: PropTypes.func,
+  itemDescriptionExtractor: PropTypes.func,
+  items: PropTypes.array.isRequired,
+  multiple: PropTypes.bool,
+  onChange: PropTypes.func,
+  selectedItems: PropTypes.array,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

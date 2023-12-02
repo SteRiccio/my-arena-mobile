@@ -57,6 +57,7 @@ export const NodeCodeAutocomplete = (props) => {
 };
 
 NodeCodeAutocomplete.propTypes = {
+  editable: PropTypes.bool,
   itemLabelFunction: PropTypes.func.isRequired,
   items: PropTypes.array,
   multiple: PropTypes.bool,
@@ -67,6 +68,7 @@ NodeCodeAutocomplete.propTypes = {
 };
 
 NodeCodeAutocomplete.defaultProps = {
+  editable: true,
   items: [],
   multiple: false,
   selectedItems: [],

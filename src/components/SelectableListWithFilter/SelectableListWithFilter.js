@@ -49,7 +49,13 @@ export const SelectableListWithFilter = (props) => {
     const filterInputValue = inputValueRef.current;
 
     if (Objects.isEmpty(filterInputValue)) {
-      return items.slice(0, maxItemsToShow);
+      if (selectedItems.length === 0) {
+        return items.slice(0, maxItemsToShow);
+      } else {
+        return items
+          .filter((item) => !selectedItems.includes(item))
+          .slice(0, maxItemsToShow);
+      }
     }
 
     if (filterItems) {
@@ -137,14 +143,6 @@ export const SelectableListWithFilter = (props) => {
   }, [updateItemsFiltered, items, selectedItems]);
 
   const onClearPress = useCallback(() => {
-    // dispatch(
-    //   ConfirmActions.show({
-    //     confirmButtonTextKey: "common:clear",
-    //     messageKey: "common:confirmClearSelectedValue",
-    //     messageParams: { count: multiple ? 2 : 1 },
-    //     onConfirm: () => _onSelectedItemsChange([]),
-    //   })
-    // );
     _onSelectedItemsChange([]);
   }, [_onSelectedItemsChange]);
 
@@ -214,6 +212,8 @@ SelectableListWithFilter.propTypes = {
   itemLabelExtractor: PropTypes.func,
   itemDescriptionExtractor: PropTypes.func,
   items: PropTypes.array,
+  itemsCountToShowFilter: PropTypes.number,
+  maxItemsToShow: PropTypes.number,
   multiple: PropTypes.bool,
   onSelectedItemsChange: PropTypes.func.isRequired,
   selectedItems: PropTypes.array,
