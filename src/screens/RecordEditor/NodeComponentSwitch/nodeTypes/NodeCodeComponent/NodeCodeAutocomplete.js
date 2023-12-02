@@ -59,9 +59,7 @@ export const NodeCodeAutocomplete = (props) => {
 NodeCodeAutocomplete.propTypes = {
   itemLabelFunction: PropTypes.func.isRequired,
   items: PropTypes.array,
-  focusOnMount: PropTypes.bool,
   multiple: PropTypes.bool,
-  onFocus: PropTypes.func,
   onItemAdd: PropTypes.func.isRequired,
   onItemRemove: PropTypes.func.isRequired,
   onSingleValueChange: PropTypes.func.isRequired,
@@ -70,7 +68,6 @@ NodeCodeAutocomplete.propTypes = {
 
 NodeCodeAutocomplete.defaultProps = {
   items: [],
-  focusOnMount: false,
   multiple: false,
   selectedItems: [],
 };

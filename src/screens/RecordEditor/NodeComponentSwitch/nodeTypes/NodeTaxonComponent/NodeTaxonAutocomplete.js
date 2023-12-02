@@ -115,7 +115,6 @@ export const NodeTaxonAutocomplete = (props) => {
 };
 
 NodeTaxonAutocomplete.propTypes = {
-  focusOnMount: PropTypes.bool,
   selectedTaxon: PropTypes.object,
   taxa: PropTypes.array.isRequired,
   updateNodeValue: PropTypes.func.isRequired,
