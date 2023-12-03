@@ -22,6 +22,8 @@ import {
   Text,
   VView,
 } from "components";
+import { DataVisualizer } from "components/DataVisualizer";
+
 import { useIsNetworkConnected, useNavigationFocus } from "hooks";
 import { useTranslation } from "localization";
 import { RecordService } from "service";
@@ -220,7 +222,7 @@ export const RecordsList = () => {
           <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
         )}
         {records.length > 0 && (
-          <DataTable
+          <DataVisualizer
             columns={[
               ...rootDefKeys.map((keyDef) => ({
                 key: Objects.camelize(NodeDefs.getName(keyDef)),

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Banner, DataTable as RNPDataTable } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { Arrays } from "@openforis/arena-core";
 
@@ -97,7 +98,7 @@ export const DataTable = (props) => {
       <Banner
         actions={[
           {
-            label: "Delete selected",
+            label: t("common:deleteSelectedTitle"),
             onPress: onDeleteSelected,
           },
         ]}
@@ -167,6 +168,18 @@ export const DataTable = (props) => {
   );
 };
 
+DataTable.propTypes = {
+  columns: PropTypes.array.isRequired,
+  rows: PropTypes.array.isRequired,
+  onRowPress: PropTypes.func,
+  onRowLongPress: PropTypes.func,
+  onSelectionChange: PropTypes.func,
+  onDeleteSelectedRowIds: PropTypes.func,
+  selectable: PropTypes.bool,
+  showPagination: PropTypes.bool,
+};
+
 DataTable.defaultProps = {
   selectable: false,
+  showPagination: false,
 };
