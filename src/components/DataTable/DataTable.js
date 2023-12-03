@@ -4,9 +4,10 @@ import { Banner, DataTable as RNPDataTable } from "react-native-paper";
 import { Arrays } from "@openforis/arena-core";
 
 import { useTranslation } from "localization";
-import { Checkbox } from "./Checkbox";
-import { ScrollView } from "./ScrollView";
-import { VView } from "./VView";
+import { Checkbox } from "../Checkbox";
+import { ScrollView } from "../ScrollView";
+import { VView } from "../VView";
+import { usePagination } from "./usePagination";
 
 export const DataTable = (props) => {
   const {
@@ -17,19 +18,19 @@ export const DataTable = (props) => {
     onSelectionChange,
     onDeleteSelectedRowIds,
     selectable,
+    showPagination,
   } = props;
 
   const { t } = useTranslation();
 
-  const [state, setState] = useState({ selectedRowIds: [] });
+  const [state, setState] = useState({
+    selectedRowIds: [],
+  });
 
   const { selectedRowIds, selectionEnabled } = state;
 
   useEffect(() => {
-    setState((statePrev) => ({
-      ...statePrev,
-      selectedRowIds: [],
-    }));
+    setState((statePrev) => ({ ...statePrev, selectedRowIds: [] }));
   }, [rows]);
 
   const onRowSelect = useCallback(
@@ -77,6 +78,20 @@ export const DataTable = (props) => {
     [onRowLongPressProp, onRowSelect]
   );
 
+  const {
+    itemFrom,
+    itemTo,
+    itemsPerPage,
+    itemsPerPageOptions,
+    numberOfPages,
+    page,
+    visibleItems,
+    onItemsPerPageChange,
+    onPageChange,
+  } = usePagination({ items: rows });
+
+  const visibleRows = showPagination ? visibleItems : rows;
+
   return (
     <VView style={{ flex: 1 }}>
       <Banner
@@ -104,7 +119,7 @@ export const DataTable = (props) => {
           )}
         </RNPDataTable.Header>
         <ScrollView persistentScrollbar>
-          {rows.map((row) => (
+          {visibleRows.map((row) => (
             <RNPDataTable.Row
               key={row.key}
               onPress={() => onRowPress(row)}
@@ -130,6 +145,23 @@ export const DataTable = (props) => {
             </RNPDataTable.Row>
           ))}
         </ScrollView>
+        {showPagination && (
+          <RNPDataTable.Pagination
+            page={page}
+            numberOfPages={numberOfPages}
+            onPageChange={onPageChange}
+            label={t("common:fromToOf", {
+              from: itemFrom + 1,
+              to: itemTo,
+              of: rows.length,
+            })}
+            numberOfItemsPerPageList={itemsPerPageOptions}
+            numberOfItemsPerPage={itemsPerPage}
+            onItemsPerPageChange={onItemsPerPageChange}
+            showFastPaginationControls
+            selectPageDropdownLabel={t("common:rowsPerPage")}
+          />
+        )}
       </RNPDataTable>
     </VView>
   );
