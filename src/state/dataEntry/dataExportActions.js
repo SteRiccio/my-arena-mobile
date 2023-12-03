@@ -26,7 +26,7 @@ const handleError = (error) => (dispatch) =>
   );
 
 const startUploadDataToRemoteServer =
-  ({ outputFileUri }) =>
+  ({ outputFileUri, onJobComplete = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
@@ -44,6 +44,7 @@ const startUploadDataToRemoteServer =
           jobUuid: remoteJob.uuid,
           titleKey: "dataEntry:exportData",
           onClose: () => WebSocketService.close(),
+          onJobComplete,
         })
       );
     } catch (error) {
@@ -52,11 +53,13 @@ const startUploadDataToRemoteServer =
   };
 
 const onExportConfirmed =
-  ({ selectedSingleChoiceValue, outputFileUri }) =>
+  ({ selectedSingleChoiceValue, outputFileUri, onJobComplete }) =>
   async (dispatch) => {
     try {
       if (selectedSingleChoiceValue === exportType.remote) {
-        dispatch(startUploadDataToRemoteServer({ outputFileUri }));
+        dispatch(
+          startUploadDataToRemoteServer({ outputFileUri, onJobComplete })
+        );
       } else if (selectedSingleChoiceValue === exportType.local) {
         const res = await Files.moveFileToDownloadFolder(outputFileUri);
         if (!res) {
@@ -95,6 +98,7 @@ const _onExportFileGenerationError = ({ errors, dispatch }) => {
 const _onExportFileGenerationSucceeded = async ({
   result,
   onlyLocally,
+  onJobComplete,
   dispatch,
 }) => {
   const { outputFileUri } = result || {};
@@ -114,7 +118,11 @@ const _onExportFileGenerationSucceeded = async ({
       // },
       onConfirm: ({ selectedSingleChoiceValue }) => {
         dispatch(
-          onExportConfirmed({ selectedSingleChoiceValue, outputFileUri })
+          onExportConfirmed({
+            selectedSingleChoiceValue,
+            outputFileUri,
+            onJobComplete,
+          })
         );
       },
       singleChoiceOptions: availableExportTypes.map((type) => ({
@@ -128,7 +136,7 @@ const _onExportFileGenerationSucceeded = async ({
 };
 
 export const exportRecords =
-  ({ recordUuids, onlyLocally = false }) =>
+  ({ recordUuids, onlyLocally = false, onJobComplete = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
@@ -151,6 +159,7 @@ export const exportRecords =
         await _onExportFileGenerationSucceeded({
           result,
           onlyLocally,
+          onJobComplete,
           dispatch,
         });
       } else {

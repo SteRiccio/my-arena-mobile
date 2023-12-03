@@ -141,8 +141,13 @@ export const RecordsList = () => {
         )
       )
       .map((record) => record.uuid);
-    dispatch(DataEntryActions.exportRecords({ recordUuids: newRecordsUuids }));
-  }, [records]);
+    dispatch(
+      DataEntryActions.exportRecords({
+        recordUuids: newRecordsUuids,
+        onJobComplete: () => loadRecordsWithSyncStatus(),
+      })
+    );
+  }, [loadRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
     const recordsUuids = records.map((record) => record.uuid);

@@ -138,6 +138,7 @@ export const SurveysListRemote = () => {
               ...survey,
             }))}
             onRowPress={onRowPress}
+            showPagination={surveysFiltered.length > 20}
           />
         </>
       )}

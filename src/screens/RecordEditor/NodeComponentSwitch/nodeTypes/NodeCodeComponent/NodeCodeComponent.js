@@ -92,13 +92,14 @@ export const NodeCodeComponent = (props) => {
     }
     return (
       <NodeCodeAutocomplete
+        editable={editable}
         itemLabelFunction={itemLabelFunction}
         items={items}
+        multiple={multiple}
         onItemAdd={onItemAdd}
         onItemRemove={onItemRemove}
         onSingleValueChange={onSingleValueChange}
         selectedItems={selectedItems}
-        multiple={multiple}
       />
     );
   }
