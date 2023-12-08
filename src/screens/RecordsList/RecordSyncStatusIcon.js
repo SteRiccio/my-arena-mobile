@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { IconButton } from "components/IconButton";
 import { RecordSyncStatus } from "model/RecordSyncStatus";
@@ -14,8 +15,8 @@ const colorBySyncStatus = {
 };
 
 export const RecordSyncStatusIcon = (props) => {
-  const { row } = props;
-  const { syncStatus } = row;
+  const { item } = props;
+  const { syncStatus } = item;
 
   if (!syncStatus) return null;
 
@@ -31,4 +32,8 @@ export const RecordSyncStatusIcon = (props) => {
       />
     </Tooltip>
   );
+};
+
+RecordSyncStatusIcon.propTypes = {
+  item: PropTypes.object.isRequired,
 };

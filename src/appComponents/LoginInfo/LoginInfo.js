@@ -1,6 +1,13 @@
 import { useDispatch } from "react-redux";
 
-import { Button, FieldSet, FormItem, Text, VView } from "components";
+import {
+  Button,
+  CollapsiblePanel,
+  FieldSet,
+  FormItem,
+  Text,
+  VView,
+} from "components";
 import { useIsNetworkConnected } from "hooks";
 import {
   RemoteConnectionActions,
@@ -21,8 +28,12 @@ export const LoginInfo = () => {
 
   if (user) {
     return (
-      <FieldSet heading="loginInfo:loggedInAs">
-        <VView>
+      <CollapsiblePanel
+        containerStyle={{ width: "90%" }}
+        headerKey="loginInfo:loggedInAs"
+        headerParams={{ name: user.name }}
+      >
+        <>
           <FormItem labelKey="loginInfo:name">{user.name}</FormItem>
           <FormItem labelKey="loginInfo:email">{user.email}</FormItem>
           <Button
@@ -31,8 +42,8 @@ export const LoginInfo = () => {
             textKey="loginInfo:logout"
             onPress={() => dispatch(RemoteConnectionActions.logout())}
           />
-        </VView>
-      </FieldSet>
+        </>
+      </CollapsiblePanel>
     );
   }
   return (

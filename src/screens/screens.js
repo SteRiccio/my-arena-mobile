@@ -35,6 +35,7 @@ export const screens = {
   },
   [screenKeys.recordsList]: {
     ...screenDefaults,
+    hasToggleScreenView: true,
     title: "dataEntry:listOfRecords",
     component: RecordsList,
   },
@@ -63,11 +64,13 @@ export const screens = {
   },
   [screenKeys.surveysListLocal]: {
     ...screenDefaults,
+    hasToggleScreenView: true,
     title: "surveys:surveysInTheDevice",
     component: SurveysListLocal,
   },
   [screenKeys.surveysListRemote]: {
     ...screenDefaults,
+    hasToggleScreenView: true,
     title: "surveys:surveysInTheCloud",
     component: SurveysListRemote,
   },

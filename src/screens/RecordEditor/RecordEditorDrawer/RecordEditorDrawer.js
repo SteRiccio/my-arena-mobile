@@ -6,9 +6,9 @@ import { Surveys } from "@openforis/arena-core";
 import {
   Button,
   CloseIconButton,
-  Dropdown,
   HView,
   IconButton,
+  SegmentedButtons,
   Text,
   View,
 } from "components";
@@ -68,14 +68,17 @@ export const RecordEditorDrawer = () => {
         onPress={() => navigation.navigate(screenKeys.recordValidationReport)}
       />
 
-      <Dropdown
-        items={Object.values(RecordEditViewMode).map((mode) => ({
-          value: mode,
+      <SegmentedButtons
+        buttons={Object.values(RecordEditViewMode).map((mode) => ({
+          icon:
+            mode === RecordEditViewMode.form
+              ? "format-list-bulleted"
+              : "numeric-1-box-outline",
           label: `dataEntry:viewMode.${mode}`,
+          value: mode,
         }))}
-        label="dataEntry:viewModeLabel"
         onChange={(value) =>
-          dispatch(SurveyOptionsActions.selectRecordEditViewMode(value))
+          dispatch(SurveyOptionsActions.setRecordEditViewMode(value))
         }
         value={viewMode}
       />

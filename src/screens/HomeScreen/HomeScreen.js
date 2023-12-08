@@ -5,9 +5,10 @@ import { useAssets } from "expo-asset";
 
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { LoginInfo } from "appComponents/LoginInfo";
-import { Button, Text, VView } from "components";
+import { Button, ScrollView, Text, VView } from "components";
+import { SurveySelectors } from "state";
+
 import { screenKeys } from "../screenKeys";
-import { SurveySelectors } from "state/survey";
 import { SelectedSurveyFieldset } from "./SelectedSurveyFieldet";
 import { VersionNumberInfo } from "./VersionNumberInfo";
 
@@ -21,30 +22,32 @@ export const HomeScreen = () => {
   const surveySelected = !!survey;
 
   return (
-    <VView style={styles.container}>
-      {logo && <Image source={logo} style={styles.logo} />}
-      <Text
-        style={styles.appTitle}
-        variant="headlineSmall"
-        textKey="common:appTitle"
-      />
+    <ScrollView>
+      <VView style={styles.container}>
+        {logo && <Image source={logo} style={styles.logo} />}
+        <Text
+          style={styles.appTitle}
+          variant="headlineSmall"
+          textKey="common:appTitle"
+        />
 
-      <VersionNumberInfo />
+        <VersionNumberInfo />
 
-      <LoginInfo />
+        <LoginInfo />
 
-      <GpsLockingEnabledWarning />
+        <GpsLockingEnabledWarning />
 
-      {surveySelected && <SelectedSurveyFieldset />}
+        {surveySelected && <SelectedSurveyFieldset />}
 
-      <Button
-        mode={surveySelected ? "contained-tonal" : "contained"}
-        textKey={
-          surveySelected ? "surveys:manageSurveys" : "surveys:selectSurvey"
-        }
-        style={styles.manageSurveysButton}
-        onPress={() => navigation.navigate(screenKeys.surveysListLocal)}
-      />
-    </VView>
+        <Button
+          mode={surveySelected ? "contained-tonal" : "contained"}
+          textKey={
+            surveySelected ? "surveys:manageSurveys" : "surveys:selectSurvey"
+          }
+          style={styles.manageSurveysButton}
+          onPress={() => navigation.navigate(screenKeys.surveysListLocal)}
+        />
+      </VView>
+    </ScrollView>
   );
 };

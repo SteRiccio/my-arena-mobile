@@ -1,82 +1,41 @@
-import { useCallback, useEffect, useState } from "react";
-import { Banner, DataTable as RNPDataTable } from "react-native-paper";
-
-import { Arrays } from "@openforis/arena-core";
+import { DataTable as RNPDataTable } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 import { Checkbox } from "../Checkbox";
 import { ScrollView } from "../ScrollView";
 import { VView } from "../VView";
 import { usePagination } from "./usePagination";
+import { ItemSelectedBanner, useSelectableList } from "../SelectableList";
 
 export const DataTable = (props) => {
   const {
     columns,
-    rows,
-    onRowPress: onRowPressProp,
-    onRowLongPress: onRowLongPressProp,
+    items,
+    onItemPress: onItemPressProp,
+    onItemLongPress: onItemLongPressProp,
     onSelectionChange,
-    onDeleteSelectedRowIds,
+    onDeleteSelectedItemIds,
     selectable,
     showPagination,
   } = props;
 
   const { t } = useTranslation();
 
-  const [state, setState] = useState({
-    selectedRowIds: [],
+  const {
+    onDeleteSelected,
+    onItemPress,
+    onItemLongPress,
+    onItemSelect,
+    selectedItemIds,
+    selectionEnabled,
+  } = useSelectableList({
+    onDeleteSelectedItemIds,
+    onItemPress: onItemPressProp,
+    onItemLongPress: onItemLongPressProp,
+    onSelectionChange,
+    selectable,
   });
-
-  const { selectedRowIds, selectionEnabled } = state;
-
-  useEffect(() => {
-    setState((statePrev) => ({ ...statePrev, selectedRowIds: [] }));
-  }, [rows]);
-
-  const onRowSelect = useCallback(
-    (row) => {
-      const selected = !selectedRowIds.includes(row.key);
-      const selectedRowIdsNext = selected
-        ? Arrays.addItem(row.key)(selectedRowIds)
-        : Arrays.removeItem(row.key)(selectedRowIds);
-
-      setState((statePrev) => ({
-        ...statePrev,
-        selectionEnabled: selectedRowIdsNext.length > 0,
-        selectedRowIds: selectedRowIdsNext,
-      }));
-
-      onSelectionChange?.(selectedRowIds);
-    },
-    [selectedRowIds]
-  );
-
-  const onDeleteSelected = useCallback(
-    () => onDeleteSelectedRowIds?.(selectedRowIds),
-    [selectedRowIds, onDeleteSelectedRowIds]
-  );
-
-  const onRowPress = useCallback(
-    (row) => {
-      if (selectionEnabled) {
-        onRowSelect(row);
-      } else {
-        onRowPressProp?.(row);
-      }
-    },
-    [onRowPressProp, onRowSelect]
-  );
-
-  const onRowLongPress = useCallback(
-    (row) => {
-      if (selectable) {
-        onRowSelect(row);
-      } else {
-        onRowLongPressProp?.(row);
-      }
-    },
-    [onRowLongPressProp, onRowSelect]
-  );
 
   const {
     itemFrom,
@@ -88,20 +47,15 @@ export const DataTable = (props) => {
     visibleItems,
     onItemsPerPageChange,
     onPageChange,
-  } = usePagination({ items: rows });
+  } = usePagination({ items: items });
 
-  const visibleRows = showPagination ? visibleItems : rows;
+  const visibleRows = showPagination ? visibleItems : items;
 
   return (
     <VView style={{ flex: 1 }}>
-      <Banner
-        actions={[
-          {
-            label: "Delete selected",
-            onPress: onDeleteSelected,
-          },
-        ]}
-        visible={selectedRowIds.length > 0}
+      <ItemSelectedBanner
+        onDeleteSelected={onDeleteSelected}
+        selectedItemIds={selectedItemIds}
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
@@ -119,11 +73,11 @@ export const DataTable = (props) => {
           )}
         </RNPDataTable.Header>
         <ScrollView persistentScrollbar>
-          {visibleRows.map((row) => (
+          {visibleRows.map((item) => (
             <RNPDataTable.Row
-              key={row.key}
-              onPress={() => onRowPress(row)}
-              onLongPress={() => onRowLongPress(row)}
+              key={item.key}
+              onPress={() => onItemPress(item)}
+              onLongPress={() => onItemLongPress(item)}
             >
               {columns.map(({ key: columnKey, style, cellRenderer = null }) => (
                 <RNPDataTable.Cell
@@ -131,14 +85,14 @@ export const DataTable = (props) => {
                   style={style}
                   textStyle={{ flex: 1 }}
                 >
-                  {cellRenderer ? cellRenderer({ row }) : row[columnKey]}
+                  {cellRenderer ? cellRenderer({ item }) : item[columnKey]}
                 </RNPDataTable.Cell>
               ))}
               {selectionEnabled && (
                 <RNPDataTable.Cell style={{ maxWidth: 40, minWidth: 40 }}>
                   <Checkbox
-                    checked={selectedRowIds.includes(row.key)}
-                    onPress={() => onRowSelect(row)}
+                    checked={selectedItemIds.includes(item.key)}
+                    onPress={() => onItemSelect(item)}
                   />
                 </RNPDataTable.Cell>
               )}
@@ -153,7 +107,7 @@ export const DataTable = (props) => {
             label={t("common:fromToOf", {
               from: itemFrom + 1,
               to: itemTo,
-              of: rows.length,
+              of: items.length,
             })}
             numberOfItemsPerPageList={itemsPerPageOptions}
             numberOfItemsPerPage={itemsPerPage}
@@ -167,6 +121,18 @@ export const DataTable = (props) => {
   );
 };
 
+DataTable.propTypes = {
+  columns: PropTypes.array.isRequired,
+  items: PropTypes.array.isRequired,
+  onItemPress: PropTypes.func,
+  onItemLongPress: PropTypes.func,
+  onSelectionChange: PropTypes.func,
+  onDeleteSelectedItemIds: PropTypes.func,
+  selectable: PropTypes.bool,
+  showPagination: PropTypes.bool,
+};
+
 DataTable.defaultProps = {
   selectable: false,
+  showPagination: false,
 };

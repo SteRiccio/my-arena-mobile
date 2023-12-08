@@ -115,8 +115,8 @@ export const RecordValidationReport = () => {
               header: "common:error",
             },
           ]}
-          onRowPress={onRowPress}
-          rows={items}
+          onItemPress={onRowPress}
+          items={items}
         />
       )}
       {editDialogOpen && (

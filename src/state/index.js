@@ -23,6 +23,13 @@ export {
 } from "./remoteConnection";
 
 export {
+  ScreenOptionsActions,
+  ScreenOptionsReducer,
+  ScreenOptionsSelectors,
+  ScreenOptionsState,
+} from "./screenOptions";
+
+export {
   SettingsActions,
   SettingsReducer,
   SettingsSelectors,

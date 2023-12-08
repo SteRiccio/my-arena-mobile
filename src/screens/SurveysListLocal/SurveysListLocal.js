@@ -2,11 +2,18 @@ import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { Button, DataTable, Loader, Searchbar, Text, VView } from "components";
+import {
+  Button,
+  DataVisualizer,
+  Loader,
+  Searchbar,
+  Text,
+  VView,
+} from "components";
 import { SurveyService } from "service";
 import { useNavigationFocus } from "hooks";
 import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
-import { ConfirmActions, SurveyActions } from "state";
+import { ConfirmActions, SurveyActions, ScreenOptionsSelectors } from "state";
 import { screenKeys } from "../screenKeys";
 
 import styles from "./styles";
@@ -15,6 +22,7 @@ export const SurveysListLocal = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [state, setState] = useState({ surveys: [], loading: true });
+  const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const { loading, surveys } = state;
 
   const loadSurveys = async () => {
@@ -32,7 +40,7 @@ export const SurveysListLocal = () => {
   const { onSearchValueChange, searchValue, surveysFiltered } =
     useSurveysSearch({ surveys });
 
-  const onDeleteSelectedRowIds = useCallback((surveyIds) => {
+  const onDeleteSelectedItemIds = useCallback((surveyIds) => {
     dispatch(
       ConfirmActions.show({
         titleKey: "surveys:confirmDeleteSurvey.title",
@@ -46,7 +54,7 @@ export const SurveysListLocal = () => {
     );
   }, []);
 
-  const onRowPress = useCallback(
+  const onItemPress = useCallback(
     (survey) =>
       dispatch(
         SurveyActions.fetchAndSetCurrentSurvey({
@@ -68,7 +76,7 @@ export const SurveysListLocal = () => {
         <Text textKey="surveys:noAvailableSurveysFound" variant="labelLarge" />
       )}
       {surveysFiltered.length > 0 && (
-        <DataTable
+        <DataVisualizer
           columns={[
             {
               key: "name",
@@ -79,9 +87,10 @@ export const SurveysListLocal = () => {
               header: "common:label",
             },
           ]}
-          onDeleteSelectedRowIds={onDeleteSelectedRowIds}
-          onRowPress={onRowPress}
-          rows={surveysFiltered}
+          mode={screenViewMode}
+          onDeleteSelectedItemIds={onDeleteSelectedItemIds}
+          onItemPress={onItemPress}
+          items={surveysFiltered}
           selectable
         />
       )}
