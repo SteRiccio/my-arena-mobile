@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { IconButton } from "components/IconButton";
 import { RecordSyncStatus } from "model/RecordSyncStatus";
@@ -31,4 +32,8 @@ export const RecordSyncStatusIcon = (props) => {
       />
     </Tooltip>
   );
+};
+
+RecordSyncStatusIcon.propTypes = {
+  item: PropTypes.object.isRequired,
 };

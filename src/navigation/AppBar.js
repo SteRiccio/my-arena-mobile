@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { useScreenKey } from "hooks";
 import { ScreenViewMode } from "model";
@@ -102,4 +103,10 @@ export const AppBar = (props) => {
       )}
     </RNPAppbar.Header>
   );
+};
+
+AppBar.propTypes = {
+  back: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
+  options: PropTypes.object.isRequired,
 };

@@ -51,10 +51,11 @@ export const DataList = (props) => {
               const { cellRenderer, header, key, style } = col;
               return (
                 <FormItem
-                  labelVariant="titleSmall"
-                  textVariant="titleMedium"
                   key={key}
                   labelKey={header}
+                  labelVariant="titleSmall"
+                  style={style}
+                  textVariant="titleMedium"
                 >
                   {cellRenderer ? cellRenderer({ item }) : item[key]}
                 </FormItem>
