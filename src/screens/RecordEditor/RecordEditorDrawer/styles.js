@@ -19,6 +19,7 @@ export const useStyles = () => {
       backgroundColor: theme.colors.surfaceVariant,
       padding: 10,
       borderWidth: 1,
+      gap: 10
     },
     closeButton: {},
     buttonBar: {
