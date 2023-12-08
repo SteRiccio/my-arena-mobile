@@ -43,6 +43,7 @@ export const NodeEntityFormComponent = (props) => {
       getItem={(_data, index) => childrenDefs[index]}
       initialNumToRender={10}
       keyExtractor={(childDef) => childDef.uuid}
+      persistentScrollbar
       renderItem={({ item: childDef }) => (
         <NodeDefFormItem
           key={childDef.uuid}

@@ -9,9 +9,10 @@ export const SegmentedButtons = (props) => {
 
   return (
     <RNPSegmentedButtons
-      buttons={buttons.map(({ value, label }) => ({
-        value,
+      buttons={buttons.map(({ icon, label, value }) => ({
+        icon,
         label: t(label),
+        value,
       }))}
       onValueChange={onChange}
       value={value}

@@ -1,13 +1,16 @@
 import { useCallback, useState } from "react";
 import Collapsible from "react-native-collapsible";
+import PropTypes from "prop-types";
 
 import { Button } from "../Button";
 import { VView } from "../VView";
 
-import styles from "./styles";
+import { useStyles } from "./styles";
 
 export const CollapsiblePanel = (props) => {
-  const { children, headerKey } = props;
+  const { children, containerStyle, headerKey, headerParams } = props;
+
+  const styles = useStyles();
 
   const [collapsed, setCollapsed] = useState(true);
 
@@ -17,7 +20,7 @@ export const CollapsiblePanel = (props) => {
   );
 
   return (
-    <VView style={styles.container}>
+    <VView style={[styles.container, containerStyle]}>
       <Button
         icon={collapsed ? "chevron-down" : "chevron-up"}
         contentStyle={styles.headerButtonContent}
@@ -26,10 +29,18 @@ export const CollapsiblePanel = (props) => {
         onPress={onHeaderPress}
         style={styles.headerButton}
         textKey={headerKey}
+        textParams={headerParams}
       />
       <Collapsible collapsed={collapsed} style={styles.collapsibleContainer}>
         {children}
       </Collapsible>
     </VView>
   );
+};
+
+CollapsiblePanel.propTypes = {
+  children: PropTypes.node,
+  containerStyle: PropTypes.object,
+  headerKey: PropTypes.string.isRequired,
+  headerParams: PropTypes.object,
 };
