@@ -3,14 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { screenKeys } from "../screenKeys";
-import {
-  DataTable,
-  DataVisualizer,
-  Loader,
-  Searchbar,
-  Text,
-  VView,
-} from "components";
+import { DataVisualizer, Loader, Searchbar, Text, VView } from "components";
 import { useNavigationFocus } from "hooks";
 import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
 import { SurveyService } from "service";

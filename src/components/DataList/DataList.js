@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { FlatList, TouchableHighlight } from "react-native";
+import PropTypes from "prop-types";
 
 import { Checkbox } from "../Checkbox";
 import { FormItem } from "../FormItem";
@@ -14,8 +15,8 @@ export const DataList = (props) => {
     items,
     onItemPress: onItemPressProp,
     onItemLongPress: onItemLongPressProp,
-    onSelectionChange,
     onDeleteSelectedItemIds,
+    onSelectionChange,
     selectable,
   } = props;
 
@@ -85,4 +86,14 @@ export const DataList = (props) => {
       />
     </VView>
   );
+};
+
+DataList.propTypes = {
+  columns: PropTypes.array.isRequired,
+  items: PropTypes.array.isRequired,
+  onItemPress: PropTypes.func,
+  onItemLongPress: PropTypes.func,
+  onDeleteSelectedItemIds: PropTypes.func,
+  onSelectionChange: PropTypes.func,
+  selectable: PropTypes.bool,
 };

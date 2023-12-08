@@ -1,6 +1,5 @@
 import { ScreenViewMode } from "model";
 import { ScreenOptionsSelectors } from "./selectors";
-import { ScreenOptionsState } from "./state";
 
 const SCREEN_VIEW_MODE_SET = "SCREEN_VIEW_MODE_SET";
 

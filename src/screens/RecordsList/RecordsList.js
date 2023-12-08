@@ -23,7 +23,7 @@ import {
   VView,
 } from "components";
 
-import { useIsNetworkConnected, useNavigationFocus, useScreenKey } from "hooks";
+import { useIsNetworkConnected, useNavigationFocus } from "hooks";
 import { useTranslation } from "localization";
 import { RecordService } from "service";
 import {
