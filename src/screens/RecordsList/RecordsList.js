@@ -14,7 +14,7 @@ import {
 import {
   Button,
   CollapsiblePanel,
-  DataTable,
+  DataVisualizer,
   HView,
   Loader,
   LoadingIcon,
@@ -22,18 +22,18 @@ import {
   Text,
   VView,
 } from "components";
-import { DataVisualizer } from "components/DataVisualizer";
 
-import { useIsNetworkConnected, useNavigationFocus } from "hooks";
+import { useIsNetworkConnected, useNavigationFocus, useScreenKey } from "hooks";
 import { useTranslation } from "localization";
 import { RecordService } from "service";
 import {
   ConfirmActions,
   DataEntryActions,
   MessageActions,
+  ScreenOptionsSelectors,
   SurveySelectors,
 } from "state";
-import { RecordSyncStatus } from "model/RecordSyncStatus";
+import { RecordSyncStatus } from "model";
 
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
@@ -44,6 +44,7 @@ export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const networkAvailable = useIsNetworkConnected();
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -115,13 +116,13 @@ export const RecordsList = () => {
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };
 
-  const onRowPress = useCallback((row) => {
+  const onItemPress = useCallback((row) => {
     dispatch(
       DataEntryActions.fetchAndEditRecord({ navigation, recordId: row.id })
     );
   }, []);
 
-  const onDeleteSelectedRowIds = useCallback((recordUuids) => {
+  const onDeleteSelectedItemIds = useCallback((recordUuids) => {
     dispatch(
       ConfirmActions.show({
         titleKey: "Delete records",
@@ -161,7 +162,7 @@ export const RecordsList = () => {
     );
   }, [records]);
 
-  const recordToRow = (record) => {
+  const recordToItem = (record) => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
       const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
       const value = record[recordKeyProp];
@@ -245,9 +246,10 @@ export const RecordsList = () => {
                   ]
                 : []),
             ]}
-            rows={records.map(recordToRow)}
-            onRowPress={onRowPress}
-            onDeleteSelectedRowIds={onDeleteSelectedRowIds}
+            mode={screenViewMode}
+            items={records.map(recordToItem)}
+            onItemPress={onItemPress}
+            onDeleteSelectedItemIds={onDeleteSelectedItemIds}
             selectable
           />
         )}

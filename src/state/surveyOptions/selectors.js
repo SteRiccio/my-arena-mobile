@@ -1,9 +1,11 @@
 import { useSelector } from "react-redux";
 
-const getSurveyOptionsState = (state) => state.surveyOptions;
+import { SurveyOptionsState } from "./state";
+
+const getSurveyOptionsState = (state) => state[SurveyOptionsState.stateKey];
 
 const selectRecordEditViewMode = (state) =>
-  getSurveyOptionsState(state).recordEditViewMode;
+  SurveyOptionsState.getRecordEditViewMode(getSurveyOptionsState(state));
 
 export const SurveyOptionsSelectors = {
   selectRecordEditViewMode,

@@ -104,9 +104,9 @@ export const NodeMultipleEntityListComponent = (props) => {
               header: NodeDefs.getLabelOrName(keyDef, lang),
             })),
           ]}
-          rows={rows}
-          onRowPress={onRowPress}
-          onDeleteSelectedRowIds={onDeleteSelectedNodeUuids}
+          items={rows}
+          onItemPress={onRowPress}
+          onDeleteSelectedItemIds={onDeleteSelectedNodeUuids}
           selectable
         />
       )}

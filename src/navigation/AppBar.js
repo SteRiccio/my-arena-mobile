@@ -2,8 +2,16 @@ import { useCallback, useState } from "react";
 import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
+import { useScreenKey } from "hooks";
+import { ScreenViewMode } from "model";
 import { useTranslation } from "localization";
-import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
+import {
+  DataEntryActions,
+  DataEntrySelectors,
+  ScreenOptionsActions,
+  ScreenOptionsSelectors,
+  SurveySelectors,
+} from "state";
 import { screenKeys } from "screens";
 import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
 
@@ -12,17 +20,21 @@ export const AppBar = (props) => {
 
   const { t } = useTranslation();
 
-  const { hasBack, surveyNameAsTitle, title: titleOption } = options;
+  const {
+    hasBack,
+    hasToggleScreenView,
+    surveyNameAsTitle,
+    title: titleOption,
+  } = options;
 
-  const navigationState = navigation.getState();
-  const { index, routes } = navigationState;
-  const currentScreenKey = routes[index].name;
+  const screenKey = useScreenKey();
+  const screenViewMode = ScreenOptionsSelectors.useScreenViewMode(screenKey);
 
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
-    currentScreenKey === screenKeys.recordEditor;
+    screenKey === screenKeys.recordEditor;
 
   const [state, setState] = useState({ menuVisible: false });
 
@@ -54,7 +66,16 @@ export const AppBar = (props) => {
 
       {!editingRecord && <RNPAppbar.Content title={title} />}
 
-      {!editingRecord && currentScreenKey !== screenKeys.settings && (
+      {!editingRecord && hasToggleScreenView && (
+        <RNPAppbar.Action
+          icon={screenViewMode === ScreenViewMode.list ? "table" : "view-list"}
+          onPress={() =>
+            dispatch(ScreenOptionsActions.toggleScreenViewMode({ screenKey }))
+          }
+        />
+      )}
+
+      {!editingRecord && screenKey !== screenKeys.settings && (
         <Menu
           visible={menuVisible}
           onDismiss={toggleMenu}

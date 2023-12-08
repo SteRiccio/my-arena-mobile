@@ -3,11 +3,23 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { screenKeys } from "../screenKeys";
-import { DataTable, Loader, Searchbar, Text, VView } from "components";
+import {
+  DataTable,
+  DataVisualizer,
+  Loader,
+  Searchbar,
+  Text,
+  VView,
+} from "components";
 import { useNavigationFocus } from "hooks";
 import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
 import { SurveyService } from "service";
-import { ConfirmActions, SurveyActions, SurveySelectors } from "state";
+import {
+  ConfirmActions,
+  ScreenOptionsSelectors,
+  SurveyActions,
+  SurveySelectors,
+} from "state";
 
 import styles from "./styles";
 
@@ -21,6 +33,7 @@ export const SurveysListRemote = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const surveysLocal = SurveySelectors.useSurveysLocal();
+  const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
 
   const [state, setState] = useState(INITIAL_STATE);
   const { surveys, loading, errorKey } = state;
@@ -121,26 +134,25 @@ export const SurveysListRemote = () => {
         />
       )}
       {surveysFiltered.length > 0 && (
-        <>
-          <DataTable
-            columns={[
-              {
-                key: "name",
-                header: "common:name",
-              },
-              {
-                key: "defaultLabel",
-                header: "common:label",
-              },
-            ]}
-            rows={surveysFiltered.map((survey) => ({
-              key: survey.uuid,
-              ...survey,
-            }))}
-            onRowPress={onRowPress}
-            showPagination={surveysFiltered.length > 20}
-          />
-        </>
+        <DataVisualizer
+          columns={[
+            {
+              key: "name",
+              header: "common:name",
+            },
+            {
+              key: "defaultLabel",
+              header: "common:label",
+            },
+          ]}
+          items={surveysFiltered.map((survey) => ({
+            key: survey.uuid,
+            ...survey,
+          }))}
+          mode={screenViewMode}
+          onItemPress={onRowPress}
+          showPagination={surveysFiltered.length > 20}
+        />
       )}
     </VView>
   );

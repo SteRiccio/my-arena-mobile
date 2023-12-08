@@ -14,8 +14,8 @@ const colorBySyncStatus = {
 };
 
 export const RecordSyncStatusIcon = (props) => {
-  const { row } = props;
-  const { syncStatus } = row;
+  const { item } = props;
+  const { syncStatus } = item;
 
   if (!syncStatus) return null;
 

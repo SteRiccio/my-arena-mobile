@@ -3,9 +3,10 @@ import { StoreUtils } from "../storeUtils";
 import { RecordEditViewMode } from "model";
 import { SurveyActionTypes } from "state";
 import { SurveyOptionsActions } from "./actions";
+import { SurveyOptionsState } from "./state";
 
 const initialState = {
-  recordEditViewMode: RecordEditViewMode.form,
+  [SurveyOptionsState.keys.recordEditViewMode]: RecordEditViewMode.form,
 };
 
 const actionHandlers = {
@@ -13,7 +14,7 @@ const actionHandlers = {
 
   [SurveyOptionsActions.RECORD_EDIT_VIEW_MODE_SET]: ({ state, action }) => ({
     ...state,
-    recordEditViewMode: action.viewMode,
+    [SurveyOptionsState.keys.recordEditViewMode]: action.viewMode,
   }),
 };
 
