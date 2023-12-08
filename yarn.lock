@@ -7642,15 +7642,10 @@ react-native-paper-dropdown@^1.0.7:
   resolved "https://registry.yarnpkg.com/react-native-paper-dropdown/-/react-native-paper-dropdown-1.0.7.tgz#64fe004b05b73ca5c781873d800ac5062b35bdc9"
   integrity sha512-St0rZFw5sC7mbXtFCOGsyEa0fIBaG6Cfz78RsjFNzTj+rKd1i9qlDY2O7eOa2zAUEnFlL+C7FXdXUY9RUNELNw==
 
-react-native-paper-select@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-paper-select/-/react-native-paper-select-1.0.2.tgz#d25d0ee0862ed842fb35c82eb25ef87fe1926522"
-  integrity sha512-QRuHuPii4v3s6mhTcFaWIT5JyFiNMpu0cgkpG/MrB+ysht6edwq2q57hzvfjZy9fbVA5wctZwJrd6xIccBCs6Q==
-
-react-native-paper@^5.11.1:
-  version "5.11.1"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.11.1.tgz#34f612d6fb28099334db08a1bd109086ea91dcac"
-  integrity sha512-axqRTagGL8LtuYh172cx2Q2THOVJ3PTpPjCKhL5ECRdpJs2ceiboVecSiOIBuO3H7dVpaneptBA0vJr9HeVHwg==
+react-native-paper@^5.11.3:
+  version "5.11.3"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.11.3.tgz#09efd215ed3f6607dec7c76897358a754c2484b7"
+  integrity sha512-550W/B+2LdFt0wBucQQI7GKZJ4XD0DTJz1BxalMv87l8WKKdRrdxI8t1lTEbyFb4gsTHA/sqMVXpQXITh0yplw==
   dependencies:
     "@callstack/react-theme-provider" "^3.0.9"
     color "^3.1.2"
