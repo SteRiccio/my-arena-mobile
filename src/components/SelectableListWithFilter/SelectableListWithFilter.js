@@ -8,8 +8,8 @@ import { Arrays, Objects } from "@openforis/arena-core";
 import {
   IconButton,
   LoadingIcon,
+  Searchbar,
   Text,
-  TextInput,
   VView,
   View,
 } from "components";
@@ -91,7 +91,7 @@ export const SelectableListWithFilter = (props) => {
         loading: false,
       }));
     }
-  }, [calculateItemsFiltered]);
+  }, [calculateItemsFiltered, debounceFiltering]);
 
   const updateItemsFilteredDebouced = useMemo(
     () => debounce(updateItemsFiltered, 500),
@@ -112,7 +112,7 @@ export const SelectableListWithFilter = (props) => {
         updateItemsFiltered();
       }
     },
-    [updateItemsFiltered]
+    [debounceFiltering, updateItemsFiltered]
   );
 
   const _onSelectedItemsChange = useCallback(
@@ -124,16 +124,14 @@ export const SelectableListWithFilter = (props) => {
 
   const onListSelectionChange = useCallback(
     (newValue) => {
-      const selectedItemsNext = _objToArray(newValue);
-      _onSelectedItemsChange(selectedItemsNext);
+      _onSelectedItemsChange(_objToArray(newValue));
     },
     [_onSelectedItemsChange]
   );
 
   const onItemRemove = useCallback(
     (item) => {
-      const selectedItemsNext = Arrays.removeItem(item)(selectedItems);
-      _onSelectedItemsChange(selectedItemsNext);
+      _onSelectedItemsChange(Arrays.removeItem(item)(selectedItems));
     },
     [_onSelectedItemsChange]
   );
@@ -169,7 +167,7 @@ export const SelectableListWithFilter = (props) => {
               }
             />
           )}
-          <TextInput onChange={onFilterInputChange} label="common:filter" />
+          <Searchbar onChange={onFilterInputChange} />
 
           {loading && <LoadingIcon />}
 
