@@ -12,6 +12,10 @@ export const useStyles = () => {
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.primary,
     },
+    formItemOneNode: {
+      flex: 1,
+      borderBottomWidth: 0,
+    },
     nodeDefLabelContainer: {
       flexDirection: "row",
       alignItems: "center",

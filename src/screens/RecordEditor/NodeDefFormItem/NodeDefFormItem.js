@@ -40,7 +40,7 @@ export const NodeDefFormItem = (props) => {
     <VView
       style={[
         styles.formItem,
-        viewMode === RecordEditViewMode.oneNode ? { flex: 1 } : {},
+        viewMode === RecordEditViewMode.oneNode ? styles.formItemOneNode : {},
       ]}
     >
       <NodeDefFormItemHeader
