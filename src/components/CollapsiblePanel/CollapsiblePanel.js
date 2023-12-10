@@ -6,9 +6,12 @@ import { Button } from "../Button";
 import { VView } from "../VView";
 
 import { useStyles } from "./styles";
+import { HView } from "..";
+import { TouchableOpacity } from "react-native";
 
 export const CollapsiblePanel = (props) => {
-  const { children, containerStyle, headerKey, headerParams } = props;
+  const { children, containerStyle, headerContent, headerKey, headerParams } =
+    props;
 
   const styles = useStyles();
 
@@ -21,16 +24,22 @@ export const CollapsiblePanel = (props) => {
 
   return (
     <VView style={[styles.container, containerStyle]}>
-      <Button
-        icon={collapsed ? "chevron-down" : "chevron-up"}
-        contentStyle={styles.headerButtonContent}
-        labelStyle={styles.headerButtonLabel}
-        mode="text"
-        onPress={onHeaderPress}
-        style={styles.headerButton}
-        textKey={headerKey}
-        textParams={headerParams}
-      />
+      {headerContent ? (
+        <TouchableOpacity onPress={onHeaderPress}>
+          {headerContent}
+        </TouchableOpacity>
+      ) : (
+        <Button
+          icon={collapsed ? "chevron-down" : "chevron-up"}
+          contentStyle={styles.headerButtonContent}
+          labelStyle={styles.headerButtonLabel}
+          mode="text"
+          onPress={onHeaderPress}
+          style={styles.headerButton}
+          textKey={headerKey}
+          textParams={headerParams}
+        />
+      )}
       <Collapsible collapsed={collapsed} style={styles.collapsibleContainer}>
         {children}
       </Collapsible>
@@ -41,6 +50,7 @@ export const CollapsiblePanel = (props) => {
 CollapsiblePanel.propTypes = {
   children: PropTypes.node,
   containerStyle: PropTypes.object,
+  headerContent: PropTypes.node,
   headerKey: PropTypes.string.isRequired,
   headerParams: PropTypes.object,
 };

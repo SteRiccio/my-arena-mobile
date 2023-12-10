@@ -2,6 +2,7 @@ import app from "./app";
 import authService from "./authService";
 import common from "./common";
 import dataEntry from "./dataEntry";
+import device from "./device";
 import loginInfo from "./loginInfo";
 import job from "./job";
 import settingsRemoteConnection from "./settingsRemoteConnection";
@@ -14,6 +15,7 @@ export default {
   authService,
   common,
   dataEntry,
+  device,
   loginInfo,
   job,
   settings,

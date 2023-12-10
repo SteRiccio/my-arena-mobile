@@ -8,6 +8,11 @@ const actionHandlers = {
     ...state,
     ...action.deviceInfo,
   }),
+  [DeviceInfoActions.DEVICE_POWER_STATE_SET]: ({ state, action }) => ({
+    ...state,
+    batteryLevel: action.batteryLevel,
+    batteryState: action.batteryState,
+  }),
 };
 
 export const DeviceInfoReducer = StoreUtils.exportReducer({

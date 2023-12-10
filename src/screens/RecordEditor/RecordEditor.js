@@ -10,6 +10,7 @@ import { BottomNavigationBar } from "./BottomNavigationBar";
 import { RecordPageForm } from "./RecordPageForm";
 import { RecordEditorDrawer } from "./RecordEditorDrawer";
 import { RecordNodesCarousel } from "./RecordNodesCarousel";
+import { StatusBar } from "./StatusBar";
 
 import styles from "./styles.js";
 
@@ -21,6 +22,8 @@ export const RecordEditor = () => {
 
   const internalContainer = (
     <VView style={styles.internalContainer}>
+      <StatusBar />
+
       {viewMode === RecordEditViewMode.form ? (
         <RecordPageForm />
       ) : (
