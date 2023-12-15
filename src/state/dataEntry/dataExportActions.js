@@ -4,7 +4,10 @@ import { AuthService, RecordService, WebSocketService } from "service";
 import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerationJob";
 
 import { i18n } from "localization";
-import { ConfirmActions, JobMonitorActions, MessageActions } from "state";
+import { ConfirmActions } from "../confirm/actions";
+import { JobMonitorActions } from "../jobMonitor/actions";
+import { MessageActions } from "../message/actions";
+
 import { SurveySelectors } from "../survey";
 import { Files } from "utils";
 import { Validations } from "model/utils/Validations";

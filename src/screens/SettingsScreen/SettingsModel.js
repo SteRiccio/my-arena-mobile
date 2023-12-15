@@ -28,6 +28,10 @@ const properties = {
     type: propertyType.boolean,
     labelKey: "settings:animationsEnabled",
   },
+  showStatusBar: {
+    type: propertyType.boolean,
+    labelKey: "settings:showStatusBar",
+  },
   fontScale: {
     type: propertyType.slider,
     labelKey: "settings:fontScale",

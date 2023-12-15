@@ -106,7 +106,7 @@ export const AppBar = (props) => {
 };
 
 AppBar.propTypes = {
-  back: PropTypes.func.isRequired,
+  back: PropTypes.object,
   navigation: PropTypes.object.isRequired,
   options: PropTypes.object.isRequired,
 };

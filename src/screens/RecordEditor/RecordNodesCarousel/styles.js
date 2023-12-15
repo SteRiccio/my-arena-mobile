@@ -4,7 +4,6 @@ export const useStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      marginBottom: 40,
     },
     pager: {
       flex: 1,

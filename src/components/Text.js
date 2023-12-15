@@ -23,7 +23,7 @@ export const Text = (props) => {
       style={style}
       variant={variant}
     >
-      {t(textKey, textParams)}
+      {textKey ? t(textKey, textParams) : null}
       {children}
     </RNText>
   );

@@ -1,7 +1,7 @@
 import { StoreUtils } from "../storeUtils";
 
 import { RecordEditViewMode } from "model";
-import { SurveyActionTypes } from "state";
+import { SurveyActionTypes } from "../survey/actionTypes";
 import { SurveyOptionsActions } from "./actions";
 import { SurveyOptionsState } from "./state";
 

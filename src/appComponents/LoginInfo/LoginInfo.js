@@ -14,6 +14,8 @@ import {
   RemoteConnectionSelectors,
   SettingsSelectors,
 } from "state";
+import { SettingsService } from "service/settingsService";
+
 import { ConnectionToRemoteServerButton } from "../ConnectionToRemoteServerButton";
 
 import styles from "./styles";
@@ -24,7 +26,7 @@ export const LoginInfo = () => {
   const networkAvailable = useIsNetworkConnected();
   const user = RemoteConnectionSelectors.useLoggedInUser();
   const settings = SettingsSelectors.useSettings();
-  const { email } = settings;
+  const { email, serverUrl } = settings;
 
   if (user) {
     return (
@@ -36,6 +38,9 @@ export const LoginInfo = () => {
         <>
           <FormItem labelKey="loginInfo:name">{user.name}</FormItem>
           <FormItem labelKey="loginInfo:email">{user.email}</FormItem>
+          {serverUrl != SettingsService.defaultServerUrl && (
+            <FormItem labelKey="loginInfo:serverUrl">{serverUrl}</FormItem>
+          )}
           <Button
             mode="contained-tonal"
             style={styles.logoutButton}
@@ -47,7 +52,7 @@ export const LoginInfo = () => {
     );
   }
   return (
-    <FieldSet heading="loginInfo:notLoggedIn">
+    <FieldSet headerKey="loginInfo:notLoggedIn">
       <VView>
         {email && !networkAvailable && (
           <Text

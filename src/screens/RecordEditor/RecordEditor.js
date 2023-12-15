@@ -3,19 +3,25 @@ import MenuDrawer from "react-native-side-drawer";
 
 import { RecordEditViewMode } from "model";
 import { HView, VView, View } from "components";
-import { DataEntrySelectors, SurveyOptionsSelectors } from "state";
+import {
+  DataEntrySelectors,
+  SettingsSelectors,
+  SurveyOptionsSelectors,
+} from "state";
 import { DeviceInfoSelectors } from "state/deviceInfo";
 
 import { BottomNavigationBar } from "./BottomNavigationBar";
 import { RecordPageForm } from "./RecordPageForm";
 import { RecordEditorDrawer } from "./RecordEditorDrawer";
 import { RecordNodesCarousel } from "./RecordNodesCarousel";
+import { StatusBar } from "./StatusBar";
 
 import styles from "./styles.js";
 
 export const RecordEditor = () => {
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
+  const { showStatusBar } = SettingsSelectors.useSettings();
 
   const isPhone = DeviceInfoSelectors.useIsPhone();
 
@@ -26,6 +32,7 @@ export const RecordEditor = () => {
       ) : (
         <RecordNodesCarousel />
       )}
+      {showStatusBar && <StatusBar />}
       <BottomNavigationBar />
     </VView>
   );

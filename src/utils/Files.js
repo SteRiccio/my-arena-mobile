@@ -8,6 +8,8 @@ const MIME_TYPES = {
   zip: "application/zip ",
 };
 
+const getFreeDiskStorage = async () => FileSystem.getFreeDiskStorageAsync();
+
 const jsonToString = (obj) => JSON.stringify(obj, null, 2);
 
 const getInfo = async (fileUri) => FileSystem.getInfoAsync(fileUri);
@@ -83,6 +85,7 @@ const toHumanReadableFileSize = (
 
 export const Files = {
   MIME_TYPES,
+  getFreeDiskStorage,
   getInfo,
   getSize,
   readJsonFromFile,

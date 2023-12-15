@@ -132,7 +132,7 @@ export const SettingsRemoteConnectionScreen = () => {
       <VView style={styles.container}>
         {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
 
-        <FieldSet heading="settingsRemoteConnection:serverUrl">
+        <FieldSet headerKey="settingsRemoteConnection:serverUrl">
           <RadioButton.Group
             onValueChange={onServerUrlTypeChange}
             value={serverUrlType}

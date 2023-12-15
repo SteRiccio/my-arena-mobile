@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
-import { List as RNPList, RadioButton } from "react-native-paper";
+import { List as RNPList } from "react-native-paper";
 import PropTypes from "prop-types";
 
 import { Arrays } from "@openforis/arena-core";
 
-import { Checkbox } from "components";
+import { Checkbox } from "../Checkbox";
+import { RadioButton } from "../RadioButton";
 
 import styles from "./styles";
 
@@ -21,8 +22,8 @@ const ListItemIcon = (props) => {
       />
     );
   return (
-    <RadioButton.Item
-      status={checked ? "checked" : "unchecked"}
+    <RadioButton
+      checked={checked}
       disabled={!editable}
       onPress={() => onItemSelect(item)}
     />

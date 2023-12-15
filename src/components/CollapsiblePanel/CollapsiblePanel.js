@@ -1,14 +1,18 @@
 import { useCallback, useState } from "react";
 import Collapsible from "react-native-collapsible";
+import { TouchableOpacity } from "react-native";
 import PropTypes from "prop-types";
 
-import { Button } from "../Button";
+import { HView } from "../HView";
+import { Icon } from "../Icon";
+import { Text } from "../Text";
 import { VView } from "../VView";
 
 import { useStyles } from "./styles";
 
 export const CollapsiblePanel = (props) => {
-  const { children, containerStyle, headerKey, headerParams } = props;
+  const { children, containerStyle, headerContent, headerKey, headerParams } =
+    props;
 
   const styles = useStyles();
 
@@ -19,18 +23,24 @@ export const CollapsiblePanel = (props) => {
     [collapsed]
   );
 
+  const headerCollapsingIconSource = collapsed ? "chevron-down" : "chevron-up";
+
   return (
     <VView style={[styles.container, containerStyle]}>
-      <Button
-        icon={collapsed ? "chevron-down" : "chevron-up"}
-        contentStyle={styles.headerButtonContent}
-        labelStyle={styles.headerButtonLabel}
-        mode="text"
-        onPress={onHeaderPress}
-        style={styles.headerButton}
-        textKey={headerKey}
-        textParams={headerParams}
-      />
+      <TouchableOpacity onPress={onHeaderPress}>
+        <HView style={styles.headerContainer}>
+          {headerContent}
+          {headerKey && (
+            <Text
+              style={styles.headerText}
+              textKey={headerKey}
+              textParams={headerParams}
+            />
+          )}
+          <Icon source={headerCollapsingIconSource} size={30} />
+        </HView>
+      </TouchableOpacity>
+
       <Collapsible collapsed={collapsed} style={styles.collapsibleContainer}>
         {children}
       </Collapsible>
@@ -41,6 +51,7 @@ export const CollapsiblePanel = (props) => {
 CollapsiblePanel.propTypes = {
   children: PropTypes.node,
   containerStyle: PropTypes.object,
-  headerKey: PropTypes.string.isRequired,
+  headerContent: PropTypes.node,
+  headerKey: PropTypes.string,
   headerParams: PropTypes.object,
 };

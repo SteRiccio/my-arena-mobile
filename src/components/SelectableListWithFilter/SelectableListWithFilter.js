@@ -5,14 +5,13 @@ import debounce from "lodash.debounce";
 
 import { Arrays, Objects } from "@openforis/arena-core";
 
-import {
-  IconButton,
-  LoadingIcon,
-  Text,
-  TextInput,
-  VView,
-  View,
-} from "components";
+import { IconButton } from "../IconButton";
+import { LoadingIcon } from "../LoadingIcon";
+import { Searchbar } from "../Searchbar";
+import { Text } from "../Text";
+import { VView } from "../VView";
+import { View } from "../View";
+
 import { SelectableList } from "./SelectableList";
 
 import styles from "./styles";
@@ -91,7 +90,7 @@ export const SelectableListWithFilter = (props) => {
         loading: false,
       }));
     }
-  }, [calculateItemsFiltered]);
+  }, [calculateItemsFiltered, debounceFiltering]);
 
   const updateItemsFilteredDebouced = useMemo(
     () => debounce(updateItemsFiltered, 500),
@@ -112,7 +111,7 @@ export const SelectableListWithFilter = (props) => {
         updateItemsFiltered();
       }
     },
-    [updateItemsFiltered]
+    [debounceFiltering, updateItemsFiltered]
   );
 
   const _onSelectedItemsChange = useCallback(
@@ -124,16 +123,14 @@ export const SelectableListWithFilter = (props) => {
 
   const onListSelectionChange = useCallback(
     (newValue) => {
-      const selectedItemsNext = _objToArray(newValue);
-      _onSelectedItemsChange(selectedItemsNext);
+      _onSelectedItemsChange(_objToArray(newValue));
     },
     [_onSelectedItemsChange]
   );
 
   const onItemRemove = useCallback(
     (item) => {
-      const selectedItemsNext = Arrays.removeItem(item)(selectedItems);
-      _onSelectedItemsChange(selectedItemsNext);
+      _onSelectedItemsChange(Arrays.removeItem(item)(selectedItems));
     },
     [_onSelectedItemsChange]
   );
@@ -169,7 +166,7 @@ export const SelectableListWithFilter = (props) => {
               }
             />
           )}
-          <TextInput onChange={onFilterInputChange} label="common:filter" />
+          <Searchbar onChange={onFilterInputChange} />
 
           {loading && <LoadingIcon />}
 

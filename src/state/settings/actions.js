@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
 
 import { SettingsService } from "service";
-import { ToastActions } from "..";
+import { ToastActions } from "../toast/actions";
 
 const SETTINGS_SET = "SETTINGS_SET";
 
