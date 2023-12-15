@@ -1,71 +1,45 @@
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
-import { CollapsiblePanel, FormItem, HView, Icon, Text } from "components";
+import {
+  CollapsiblePanel,
+  FieldSet,
+  FormItem,
+  HView,
+  Icon,
+  Text,
+} from "components";
+import { useTranslation } from "localization";
 import { BatteryState } from "model";
 import { DeviceInfoActions, DeviceInfoSelectors } from "state";
+import { Files, TimeUtils } from "utils";
 
-const getBatteryIcon = (batteryLevel) => {
-  if (batteryLevel > 0.9) return "battery";
-  if (batteryLevel > 0.8) return "battery-90";
-  if (batteryLevel > 0.7) return "battery-70";
-  if (batteryLevel > 0.6) return "battery-60";
-  if (batteryLevel > 0.5) return "battery-50";
-  if (batteryLevel > 0.4) return "battery-40";
-  if (batteryLevel > 0.3) return "battery-30";
-  if (batteryLevel > 0.2) return "battery-20";
-  if (batteryLevel > 0.1) return "battery-10";
-  if (batteryLevel >= 0) return "battery-alert-variant-outline";
-};
+import { BatteryIcon } from "./BatteryIcon";
+
+import styles from "./styles.js";
+
+const statusUpdateDelay = 10000; // 10 sec
 
 const getBatteryPercent = (batteryLevel) =>
-  `${Math.floor(batteryLevel * 100)}%`;
-
-const formatRemainingTime = (milliseconds) => {
-  if (!milliseconds) return "";
-
-  const numberEnding = (number) => (number > 1 ? "s" : "");
-
-  let temp = Math.floor(milliseconds / 1000);
-  const years = Math.floor(temp / 31536000);
-  if (years) {
-    return years + " year" + numberEnding(years);
-  }
-  //TODO: Months! Maybe weeks?
-  const days = Math.floor((temp %= 31536000) / 86400);
-  if (days) {
-    return days + " day" + numberEnding(days);
-  }
-  const hours = Math.floor((temp %= 86400) / 3600);
-  if (hours) {
-    return hours + " hour" + numberEnding(hours);
-  }
-  const minutes = Math.floor((temp %= 3600) / 60);
-  if (minutes) {
-    return minutes + " minute" + numberEnding(minutes);
-  }
-  const seconds = temp % 60;
-  if (seconds) {
-    return seconds + " second" + numberEnding(seconds);
-  }
-  return "less than a second";
-};
+  `${Math.round(batteryLevel * 100)}%`;
 
 export const StatusBar = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const intervalIdRef = useRef(null);
   const {
     batteryLevel,
     batteryState,
     batteryTimeToDischarge,
     batteryTimeToFullCharge,
-    batteryLevelMeasureStartTime,
+    freeDiskStorage,
   } = DeviceInfoSelectors.useDeviceInfo();
 
   useEffect(() => {
     intervalIdRef.current = setInterval(() => {
-      dispatch(DeviceInfoActions.updatePowerState());
-    }, 60000);
+      dispatch(DeviceInfoActions.updatePowerStateAndFreeDiskStorage());
+    }, statusUpdateDelay);
 
     return () => {
       const intervalId = intervalIdRef.current;
@@ -75,52 +49,85 @@ export const StatusBar = () => {
     };
   }, []);
 
-  const batteryTimeToDischargeFormatted = formatRemainingTime(
+  const formatRemainingTimeCompact = (time) =>
+    TimeUtils.formatRemainingTimeIfLessThan1Day({
+      time,
+      t,
+      formatMode: TimeUtils.formatModes.compact,
+    });
+
+  const formatRemainingTimeShort = (time) =>
+    TimeUtils.formatRemainingTimeIfLessThan1Day({
+      time,
+      t,
+      formatMode: TimeUtils.formatModes.short,
+    });
+
+  const batteryTimeToDischargeFormatted = formatRemainingTimeCompact(
     batteryTimeToDischarge
   );
-
-  const batteryTimeToFullChargeFormatted = formatRemainingTime(
+  const batteryTimeToDischargeFormattedShort = formatRemainingTimeShort(
+    batteryTimeToDischarge
+  );
+  const batteryTimeToFullChargeFormattedShort = formatRemainingTimeShort(
     batteryTimeToFullCharge
   );
+  const freeDiskStorageFormatted =
+    Files.toHumanReadableFileSize(freeDiskStorage);
 
   return (
     <CollapsiblePanel
       headerContent={
-        <HView>
-          <Icon source={getBatteryIcon(batteryLevel)} />
-          <Text variant="titleSmall">{getBatteryPercent(batteryLevel)}</Text>
-          {batteryState === BatteryState.unplugged &&
-            batteryTimeToDischarge && (
-              <Text variant="titleSmall">
-                {`${batteryTimeToDischargeFormatted} left to discharge`}
-              </Text>
-            )}
-          {batteryState === BatteryState.charging &&
-            batteryTimeToFullCharge && (
-              <Text variant="titleSmall">
-                {`${batteryTimeToFullChargeFormatted} to full charge`}
-              </Text>
-            )}
+        <HView style={styles.headerContent}>
+          <HView>
+            <BatteryIcon
+              batteryLevel={batteryLevel}
+              batteryState={batteryState}
+            />
+            <Text variant="titleSmall">{getBatteryPercent(batteryLevel)}</Text>
+            {batteryState === BatteryState.unplugged &&
+              batteryTimeToDischargeFormatted && (
+                <Text variant="titleSmall">
+                  {batteryTimeToDischargeFormatted}
+                </Text>
+              )}
+          </HView>
+          <HView>
+            <Icon source="chart-pie" size={20} />
+            <Text variant="titleSmall">
+              {t("common:sizeAvailable", {
+                size: freeDiskStorageFormatted,
+              })}
+            </Text>
+          </HView>
         </HView>
       }
     >
-      <FormItem labelKey="device:battery.level">
-        {getBatteryPercent(batteryLevel)}
-      </FormItem>
-      <FormItem labelKey="device:battery.status">{batteryState}</FormItem>
-      {batteryTimeToDischarge && (
-        <FormItem labelKey="device:battery.timeLeftToDischarge">
-          {batteryTimeToDischargeFormatted}
+      <FieldSet headerKey="device:battery.title">
+        <FormItem labelKey="device:battery.level">
+          {getBatteryPercent(batteryLevel)}
         </FormItem>
-      )}
-      {batteryTimeToFullCharge && (
-        <FormItem labelKey="device:battery.timeLeftToFullCharge">
-          {batteryTimeToFullChargeFormatted}
+        {batteryState && (
+          <FormItem labelKey="device:battery.statusLabel">
+            {t(`device:battery.status.${batteryState}`)}
+          </FormItem>
+        )}
+        {batteryTimeToDischargeFormattedShort && (
+          <FormItem labelKey="device:battery.timeLeftToDischarge">
+            {batteryTimeToDischargeFormattedShort}
+          </FormItem>
+        )}
+        {batteryTimeToFullChargeFormattedShort && (
+          <FormItem labelKey="device:battery.timeLeftToFullCharge">
+            {batteryTimeToFullChargeFormattedShort}
+          </FormItem>
+        )}
+      </FieldSet>
+      <FieldSet headerKey="device:internalMemory.title">
+        <FormItem labelKey="device:internalMemory.storageAvailable">
+          {freeDiskStorageFormatted}
         </FormItem>
-      )}
-      <FormItem labelKey="device:battery.elapsedMeasureTime">
-        {Date.now() - batteryLevelMeasureStartTime}
-      </FormItem>
+      </FieldSet>
     </CollapsiblePanel>
   );
 };

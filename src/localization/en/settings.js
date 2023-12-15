@@ -16,6 +16,7 @@ It will help to get a better accuracy in a coordinate attributes.`,
     error:
       "Cannot start GPS locking: location provider not available or access to location not granted",
   },
+  showStatusBar: "Show status bar",
   theme: {
     label: "Theme",
     auto: "Auto",

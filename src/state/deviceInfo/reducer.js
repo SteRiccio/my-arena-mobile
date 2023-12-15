@@ -6,12 +6,11 @@ const initialState = {};
 const actionHandlers = {
   [DeviceInfoActions.DEVICE_INFO_SET]: ({ state, action }) => ({
     ...state,
-    ...action.deviceInfo,
+    ...action.payload,
   }),
   [DeviceInfoActions.DEVICE_POWER_STATE_SET]: ({ state, action }) => ({
     ...state,
-    batteryLevel: action.batteryLevel,
-    batteryState: action.batteryState,
+    ...action.payload,
   }),
 };
 

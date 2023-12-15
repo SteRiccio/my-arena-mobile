@@ -5,3 +5,4 @@ export { RecordPageNavigator } from "./RecordPageNavigator";
 export { RecordSyncStatus } from "./RecordSyncStatus";
 export { ScreenViewMode } from "./ScreenViewMode";
 export { Themes, ThemesSettings } from "./Themes";
+export { UpdateStatus } from "./UpdateStatus";
