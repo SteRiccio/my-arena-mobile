@@ -1,8 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { IconButton } from "components";
 
-import { UpdateStatus } from "model/UpdateStatus";
+import { UpdateStatus } from "model";
+
+import { IconButton } from "../IconButton";
+
 import styles from "./styles";
 
 const iconByUpdateStatus = {

@@ -5,14 +5,13 @@ import debounce from "lodash.debounce";
 
 import { Arrays, Objects } from "@openforis/arena-core";
 
-import {
-  IconButton,
-  LoadingIcon,
-  Searchbar,
-  Text,
-  VView,
-  View,
-} from "components";
+import { IconButton } from "../IconButton";
+import { LoadingIcon } from "../LoadingIcon";
+import { Searchbar } from "../Searchbar";
+import { Text } from "../Text";
+import { VView } from "../VView";
+import { View } from "../View";
+
 import { SelectableList } from "./SelectableList";
 
 import styles from "./styles";

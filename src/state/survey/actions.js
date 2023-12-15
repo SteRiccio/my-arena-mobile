@@ -1,7 +1,8 @@
 import { screenKeys } from "screens/screenKeys";
 import { PreferencesService, SurveyService } from "service";
+
+import { ConfirmActions } from "../confirm/actions";
 import { SurveyActionTypes } from "./actionTypes";
-import { ConfirmActions } from "..";
 
 const {
   CURRENT_SURVEY_SET,

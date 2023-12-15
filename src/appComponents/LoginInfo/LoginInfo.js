@@ -52,7 +52,7 @@ export const LoginInfo = () => {
     );
   }
   return (
-    <FieldSet heading="loginInfo:notLoggedIn">
+    <FieldSet headerKey="loginInfo:notLoggedIn">
       <VView>
         {email && !networkAvailable && (
           <Text

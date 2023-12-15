@@ -1,4 +1,5 @@
 import { useTheme } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { Text } from "../Text";
 import { View } from "../View";
@@ -6,7 +7,7 @@ import { View } from "../View";
 import styles from "./styles";
 
 export const FieldSet = (props) => {
-  const { heading, style, children } = props;
+  const { headerKey, style, children } = props;
 
   const theme = useTheme();
 
@@ -19,13 +20,16 @@ export const FieldSet = (props) => {
       ]}
     >
       <Text
-        style={[
-          styles.legend,
-          { backgroundColor: theme.colors.surface },
-        ]}
-        textKey={heading}
+        style={[styles.legend, { backgroundColor: theme.colors.surface }]}
+        textKey={headerKey}
       />
       {children}
     </View>
   );
+};
+
+FieldSet.propTypes = {
+  headerKey: PropTypes.string,
+  style: PropTypes.object,
+  children: PropTypes.node,
 };

@@ -10,15 +10,15 @@ export const useStyles = () => {
       borderRadius: 5,
       borderColor: theme.colors.onBackground,
     },
-    headerButton: {
-      width: "100%",
-    },
-    headerButtonLabel: {
-      fontSize: 16,
-    },
-    headerButtonContent: {
-      flexDirection: "row-reverse",
+    headerContainer: {
+      marginHorizontal: 8,
+      marginVertical: 4,
+      alignItems: "center",
       justifyContent: "space-between",
+    },
+    headerText: {
+      flex: 1,
+      color: theme.colors.primary,
     },
     collapsibleContainer: {
       paddingHorizontal: 20,

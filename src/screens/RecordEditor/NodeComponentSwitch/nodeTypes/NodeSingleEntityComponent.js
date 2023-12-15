@@ -17,7 +17,7 @@ export const NodeSingleEntityComponent = (props) => {
   if (!nodeUuid) return null;
 
   return (
-    <FieldSet header={nodeDef.props.name}>
+    <FieldSet headerKey={nodeDef.props.name}>
       <NodeEntityFormComponent nodeDef={nodeDef} parentNodeUuid={nodeUuid} />
     </FieldSet>
   );

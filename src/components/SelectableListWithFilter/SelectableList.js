@@ -5,7 +5,8 @@ import PropTypes from "prop-types";
 
 import { Arrays } from "@openforis/arena-core";
 
-import { Checkbox, RadioButton } from "components";
+import { Checkbox } from "../Checkbox";
+import { RadioButton } from "../RadioButton";
 
 import styles from "./styles";
 

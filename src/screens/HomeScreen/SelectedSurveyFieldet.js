@@ -105,7 +105,7 @@ export const SelectedSurveyFieldset = () => {
   if (!survey) return null;
 
   return (
-    <FieldSet heading="surveys:currentSurvey" style={styles.fieldset}>
+    <FieldSet headerKey="surveys:currentSurvey" style={styles.fieldset}>
       <VView style={styles.internalContainer}>
         <HView style={styles.surveyTitleContainer}>
           <Text

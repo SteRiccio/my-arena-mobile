@@ -2,7 +2,7 @@ import { useColorScheme } from "react-native";
 import { MD3DarkTheme, DefaultTheme } from "react-native-paper";
 
 import { Themes, ThemesSettings } from "model";
-import { SettingsSelectors } from "state";
+import { SettingsSelectors } from "../state/settings/selectors";
 
 const defaultFontSize = 16;
 
