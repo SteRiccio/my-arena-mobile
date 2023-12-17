@@ -7,9 +7,10 @@ import { BatteryState } from "model/BatteryState";
 const getBatteryIconSource = ({ batteryLevel, batteryState }) => {
   if (batteryLevel < 0.1) return "battery-alert-variant-outline";
   const suffix = batteryState === BatteryState.charging ? "-charging" : "";
-  if (batteryLevel > 0.9) return `battery${suffix}`;
+  const iconName = `battery${suffix}`;
+  if (batteryLevel > 0.9) return iconName;
   const batteryLevelDec = Math.ceil(batteryLevel * 10) * 10;
-  return `battery-${batteryLevelDec}${suffix}`; // e.g. battery-level-50 or battery-level-50-charging
+  return `${iconName}-${batteryLevelDec}`; // e.g. battery-level-50 or battery-level-50-charging
 };
 
 export const BatteryIcon = (props) => {

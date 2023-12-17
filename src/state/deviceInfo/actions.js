@@ -7,7 +7,7 @@ import { Files } from "utils";
 import { DeviceInfoSelectors } from "./selectors";
 
 const DEVICE_INFO_SET = "DEVICE_INFO_SET";
-const DEVICE_POWER_STATE_SET = "DEVICE_POWER_STATE_SET";
+const DEVICE_INFO_UPDATE = "DEVICE_INFO_UPDATE";
 
 const batteryStatusFromExpoBatteryState = {
   [Battery.BatteryState.CHARGING]: BatteryState.charging,
@@ -48,7 +48,7 @@ const initDeviceInfo = () => async (dispatch) => {
   );
 };
 
-const determineActionPaylodForBatteryChange = ({
+const determineBatteryStateUpdateActionPaylod = ({
   batteryLevel,
   batteryState,
   batteryStateChanged,
@@ -93,24 +93,27 @@ const determineActionPaylodForBatteryChange = ({
   return payload;
 };
 
-const updatePowerStateAndFreeDiskStorage = () => async (dispatch, getState) => {
+const startPowerStateMonitor = () => (dispatch) => {
+  return Battery.addBatteryStateListener(() => {
+    dispatch(updatePowerState());
+  });
+};
+
+const updatePowerState = () => async (dispatch, getState) => {
   const state = getState();
   const {
     batteryLevel: batteryLevelPrev,
     batteryState: batteryStatePrev,
     batteryLevelMeasureStartTime,
     batteryLevelAtStartTime,
-    freeDiskStorage: freeDiskStoragePrev,
   } = DeviceInfoSelectors.selectDeviceInfo(state);
 
   const { batteryLevel, batteryState } = await _getPowerState();
-  const freeDiskStorage = await Files.getFreeDiskStorage();
 
   const batteryStateChanged = batteryState !== batteryStatePrev;
   const batteryLevelChanged = batteryLevel !== batteryLevelPrev;
-  const freeDiskStorageChanged = freeDiskStorage !== freeDiskStoragePrev;
 
-  if (!batteryLevelChanged && !batteryStateChanged && !freeDiskStorageChanged) {
+  if (!batteryLevelChanged && !batteryStateChanged) {
     // do not update state
     return;
   }
@@ -118,7 +121,7 @@ const updatePowerStateAndFreeDiskStorage = () => async (dispatch, getState) => {
   if (batteryLevelChanged || batteryStateChanged) {
     Object.assign(
       payload,
-      determineActionPaylodForBatteryChange({
+      determineBatteryStateUpdateActionPaylod({
         batteryLevel,
         batteryState,
         batteryStateChanged,
@@ -127,17 +130,27 @@ const updatePowerStateAndFreeDiskStorage = () => async (dispatch, getState) => {
       })
     );
   }
-  if (freeDiskStorageChanged) {
-    Object.assign(payload, { freeDiskStorage });
-  }
-  dispatch({ type: DEVICE_POWER_STATE_SET, payload });
+  dispatch({ type: DEVICE_INFO_UPDATE, payload });
+};
+
+const updateFreeDiskStorage = () => async (dispatch, getState) => {
+  const state = getState();
+  const { freeDiskStorage: freeDiskStoragePrev } =
+    DeviceInfoSelectors.selectDeviceInfo(state);
+
+  const freeDiskStorage = await Files.getFreeDiskStorage();
+  if (freeDiskStorage === freeDiskStoragePrev) return;
+
+  dispatch({ type: DEVICE_INFO_UPDATE, payload: { freeDiskStorage } });
 };
 
 export const DeviceInfoActions = {
   DEVICE_INFO_SET,
-  DEVICE_POWER_STATE_SET,
+  DEVICE_INFO_UPDATE,
 
   setDeviceInfo,
   initDeviceInfo,
-  updatePowerStateAndFreeDiskStorage,
+  startPowerStateMonitor,
+  updatePowerState,
+  updateFreeDiskStorage,
 };

@@ -10,6 +10,8 @@ export {
   DeviceInfoActions,
   DeviceInfoReducer,
   DeviceInfoSelectors,
+  useBatteryStateListener,
+  useFreeDiskStorageMonitor,
 } from "./deviceInfo";
 
 export { JobMonitorActions } from "./jobMonitor";

@@ -1,9 +1,16 @@
 import { RecordFileRepository } from "./repository/recordFileRepository";
 
-const { getRecordFileUri, saveRecordFile, deleteRecordFile } =
-  RecordFileRepository;
+const {
+  getRecordFilesParentDirectorySize,
+  getRecordFilesDirectorySize,
+  getRecordFileUri,
+  saveRecordFile,
+  deleteRecordFile,
+} = RecordFileRepository;
 
 export const RecordFileService = {
+  getRecordFilesParentDirectorySize,
+  getRecordFilesDirectorySize,
   getRecordFileUri,
   saveRecordFile,
   deleteRecordFile,

@@ -1,6 +1,3 @@
-import { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-
 import {
   CollapsiblePanel,
   FieldSet,
@@ -11,23 +8,96 @@ import {
 } from "components";
 import { useTranslation } from "localization";
 import { BatteryState } from "model";
-import { DeviceInfoActions, DeviceInfoSelectors } from "state";
+import {
+  DeviceInfoSelectors,
+  SurveySelectors,
+  useBatteryStateListener,
+  useFreeDiskStorageMonitor,
+} from "state";
 import { Files, TimeUtils } from "utils";
 
 import { BatteryIcon } from "./BatteryIcon";
 
 import styles from "./styles.js";
-
-const statusUpdateDelay = 10000; // 10 sec
+import { useEffect, useState } from "react";
+import { RecordFileService } from "service/recordFileService";
 
 const getBatteryPercent = (batteryLevel) =>
   `${Math.round(batteryLevel * 100)}%`;
 
-export const StatusBar = () => {
-  const dispatch = useDispatch();
+const StatusBarPanel = (props) => {
+  const {
+    batteryLevel,
+    batteryState,
+    batteryTimeToDischargeFormattedShort,
+    batteryTimeToFullChargeFormattedShort,
+    freeDiskStorageFormatted,
+  } = props;
+
   const { t } = useTranslation();
 
-  const intervalIdRef = useRef(null);
+  const survey = SurveySelectors.useCurrentSurvey();
+  const surveyId = survey.id;
+
+  const [state, setState] = useState({
+    recordFilesSize: "...",
+    cacheSize: "...",
+  });
+  const { recordFilesSize, cacheSize } = state;
+
+  useEffect(() => {
+    const fetchInfo = async () => {
+      const recordFilesSize =
+        await RecordFileService.getRecordFilesDirectorySize({ surveyId });
+      const cacheSize = await Files.getDirSize(Files.getTempFolderParentUri());
+      setState({
+        recordFilesSize: Files.toHumanReadableFileSize(recordFilesSize),
+        cacheSize: Files.toHumanReadableFileSize(cacheSize),
+      });
+    };
+    fetchInfo();
+  }, [surveyId]);
+
+  return (
+    <>
+      <FieldSet headerKey="device:battery.title">
+        <FormItem labelKey="device:battery.level">
+          {getBatteryPercent(batteryLevel)}
+        </FormItem>
+        {batteryState && (
+          <FormItem labelKey="device:battery.statusLabel">
+            {t(`device:battery.status.${batteryState}`)}
+          </FormItem>
+        )}
+        {batteryTimeToDischargeFormattedShort && (
+          <FormItem labelKey="device:battery.timeLeftToDischarge">
+            {batteryTimeToDischargeFormattedShort}
+          </FormItem>
+        )}
+        {batteryTimeToFullChargeFormattedShort && (
+          <FormItem labelKey="device:battery.timeLeftToFullCharge">
+            {batteryTimeToFullChargeFormattedShort}
+          </FormItem>
+        )}
+      </FieldSet>
+      <FieldSet headerKey="device:internalMemory.title">
+        <FormItem labelKey="device:internalMemory.storageAvailable">
+          {freeDiskStorageFormatted}
+        </FormItem>
+        <FormItem labelKey="device:internalMemory.recordFilesSize">
+          {recordFilesSize}
+        </FormItem>
+        <FormItem labelKey="device:internalMemory.cacheSize">
+          {cacheSize}
+        </FormItem>
+      </FieldSet>
+    </>
+  );
+};
+
+export const StatusBar = () => {
+  const { t } = useTranslation();
+
   const {
     batteryLevel,
     batteryState,
@@ -36,18 +106,8 @@ export const StatusBar = () => {
     freeDiskStorage,
   } = DeviceInfoSelectors.useDeviceInfo();
 
-  useEffect(() => {
-    intervalIdRef.current = setInterval(() => {
-      dispatch(DeviceInfoActions.updatePowerStateAndFreeDiskStorage());
-    }, statusUpdateDelay);
-
-    return () => {
-      const intervalId = intervalIdRef.current;
-      if (intervalId) {
-        clearTimeout(intervalIdRef.current);
-      }
-    };
-  }, []);
+  useBatteryStateListener();
+  useFreeDiskStorageMonitor();
 
   const formatRemainingTimeCompact = (time) =>
     TimeUtils.formatRemainingTimeIfLessThan1Day({
@@ -103,31 +163,17 @@ export const StatusBar = () => {
         </HView>
       }
     >
-      <FieldSet headerKey="device:battery.title">
-        <FormItem labelKey="device:battery.level">
-          {getBatteryPercent(batteryLevel)}
-        </FormItem>
-        {batteryState && (
-          <FormItem labelKey="device:battery.statusLabel">
-            {t(`device:battery.status.${batteryState}`)}
-          </FormItem>
-        )}
-        {batteryTimeToDischargeFormattedShort && (
-          <FormItem labelKey="device:battery.timeLeftToDischarge">
-            {batteryTimeToDischargeFormattedShort}
-          </FormItem>
-        )}
-        {batteryTimeToFullChargeFormattedShort && (
-          <FormItem labelKey="device:battery.timeLeftToFullCharge">
-            {batteryTimeToFullChargeFormattedShort}
-          </FormItem>
-        )}
-      </FieldSet>
-      <FieldSet headerKey="device:internalMemory.title">
-        <FormItem labelKey="device:internalMemory.storageAvailable">
-          {freeDiskStorageFormatted}
-        </FormItem>
-      </FieldSet>
+      <StatusBarPanel
+        batteryLevel={batteryLevel}
+        batteryState={batteryState}
+        batteryTimeToDischargeFormattedShort={
+          batteryTimeToDischargeFormattedShort
+        }
+        batteryTimeToFullChargeFormattedShort={
+          batteryTimeToFullChargeFormattedShort
+        }
+        freeDiskStorageFormatted={freeDiskStorageFormatted}
+      />
     </CollapsiblePanel>
   );
 };

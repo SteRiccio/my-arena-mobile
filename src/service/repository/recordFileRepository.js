@@ -1,11 +1,19 @@
+import { Files } from "utils";
 import { GenericFileRepository } from "./genericFileRepository";
 
 const SURVEY_RECORD_FILES_DIR_NAME = "survey_record_files";
 
+const getRecordFilesParentDirectoryUri = () =>
+  `${GenericFileRepository.getDirUri(SURVEY_RECORD_FILES_DIR_NAME)}`;
+
+const getRecordFilesParentDirectorySize = async () =>
+  Files.getDirSize(getRecordFilesParentDirectoryUri());
+
 const getRecordFileDirectoryUri = ({ surveyId }) =>
-  `${GenericFileRepository.getDirUri(
-    SURVEY_RECORD_FILES_DIR_NAME
-  )}/${surveyId}`;
+  `${getRecordFilesParentDirectoryUri()}/${surveyId}`;
+
+const getRecordFilesDirectorySize = async ({ surveyId }) =>
+  Files.getDirSize(getRecordFileDirectoryUri({ surveyId }));
 
 const getRecordFileUri = ({ surveyId, fileUuid }) =>
   `${getRecordFileDirectoryUri({ surveyId })}/${fileUuid}`;
@@ -29,6 +37,8 @@ const deleteRecordFile = async ({ surveyId, fileUuid }) => {
 };
 
 export const RecordFileRepository = {
+  getRecordFilesParentDirectorySize,
+  getRecordFilesDirectorySize,
   getRecordFileUri,
   saveRecordFile,
   deleteRecordFile,

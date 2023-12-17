@@ -19,6 +19,7 @@ import { DataEntrySelectors } from "./selectors";
 import { ConfirmActions } from "state/confirm";
 
 import { exportRecords } from "./dataExportActions";
+import { DeviceInfoActions } from "..";
 
 const RECORD_SET = "RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
@@ -119,6 +120,8 @@ const deleteRecords = (recordUuids) => async (_dispatch, getState) => {
   const survey = SurveySelectors.selectCurrentSurvey(state);
 
   await RecordService.deleteRecords({ surveyId: survey.id, recordUuids });
+
+  dispatch(DeviceInfoActions.updateFreeDiskStorage());
 };
 
 const editRecord =
@@ -181,6 +184,7 @@ const updateAttribute =
           fileUuid: fileUuidPrev,
         });
       }
+      dispatch(DeviceInfoActions.updateFreeDiskStorage());
     }
     await RecordService.updateRecord({ survey, record: recordUpdated });
 
