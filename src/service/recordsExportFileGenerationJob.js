@@ -146,7 +146,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
         surveyId,
         fileUuid,
       });
-      const info = await FileSystem.getInfoAsync(fileUri);
+      const info = await Files.getInfo(fileUri);
       if (info.exists) {
         const destUri = `${Files.path(
           tempFolderUri,
