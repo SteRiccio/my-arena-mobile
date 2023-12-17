@@ -41,18 +41,21 @@ const StatusBarPanel = (props) => {
 
   const [state, setState] = useState({
     recordFilesSize: "...",
-    cacheSize: "...",
+    tempFilesSize: "...",
   });
-  const { recordFilesSize, cacheSize } = state;
+  const { recordFilesSize, tempFilesSize } = state;
 
   useEffect(() => {
     const fetchInfo = async () => {
-      const recordFilesSize =
-        await RecordFileService.getRecordFilesDirectorySize({ surveyId });
+      const recordFilesSize = surveyId
+        ? await RecordFileService.getRecordFilesDirectorySize({ surveyId })
+        : null;
       const cacheSize = await Files.getDirSize(Files.getTempFolderParentUri());
       setState({
-        recordFilesSize: Files.toHumanReadableFileSize(recordFilesSize),
-        cacheSize: Files.toHumanReadableFileSize(cacheSize),
+        recordFilesSize: recordFilesSize
+          ? Files.toHumanReadableFileSize(recordFilesSize)
+          : null,
+        tempFilesSize: Files.toHumanReadableFileSize(cacheSize),
       });
     };
     fetchInfo();
@@ -84,11 +87,13 @@ const StatusBarPanel = (props) => {
         <FormItem labelKey="device:internalMemory.storageAvailable">
           {freeDiskStorageFormatted}
         </FormItem>
-        <FormItem labelKey="device:internalMemory.recordFilesSize">
-          {recordFilesSize}
-        </FormItem>
-        <FormItem labelKey="device:internalMemory.cacheSize">
-          {cacheSize}
+        {recordFilesSize && (
+          <FormItem labelKey="device:internalMemory.recordFilesSize">
+            {recordFilesSize}
+          </FormItem>
+        )}
+        <FormItem labelKey="device:internalMemory.tempFilesSize">
+          {tempFilesSize}
         </FormItem>
       </FieldSet>
     </>
