@@ -41,7 +41,11 @@ export const CollapsiblePanel = (props) => {
         </HView>
       </TouchableOpacity>
 
-      <Collapsible collapsed={collapsed} style={styles.collapsibleContainer}>
+      <Collapsible
+        collapsed={collapsed}
+        renderChildrenCollapsed={false}
+        style={styles.collapsibleContainer}
+      >
         {children}
       </Collapsible>
     </VView>

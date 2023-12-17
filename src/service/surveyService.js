@@ -74,6 +74,8 @@ const fetchSurveyRemoteById = async ({ id, cycle = null }) => {
   return survey;
 };
 
+const getSurveysStorageSize = async () => SurveyFSRepository.getStorageSize();
+
 const importDemoSurvey = async () => _insertSurvey(demoSurvey);
 
 const importSurveyRemote = async ({ id }) => {
@@ -101,6 +103,7 @@ export const SurveyService = {
   fetchSurveySummariesRemote,
   fetchSurveySummaryRemote,
   fetchSurveyById,
+  getSurveysStorageSize,
   importDemoSurvey,
   importSurveyRemote,
   fetchCategoryItems,

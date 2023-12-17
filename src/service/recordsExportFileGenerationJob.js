@@ -8,11 +8,10 @@ import {
   Objects,
   Promises,
   Records,
-  UUIDs,
 } from "@openforis/arena-core";
 
 import { JobMobile } from "model";
-import { Files } from "utils/Files";
+import { Files } from "utils";
 
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
@@ -30,14 +29,15 @@ export class RecordsExportFileGenerationJob extends JobMobile {
   async execute() {
     const { survey, recordUuids, user } = this.context;
 
-    const tempFolderUri = `${FileSystem.cacheDirectory}${UUIDs.v4()}`;
+    const tempFolderUri = Files.createTempFolder();
 
     try {
-      const tempRecordsFolderUri = `${tempFolderUri}/${RECORDS_FOLDER_NAME}`;
+      const tempRecordsFolderUri = Files.path(
+        tempFolderUri,
+        RECORDS_FOLDER_NAME
+      );
 
-      await FileSystem.makeDirectoryAsync(tempRecordsFolderUri, {
-        intermediates: true,
-      });
+      await Files.mkDir(tempRecordsFolderUri);
 
       const recordsSummary = await RecordService.fetchRecords({ survey });
 
@@ -48,7 +48,10 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       // set total
       this.summary.total = recordsToExport.length;
 
-      const tempRecordsSummaryJsonFileUri = `${tempRecordsFolderUri}/${RECORDS_SUMMARY_JSON_FILENAME}`;
+      const tempRecordsSummaryJsonFileUri = Files.path(
+        tempRecordsFolderUri,
+        RECORDS_SUMMARY_JSON_FILENAME
+      );
       await Files.writeJsonToFile({
         content: recordsToExport.map(({ uuid, cycle }) => ({ uuid, cycle })),
         fileUri: tempRecordsSummaryJsonFileUri,
@@ -67,7 +70,10 @@ export class RecordsExportFileGenerationJob extends JobMobile {
           record.ownerUuid = user.uuid;
         }
 
-        const tempRecordFileUri = `${tempRecordsFolderUri}/${uuid}.json`;
+        const tempRecordFileUri = `${Files.path(
+          tempRecordsFolderUri,
+          uuid
+        )}.json`;
         await Files.writeJsonToFile({
           content: record,
           fileUri: tempRecordFileUri,
@@ -87,7 +93,11 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       });
 
       if (files.length > 0) {
-        const tempFilesSummaryJsonFileUri = `${tempFolderUri}/${FILES_FOLDER_NAME}/${FILES_SUMMARY_JSON_FILENAME}`;
+        const tempFilesSummaryJsonFileUri = Files.path(
+          tempFolderUri,
+          FILES_FOLDER_NAME,
+          FILES_SUMMARY_JSON_FILENAME
+        );
         await Files.writeJsonToFile({
           content: files,
           fileUri: tempFilesSummaryJsonFileUri,
@@ -95,11 +105,11 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       }
 
       const outputFileName = `recordsExport-${Dates.nowFormattedForStorage()}.zip`;
-      this.outputFileUri = `${FileSystem.documentDirectory}${outputFileName}`;
+      this.outputFileUri = Files.path(Files.documentDirectory, outputFileName);
 
       await zip(tempFolderUri, this.outputFileUri);
     } finally {
-      await FileSystem.deleteAsync(tempFolderUri);
+      await Files.del(tempFolderUri);
     }
   }
 
@@ -136,9 +146,13 @@ export class RecordsExportFileGenerationJob extends JobMobile {
         surveyId,
         fileUuid,
       });
-      const info = await FileSystem.getInfoAsync(fileUri);
+      const info = await Files.getInfo(fileUri);
       if (info.exists) {
-        const destUri = `${tempFolderUri}/${FILES_FOLDER_NAME}/${fileUuid}.bin`;
+        const destUri = `${Files.path(
+          tempFolderUri,
+          FILES_FOLDER_NAME,
+          fileUuid
+        )}.bin`;
         await FileSystem.copyAsync({
           from: fileUri,
           to: destUri,

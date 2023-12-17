@@ -2,25 +2,93 @@ import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 
+import { Promises, Strings, UUIDs } from "@openforis/arena-core";
+
+const PATH_SEPARATOR = "/";
 const DOWNLOAD_FOLDER = "Download";
+const TEMP_FOLDER_NAME = "mam_temp";
 
 const MIME_TYPES = {
   zip: "application/zip ",
+};
+
+const { cacheDirectory, documentDirectory, deleteAsync: del } = FileSystem;
+
+const path = (...parts) =>
+  parts.map(Strings.removeSuffix(PATH_SEPARATOR)).join(PATH_SEPARATOR);
+
+const getTempFolderParentUri = () => path(cacheDirectory, TEMP_FOLDER_NAME);
+
+const createTempFolder = () => path(getTempFolderParentUri(), UUIDs.v4());
+
+const mkDir = async (dir) =>
+  FileSystem.makeDirectoryAsync(dir, {
+    intermediates: true,
+  });
+
+const listDir = async (dirUri) => {
+  try {
+    const fileNames = await FileSystem.readDirectoryAsync(dirUri);
+    return fileNames.map((fileName) => path(dirUri, fileName));
+  } catch (error) {
+    return [];
+  }
+};
+
+const visitDirFilesRecursively = async ({
+  dirUri,
+  visitor,
+  visitDirectories = false,
+}) => {
+  const stack = [dirUri];
+  while (stack.length > 0) {
+    const currentDirUri = stack.pop();
+    const fileUris = await listDir(currentDirUri);
+    await Promises.each(fileUris, async (fileUri) => {
+      const info = await getInfo(fileUri);
+      if (info) {
+        if (!info.isDirectory || visitDirectories) {
+          await visitor(fileUri);
+        }
+        if (info.isDirectory) {
+          stack.push(fileUri);
+        }
+      }
+    });
+  }
+};
+
+const getDirSize = async (dirUri) => {
+  let total = 0;
+  await visitDirFilesRecursively({
+    dirUri,
+    visitor: async (fileUri) => {
+      const size = await getSize(fileUri);
+      total += size;
+    },
+  });
+  return total;
 };
 
 const getFreeDiskStorage = async () => FileSystem.getFreeDiskStorageAsync();
 
 const jsonToString = (obj) => JSON.stringify(obj, null, 2);
 
-const getInfo = async (fileUri) => FileSystem.getInfoAsync(fileUri);
-
-const getSize = async (fileUri, ignoreErrors = true) => {
+const getInfo = async (fileUri, ignoreErrors = true) => {
   try {
-    return (await getInfo(fileUri)).size;
+    const info = await FileSystem.getInfoAsync(fileUri);
+    return info;
   } catch (error) {
-    if (ignoreErrors) return -1;
+    if (ignoreErrors) {
+      return null;
+    }
     throw error;
   }
+};
+
+const getSize = async (fileUri, ignoreErrors = true) => {
+  const info = await getInfo(fileUri, ignoreErrors);
+  return info?.size ?? 0;
 };
 
 const readJsonFromFile = async ({ fileUri }) => {
@@ -85,6 +153,15 @@ const toHumanReadableFileSize = (
 
 export const Files = {
   MIME_TYPES,
+  cacheDirectory,
+  documentDirectory,
+  path,
+  getTempFolderParentUri,
+  createTempFolder,
+  mkDir,
+  del,
+  visitDirFilesRecursively,
+  getDirSize,
   getFreeDiskStorage,
   getInfo,
   getSize,

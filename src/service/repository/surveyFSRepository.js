@@ -9,6 +9,8 @@ const getSurveyFilesDirUri = () =>
 const getSurveyFileUri = ({ surveyId }) =>
   `${getSurveyFilesDirUri()}/${surveyId}.json`;
 
+const getStorageSize = async () => Files.getDirSize(getSurveyFilesDirUri());
+
 const readSurveyFile = async ({ surveyId }) => {
   const fileUri = getSurveyFileUri({ surveyId });
   return Files.readJsonFromFile({ fileUri });
@@ -31,6 +33,7 @@ const deleteSurveyFile = async ({ surveyId }) => {
 };
 
 export const SurveyFSRepository = {
+  getStorageSize,
   readSurveyFile,
   saveSurveyFile,
   deleteSurveyFile,
