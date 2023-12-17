@@ -4,6 +4,7 @@ import * as FileSystem from "expo-file-system";
 
 import { Promises, Strings, UUIDs } from "@openforis/arena-core";
 
+const PATH_SEPARATOR = "/";
 const DOWNLOAD_FOLDER = "Download";
 const TEMP_FOLDER_NAME = "mam_temp";
 
@@ -25,6 +26,15 @@ const mkDir = async (dir) =>
     intermediates: true,
   });
 
+const listDir = async (dirUri) => {
+  try {
+    const fileNames = await FileSystem.readDirectoryAsync(dirUri);
+    return fileNames.map((fileName) => path(dirUri, fileName));
+  } catch (error) {
+    return [];
+  }
+};
+
 const visitDirFilesRecursively = async ({
   dirUri,
   visitor,
@@ -33,9 +43,8 @@ const visitDirFilesRecursively = async ({
   const stack = [dirUri];
   while (stack.length > 0) {
     const currentDirUri = stack.pop();
-    const dirFileNames = await FileSystem.readDirectoryAsync(currentDirUri);
-    await Promises.each(dirFileNames, async (fileName) => {
-      const fileUri = path(currentDirUri, fileName);
+    const fileUris = await listDir(currentDirUri);
+    await Promises.each(fileUris, async (fileUri) => {
       const info = await getInfo(fileUri);
       if (info) {
         if (!info.isDirectory || visitDirectories) {
@@ -147,6 +156,7 @@ export const Files = {
   cacheDirectory,
   documentDirectory,
   path,
+  getTempFolderParentUri,
   createTempFolder,
   mkDir,
   del,
