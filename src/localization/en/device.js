@@ -13,5 +13,7 @@ export default {
   internalMemory: {
     title: "Internal memory",
     storageAvailable: "Storage available",
+    recordFilesSize: "Record files size",
+    tempFilesSize: "Temporary files size",
   },
 };

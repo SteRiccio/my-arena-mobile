@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+
 import {
   CollapsiblePanel,
   FieldSet,
@@ -8,6 +11,7 @@ import {
 } from "components";
 import { useTranslation } from "localization";
 import { BatteryState } from "model";
+import { RecordFileService } from "service";
 import {
   DeviceInfoSelectors,
   SurveySelectors,
@@ -19,8 +23,6 @@ import { Files, TimeUtils } from "utils";
 import { BatteryIcon } from "./BatteryIcon";
 
 import styles from "./styles.js";
-import { useEffect, useState } from "react";
-import { RecordFileService } from "service/recordFileService";
 
 const getBatteryPercent = (batteryLevel) =>
   `${Math.round(batteryLevel * 100)}%`;
@@ -98,6 +100,14 @@ const StatusBarPanel = (props) => {
       </FieldSet>
     </>
   );
+};
+
+StatusBarPanel.propTypes = {
+  batteryLevel: PropTypes.number,
+  batteryState: PropTypes.string,
+  batteryTimeToDischargeFormattedShort: PropTypes.string,
+  batteryTimeToFullChargeFormattedShort: PropTypes.string,
+  freeDiskStorageFormatted: PropTypes.string,
 };
 
 export const StatusBar = () => {
