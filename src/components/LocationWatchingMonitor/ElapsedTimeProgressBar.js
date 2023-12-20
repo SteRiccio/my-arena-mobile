@@ -1,4 +1,4 @@
-import { ProgressBar } from "components";
+import { ProgressBar } from "../ProgressBar";
 
 export const ElapsedTimeProgressBar = (props) => {
   const { elapsedTime, elapsedTimeThreshold } = props;

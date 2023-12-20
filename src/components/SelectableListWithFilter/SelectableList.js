@@ -121,3 +121,10 @@ SelectableList.propTypes = {
   selectedItems: PropTypes.array,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
+
+SelectableList.defaultProps = {
+  editable: true,
+  itemLabelExtractor: () => null,
+  itemDescriptionExtractor: () => null,
+  selectedItems: [],
+};

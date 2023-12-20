@@ -19,6 +19,10 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const dispatch = useDispatch();
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [
+    findClosestSamplingPointDialogOpen,
+    setFindClosestSamplingPointDialogOpen,
+  ] = useState(false);
 
   const { nodes } = DataEntrySelectors.useRecordChildNodes({
     parentEntityUuid: parentNodeUuid,
@@ -145,15 +149,23 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
   const openEditDialog = () => setEditDialogOpen(true);
   const closeEditDialog = () => setEditDialogOpen(false);
 
+  const openFindClosestSamplingPointDialog = () =>
+    setFindClosestSamplingPointDialogOpen(true);
+  const closeFindClosestSamplingPointDialog = () =>
+    setFindClosestSamplingPointDialogOpen(false);
+
   return {
     closeEditDialog,
+    closeFindClosestSamplingPointDialog,
     editDialogOpen,
+    findClosestSamplingPointDialogOpen,
     items,
     itemLabelFunction,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
     openEditDialog,
+    openFindClosestSamplingPointDialog,
     selectedItems,
     selectedItemUuid,
   };

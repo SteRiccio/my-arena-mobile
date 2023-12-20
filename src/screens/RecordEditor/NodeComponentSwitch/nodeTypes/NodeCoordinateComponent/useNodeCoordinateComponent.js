@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import * as Location from "expo-location";
 
 import {
   NodeDefs,
@@ -14,8 +13,9 @@ import {
 
 import { NumberUtils } from "utils/NumberUtils";
 import { RecordNodes } from "model/utils/RecordNodes";
-import { DataEntrySelectors, SettingsSelectors, SurveySelectors } from "state";
+import { DataEntrySelectors, SurveySelectors } from "state";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
+import { useLocationWatch } from "hooks/useLocationWatch";
 
 const stringToNumber = (str) => Numbers.toNumber(str);
 const numberToString = (num, roundToDecimals = NaN) => {
@@ -65,24 +65,32 @@ export const useNodeCoordinateComponent = (props) => {
     [nodeDef]
   );
 
-  const settings = SettingsSelectors.useSettings();
-  const { locationAccuracyThreshold, locationAccuracyWatchTimeout } = settings;
-
   const [state, setState] = useState({
     compassNavigatorVisible: false,
-    watchingLocation: false,
-    locationWatchElapsedTime: 0,
   });
 
-  const locationSubscritionRef = useRef(null);
-  const locationAccuracyWatchTimeoutRef = useRef(null);
-  const locationWatchIntervalRef = useRef(null);
+  const locationCallback = useCallback(({ location }) => {
+    const valueNext = locationToUiValue({
+      location,
+      nodeDef,
+      srsTo: srs,
+      srsIndex,
+    });
+
+    onValueChange(valueNext);
+  }, []);
 
   const {
-    compassNavigatorVisible,
+    locationAccuracyThreshold,
     locationWatchElapsedTime,
+    locationWatchProgress,
+    locationWatchTimeout,
+    startLocationWatch,
+    stopLocationWatch,
     watchingLocation,
-  } = state;
+  } = useLocationWatch({ locationCallback });
+
+  const { compassNavigatorVisible } = state;
 
   const nodeValueToUiValue = useCallback(
     (nodeValue) => {
@@ -145,32 +153,8 @@ export const useNodeCoordinateComponent = (props) => {
 
   const { accuracy, srs = srss[0].code } = uiValue || {};
 
-  const clearLocationWatchTimeout = () => {
-    if (locationWatchIntervalRef.current) {
-      clearInterval(locationWatchIntervalRef.current);
-      locationWatchIntervalRef.current = null;
-    }
-    if (locationAccuracyWatchTimeoutRef.current) {
-      clearTimeout(locationAccuracyWatchTimeoutRef.current);
-      locationAccuracyWatchTimeoutRef.current = null;
-    }
-  };
-
-  const stopGps = () => {
-    locationSubscritionRef.current?.remove();
-    locationSubscritionRef.current = null;
-
-    clearLocationWatchTimeout();
-
-    setState((statePrev) => ({
-      ...statePrev,
-      locationWatchElapsedTime: 0,
-      watchingLocation: false,
-    }));
-  };
-
   useEffect(() => {
-    return stopGps;
+    return stopLocationWatch;
   }, []);
 
   const onValueChange = useCallback(
@@ -188,53 +172,11 @@ export const useNodeCoordinateComponent = (props) => {
     onValueChange({ ...uiValue, [fieldKey]: val });
 
   const onStartGpsPress = useCallback(async () => {
-    const foregroundPermission =
-      await Location.requestForegroundPermissionsAsync();
-    if (!foregroundPermission.granted) {
-      return;
-    }
-    stopGps();
-    locationSubscritionRef.current = await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.Highest,
-        distanceInterval: 0.01,
-      },
-      (location) => {
-        const valueNext = locationToUiValue({
-          location,
-          nodeDef,
-          srsTo: srs,
-          srsIndex,
-        });
-
-        onValueChange(valueNext);
-
-        if (valueNext.accuracy <= locationAccuracyThreshold) {
-          stopGps();
-        }
-      }
-    );
-    locationWatchIntervalRef.current = setInterval(() => {
-      setState((statePrev) => ({
-        ...statePrev,
-        locationWatchElapsedTime: statePrev.locationWatchElapsedTime + 1000,
-      }));
-    }, 1000);
-    locationAccuracyWatchTimeoutRef.current = setTimeout(() => {
-      stopGps();
-    }, locationAccuracyWatchTimeout * 1000);
-
-    setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
-  }, [
-    nodeDef,
-    srs,
-    srsIndex,
-    locationAccuracyThreshold,
-    locationAccuracyWatchTimeout,
-  ]);
+    await startLocationWatch();
+  }, [startLocationWatch]);
 
   const onStopGpsPress = useCallback(() => {
-    stopGps();
+    stopLocationWatch();
   }, []);
 
   const setCompassNavigatorVisible = useCallback(
@@ -278,7 +220,8 @@ export const useNodeCoordinateComponent = (props) => {
     includedExtraFields,
     locationAccuracyThreshold,
     locationWatchElapsedTime,
-    locationWatchTimeout: locationAccuracyWatchTimeout,
+    locationWatchProgress,
+    locationWatchTimeout,
     onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,

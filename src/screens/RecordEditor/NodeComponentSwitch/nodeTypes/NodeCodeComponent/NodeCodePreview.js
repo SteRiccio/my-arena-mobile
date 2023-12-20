@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
+import { SurveyDefs } from "model";
+import { SurveySelectors } from "state";
 import { Button } from "components/Button";
 import { HView } from "components/HView";
 
@@ -34,9 +36,20 @@ OpenDropdownButton.defaultProps = {
 };
 
 export const NodeCodePreview = (props) => {
-  const { itemLabelFunction, nodeDef, openEditDialog, selectedItems } = props;
+  const {
+    itemLabelFunction,
+    nodeDef,
+    openEditDialog,
+    openFindClosestSamplingPointDialog,
+    selectedItems,
+  } = props;
+
+  const survey = SurveySelectors.useCurrentSurvey();
 
   const multiple = NodeDefs.isMultiple(nodeDef);
+  const canFindClosestSamplingPointData =
+    SurveyDefs.isCodeAttributeFromSamplingPointData({ survey, nodeDef }) &&
+    SurveyDefs.hasSamplingPointDataLocation(survey);
 
   return (
     <HView style={{ flexWrap: "wrap" }}>
@@ -65,6 +78,13 @@ export const NodeCodePreview = (props) => {
               ? itemLabelFunction(selectedItems[0])
               : "dataEntry:code.selectItem"
           }
+        />
+      )}
+      {canFindClosestSamplingPointData && (
+        <Button
+          mode="outlined"
+          textKey="findClosestSamplingPoint"
+          onPress={openFindClosestSamplingPointDialog}
         />
       )}
     </HView>
