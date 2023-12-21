@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import * as Location from "expo-location";
 import { PointFactory } from "@openforis/arena-core";
 
-import { SettingsSelectors } from "state";
+import { SettingsSelectors } from "../state/settings";
 
 const locationWatchElapsedTimeIntervalDelay = 1000;
 const defaultLocationAccuracyThreshold = 4;
@@ -12,6 +12,8 @@ export const useLocationWatch = ({
   accuracy = Location.Accuracy.Highest,
   distanceInterval = 0.01,
   locationCallback: locationCallbackProp,
+  stopOnAccuracyThreshold = true,
+  stopOnTimeout = true,
 }) => {
   const lastLocationRef = useRef(null);
   const locationSubscriptionRef = useRef(null);
@@ -48,7 +50,7 @@ export const useLocationWatch = ({
     }
   }, []);
 
-  const _stopLocationWatch = useCallback(() => {
+  const stopLocationWatch = useCallback(() => {
     locationSubscriptionRef.current?.remove();
     locationSubscriptionRef.current = null;
 
@@ -61,11 +63,6 @@ export const useLocationWatch = ({
     }));
   }, [clearLocationWatchTimeout]);
 
-  const stopLocationWatch = useCallback(() => {
-    _stopLocationWatch();
-    locationCallback(lastLocationRef.current);
-  }, [_stopLocationWatch]);
-
   const locationCallback = useCallback(
     (location) => {
       lastLocationRef.current = location; // location could be null when watch timeout is reached
@@ -73,11 +70,16 @@ export const useLocationWatch = ({
       const { coords } = location ?? {};
       const { latitude, longitude, accuracy: locationAccuracy } = coords ?? {};
 
-      const thresholdReached =
-        locationAccuracy <= locationAccuracyThreshold ||
-        locationSubscriptionRef.current === null;
-      if (thresholdReached) {
-        _stopLocationWatch();
+      const accuractyThresholdReached =
+        locationAccuracy <= locationAccuracyThreshold;
+      const timeoutReached =
+        stopOnTimeout && locationSubscriptionRef.current === null;
+      const thresholdReached = accuractyThresholdReached || timeoutReached;
+      if (
+        (stopOnAccuracyThreshold && thresholdReached) ||
+        (stopOnTimeout && timeoutReached)
+      ) {
+        stopLocationWatch();
       }
       const pointLatLong = location
         ? PointFactory.createInstance({
@@ -93,7 +95,12 @@ export const useLocationWatch = ({
         thresholdReached,
       });
     },
-    [locationCallbackProp, locationAccuracyThreshold]
+    [
+      locationCallbackProp,
+      locationAccuracyThreshold,
+      stopOnAccuracyThreshold,
+      stopOnTimeout,
+    ]
   );
 
   const startLocationWatch = useCallback(async () => {
@@ -102,7 +109,7 @@ export const useLocationWatch = ({
     if (!foregroundPermission.granted) {
       return;
     }
-    _stopLocationWatch();
+    stopLocationWatch();
     locationSubscriptionRef.current = await Location.watchPositionAsync(
       { accuracy, distanceInterval },
       locationCallback
@@ -124,12 +131,19 @@ export const useLocationWatch = ({
       locationWatchTimeout
     );
 
-    locationAccuracyWatchTimeoutRef.current = setTimeout(() => {
-      stopLocationWatch();
-    }, locationWatchTimeout);
-
+    if (stopOnTimeout) {
+      locationAccuracyWatchTimeoutRef.current = setTimeout(() => {
+        stopLocationWatch();
+        locationCallback(lastLocationRef.current);
+      }, locationWatchTimeout);
+    }
     setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
-  }, [locationCallback, locationAccuracyThreshold, locationWatchTimeout]);
+  }, [
+    locationCallback,
+    locationAccuracyThreshold,
+    locationWatchTimeout,
+    stopOnTimeout,
+  ]);
 
   return {
     locationAccuracyThreshold,

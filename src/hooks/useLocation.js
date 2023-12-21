@@ -48,9 +48,7 @@ export const useLocation = () => {
     locationWatchTimeout,
     startLocationWatch,
     stopLocationWatch,
-  } = useLocationWatch({
-    locationCallback,
-  });
+  } = useLocationWatch({ locationCallback });
 
   useEffect(() => {
     startLocationWatch();

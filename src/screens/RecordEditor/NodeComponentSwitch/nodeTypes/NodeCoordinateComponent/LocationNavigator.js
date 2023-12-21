@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Dimensions, Image } from "react-native";
 import { Modal, Portal, useTheme } from "react-native-paper";
-import * as Location from "expo-location";
 
-import { Objects, PointFactory, Points } from "@openforis/arena-core";
+import { Objects, Points } from "@openforis/arena-core";
 
-import { useMagnetometerHeading } from "hooks";
+import { useLocationWatch, useMagnetometerHeading } from "hooks";
 import { Button, FormItem, HView, Text, View, VView } from "components";
-import { SurveySelectors } from "state/survey";
+import { SurveySelectors } from "state";
 
 import styles from "./locationNavigatorStyles";
 
@@ -53,7 +52,29 @@ export const LocationNavigator = (props) => {
 
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
 
-  const locationSubscriptionRef = useRef(null);
+  const locationCallback = useCallback(
+    ({ location, locationAccuracy, pointLatLong }) => {
+      console.log("===loc", location);
+      const angleToTargetNew = calculateAngleBetweenPoints(
+        pointLatLong,
+        targetPoint
+      );
+      const distanceNew = Points.distance(pointLatLong, targetPoint, srsIndex);
+      updateState({
+        currentLocation: location,
+        angleToTarget: angleToTargetNew,
+        accuracy: locationAccuracy,
+        distance: distanceNew,
+      });
+    },
+    [updateState]
+  );
+
+  const { startLocationWatch, stopLocationWatch } = useLocationWatch({
+    locationCallback,
+    stopOnAccuracyThreshold: false,
+    stopOnTimeout: false,
+  });
 
   const theme = useTheme();
 
@@ -97,41 +118,10 @@ export const LocationNavigator = (props) => {
   };
 
   useEffect(() => {
-    const startWatchLocation = async () => {
-      const permission = await Location.requestForegroundPermissionsAsync();
-      if (!permission.granted) return;
-
-      locationSubscriptionRef.current = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          distanceInterval: 0.2,
-        },
-        (location) => {
-          const { coords } = location;
-          const { latitude: y, longitude: x, accuracy: accuracyNew } = coords;
-          const currentLocationPoint = PointFactory.createInstance({ x, y });
-          const angleToTargetNew = calculateAngleBetweenPoints(
-            currentLocationPoint,
-            targetPoint
-          );
-          const distanceNew = Points.distance(
-            currentLocationPoint,
-            targetPoint,
-            srsIndex
-          );
-          updateState({
-            currentLocation: location,
-            angleToTarget: angleToTargetNew,
-            accuracy: accuracyNew,
-            distance: distanceNew,
-          });
-        }
-      );
-    };
-    startWatchLocation();
+    startLocationWatch();
 
     return () => {
-      locationSubscriptionRef.current?.remove();
+      stopLocationWatch();
     };
   }, []);
 
