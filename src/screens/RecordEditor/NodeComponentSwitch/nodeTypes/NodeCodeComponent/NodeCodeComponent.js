@@ -100,7 +100,10 @@ export const NodeCodeComponent = (props) => {
               items={items}
               nodeDef={nodeDef}
               onDismiss={closeFindClosestSamplingPointDialog}
-              onDone={() => {}}
+              onItemSelected={(selectedMinDistanceItem) => {
+                onSingleValueChange(selectedMinDistanceItem.uuid);
+                closeFindClosestSamplingPointDialog();
+              }}
               parentNodeUuid={parentNodeUuid}
             />
           )}

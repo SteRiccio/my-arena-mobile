@@ -2,6 +2,13 @@ export default {
   confirmGoToListOfRecordsAndTerminateRecordEditing:
     "Go to list of records and terminate record editing?",
   checkSyncStatus: "Check sync status",
+  closestSamplingPoint: {
+    findClosestSamplingPoint: "Find closest sampling point",
+    minDistanceItemFound: "Item found at a distance of {{minDistance}}m",
+    minDistanceItemFound_plural:
+      "Items found at a distance of {{minDistance}}m",
+    useSelectedItem: "Use selected item",
+  },
   cycleForNewRecords: "Cycle for new records:",
   options: "Data entry options",
   errorFetchingRecordsSyncStatus:
@@ -83,5 +90,9 @@ Select the target of the export:`,
       share: "Share file",
     },
     shareExportedFile: "Share exported file",
+  },
+  location: {
+    gettingCurrentLocation: "Getting current location",
+    usingCurrentLocation: "Using current location",
   },
 };

@@ -83,7 +83,7 @@ export const NodeCodePreview = (props) => {
       {canFindClosestSamplingPointData && (
         <Button
           mode="outlined"
-          textKey="findClosestSamplingPoint"
+          textKey="dataEntry:closestSamplingPoint.findClosestSamplingPoint"
           onPress={openFindClosestSamplingPointDialog}
         />
       )}

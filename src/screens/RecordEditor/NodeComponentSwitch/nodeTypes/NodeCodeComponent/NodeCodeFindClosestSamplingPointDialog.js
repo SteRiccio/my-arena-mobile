@@ -2,9 +2,9 @@ import { Modal, Portal } from "react-native-paper";
 
 import { useCallback, useEffect, useState } from "react";
 
-import { CategoryItems, Objects, Points } from "@openforis/arena-core";
+import { Objects, Points } from "@openforis/arena-core";
 
-import { Button, FieldSet, FormItem, Text, VView } from "components";
+import { Button, FieldSet, FormItem, HView, Text, VView } from "components";
 import { SurveySelectors } from "state";
 import { useLocation } from "hooks/useLocation";
 import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
@@ -13,10 +13,8 @@ import { SelectableList } from "components/SelectableListWithFilter/SelectableLi
 export const NodeCodeFindClosestSamplingPointDialog = ({
   itemLabelFunction,
   items,
-  nodeDef,
   onDismiss,
-  onDone,
-  parentNodeUuid,
+  onItemSelected,
 }) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -37,9 +35,15 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
     findingMinDistanceItems: false,
     minDistance: NaN,
     minDistanceItems: null,
+    selectedMinDistanceItem: null,
   });
 
-  const { findingMinDistanceItems, minDistance, minDistanceItems } = state;
+  const {
+    findingMinDistanceItems,
+    minDistance,
+    minDistanceItems,
+    selectedMinDistanceItem,
+  } = state;
 
   const findItemsWithMinDistance = useCallback(() => {
     let minDistanceItems = [];
@@ -82,10 +86,12 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
         minDistance,
         minDistanceItems,
       }));
-      console.log("-=-=min distance items", minDistanceItems);
-      console.log("===min distance", minDistance);
     }
   }, [items, locationFetched, pointLatLong]);
+
+  const onUseSelectedItemPress = useCallback(() => {
+    onItemSelected(selectedMinDistanceItem);
+  }, [onItemSelected, selectedMinDistanceItem]);
 
   return (
     <Portal>
@@ -94,7 +100,7 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
           {!locationFetched && (
             <>
               {wathingLocation && (
-                <Text textKey="dataEntry:gettingCurrentLocation" />
+                <Text textKey="dataEntry:location.gettingCurrentLocation" />
               )}
               <LocationWatchingMonitor
                 locationAccuracy={locationAccuracy}
@@ -108,7 +114,7 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
             </>
           )}
           {locationFetched && (
-            <FieldSet headerKey="dataEntry:usingCurrentLocation">
+            <FieldSet headerKey="dataEntry:location.usingCurrentLocation">
               <FormItem labelKey="dataEntry:coordinate.x">
                 {pointLatLong.x}
               </FormItem>
@@ -123,19 +129,41 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
           {minDistanceItems && (
             <>
               <Text
-                textKey="dataEntry:minDistanceItemsFound"
-                textParams={minDistance}
+                textKey="dataEntry:closestSamplingPoint.minDistanceItemFound"
+                textParams={{
+                  count: minDistanceItems.length,
+                  minDistance: minDistance?.toFixed?.(2),
+                }}
               />
               <SelectableList
                 itemKeyExtractor={(item) => item.uuid}
                 itemLabelExtractor={itemLabelFunction}
                 items={minDistanceItems}
-                onChange={() => {}}
+                onChange={(selectedItems) => {
+                  setState((statePrev) => ({
+                    ...statePrev,
+                    selectedMinDistanceItem: selectedItems[0],
+                  }));
+                }}
+                selectedItems={
+                  selectedMinDistanceItem ? [selectedMinDistanceItem] : []
+                }
               />
             </>
           )}
           {!wathingLocation && (
-            <Button onPress={onDismiss} textKey="common:close" />
+            <HView>
+              <Button
+                mode="outlined"
+                onPress={onDismiss}
+                textKey="common:close"
+              />
+              <Button
+                disabled={!selectedMinDistanceItem}
+                onPress={onUseSelectedItemPress}
+                textKey="dataEntry:closestSamplingPoint.useSelectedItem"
+              />
+            </HView>
           )}
         </VView>
       </Modal>

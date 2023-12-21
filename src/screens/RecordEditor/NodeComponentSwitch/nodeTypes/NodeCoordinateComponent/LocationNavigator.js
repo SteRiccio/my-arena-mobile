@@ -54,7 +54,7 @@ export const LocationNavigator = (props) => {
 
   const locationCallback = useCallback(
     ({ location, locationAccuracy, pointLatLong }) => {
-      console.log("===loc", location);
+      if (!location) return;
       const angleToTargetNew = calculateAngleBetweenPoints(
         pointLatLong,
         targetPoint

@@ -126,5 +126,6 @@ SelectableList.defaultProps = {
   editable: true,
   itemLabelExtractor: () => null,
   itemDescriptionExtractor: () => null,
+  multiple: false,
   selectedItems: [],
 };

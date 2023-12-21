@@ -50,7 +50,7 @@ export const useLocationWatch = ({
     }
   }, []);
 
-  const stopLocationWatch = useCallback(() => {
+  const _stopLocationWatch = useCallback(() => {
     locationSubscriptionRef.current?.remove();
     locationSubscriptionRef.current = null;
 
@@ -63,6 +63,11 @@ export const useLocationWatch = ({
     }));
   }, [clearLocationWatchTimeout]);
 
+  const stopLocationWatch = useCallback(() => {
+    _stopLocationWatch();
+    locationCallback(lastLocationRef.current);
+  }, [_stopLocationWatch, locationCallback]);
+
   const locationCallback = useCallback(
     (location) => {
       lastLocationRef.current = location; // location could be null when watch timeout is reached
@@ -70,16 +75,16 @@ export const useLocationWatch = ({
       const { coords } = location ?? {};
       const { latitude, longitude, accuracy: locationAccuracy } = coords ?? {};
 
-      const accuractyThresholdReached =
+      const accuracyThresholdReached =
         locationAccuracy <= locationAccuracyThreshold;
       const timeoutReached =
         stopOnTimeout && locationSubscriptionRef.current === null;
-      const thresholdReached = accuractyThresholdReached || timeoutReached;
+      const thresholdReached = accuracyThresholdReached || timeoutReached;
       if (
-        (stopOnAccuracyThreshold && thresholdReached) ||
+        (stopOnAccuracyThreshold && accuracyThresholdReached) ||
         (stopOnTimeout && timeoutReached)
       ) {
-        stopLocationWatch();
+        _stopLocationWatch();
       }
       const pointLatLong = location
         ? PointFactory.createInstance({
@@ -109,7 +114,7 @@ export const useLocationWatch = ({
     if (!foregroundPermission.granted) {
       return;
     }
-    stopLocationWatch();
+    _stopLocationWatch();
     locationSubscriptionRef.current = await Location.watchPositionAsync(
       { accuracy, distanceInterval },
       locationCallback
@@ -134,7 +139,6 @@ export const useLocationWatch = ({
     if (stopOnTimeout) {
       locationAccuracyWatchTimeoutRef.current = setTimeout(() => {
         stopLocationWatch();
-        locationCallback(lastLocationRef.current);
       }, locationWatchTimeout);
     }
     setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
