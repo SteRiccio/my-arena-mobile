@@ -65,13 +65,6 @@ export const useLocationWatch = ({
     }));
   }, [clearLocationWatchTimeout]);
 
-  const stopLocationWatch = useCallback(() => {
-    _stopLocationWatch();
-    if (isMountedRef.current) {
-      locationCallback(lastLocationRef.current);
-    }
-  }, [_stopLocationWatch, locationCallback]);
-
   const locationCallback = useCallback(
     (location) => {
       lastLocationRef.current = location; // location could be null when watch timeout is reached
@@ -111,6 +104,13 @@ export const useLocationWatch = ({
       stopOnTimeout,
     ]
   );
+
+  const stopLocationWatch = useCallback(() => {
+    _stopLocationWatch();
+    if (isMountedRef.current) {
+      locationCallback(lastLocationRef.current);
+    }
+  }, [_stopLocationWatch, locationCallback]);
 
   const startLocationWatch = useCallback(async () => {
     const foregroundPermission =

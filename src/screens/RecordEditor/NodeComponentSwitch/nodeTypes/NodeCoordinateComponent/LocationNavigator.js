@@ -50,7 +50,22 @@ const formatNumber = (num, decimals = 2) =>
 export const LocationNavigator = (props) => {
   const { targetPoint, onDismiss, onUseCurrentLocation } = props;
 
+  const theme = useTheme();
+
+  const [state, setState] = useState({
+    currentLocation: null,
+    angleToTarget: 0,
+    accuracy: 0,
+    distance: 0,
+  });
+
+  const compassBg = theme.dark ? compassBgWhite : compassBgBlack;
+
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
+
+  const updateState = (params) => {
+    setState((statePrev) => ({ ...statePrev, ...params }));
+  };
 
   const locationCallback = useCallback(
     ({ location, locationAccuracy, pointLatLong }) => {
@@ -74,17 +89,6 @@ export const LocationNavigator = (props) => {
     locationCallback,
     stopOnAccuracyThreshold: false,
     stopOnTimeout: false,
-  });
-
-  const theme = useTheme();
-
-  const compassBg = theme.dark ? compassBgWhite : compassBgBlack;
-
-  const [state, setState] = useState({
-    currentLocation: null,
-    angleToTarget: 0,
-    accuracy: 0,
-    distance: 0,
   });
 
   const { heading, magnetometerAvailable } = useMagnetometerHeading();
@@ -112,10 +116,6 @@ export const LocationNavigator = (props) => {
   if (angleToTargetDifference < 0) angleToTargetDifference += 360;
 
   const arrowToTargetSource = getArrowImageByAngle(angleToTargetDifference);
-
-  const updateState = (params) => {
-    setState((statePrev) => ({ ...statePrev, ...params }));
-  };
 
   useEffect(() => {
     startLocationWatch();
