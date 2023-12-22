@@ -1,6 +1,6 @@
-import { Modal, Portal } from "react-native-paper";
-
 import { useCallback, useEffect, useState } from "react";
+import { Modal, Portal } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { Objects, Points } from "@openforis/arena-core";
 
@@ -180,4 +180,11 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
       </Modal>
     </Portal>
   );
+};
+
+NodeCodeFindClosestSamplingPointDialog.propTypes = {
+  itemLabelFunction: PropTypes.func.isRequired,
+  items: PropTypes.array.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+  onItemSelected: PropTypes.func.isRequired,
 };

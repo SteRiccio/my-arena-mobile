@@ -22,6 +22,16 @@ const locationToPoint = (location) => {
   });
 };
 
+const getLocationWatchTimeout = ({ settings }) => {
+  const {
+    locationAccuracyWatchTimeout: locationAccuracyWatchTimeoutSetting, // in seconds
+  } = settings;
+
+  return locationAccuracyWatchTimeoutSetting
+    ? locationAccuracyWatchTimeoutSetting * 1000
+    : defaultLocationAccuracyWatchTimeout; // in ms
+};
+
 export const useLocationWatch = ({
   accuracy = Location.Accuracy.Highest,
   distanceInterval = 0.01,
@@ -36,14 +46,10 @@ export const useLocationWatch = ({
   const locationWatchIntervalRef = useRef(null);
 
   const settings = SettingsSelectors.useSettings();
-  const {
-    locationAccuracyThreshold = defaultLocationAccuracyThreshold,
-    locationAccuracyWatchTimeout: locationAccuracyWatchTimeoutSetting, // in seconds
-  } = settings;
+  const { locationAccuracyThreshold = defaultLocationAccuracyThreshold } =
+    settings;
 
-  const locationWatchTimeout = locationAccuracyWatchTimeoutSetting
-    ? locationAccuracyWatchTimeoutSetting * 1000
-    : defaultLocationAccuracyWatchTimeout; // in ms
+  const locationWatchTimeout = getLocationWatchTimeout({ settings });
 
   const [state, setState] = useState({
     watchingLocation: false,

@@ -95,6 +95,7 @@ NodeCodePreview.propTypes = {
   itemLabelFunction: PropTypes.func.isRequired,
   nodeDef: PropTypes.object.isRequired,
   openEditDialog: PropTypes.func.isRequired,
+  openFindClosestSamplingPointDialog: PropTypes.func.isRequired,
   selectedItems: PropTypes.array,
 };
 
