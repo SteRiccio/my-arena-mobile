@@ -15,8 +15,8 @@ import {
   Text,
   VView,
 } from "components";
+import { useLocation } from "hooks";
 import { SurveySelectors } from "state";
-import { useLocation } from "hooks/useLocation";
 
 export const NodeCodeFindClosestSamplingPointDialog = ({
   itemLabelFunction,
@@ -25,7 +25,6 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
   onItemSelected,
 }) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
-  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const {
     locationAccuracy,

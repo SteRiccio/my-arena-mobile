@@ -15,7 +15,7 @@ import { NumberUtils } from "utils/NumberUtils";
 import { RecordNodes } from "model/utils/RecordNodes";
 import { DataEntrySelectors, SurveySelectors } from "state";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
-import { useLocationWatch } from "hooks/useLocationWatch";
+import { useLocationWatch } from "hooks";
 
 const stringToNumber = (str) => Numbers.toNumber(str);
 const numberToString = (num, roundToDecimals = NaN) => {

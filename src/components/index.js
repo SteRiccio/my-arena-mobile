@@ -13,6 +13,7 @@ export { FormItem } from "./FormItem";
 export { HView } from "./HView";
 export { Icon } from "./Icon";
 export { IconButton } from "./IconButton";
+export { Link } from "./Link";
 export { LocationWatchingMonitor } from "./LocationWatchingMonitor";
 export { Loader } from "./Loader";
 export { LoadingIcon } from "./LoadingIcon";
