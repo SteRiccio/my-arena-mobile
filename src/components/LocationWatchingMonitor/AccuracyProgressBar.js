@@ -30,7 +30,7 @@ export const AccuracyProgressBar = (props) => {
 };
 
 AccuracyProgressBar.propTypes = {
-  accuracy: PropTypes.number.isRequired,
+  accuracy: PropTypes.number,
   accuracyThreshold: PropTypes.number.isRequired,
   style: PropTypes.object,
 };

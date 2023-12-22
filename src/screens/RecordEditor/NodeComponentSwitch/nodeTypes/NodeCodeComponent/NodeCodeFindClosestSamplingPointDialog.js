@@ -163,8 +163,7 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
         </>
       )}
       {!wathingLocation && (
-        <HView>
-          <Button mode="outlined" onPress={onDismiss} textKey="common:close" />
+        <HView style={{ justifyContent: "center" }}>
           <Button
             disabled={!selectedMinDistanceItem}
             onPress={onUseSelectedItemPress}
