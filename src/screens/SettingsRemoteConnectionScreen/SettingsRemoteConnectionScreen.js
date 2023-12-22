@@ -7,6 +7,7 @@ import {
   FieldSet,
   HView,
   Icon,
+  Link,
   ScrollView,
   Text,
   TextInput,
@@ -15,10 +16,13 @@ import {
 } from "components";
 import { useTranslation } from "localization";
 import { SettingsService } from "service";
-import { RemoteConnectionActions } from "state";
-import { MessageActions } from "state/message";
-import { useIsNetworkConnected } from "hooks/useIsNetworkConnected";
+import { MessageActions, RemoteConnectionActions } from "state";
+import { useIsNetworkConnected } from "hooks";
 import styles from "./styles";
+
+const forgotPasswordUrl =
+  "https://www.openforis-arena.org/guest/forgotPassword";
+const requestAccessUrl = "https://www.openforis-arena.org/guest/accessRequest";
 
 const serverUrlTypes = {
   default: "default",
@@ -131,7 +135,6 @@ export const SettingsRemoteConnectionScreen = () => {
     <ScrollView>
       <VView style={styles.container}>
         {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
-
         <FieldSet headerKey="settingsRemoteConnection:serverUrl">
           <RadioButton.Group
             onValueChange={onServerUrlTypeChange}
@@ -157,7 +160,7 @@ export const SettingsRemoteConnectionScreen = () => {
               style={{ width: "90%" }}
               value={serverUrl}
             />
-            {serverUrlVerified && <Icon source="check" size={50} />}
+            {serverUrlVerified && <Icon source="check" size={30} />}
           </HView>
           {!serverUrlVerified && (
             <Button
@@ -168,7 +171,6 @@ export const SettingsRemoteConnectionScreen = () => {
             />
           )}
         </FieldSet>
-
         <TextInput
           autoCapitalize="none"
           disabled={!networkAvailable}
@@ -189,6 +191,14 @@ export const SettingsRemoteConnectionScreen = () => {
           style={styles.loginButton}
           labelStyle={styles.loginButtonLabel}
           textKey="settingsRemoteConnection:login"
+        />
+        <Link
+          labelKey="settingsRemoteConnection:forgotPassword"
+          url={forgotPasswordUrl}
+        />
+        <Link
+          labelKey="settingsRemoteConnection:requestAccess"
+          url={requestAccessUrl}
         />
       </VView>
     </ScrollView>

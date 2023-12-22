@@ -17,6 +17,7 @@ import { NodeCodeReadOnlyValue } from "./NodeCodeReadOnlyValue";
 import { NodeCodeEditDialog } from "./NodeCodeEditDialog";
 import { NodeCodePreview } from "./NodeCodePreview";
 import { NodeCodeAutocomplete } from "./NodeCodeAutocomplete";
+import { NodeCodeFindClosestSamplingPointDialog } from "./NodeCodeFindClosestSamplingPointDialog";
 
 const MAX_VISIBLE_ITEMS = 10;
 
@@ -29,13 +30,16 @@ export const NodeCodeComponent = (props) => {
 
   const {
     closeEditDialog,
+    closeFindClosestSamplingPointDialog,
     editDialogOpen,
+    findClosestSamplingPointDialogOpen,
     itemLabelFunction,
     items,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
     openEditDialog,
+    openFindClosestSamplingPointDialog,
     selectedItems,
     selectedItemUuid,
   } = useNodeCodeComponentLocalState({
@@ -71,6 +75,9 @@ export const NodeCodeComponent = (props) => {
             itemLabelFunction={itemLabelFunction}
             nodeDef={nodeDef}
             openEditDialog={openEditDialog}
+            openFindClosestSamplingPointDialog={
+              openFindClosestSamplingPointDialog
+            }
             selectedItems={selectedItems}
           />
           {editDialogOpen && (
@@ -85,6 +92,19 @@ export const NodeCodeComponent = (props) => {
               onSingleValueChange={onSingleValueChange}
               parentNodeUuid={parentNodeUuid}
               selectedItems={selectedItems}
+            />
+          )}
+          {findClosestSamplingPointDialogOpen && (
+            <NodeCodeFindClosestSamplingPointDialog
+              itemLabelFunction={itemLabelFunction}
+              items={items}
+              nodeDef={nodeDef}
+              onDismiss={closeFindClosestSamplingPointDialog}
+              onItemSelected={(selectedMinDistanceItem) => {
+                onSingleValueChange(selectedMinDistanceItem.uuid);
+                closeFindClosestSamplingPointDialog();
+              }}
+              parentNodeUuid={parentNodeUuid}
             />
           )}
         </>

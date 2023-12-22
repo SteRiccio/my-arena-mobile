@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
+import { SurveyDefs } from "model";
+import { SurveySelectors } from "state";
 import { Button } from "components/Button";
 import { HView } from "components/HView";
 
@@ -34,9 +36,20 @@ OpenDropdownButton.defaultProps = {
 };
 
 export const NodeCodePreview = (props) => {
-  const { itemLabelFunction, nodeDef, openEditDialog, selectedItems } = props;
+  const {
+    itemLabelFunction,
+    nodeDef,
+    openEditDialog,
+    openFindClosestSamplingPointDialog,
+    selectedItems,
+  } = props;
+
+  const survey = SurveySelectors.useCurrentSurvey();
 
   const multiple = NodeDefs.isMultiple(nodeDef);
+  const canFindClosestSamplingPointData =
+    SurveyDefs.isCodeAttributeFromSamplingPointData({ survey, nodeDef }) &&
+    SurveyDefs.hasSamplingPointDataLocation(survey);
 
   return (
     <HView style={{ flexWrap: "wrap" }}>
@@ -67,6 +80,13 @@ export const NodeCodePreview = (props) => {
           }
         />
       )}
+      {canFindClosestSamplingPointData && (
+        <Button
+          mode="outlined"
+          textKey="dataEntry:closestSamplingPoint.findClosestSamplingPoint"
+          onPress={openFindClosestSamplingPointDialog}
+        />
+      )}
     </HView>
   );
 };
@@ -75,6 +95,7 @@ NodeCodePreview.propTypes = {
   itemLabelFunction: PropTypes.func.isRequired,
   nodeDef: PropTypes.object.isRequired,
   openEditDialog: PropTypes.func.isRequired,
+  openFindClosestSamplingPointDialog: PropTypes.func.isRequired,
   selectedItems: PropTypes.array,
 };
 

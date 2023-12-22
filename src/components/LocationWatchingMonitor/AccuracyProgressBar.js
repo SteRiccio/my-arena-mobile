@@ -1,4 +1,6 @@
-import { ProgressBar } from "components";
+import PropTypes from "prop-types";
+
+import { ProgressBar } from "../ProgressBar";
 
 const calculateProgress = ({ accuracy, accuracyThreshold }) => {
   if (!accuracy) return { progress: 0.25, color: "red" };
@@ -11,7 +13,7 @@ const calculateProgress = ({ accuracy, accuracyThreshold }) => {
 };
 
 export const AccuracyProgressBar = (props) => {
-  const { accuracy, accuracyThreshold } = props;
+  const { accuracy, accuracyThreshold, style } = props;
 
   const { progress, color } = calculateProgress({
     accuracy,
@@ -19,6 +21,16 @@ export const AccuracyProgressBar = (props) => {
   });
 
   return (
-    <ProgressBar progress={progress} color={color} style={{ margin: 0 }} />
+    <ProgressBar
+      progress={progress}
+      color={color}
+      style={[{ margin: 0 }, style]}
+    />
   );
+};
+
+AccuracyProgressBar.propTypes = {
+  accuracy: PropTypes.number.isRequired,
+  accuracyThreshold: PropTypes.number.isRequired,
+  style: PropTypes.object,
 };

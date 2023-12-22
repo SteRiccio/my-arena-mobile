@@ -1,6 +1,7 @@
 import * as Location from "expo-location";
 
 import { SettingsService } from "service";
+import { Permissions } from "utils";
 import { ToastActions } from "../toast/actions";
 
 const SETTINGS_SET = "SETTINGS_SET";
@@ -43,16 +44,8 @@ const updateSettings = (settings) => async (dispatch) => {
 let gpsLockingSubscription = null;
 
 const _startGpsLocking = async () => {
-  const foregroundPermission =
-    await Location.requestForegroundPermissionsAsync();
+  if (!(await Permissions.requestLocationForegroundPermission())) return false;
 
-  const providerStatus = await Location.getProviderStatusAsync();
-  if (
-    !providerStatus.locationServicesEnabled ||
-    !foregroundPermission.granted
-  ) {
-    return false;
-  }
   gpsLockingSubscription = await Location.watchPositionAsync(
     {
       accuracy: Location.Accuracy.BestForNavigation,

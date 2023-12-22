@@ -14,12 +14,12 @@ import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
 
-import { SurveySelectors } from "../survey/selectors";
-import { DataEntrySelectors } from "./selectors";
-import { ConfirmActions } from "state/confirm";
+import { ConfirmActions } from "../confirm";
+import { DeviceInfoActions } from "../deviceInfo";
+import { SurveySelectors } from "../survey";
 
+import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
-import { DeviceInfoActions } from "..";
 
 const RECORD_SET = "RECORD_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";

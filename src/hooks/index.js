@@ -1,7 +1,10 @@
 export { useAppInfo } from "./useAppInfo";
 export { useEffectiveTheme } from "./useEffectiveTheme";
+export { useIsMountedRef } from "./useIsMountedRef";
 export { useIsNetworkConnected } from "./useIsNetworkConnected";
 export { useKeyboardIsVisible } from "./useKeyboardIsVisible";
+export { useLocation } from "./useLocation";
+export { useLocationWatch } from "./useLocationWatch";
 export { useMagnetometerHeading } from "./useMagnetometerHeading";
 export { useNavigationFocus } from "./useNavigationFocus";
 export { useRequestCameraPermission } from "./useRequestCameraPermission";

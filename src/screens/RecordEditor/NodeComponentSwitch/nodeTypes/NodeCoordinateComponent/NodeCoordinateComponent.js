@@ -2,15 +2,14 @@ import React, { useCallback } from "react";
 
 import { Objects } from "@openforis/arena-core";
 
-import { Button, HView, IconButton, Text, TextInput, VView } from "components";
+import { HView, IconButton, Text, TextInput, VView } from "components";
 import { SrsDropdown } from "../../../SrsDropdown";
-import { AccuracyProgressBar } from "./AccuracyProgressBar";
-import { ElapsedTimeProgressBar } from "./ElapsedTimeProgressBar";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
 import { LocationNavigator } from "./LocationNavigator";
 import { OpenMapButton } from "./OpenMapButton";
 
 import styles from "./styles";
+import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef } = props;
@@ -102,33 +101,15 @@ export const NodeCoordinateComponent = (props) => {
             labelStyle: styles.extraFieldFormItemLabel,
           })
       }
-      {watchingLocation && (
-        <VView style={{ margin: 4 }}>
-          <AccuracyProgressBar
-            accuracy={accuracy}
-            accuracyThreshold={locationAccuracyThreshold}
-          />
-          <ElapsedTimeProgressBar
-            elapsedTime={locationWatchElapsedTime}
-            elapsedTimeThreshold={locationWatchTimeout * 1000}
-          />
-        </VView>
-      )}
-      {!watchingLocation && (
-        <Button
-          icon="play"
-          onPress={onStartGpsPress}
-          textKey="dataEntry:coordinate.startGPS"
-        />
-      )}
-      {watchingLocation && (
-        <Button
-          icon="stop"
-          onPress={onStopGpsPress}
-          textKey="dataEntry:coordinate.stopGPS"
-        />
-      )}
-
+      <LocationWatchingMonitor
+        locationAccuracy={accuracy}
+        locationAccuracyThreshold={locationAccuracyThreshold}
+        locationWatchElapsedTime={locationWatchElapsedTime}
+        locationWatchTimeout={locationWatchTimeout}
+        onStart={onStartGpsPress}
+        onStop={onStopGpsPress}
+        watchingLocation={watchingLocation}
+      />
       {compassNavigatorVisible && (
         <LocationNavigator
           onDismiss={hideCompassNavigator}

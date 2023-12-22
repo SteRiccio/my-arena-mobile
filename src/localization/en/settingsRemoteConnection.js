@@ -1,7 +1,9 @@
 export default {
   email: "Email",
+  forgotPassword: "Forgot password?",
   login: "Login",
   password: "Password",
+  requestAccess: "New to Arena? Request access",
   serverUrl: "Server URL",
   serverUrlNotValid: "Server URL not valid",
   serverUrlType: {
