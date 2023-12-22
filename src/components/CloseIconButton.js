@@ -9,4 +9,3 @@ export const CloseIconButton = (props) => {
     </IconButton>
   );
 };
-

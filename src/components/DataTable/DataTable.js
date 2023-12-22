@@ -10,7 +10,7 @@ import { ItemSelectedBanner, useSelectableList } from "../SelectableList";
 
 export const DataTable = (props) => {
   const {
-    columns,
+    fields,
     items,
     onItemPress: onItemPressProp,
     onItemLongPress: onItemLongPressProp,
@@ -59,13 +59,13 @@ export const DataTable = (props) => {
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
-          {columns.map((column) => (
+          {fields.map((field) => (
             <RNPDataTable.Title
-              key={column.key}
-              style={[{ flex: 1 }, column.style]}
+              key={field.key}
+              style={[{ flex: 1 }, field.style]}
               textStyle={{ fontWeight: "bold", fontSize: 15 }}
             >
-              {t(column.header)}
+              {t(field.header)}
             </RNPDataTable.Title>
           ))}
           {selectionEnabled && (
@@ -79,13 +79,13 @@ export const DataTable = (props) => {
               onPress={() => onItemPress(item)}
               onLongPress={() => onItemLongPress(item)}
             >
-              {columns.map(({ key: columnKey, style, cellRenderer = null }) => (
+              {fields.map(({ key: fieldKey, style, cellRenderer = null }) => (
                 <RNPDataTable.Cell
-                  key={columnKey}
+                  key={fieldKey}
                   style={style}
                   textStyle={{ flex: 1 }}
                 >
-                  {cellRenderer ? cellRenderer({ item }) : item[columnKey]}
+                  {cellRenderer ? cellRenderer({ item }) : item[fieldKey]}
                 </RNPDataTable.Cell>
               ))}
               {selectionEnabled && (
@@ -122,7 +122,7 @@ export const DataTable = (props) => {
 };
 
 DataTable.propTypes = {
-  columns: PropTypes.array.isRequired,
+  fields: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   onItemPress: PropTypes.func,
   onItemLongPress: PropTypes.func,

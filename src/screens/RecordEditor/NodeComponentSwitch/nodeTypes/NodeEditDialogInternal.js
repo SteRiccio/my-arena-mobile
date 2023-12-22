@@ -1,10 +1,9 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { Modal, Portal } from "react-native-paper";
 
 import { useTranslation } from "localization";
 
-import { Button, VView } from "components";
+import { Button, Modal } from "components";
 
 import { NodeDefFormItemHeader } from "screens/RecordEditor/NodeDefFormItem/NodeDefFormItemHeader";
 
@@ -21,18 +20,14 @@ export const NodeEditDialogInternal = (props) => {
   const { t } = useTranslation();
 
   return (
-    <Portal>
-      <Modal visible onDismiss={onDismiss}>
-        <VView style={{ height: "100%" }}>
-          <NodeDefFormItemHeader
-            nodeDef={nodeDef}
-            parentNodeUuid={parentNodeUuid}
-          />
-          {children}
-          <Button onPress={onDone ?? onDismiss}>{t(doneButtonLabel)}</Button>
-        </VView>
-      </Modal>
-    </Portal>
+    <Modal showCloseButton={false} onDismiss={onDone ?? onDismiss}>
+      <NodeDefFormItemHeader
+        nodeDef={nodeDef}
+        parentNodeUuid={parentNodeUuid}
+      />
+      {children}
+      <Button onPress={onDone ?? onDismiss}>{t(doneButtonLabel)}</Button>
+    </Modal>
   );
 };
 

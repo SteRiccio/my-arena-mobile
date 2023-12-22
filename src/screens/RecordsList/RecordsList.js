@@ -224,7 +224,7 @@ export const RecordsList = () => {
         )}
         {records.length > 0 && (
           <DataVisualizer
-            columns={[
+            fields={[
               ...rootDefKeys.map((keyDef) => ({
                 key: Objects.camelize(NodeDefs.getName(keyDef)),
                 header: NodeDefs.getLabelOrName(keyDef, lang),

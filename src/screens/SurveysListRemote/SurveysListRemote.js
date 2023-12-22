@@ -128,7 +128,7 @@ export const SurveysListRemote = () => {
       )}
       {surveysFiltered.length > 0 && (
         <DataVisualizer
-          columns={[
+          fields={[
             {
               key: "name",
               header: "common:name",
