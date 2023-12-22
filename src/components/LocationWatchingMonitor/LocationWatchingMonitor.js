@@ -65,7 +65,8 @@ export const LocationWatchingMonitor = (props) => {
 };
 
 LocationWatchingMonitor.propTypes = {
-  locationAccuracy: PropTypes.number.isRequired,
+  locationAccuracy: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    .isRequired,
   locationAccuracyThreshold: PropTypes.number.isRequired,
   locationWatchElapsedTime: PropTypes.number.isRequired,
   locationWatchTimeout: PropTypes.number.isRequired,

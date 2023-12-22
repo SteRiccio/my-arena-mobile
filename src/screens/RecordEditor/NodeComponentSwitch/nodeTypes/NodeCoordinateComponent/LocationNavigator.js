@@ -63,9 +63,9 @@ export const LocationNavigator = (props) => {
 
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
 
-  const updateState = (params) => {
+  const updateState = useCallback((params) => {
     setState((statePrev) => ({ ...statePrev, ...params }));
-  };
+  }, []);
 
   const locationCallback = useCallback(
     ({ location, locationAccuracy, pointLatLong }) => {
