@@ -98,7 +98,7 @@ export const NodeMultipleEntityListComponent = (props) => {
       )}
       {rows.length > 0 && (
         <DataTable
-          columns={[
+          fields={[
             ...summaryDefs.map((keyDef) => ({
               key: NodeDefs.getName(keyDef),
               header: NodeDefs.getLabelOrName(keyDef, lang),

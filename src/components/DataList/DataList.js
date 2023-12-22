@@ -11,7 +11,7 @@ import { useStyles } from "./styles";
 
 export const DataList = (props) => {
   const {
-    columns,
+    fields,
     items,
     onItemPress: onItemPressProp,
     onItemLongPress: onItemLongPressProp,
@@ -47,8 +47,8 @@ export const DataList = (props) => {
       >
         <HView style={styles.item}>
           <VView style={{ flex: 1 }}>
-            {columns.map((col) => {
-              const { cellRenderer, header, key, style } = col;
+            {fields.map((field) => {
+              const { cellRenderer, header, key, style } = field;
               return (
                 <FormItem
                   key={key}
@@ -71,7 +71,7 @@ export const DataList = (props) => {
         </HView>
       </TouchableHighlight>
     ),
-    [columns, onItemPress, onItemLongPress]
+    [fields, onItemPress, onItemLongPress]
   );
 
   return (
@@ -90,7 +90,7 @@ export const DataList = (props) => {
 };
 
 DataList.propTypes = {
-  columns: PropTypes.array.isRequired,
+  fields: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   onItemPress: PropTypes.func,
   onItemLongPress: PropTypes.func,

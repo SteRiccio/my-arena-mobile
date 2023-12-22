@@ -105,7 +105,7 @@ export const RecordValidationReport = () => {
       )}
       {items.length > 0 && (
         <DataTable
-          columns={[
+          fields={[
             {
               key: "path",
               header: "common:path",
