@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { FieldSet } from "../FieldSet";
 import { Button } from "../Button";
 import { HView } from "../HView";
@@ -60,4 +62,14 @@ export const LocationWatchingMonitor = (props) => {
       )}
     </VView>
   );
+};
+
+LocationWatchingMonitor.propTypes = {
+  locationAccuracy: PropTypes.number.isRequired,
+  locationAccuracyThreshold: PropTypes.number.isRequired,
+  locationWatchElapsedTime: PropTypes.number.isRequired,
+  locationWatchTimeout: PropTypes.number.isRequired,
+  onStart: PropTypes.func.isRequired,
+  onStop: PropTypes.func.isRequired,
+  watchingLocation: PropTypes.bool.isRequired,
 };

@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { ProgressBar } from "../ProgressBar";
 
 const calculateProgress = ({ accuracy, accuracyThreshold }) => {
@@ -25,4 +27,10 @@ export const AccuracyProgressBar = (props) => {
       style={[{ margin: 0 }, style]}
     />
   );
+};
+
+AccuracyProgressBar.propTypes = {
+  accuracy: PropTypes.number.isRequired,
+  accuracyThreshold: PropTypes.number.isRequired,
+  style: PropTypes.object,
 };

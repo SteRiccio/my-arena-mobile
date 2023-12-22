@@ -2,12 +2,25 @@ import { useCallback, useRef, useState } from "react";
 import * as Location from "expo-location";
 import { PointFactory } from "@openforis/arena-core";
 
+import { Permissions, Refs } from "utils";
 import { SettingsSelectors } from "../state/settings";
 import { useIsMountedRef } from "./useIsMountedRef";
 
 const locationWatchElapsedTimeIntervalDelay = 1000;
 const defaultLocationAccuracyThreshold = 4;
 const defaultLocationAccuracyWatchTimeout = 120000; // 2 mins
+
+const locationToPoint = (location) => {
+  if (!location) return null;
+
+  const { coords } = location;
+  const { latitude, longitude } = coords;
+
+  return PointFactory.createInstance({
+    x: longitude,
+    y: latitude,
+  });
+};
 
 export const useLocationWatch = ({
   accuracy = Location.Accuracy.Highest,
@@ -42,14 +55,8 @@ export const useLocationWatch = ({
     state;
 
   const clearLocationWatchTimeout = useCallback(() => {
-    if (locationWatchIntervalRef.current) {
-      clearInterval(locationWatchIntervalRef.current);
-      locationWatchIntervalRef.current = null;
-    }
-    if (locationAccuracyWatchTimeoutRef.current) {
-      clearTimeout(locationAccuracyWatchTimeoutRef.current);
-      locationAccuracyWatchTimeoutRef.current = null;
-    }
+    Refs.clearIntervalRef(locationWatchIntervalRef);
+    Refs.clearTimeoutRef(locationAccuracyWatchTimeoutRef);
   }, []);
 
   const _stopLocationWatch = useCallback(() => {
@@ -70,7 +77,7 @@ export const useLocationWatch = ({
       lastLocationRef.current = location; // location could be null when watch timeout is reached
 
       const { coords } = location ?? {};
-      const { latitude, longitude, accuracy: locationAccuracy } = coords ?? {};
+      const { accuracy: locationAccuracy } = coords ?? {};
 
       const accuracyThresholdReached =
         locationAccuracy <= locationAccuracyThreshold;
@@ -83,12 +90,7 @@ export const useLocationWatch = ({
       ) {
         _stopLocationWatch();
       }
-      const pointLatLong = location
-        ? PointFactory.createInstance({
-            x: longitude,
-            y: latitude,
-          })
-        : null;
+      const pointLatLong = locationToPoint(location);
 
       locationCallbackProp({
         location,
@@ -113,11 +115,8 @@ export const useLocationWatch = ({
   }, [_stopLocationWatch, locationCallback]);
 
   const startLocationWatch = useCallback(async () => {
-    const foregroundPermission =
-      await Location.requestForegroundPermissionsAsync();
-    if (!foregroundPermission.granted) {
-      return;
-    }
+    if (!(await Permissions.requestLocationForegroundPermission())) return;
+
     _stopLocationWatch();
     locationSubscriptionRef.current = await Location.watchPositionAsync(
       { accuracy, distanceInterval },

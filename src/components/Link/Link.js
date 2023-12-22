@@ -1,5 +1,6 @@
 import { Linking } from "react-native";
 import { Paragraph } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
@@ -13,4 +14,10 @@ export const Link = (props) => {
       {t(labelKey, labelParams)}
     </Paragraph>
   );
+};
+
+Link.propTypes = {
+  labelKey: PropTypes.string.isRequired,
+  labelParams: PropTypes.object,
+  url: PropTypes.string.isRequired,
 };
