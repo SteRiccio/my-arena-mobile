@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
-import { Button, Modal, VView } from "components";
+import { Button, Modal } from "components";
 
 import { NodeDefFormItemHeader } from "screens/RecordEditor/NodeDefFormItem/NodeDefFormItemHeader";
 

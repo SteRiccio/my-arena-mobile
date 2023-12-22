@@ -13,7 +13,6 @@ import {
   Modal,
   SelectableList,
   Text,
-  VView,
 } from "components";
 import { useLocation } from "hooks";
 import { SurveySelectors } from "state";
