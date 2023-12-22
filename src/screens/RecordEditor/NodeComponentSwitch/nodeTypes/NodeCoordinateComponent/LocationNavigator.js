@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Dimensions, Image } from "react-native";
-import { Modal, Portal, useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 
 import { Objects, Points } from "@openforis/arena-core";
 
 import { useLocationWatch, useMagnetometerHeading } from "hooks";
-import { Button, FormItem, HView, Text, View, VView } from "components";
+import { Button, FormItem, HView, Modal, Text, View, VView } from "components";
 import { SurveySelectors } from "state";
 
 import styles from "./locationNavigatorStyles";
@@ -131,21 +131,19 @@ export const LocationNavigator = (props) => {
   }, [currentLocation, onDismiss, onUseCurrentLocation]);
 
   return (
-    <Portal>
-      <Modal visible onDismiss={onDismiss}>
-        <VView style={styles.container}>
+    <Modal
+      onDismiss={onDismiss}
+      titleKey="dataEntry:coordinate.navigateToTarget"
+    >
+      <VView style={styles.container}>
+        {!magnetometerAvailable && (
           <Text
-            textKey="dataEntry:coordinate.navigateToTarget"
-            variant="titleLarge"
+            textKey="dataEntry:coordinate.magnetometerNotAvailable"
+            variant="labelMedium"
           />
-          {!magnetometerAvailable && (
-            <Text
-              textKey="dataEntry:coordinate.magnetometerNotAvailable"
-              variant="labelMedium"
-            />
-          )}
-          <VView style={styles.compassContainer}>
-            {/* <Image
+        )}
+        <VView style={styles.compassContainer}>
+          {/* <Image
         source={compassPointer}
         style={{
           alignSelf: "center",
@@ -154,92 +152,90 @@ export const LocationNavigator = (props) => {
         }}
       /> */}
 
-            <View
+          <View
+            style={{
+              height: compassImageSize,
+              width: compassImageSize,
+            }}
+          >
+            <Image
+              source={compassBg}
               style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
                 height: compassImageSize,
                 width: compassImageSize,
+                resizeMode: "contain",
+                transform: [{ rotate: `${360 - heading} deg` }],
               }}
-            >
+            />
+            {arrowToTargetVisible && (
               <Image
-                source={compassBg}
+                source={arrowToTargetSource}
                 style={{
                   position: "absolute",
-                  top: 0,
-                  left: 0,
-                  height: compassImageSize,
-                  width: compassImageSize,
+                  top: (compassImageSize - arrowToTargetHeight) / 2,
+                  height: arrowToTargetHeight,
+                  transform: [{ rotate: angleToTargetDifference + "deg" }],
                   resizeMode: "contain",
-                  transform: [{ rotate: `${360 - heading} deg` }],
+                  alignSelf: "center",
                 }}
               />
-              {arrowToTargetVisible && (
+            )}
+            {!arrowToTargetVisible && (
+              <View
+                style={{
+                  backgroundColor: "transparent",
+                  width: targetLocationBoxWidthAdjusted,
+                  height: targetLocationBoxWidthAdjusted,
+                  position: "absolute",
+                  top: targetLocationBoxMargin,
+                  left: targetLocationBoxMargin,
+                  transform: [{ rotate: angleToTargetDifference + "deg" }],
+                }}
+              >
                 <Image
-                  source={arrowToTargetSource}
+                  source={circleGreen}
                   style={{
-                    position: "absolute",
-                    top: (compassImageSize - arrowToTargetHeight) / 2,
-                    height: arrowToTargetHeight,
-                    transform: [{ rotate: angleToTargetDifference + "deg" }],
-                    resizeMode: "contain",
                     alignSelf: "center",
+                    height: targetLocationMarkerHeight,
+                    resizeMode: "contain",
                   }}
                 />
-              )}
-              {!arrowToTargetVisible && (
-                <View
-                  style={{
-                    backgroundColor: "transparent",
-                    width: targetLocationBoxWidthAdjusted,
-                    height: targetLocationBoxWidthAdjusted,
-                    position: "absolute",
-                    top: targetLocationBoxMargin,
-                    left: targetLocationBoxMargin,
-                    transform: [{ rotate: angleToTargetDifference + "deg" }],
-                  }}
-                >
-                  <Image
-                    source={circleGreen}
-                    style={{
-                      alignSelf: "center",
-                      height: targetLocationMarkerHeight,
-                      resizeMode: "contain",
-                    }}
-                  />
-                </View>
-              )}
-            </View>
+              </View>
+            )}
+          </View>
 
-            <HView style={{ justifyContent: "space-between" }}>
-              <FormItem labelKey="dataEntry:coordinate.accuracy">
-                {formatNumber(accuracy)}m
-              </FormItem>
-              <FormItem labelKey="dataEntry:coordinate.distance">
-                {formatNumber(distance)}m
-              </FormItem>
-            </HView>
-            <HView style={{ justifyContent: "space-between" }}>
-              <FormItem labelKey="dataEntry:coordinate.heading">
-                {formatNumber(heading, 0)}&deg;
-              </FormItem>
-              <FormItem labelKey="dataEntry:coordinate.angleToTargetLocation">
-                {formatNumber(angleToTarget, 0)}
-                &deg;
-              </FormItem>
-            </HView>
-            <FormItem labelKey="dataEntry:coordinate.currentLocation">
-              {formatNumber(currentLocationX, 5)},
-              {formatNumber(currentLocationY, 5)}
+          <HView style={{ justifyContent: "space-between" }}>
+            <FormItem labelKey="dataEntry:coordinate.accuracy">
+              {formatNumber(accuracy)}m
             </FormItem>
-          </VView>
-          <HView style={styles.bottomBar}>
-            <Button onPress={onDismiss} textKey="common:close" />
-            <Button
-              onPress={onUseCurrentLocationPress}
-              textKey="dataEntry:coordinate.useCurrentLocation"
-            />
+            <FormItem labelKey="dataEntry:coordinate.distance">
+              {formatNumber(distance)}m
+            </FormItem>
           </HView>
+          <HView style={{ justifyContent: "space-between" }}>
+            <FormItem labelKey="dataEntry:coordinate.heading">
+              {formatNumber(heading, 0)}&deg;
+            </FormItem>
+            <FormItem labelKey="dataEntry:coordinate.angleToTargetLocation">
+              {formatNumber(angleToTarget, 0)}
+              &deg;
+            </FormItem>
+          </HView>
+          <FormItem labelKey="dataEntry:coordinate.currentLocation">
+            {formatNumber(currentLocationX, 5)},
+            {formatNumber(currentLocationY, 5)}
+          </FormItem>
         </VView>
-      </Modal>
-    </Portal>
+        <HView style={styles.bottomBar}>
+          <Button
+            onPress={onUseCurrentLocationPress}
+            textKey="dataEntry:coordinate.useCurrentLocation"
+          />
+        </HView>
+      </VView>
+    </Modal>
   );
 };

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { Modal, Portal } from "react-native-paper";
 import PropTypes from "prop-types";
 
 import { Objects, Points } from "@openforis/arena-core";
@@ -11,6 +10,7 @@ import {
   HView,
   LoadingIcon,
   LocationWatchingMonitor,
+  Modal,
   SelectableList,
   Text,
   VView,
@@ -102,83 +102,78 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
   }, [onItemSelected, selectedMinDistanceItem]);
 
   return (
-    <Portal>
-      <Modal visible onDismiss={onDismiss}>
-        <VView style={{ height: "100%" }}>
-          {!locationFetched && (
-            <>
-              {wathingLocation && (
-                <Text textKey="dataEntry:location.gettingCurrentLocation" />
-              )}
-              <LocationWatchingMonitor
-                locationAccuracy={locationAccuracy}
-                locationAccuracyThreshold={locationAccuracyThreshold}
-                locationWatchElapsedTime={locationWatchElapsedTime}
-                locationWatchTimeout={locationWatchTimeout}
-                onStart={startLocationWatch}
-                onStop={stopLocationWatch}
-                watchingLocation={wathingLocation}
-              />
-            </>
+    <Modal
+      titleKey="dataEntry:closestSamplingPoint.findingClosestSamplingPoint"
+      onDismiss={onDismiss}
+    >
+      {!locationFetched && (
+        <>
+          {wathingLocation && (
+            <Text textKey="dataEntry:location.gettingCurrentLocation" />
           )}
-          {locationFetched && pointLatLong && (
-            <FieldSet headerKey="dataEntry:location.usingCurrentLocation">
-              <FormItem labelKey="dataEntry:coordinate.x">
-                {pointLatLong.x}
-              </FormItem>
-              <FormItem labelKey="dataEntry:coordinate.y">
-                {pointLatLong.y}
-              </FormItem>
-              <FormItem labelKey="dataEntry:coordinate.accuracy">
-                {locationAccuracy?.toFixed(2)}
-              </FormItem>
-            </FieldSet>
-          )}
+          <LocationWatchingMonitor
+            locationAccuracy={locationAccuracy}
+            locationAccuracyThreshold={locationAccuracyThreshold}
+            locationWatchElapsedTime={locationWatchElapsedTime}
+            locationWatchTimeout={locationWatchTimeout}
+            onStart={startLocationWatch}
+            onStop={stopLocationWatch}
+            watchingLocation={wathingLocation}
+          />
+        </>
+      )}
+      {locationFetched && pointLatLong && (
+        <FieldSet headerKey="dataEntry:location.usingCurrentLocation">
+          <FormItem labelKey="dataEntry:coordinate.x">
+            {pointLatLong.x}
+          </FormItem>
+          <FormItem labelKey="dataEntry:coordinate.y">
+            {pointLatLong.y}
+          </FormItem>
+          <FormItem labelKey="dataEntry:coordinate.accuracy">
+            {locationAccuracy?.toFixed(2)}
+          </FormItem>
+        </FieldSet>
+      )}
 
-          {findingMinDistanceItems && <LoadingIcon />}
+      {findingMinDistanceItems && <LoadingIcon />}
 
-          {minDistanceItems && (
-            <>
-              <Text
-                textKey="dataEntry:closestSamplingPoint.minDistanceItemFound"
-                textParams={{
-                  count: minDistanceItems.length,
-                  minDistance: minDistance?.toFixed?.(2),
-                }}
-              />
-              <SelectableList
-                itemKeyExtractor={(item) => item.uuid}
-                itemLabelExtractor={itemLabelFunction}
-                items={minDistanceItems}
-                onChange={(selectedItems) => {
-                  setState((statePrev) => ({
-                    ...statePrev,
-                    selectedMinDistanceItem: selectedItems[0],
-                  }));
-                }}
-                selectedItems={
-                  selectedMinDistanceItem ? [selectedMinDistanceItem] : []
-                }
-              />
-            </>
-          )}
-          {!wathingLocation && (
-            <HView>
-              <Button
-                mode="outlined"
-                onPress={onDismiss}
-                textKey="common:close"
-              />
-              <Button
-                disabled={!selectedMinDistanceItem}
-                onPress={onUseSelectedItemPress}
-                textKey="dataEntry:closestSamplingPoint.useSelectedItem"
-              />
-            </HView>
-          )}
-        </VView>
-      </Modal>
-    </Portal>
+      {minDistanceItems && (
+        <>
+          <Text
+            textKey="dataEntry:closestSamplingPoint.minDistanceItemFound"
+            textParams={{
+              count: minDistanceItems.length,
+              minDistance: minDistance?.toFixed?.(2),
+            }}
+          />
+          <SelectableList
+            itemKeyExtractor={(item) => item.uuid}
+            itemLabelExtractor={itemLabelFunction}
+            items={minDistanceItems}
+            onChange={(selectedItems) => {
+              setState((statePrev) => ({
+                ...statePrev,
+                selectedMinDistanceItem: selectedItems[0],
+              }));
+            }}
+            selectedItems={
+              selectedMinDistanceItem ? [selectedMinDistanceItem] : []
+            }
+          />
+        </>
+      )}
+      {!wathingLocation && (
+        <HView>
+          <Button mode="outlined" onPress={onDismiss} textKey="common:close" />
+          <Button
+            disabled={!selectedMinDistanceItem}
+            onPress={onUseSelectedItemPress}
+            textKey="dataEntry:closestSamplingPoint.useSelectedItem"
+          />
+        </HView>
+      )}
+    </Modal>
   );
 };
 

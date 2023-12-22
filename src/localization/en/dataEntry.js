@@ -4,6 +4,7 @@ export default {
   checkSyncStatus: "Check sync status",
   closestSamplingPoint: {
     findClosestSamplingPoint: "Find closest sampling point",
+    findingClosestSamplingPoint: "Finding closest sampling point",
     minDistanceItemFound: "Item found at a distance of {{minDistance}}m",
     minDistanceItemFound_plural:
       "Items found at a distance of {{minDistance}}m",

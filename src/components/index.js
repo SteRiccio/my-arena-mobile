@@ -19,6 +19,7 @@ export { Loader } from "./Loader";
 export { LoadingIcon } from "./LoadingIcon";
 export { MenuButton } from "./MenuButton";
 export { MessageDialog } from "./MessageDialog";
+export { Modal } from "./Modal";
 export { ProgressBar } from "./ProgressBar";
 export { RadioButton } from "./RadioButton";
 export { ScrollView } from "./ScrollView";
