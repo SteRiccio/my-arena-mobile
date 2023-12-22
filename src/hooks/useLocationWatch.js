@@ -3,6 +3,7 @@ import * as Location from "expo-location";
 import { PointFactory } from "@openforis/arena-core";
 
 import { SettingsSelectors } from "../state/settings";
+import { useIsMountedRef } from "./useIsMountedRef";
 
 const locationWatchElapsedTimeIntervalDelay = 1000;
 const defaultLocationAccuracyThreshold = 4;
@@ -15,6 +16,7 @@ export const useLocationWatch = ({
   stopOnAccuracyThreshold = true,
   stopOnTimeout = true,
 }) => {
+  const isMountedRef = useIsMountedRef();
   const lastLocationRef = useRef(null);
   const locationSubscriptionRef = useRef(null);
   const locationAccuracyWatchTimeoutRef = useRef(null);
@@ -65,7 +67,9 @@ export const useLocationWatch = ({
 
   const stopLocationWatch = useCallback(() => {
     _stopLocationWatch();
-    locationCallback(lastLocationRef.current);
+    if (isMountedRef.current) {
+      locationCallback(lastLocationRef.current);
+    }
   }, [_stopLocationWatch, locationCallback]);
 
   const locationCallback = useCallback(

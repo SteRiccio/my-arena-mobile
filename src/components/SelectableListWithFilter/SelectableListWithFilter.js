@@ -12,7 +12,7 @@ import { Text } from "../Text";
 import { VView } from "../VView";
 import { View } from "../View";
 
-import { SelectableList } from "./SelectableList";
+import { SelectableList } from "../SelectableList/SelectableList";
 
 import styles from "./styles";
 

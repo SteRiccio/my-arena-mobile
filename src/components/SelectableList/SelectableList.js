@@ -8,7 +8,7 @@ import { Arrays } from "@openforis/arena-core";
 import { Checkbox } from "../Checkbox";
 import { RadioButton } from "../RadioButton";
 
-import styles from "./styles";
+import styles from "../SelectableListWithFilter/styles";
 
 const ListItemIcon = (props) => {
   const { multiple, checked, editable, onItemSelect, item } = props;

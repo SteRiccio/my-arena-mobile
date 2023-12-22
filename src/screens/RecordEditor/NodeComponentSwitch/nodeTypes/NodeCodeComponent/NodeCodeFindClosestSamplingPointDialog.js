@@ -4,11 +4,19 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Objects, Points } from "@openforis/arena-core";
 
-import { Button, FieldSet, FormItem, HView, Text, VView } from "components";
+import {
+  Button,
+  FieldSet,
+  FormItem,
+  HView,
+  LoadingIcon,
+  LocationWatchingMonitor,
+  SelectableList,
+  Text,
+  VView,
+} from "components";
 import { SurveySelectors } from "state";
 import { useLocation } from "hooks/useLocation";
-import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
-import { SelectableList } from "components/SelectableListWithFilter/SelectableList";
 
 export const NodeCodeFindClosestSamplingPointDialog = ({
   itemLabelFunction,
@@ -83,6 +91,7 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
       const { minDistance, minDistanceItems } = findItemsWithMinDistance();
       setState((statePrev) => ({
         ...statePrev,
+        findingMinDistanceItems: false,
         minDistance,
         minDistanceItems,
       }));
@@ -113,7 +122,7 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
               />
             </>
           )}
-          {locationFetched && (
+          {locationFetched && pointLatLong && (
             <FieldSet headerKey="dataEntry:location.usingCurrentLocation">
               <FormItem labelKey="dataEntry:coordinate.x">
                 {pointLatLong.x}
@@ -126,6 +135,9 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
               </FormItem>
             </FieldSet>
           )}
+
+          {findingMinDistanceItems && <LoadingIcon />}
+
           {minDistanceItems && (
             <>
               <Text

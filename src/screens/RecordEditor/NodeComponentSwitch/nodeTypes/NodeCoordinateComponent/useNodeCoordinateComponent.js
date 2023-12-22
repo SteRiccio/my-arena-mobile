@@ -70,6 +70,8 @@ export const useNodeCoordinateComponent = (props) => {
   });
 
   const locationCallback = useCallback(({ location }) => {
+    if (!location) return;
+
     const valueNext = locationToUiValue({
       location,
       nodeDef,
