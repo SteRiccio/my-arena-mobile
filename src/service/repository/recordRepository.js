@@ -7,6 +7,7 @@ import {
 } from "@openforis/arena-core";
 
 import { DbUtils, dbClient } from "db";
+import { SystemUtils } from "utils";
 
 const SUPPORTED_KEYS = 5;
 const keysColumns = Array.from(Array(SUPPORTED_KEYS).keys()).map(
@@ -50,10 +51,11 @@ const fetchRecords = async ({ survey }) => {
   const rows = await dbClient.many(
     `SELECT id, uuid, ${keysColumns.join(", ")}, date_created, date_modified
     FROM record
-    WHERE survey_id = ?`,
+    WHERE survey_id = ?
+    ORDER BY date_modified DESC`,
     [surveyId]
   );
-  return rows.map(rowToRecord({ survey }));
+  return Promise.all(rows.map(rowToRecord({ survey })));
 };
 
 const insertRecord = async ({ survey, record }) => {
@@ -78,6 +80,7 @@ const insertRecord = async ({ survey, record }) => {
 };
 
 const updateRecord = async ({ survey, record }) => {
+  record.modifiedWith = await SystemUtils.getRecordAppInfo();
   const keyColumnsSet = keysColumns.map((keyCol) => `${keyCol} = ?`).join(", ");
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
 
@@ -116,7 +119,7 @@ const rowToRecord = ({ survey }) => {
   const rootDef = Surveys.getNodeDefRoot({ survey });
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
 
-  return (row) => {
+  return async (row) => {
     let result = row.content
       ? JSON.parse(row.content)
       : Objects.camelize(row, { skip: ["content"] });
@@ -142,6 +145,10 @@ const rowToRecord = ({ survey }) => {
       }
       delete result[keyCol];
     });
+
+    if (!result.createdWith) {
+      result.createdWith = await SystemUtils.getRecordAppInfo();
+    }
     return result;
   };
 };

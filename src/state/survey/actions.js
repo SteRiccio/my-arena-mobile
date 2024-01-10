@@ -58,6 +58,7 @@ const updateSurveyRemote =
     surveyName,
     surveyRemoteId,
     navigation,
+    confirmMessageKey = "surveys:updateSurveyConfirmMessage",
     onConfirm = null,
     onComplete = null,
   }) =>
@@ -65,7 +66,7 @@ const updateSurveyRemote =
     dispatch(
       ConfirmActions.show({
         confirmButtonTextKey: "surveys:updateSurvey",
-        messageKey: "surveys:updateSurveyConfirmMessage",
+        messageKey: confirmMessageKey,
         messageParams: { surveyName },
         onConfirm: async () => {
           onConfirm?.();

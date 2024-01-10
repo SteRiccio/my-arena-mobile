@@ -43,15 +43,12 @@ const createNewRecord =
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
-    const { version } = await SystemUtils.getApplicationInfo();
+    const appInfo = await SystemUtils.getRecordAppInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
       cycle,
       user: {},
-      appInfo: {
-        appId: "mam",
-        appVersion: version,
-      },
+      appInfo,
     });
 
     let { record, nodes } = await RecordUpdater.createRootEntity({

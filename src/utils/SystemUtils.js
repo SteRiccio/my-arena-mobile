@@ -14,6 +14,14 @@ const getApplicationInfo = async () => {
   };
 };
 
+const getRecordAppInfo = async () => {
+  const { version } = await getApplicationInfo();
+  return {
+    appId: "mam",
+    appVersion: version,
+  };
+};
+
 const setFullScreen = async (fullScreen) => {
   try {
     await SystemNavigationBar.stickyImmersive(fullScreen);
@@ -42,6 +50,7 @@ const copyValueToClipboard = (value) => {
 
 export const SystemUtils = {
   getApplicationInfo,
+  getRecordAppInfo,
   setFullScreen,
   setKeepScreenAwake,
   copyValueToClipboard,
