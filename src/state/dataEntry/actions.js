@@ -14,6 +14,8 @@ import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
 
+import { SystemUtils } from "utils";
+
 import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
 import { SurveySelectors } from "../survey";
@@ -41,10 +43,15 @@ const createNewRecord =
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
+    const { version } = await SystemUtils.getApplicationInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
       cycle,
       user: {},
+      appInfo: {
+        appId: "mam",
+        appVersion: version,
+      },
     });
 
     let { record, nodes } = await RecordUpdater.createRootEntity({
