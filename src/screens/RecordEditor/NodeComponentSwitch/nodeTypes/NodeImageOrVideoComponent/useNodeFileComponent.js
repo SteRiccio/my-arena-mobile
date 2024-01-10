@@ -18,6 +18,7 @@ import { RecordFileService } from "service/recordFileService";
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
 import { ImageUtils } from "./imageUtils";
 import { Files } from "utils";
+import { Linking } from "react-native";
 
 const mediaTypesByFileType = {
   [NodeDefFileType.image]: ImagePicker.MediaTypeOptions.Images,
@@ -122,6 +123,12 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
     onFileSelected(result);
   }, [onFileSelected, requestMediaLibraryPermission, mediaTypes]);
 
+  const onFileOpenPress = useCallback(async () => {
+    if (await Linking.canOpenURL(pickedFileUri)) {
+      await Linking.openURL(pickedFileUri);
+    }
+  }, [pickedFileUri]);
+
   const onOpenCameraPress = useCallback(async () => {
     if (!(await requestCameraPermission())) return;
 
@@ -144,6 +151,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
+    onFileOpenPress,
     pickedFileUri,
     resizing,
   };

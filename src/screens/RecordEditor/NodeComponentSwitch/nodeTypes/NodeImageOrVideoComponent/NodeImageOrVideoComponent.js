@@ -29,6 +29,7 @@ export const NodeImageOrVideoComponent = (props) => {
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
+    onFileOpenPress,
     pickedFileUri,
     resizing,
   } = useNodeFileComponent({ nodeDef, nodeUuid });
@@ -42,7 +43,11 @@ export const NodeImageOrVideoComponent = (props) => {
             {fileType === NodeDefFileType.image ? (
               <Image source={{ uri: pickedFileUri }} style={styles.image} />
             ) : (
-              <></>
+              <IconButton
+                icon="file-outline"
+                onPress={onFileOpenPress}
+                size={40}
+              />
             )}
           </>
         )}
