@@ -37,6 +37,7 @@
     "expo-status-bar": "~1.6.0",
     "i18next": "^23.7.11",
     "lz-string": "^1.5.0",
+    "mime": "^4.0.1",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",

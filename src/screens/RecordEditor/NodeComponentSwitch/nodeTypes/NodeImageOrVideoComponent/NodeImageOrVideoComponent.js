@@ -1,6 +1,14 @@
 import { Image } from "react-native";
 
-import { Button, HView, IconButton, Loader, VView, View } from "components";
+import {
+  Button,
+  HView,
+  IconButton,
+  Loader,
+  Text,
+  VView,
+  View,
+} from "components";
 import { useNodeFileComponent } from "./useNodeFileComponent";
 
 import styles from "./styles";
@@ -26,6 +34,7 @@ export const NodeImageOrVideoComponent = (props) => {
   const fileChooseTextKeySuffix = fileChooseTextKeySuffixByFileType[fileType];
 
   const {
+    fileName,
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
@@ -36,18 +45,21 @@ export const NodeImageOrVideoComponent = (props) => {
 
   return (
     <HView style={styles.container}>
-      <View style={styles.imageContainer}>
+      <View style={styles.previewContainer}>
         {resizing && <Loader />}
         {!resizing && pickedFileUri && (
           <>
             {fileType === NodeDefFileType.image ? (
               <Image source={{ uri: pickedFileUri }} style={styles.image} />
             ) : (
-              <IconButton
-                icon="file-outline"
-                onPress={onFileOpenPress}
-                size={40}
-              />
+              <VView>
+                <IconButton
+                  icon="file-outline"
+                  onPress={onFileOpenPress}
+                  size={40}
+                />
+                <Text>{fileName}</Text>
+              </VView>
             )}
           </>
         )}

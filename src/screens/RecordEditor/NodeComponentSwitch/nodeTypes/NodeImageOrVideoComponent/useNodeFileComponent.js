@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
+import mime from "mime";
 
 import { NodeDefFileType, UUIDs } from "@openforis/arena-core";
 
@@ -18,7 +19,6 @@ import { RecordFileService } from "service/recordFileService";
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
 import { ImageUtils } from "./imageUtils";
 import { Files } from "utils";
-import { Linking } from "react-native";
 
 const mediaTypesByFileType = {
   [NodeDefFileType.image]: ImagePicker.MediaTypeOptions.Images,
@@ -49,7 +49,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
     nodeUuid,
   });
 
-  const { fileUuid } = value || {};
+  const { fileName, fileUuid } = value || {};
 
   const [pickedFileUri, setPickedFileUri] = useState(null);
   const [resizing, setResizing] = useState(false);
@@ -61,7 +61,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
     if (fileUri !== pickedFileUri) {
       setPickedFileUri(fileUri);
     }
-  }, [pickedFileUri, value]);
+  }, [pickedFileUri, fileUuid]);
 
   const onFileSelected = useCallback(
     async (result) => {
@@ -71,12 +71,14 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
       const asset = assets?.[0];
       if (!asset) return;
 
-      const sourceFileUri = asset.uri;
+      const { name: assetFileName, uri: sourceFileUri } = asset;
 
-      const fileName = sourceFileUri.substring(
-        sourceFileUri.lastIndexOf("/") + 1
-      );
+      const fileName =
+        assetFileName ??
+        sourceFileUri.substring(sourceFileUri.lastIndexOf("/") + 1);
+
       const { size: sourceFileSize } = await Files.getInfo(sourceFileUri);
+
       let fileUri = sourceFileUri;
       let fileSize = sourceFileSize;
 
@@ -106,7 +108,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
       await updateNodeValue(valueUpdated, fileUri);
     },
-    [fileUuid, maxSize]
+    [maxSize]
   );
 
   const onFileChoosePress = useCallback(async () => {
@@ -124,10 +126,9 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   }, [onFileSelected, requestMediaLibraryPermission, mediaTypes]);
 
   const onFileOpenPress = useCallback(async () => {
-    if (await Linking.canOpenURL(pickedFileUri)) {
-      await Linking.openURL(pickedFileUri);
-    }
-  }, [pickedFileUri]);
+    const mimeType = mime.getType(fileName);
+    await Files.shareFile({ url: pickedFileUri, mimeType });
+  }, [fileName, pickedFileUri]);
 
   const onOpenCameraPress = useCallback(async () => {
     if (!(await requestCameraPermission())) return;
@@ -148,6 +149,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   }, [updateNodeValue]);
 
   return {
+    fileName,
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
