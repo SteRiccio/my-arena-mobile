@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { NodeDefFileType } from "@openforis/arena-core";
 
 import { Text } from "components";
@@ -23,4 +24,8 @@ export const NodeFileComponent = (props) => {
   }
 
   return <Text textKey={`File type not supported (${fileType})`} />;
+};
+
+NodeFileComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
 };

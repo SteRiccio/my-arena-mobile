@@ -1,4 +1,5 @@
 import { Image } from "react-native";
+import PropTypes from "prop-types";
 
 import {
   Button,
@@ -91,3 +92,8 @@ export const NodeImageOrVideoComponent = (props) => {
     </HView>
   );
 };
+
+NodeImageOrVideoComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  nodeUuid: PropTypes.string
+}
