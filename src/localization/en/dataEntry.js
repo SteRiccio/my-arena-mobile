@@ -73,11 +73,14 @@ export default {
     search: "Search taxon",
     taxonNotSelected: "--- Taxon not selected ---",
   },
+  fileAttribute: {
+    chooseAudio: "Choose an audio file",
+    chooseFile: "Choose a file",
+    choosePicture: "Choose a picture",
+    chooseVideo: "Choose a video",
+    deleteConfirmMessage: "Delete the existing file?",
+  },
   fileAttributeImage: {
-    chooseAPicture: "Choose a picture",
-    pictureDeleteConfirmMessage: "Delete the existing picture?",
-    pictureDeleteAndTakeNewOneConfirmMessage:
-      "Delete the existing picture and take a new one?",
     pictureResizedToSize: "Picture resized to {{size}}",
   },
   dataExport: {

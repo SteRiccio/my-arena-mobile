@@ -26,6 +26,8 @@ export default {
     upToDate: "Survey up-to-date",
   },
   updateSurvey: "Update survey",
+  updateSurveyWithNewVersionConfirmMessage:
+    'Survey "{{surveyName}}" has a new version; update it?',
   updateSurveyConfirmMessage:
-    'Survey "{{surveyName}}" already in this device. Update it?',
+    'Survey "{{surveyName}}" already in this device; update it?',
 };

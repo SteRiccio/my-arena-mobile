@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
+import mime from "mime";
 
-import { UUIDs } from "@openforis/arena-core";
+import { NodeDefFileType, UUIDs } from "@openforis/arena-core";
 
 import {
   useRequestCameraPermission,
@@ -18,7 +20,12 @@ import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponen
 import { ImageUtils } from "./imageUtils";
 import { Files } from "utils";
 
-export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
+const mediaTypesByFileType = {
+  [NodeDefFileType.image]: ImagePicker.MediaTypeOptions.Images,
+  [NodeDefFileType.video]: ImagePicker.MediaTypeOptions.Videos,
+};
+
+export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   const dispatch = useDispatch();
 
   const toaster = useToast();
@@ -31,43 +38,51 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const surveyId = survey.id;
 
-  const maxSize = (nodeDef.props.maxSize ?? 10) * Math.pow(1024, 2); // nodeDef maxSize is in MB
+  const { fileType = NodeDefFileType.other, maxSize: maxSizeMB = 10 } =
+    nodeDef.props;
+  const maxSize = maxSizeMB * Math.pow(1024, 2); // nodeDef maxSize is in MB
+
+  const mediaTypes =
+    mediaTypesByFileType[fileType] ?? ImagePicker.MediaTypeOptions.All;
 
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
 
-  const { fileUuid } = value || {};
+  const { fileName, fileUuid } = value || {};
 
-  const [pickedImageUri, setPickedImageUri] = useState(null);
+  const [pickedFileUri, setPickedFileUri] = useState(null);
   const [resizing, setResizing] = useState(false);
 
   useEffect(() => {
     const fileUri = fileUuid
       ? RecordFileService.getRecordFileUri({ surveyId, fileUuid })
       : null;
-    if (fileUri !== pickedImageUri) {
-      setPickedImageUri(fileUri);
+    if (fileUri !== pickedFileUri) {
+      setPickedFileUri(fileUri);
     }
-  }, [pickedImageUri, value]);
+  }, [pickedFileUri, fileUuid]);
 
-  const onImageSelected = useCallback(
+  const onFileSelected = useCallback(
     async (result) => {
-      if (result.canceled) return;
+      const { assets, canceled } = result;
+      if (canceled) return;
 
-      const asset = result.assets?.[0];
+      const asset = assets?.[0];
       if (!asset) return;
 
-      const sourceFileUri = asset.uri;
+      const { name: assetFileName, uri: sourceFileUri } = asset;
 
-      const fileName = sourceFileUri.substring(
-        sourceFileUri.lastIndexOf("/") + 1
-      );
+      const fileName =
+        assetFileName ??
+        sourceFileUri.substring(sourceFileUri.lastIndexOf("/") + 1);
+
       const { size: sourceFileSize } = await Files.getInfo(sourceFileUri);
+
       let fileUri = sourceFileUri;
       let fileSize = sourceFileSize;
 
-      if (sourceFileSize > maxSize) {
+      if (fileType === NodeDefFileType.image && sourceFileSize > maxSize) {
         // resize image
         setResizing(true);
         const {
@@ -89,61 +104,43 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
         }
         setResizing(false);
       }
-      setPickedImageUri(fileUri);
+      setPickedFileUri(fileUri);
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
       await updateNodeValue(valueUpdated, fileUri);
     },
-    [fileUuid, maxSize]
+    [maxSize]
   );
 
-  const openImageLibrary = useCallback(async () => {
+  const onFileChoosePress = useCallback(async () => {
     if (!(await requestMediaLibraryPermission())) return;
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-    });
-    onImageSelected(result);
-  }, [onImageSelected, requestMediaLibraryPermission]);
+    const result =
+      fileType === NodeDefFileType.other
+        ? await DocumentPicker.getDocumentAsync()
+        : await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            quality: 1,
+            mediaTypes,
+          });
+    onFileSelected(result);
+  }, [onFileSelected, requestMediaLibraryPermission, mediaTypes]);
 
-  const onPictureChoosePress = useCallback(async () => {
-    if (pickedImageUri) {
-      dispatch(
-        ConfirmActions.show({
-          messageKey: "dataEntry:pictureDeleteAndTakeNewOneConfirmMessage",
-          onConfirm: openImageLibrary,
-        })
-      );
-    } else {
-      openImageLibrary();
-    }
-  }, [openImageLibrary, pickedImageUri]);
-
-  const openCamera = useCallback(async () => {
-    if (!(await requestCameraPermission())) return;
-
-    const result = await ImagePicker.launchCameraAsync();
-    onImageSelected(result);
-  }, [onImageSelected, requestCameraPermission]);
+  const onFileOpenPress = useCallback(async () => {
+    const mimeType = mime.getType(fileName);
+    await Files.shareFile({ url: pickedFileUri, mimeType });
+  }, [fileName, pickedFileUri]);
 
   const onOpenCameraPress = useCallback(async () => {
-    if (pickedImageUri) {
-      dispatch(
-        ConfirmActions.show({
-          messageKey:
-            "dataEntry:fileAttributeImage.pictureDeleteAndTakeNewOneConfirmMessage",
-          onConfirm: openCamera,
-        })
-      );
-    } else {
-      await openCamera();
-    }
-  }, [openCamera, pickedImageUri]);
+    if (!(await requestCameraPermission())) return;
+
+    const result = await ImagePicker.launchCameraAsync({ mediaTypes });
+    onFileSelected(result);
+  }, [onFileSelected, requestCameraPermission, mediaTypes]);
 
   const onDeletePress = useCallback(async () => {
     dispatch(
       ConfirmActions.show({
-        messageKey: "dataEntry:fileAttributeImage.pictureDeleteConfirmMessage",
+        messageKey: "dataEntry:fileAttribute.deleteConfirmMessage",
         onConfirm: async () => {
           await updateNodeValue(null);
         },
@@ -152,10 +149,12 @@ export const useNodeImageComponent = ({ nodeDef, nodeUuid }) => {
   }, [updateNodeValue]);
 
   return {
+    fileName,
     onDeletePress,
     onOpenCameraPress,
-    onPictureChoosePress,
-    pickedImageUri,
+    onFileChoosePress,
+    onFileOpenPress,
+    pickedFileUri,
     resizing,
   };
 };

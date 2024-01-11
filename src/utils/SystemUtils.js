@@ -1,6 +1,26 @@
 import SystemNavigationBar from "react-native-system-navigation-bar";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import * as Application from "expo-application";
+
+import { Dates } from "@openforis/arena-core";
+
+const getApplicationInfo = async () => {
+  const lastUpdateTime = await Application.getLastUpdateTimeAsync();
+  return {
+    buildNumber: Application.nativeBuildVersion,
+    version: Application.nativeApplicationVersion,
+    lastUpdateTime: Dates.formatForStorage(lastUpdateTime),
+  };
+};
+
+const getRecordAppInfo = async () => {
+  const { version } = await getApplicationInfo();
+  return {
+    appId: "mam",
+    appVersion: version,
+  };
+};
 
 const setFullScreen = async (fullScreen) => {
   try {
@@ -29,6 +49,8 @@ const copyValueToClipboard = (value) => {
 };
 
 export const SystemUtils = {
+  getApplicationInfo,
+  getRecordAppInfo,
   setFullScreen,
   setKeepScreenAwake,
   copyValueToClipboard,

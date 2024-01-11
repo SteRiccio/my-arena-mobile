@@ -4,7 +4,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
   },
-  imageContainer: {
+  previewContainer: {
     flex: 0.5,
     padding: 30,
   },

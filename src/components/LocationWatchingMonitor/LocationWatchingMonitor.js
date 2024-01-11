@@ -20,6 +20,10 @@ export const LocationWatchingMonitor = (props) => {
     watchingLocation,
   } = props;
 
+  if (__DEV__) {
+    console.log(`rendering LocationWatchingMonitor`);
+  }
+
   const locationAccuracyFormatted =
     typeof locationAccuracy === "string"
       ? locationAccuracy
@@ -65,8 +69,7 @@ export const LocationWatchingMonitor = (props) => {
 };
 
 LocationWatchingMonitor.propTypes = {
-  locationAccuracy: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-    .isRequired,
+  locationAccuracy: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   locationAccuracyThreshold: PropTypes.number.isRequired,
   locationWatchElapsedTime: PropTypes.number.isRequired,
   locationWatchTimeout: PropTypes.number.isRequired,

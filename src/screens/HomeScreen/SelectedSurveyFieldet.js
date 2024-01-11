@@ -16,6 +16,7 @@ import { UpdateStatus } from "model/UpdateStatus";
 import { screenKeys } from "../screenKeys";
 
 import styles from "./selectedSurveyFieldsetStyles";
+import { RemoteConnectionSelectors } from "state/remoteConnection";
 
 const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const dispatch = useDispatch();
@@ -42,6 +43,7 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
             surveyName: Surveys.getName(survey),
             surveyRemoteId: survey.remoteId,
             navigation,
+            confirmMessageKey: 'surveys:updateSurveyWithNewVersionConfirmMessage',
             onConfirm: () => setLoading(true),
             onComplete: () => setLoading(false),
           })
@@ -65,6 +67,7 @@ SurveyUpdateStatusIcon.propTypes = {
 export const SelectedSurveyFieldset = () => {
   const navigation = useNavigation();
   const networkAvailable = useIsNetworkConnected();
+  const user = RemoteConnectionSelectors.useLoggedInUser();
 
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -78,11 +81,15 @@ export const SelectedSurveyFieldset = () => {
 
   useEffect(() => {
     const checkLastPublishDate = async () => {
+      if (!user) {
+        setUpdateStatus(UpdateStatus.error);
+        return;
+      }
       const surveyRemote = await SurveyService.fetchSurveySummaryRemote({
         id: survey.remoteId,
         name: surveyName,
       });
-      if (!surveyRemote) {
+      if (!surveyRemote || surveyRemote.errorKey) {
         setUpdateStatus(UpdateStatus.error);
       } else if (
         Dates.isAfter(
@@ -100,7 +107,7 @@ export const SelectedSurveyFieldset = () => {
     } else if (survey) {
       checkLastPublishDate();
     }
-  }, [networkAvailable, survey]);
+  }, [networkAvailable, survey, user]);
 
   if (!survey) return null;
 
