@@ -1,20 +1,27 @@
-import { StoreUtils } from "../storeUtils";
-import { ToastActions } from "./actions";
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {};
-
-const actionHandlers = {
-  [ToastActions.TOAST_SET]: ({ state, action }) => ({
-    ...state,
-    textKey: action.textKey,
-    textParams: action.textParams,
-  }),
-  [ToastActions.TOAST_DISMISSED]: () => ({
-    ...initialState,
-  }),
+const initialState = {
+  textKey: null,
+  textParams: null,
 };
 
-export const ToastReducer = StoreUtils.exportReducer({
-  actionHandlers,
+const toastSlice = createSlice({
+  name: "toast",
   initialState,
+  reducers: {
+    show: (state, action) => {
+      Object.assign(state, action.payload);
+    },
+    dismiss: () => initialState,
+  },
 });
+
+const { actions, reducer: ToastReducer } = toastSlice;
+const { show, dismiss } = actions;
+
+export const ToastActions = {
+  show: ({ textKey, textParams }) => show({ textKey, textParams }),
+  dismiss,
+};
+
+export { ToastReducer };
