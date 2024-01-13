@@ -4,9 +4,9 @@ import { AuthService, RecordService, WebSocketService } from "service";
 import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerationJob";
 
 import { i18n } from "localization";
-import { ConfirmActions } from "../confirm/actions";
-import { JobMonitorActions } from "../jobMonitor/actions";
-import { MessageActions } from "../message/actions";
+import { ConfirmActions } from "../confirm";
+import { JobMonitorActions } from "../jobMonitor";
+import { MessageActions } from "../message";
 
 import { SurveySelectors } from "../survey";
 import { Files } from "utils";
