@@ -1,2 +1,1 @@
-export { ConfirmActions } from "./actions";
-export { ConfirmReducer } from "./reducer";
+export { ConfirmActions, ConfirmReducer } from "./reducer";

@@ -119,7 +119,7 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
   dispatch({ type: RECORD_SET, record: recordUpdated });
 };
 
-const deleteRecords = (recordUuids) => async (_dispatch, getState) => {
+const deleteRecords = (recordUuids) => async (dispatch, getState) => {
   const state = getState();
   const survey = SurveySelectors.selectCurrentSurvey(state);
 
