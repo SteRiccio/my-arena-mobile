@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { MessageDialog } from "../components";
-import { MessageActions } from "../state/message/actions";
+import { MessageActions } from "../state/message";
 
 export const AppMessageDialog = () => {
   const dispatch = useDispatch();

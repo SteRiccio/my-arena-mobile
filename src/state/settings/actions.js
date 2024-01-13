@@ -2,7 +2,7 @@ import * as Location from "expo-location";
 
 import { SettingsService } from "service";
 import { Permissions } from "utils";
-import { ToastActions } from "../toast/actions";
+import { ToastActions } from "../toast";
 
 const SETTINGS_SET = "SETTINGS_SET";
 

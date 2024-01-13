@@ -1,7 +1,7 @@
 import { screenKeys } from "screens/screenKeys";
 import { PreferencesService, SurveyService } from "service";
 
-import { ConfirmActions } from "../confirm/actions";
+import { ConfirmActions } from "../confirm";
 import { SurveyActionTypes } from "./actionTypes";
 
 const {
