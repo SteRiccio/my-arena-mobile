@@ -2,17 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isOpen: false,
-  titleKey: "common:confirm",
-  cancelButtonTextKey: "common:cancel",
-  confirmButtonTextKey: "common:confirm",
-  onConfirm: null,
-  onCancel: null,
-  singleChoiceOptions: [],
-  defaultSingleChoiceValue: null,
-  swipeToConfirm: false,
-  swipeToConfirmTitleKey: "common:swipeToConfirm",
 };
 
+// confirm and cancel as async thunk to allow calling "dispatch" inside onConfirm and onCancel
 const confirm = createAsyncThunk(
   "confirm/show",
   async (params, { getState }) => {
