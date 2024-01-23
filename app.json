@@ -25,7 +25,8 @@
       "versionCode": 47
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "org.stericcio.myarenamobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
