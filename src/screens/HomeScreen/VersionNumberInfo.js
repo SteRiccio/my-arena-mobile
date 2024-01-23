@@ -50,6 +50,11 @@ export const VersionNumberInfo = () => {
     }
   }, [networkAvailable]);
 
+  const onUpdateConfirm = useCallback(
+    () => Linking.openURL(updateUrl),
+    [updateUrl]
+  );
+
   const onUpdateStatusIconPress = useCallback(() => {
     switch (updateStatus) {
       case UpdateStatus.error:
@@ -67,7 +72,7 @@ export const VersionNumberInfo = () => {
             titleKey: "app:confirmUpdate.title",
             confirmButtonTextKey: "app:confirmUpdate.update",
             messageKey: "app:confirmUpdate.message",
-            onConfirm: () => Linking.openURL(updateUrl),
+            onConfirm: onUpdateConfirm,
           })
         );
         break;
