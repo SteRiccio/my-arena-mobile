@@ -5,6 +5,11 @@ import { Dates } from "@openforis/arena-core";
 
 import { Environments } from "./Environments";
 
+const { nativeBuildVersion: buildNumber, nativeApplicationVersion: version } =
+  Application;
+
+const appId = "mam";
+
 let SystemNavigationBar;
 let Clipboard;
 
@@ -13,22 +18,28 @@ if (!Environments.isExpoGo) {
   Clipboard = require("@react-native-clipboard/clipboard");
 }
 
+const getLastUpdateTime = async () => {
+  try {
+    return Application.getLastUpdateTimeAsync();
+  } catch (error) {
+    // ignore it
+    return null;
+  }
+};
+
 const getApplicationInfo = async () => {
-  const lastUpdateTime = await Application.getLastUpdateTimeAsync();
+  const lastUpdateTime = await getLastUpdateTime();
   return {
-    buildNumber: Application.nativeBuildVersion,
-    version: Application.nativeApplicationVersion,
+    buildNumber,
+    version,
     lastUpdateTime: Dates.formatForStorage(lastUpdateTime),
   };
 };
 
-const getRecordAppInfo = async () => {
-  const { version } = await getApplicationInfo();
-  return {
-    appId: "mam",
-    appVersion: version,
-  };
-};
+const getRecordAppInfo = () => ({
+  appId,
+  appVersion: version,
+});
 
 const setFullScreen = async (fullScreen) => {
   try {
