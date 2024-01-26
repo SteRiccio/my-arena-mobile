@@ -1,12 +1,14 @@
 import { useCallback, useState } from "react";
 import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { useDispatch } from "react-redux";
+import { BackHandler } from "react-native";
 import PropTypes from "prop-types";
 
 import { useScreenKey } from "hooks";
 import { ScreenViewMode } from "model";
 import { useTranslation } from "localization";
 import {
+  ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
   ScreenOptionsActions,
@@ -89,7 +91,7 @@ export const AppBar = (props) => {
               navigation.navigate(screenKeys.surveysListLocal);
               toggleMenu();
             }}
-            title="Surveys"
+            title={t("surveys:title")}
           />
           <Divider />
           <Menu.Item
@@ -97,7 +99,20 @@ export const AppBar = (props) => {
               navigation.navigate(screenKeys.settings);
               toggleMenu();
             }}
-            title="Settings"
+            title={t("settings:title")}
+          />
+          <Menu.Item
+            onPress={() => {
+              dispatch(
+                ConfirmActions.show({
+                  titleKey: "app:confirmExit.title",
+                  confirmButtonTextKey: "common:exit",
+                  messageKey: "app:confirmExit.message",
+                  onConfirm: BackHandler.exitApp,
+                })
+              );
+            }}
+            title={t("common:exit")}
           />
         </Menu>
       )}
