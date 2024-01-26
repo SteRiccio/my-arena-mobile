@@ -18,14 +18,8 @@ if (!Environments.isExpoGo) {
   Clipboard = require("@react-native-clipboard/clipboard");
 }
 
-const getLastUpdateTime = async () => {
-  try {
-    return Application.getLastUpdateTimeAsync();
-  } catch (error) {
-    // ignore it
-    return null;
-  }
-};
+const getLastUpdateTime = async () =>
+  Environments.isAndroid ? Application.getLastUpdateTimeAsync() : null;
 
 const getApplicationInfo = async () => {
   const lastUpdateTime = await getLastUpdateTime();
