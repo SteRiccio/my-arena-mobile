@@ -1,4 +1,3 @@
-import { zip } from "react-native-zip-archive";
 import * as FileSystem from "expo-file-system";
 
 import {
@@ -11,10 +10,16 @@ import {
 } from "@openforis/arena-core";
 
 import { JobMobile } from "model";
-import { Files } from "utils";
+import { Environments, Files } from "utils";
 
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
+
+let zip;
+
+if (!Environments.isExpoGo) {
+  zip = require("react-native-zip-archive")?.zip;
+}
 
 const RECORDS_FOLDER_NAME = "records";
 const RECORDS_SUMMARY_JSON_FILENAME = "records.json";

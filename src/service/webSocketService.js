@@ -1,32 +1,36 @@
-import { io } from "socket.io-client";
-
 import { RemoteService } from "./remoteService";
+import { Environments } from "utils/Environments";
 
-let webSocketInstance = null
+let io;
+
+if (!Environments.isExpoGo) {
+  io = require("socket.io-client")?.io;
+}
+
+let webSocketInstance = null;
 
 const EVENTS = {
-    jobUpdate: 'jobUpdate'
-}
+  jobUpdate: "jobUpdate",
+};
 
 const open = async () => {
-    close()
+  close();
 
-    const serverUrl = await RemoteService.getServerUrl()
+  const serverUrl = await RemoteService.getServerUrl();
 
-    webSocketInstance = io(serverUrl, {withCredentials: true});
-    
-    return webSocketInstance
-}
+  webSocketInstance = io?.(serverUrl, { withCredentials: true });
+
+  return webSocketInstance;
+};
 
 const close = () => {
-    webSocketInstance?.close()
-    webSocketInstance = null
-}
+  webSocketInstance?.close();
+  webSocketInstance = null;
+};
 
 export const WebSocketService = {
-    EVENTS,
+  EVENTS,
 
-    open,
-    close
-
-}
+  open,
+  close,
+};
