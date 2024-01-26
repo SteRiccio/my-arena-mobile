@@ -12,6 +12,7 @@ export default {
   done: "Done",
   empty: "--- EMPTY ---",
   error: "Error",
+  exit: "Exit",
   export: "Export",
   false: "False",
   filter: "Filter",
