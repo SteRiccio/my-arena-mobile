@@ -17,6 +17,7 @@ import {
 } from "state";
 import { screenKeys } from "screens";
 import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
+import { Environments } from "utils/Environments";
 
 export const AppBar = (props) => {
   const { back, navigation, options } = props;
@@ -88,32 +89,35 @@ export const AppBar = (props) => {
         >
           <Menu.Item
             onPress={() => {
-              navigation.navigate(screenKeys.surveysListLocal);
               toggleMenu();
+              navigation.navigate(screenKeys.surveysListLocal);
             }}
             title={t("surveys:title")}
           />
           <Divider />
           <Menu.Item
             onPress={() => {
-              navigation.navigate(screenKeys.settings);
               toggleMenu();
+              navigation.navigate(screenKeys.settings);
             }}
             title={t("settings:title")}
           />
-          <Menu.Item
-            onPress={() => {
-              dispatch(
-                ConfirmActions.show({
-                  titleKey: "app:confirmExit.title",
-                  confirmButtonTextKey: "common:exit",
-                  messageKey: "app:confirmExit.message",
-                  onConfirm: BackHandler.exitApp,
-                })
-              );
-            }}
-            title={t("common:exit")}
-          />
+          {Environments.isAndroid && (
+            <Menu.Item
+              onPress={() => {
+                toggleMenu();
+                dispatch(
+                  ConfirmActions.show({
+                    titleKey: "app:confirmExit.title",
+                    confirmButtonTextKey: "common:exit",
+                    messageKey: "app:confirmExit.message",
+                    onConfirm: BackHandler.exitApp,
+                  })
+                );
+              }}
+              title={t("common:exit")}
+            />
+          )}
         </Menu>
       )}
     </RNPAppbar.Header>
