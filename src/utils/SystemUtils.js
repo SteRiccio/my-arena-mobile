@@ -1,30 +1,43 @@
-import SystemNavigationBar from "react-native-system-navigation-bar";
-import Clipboard from "@react-native-clipboard/clipboard";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import * as Application from "expo-application";
 
 import { Dates } from "@openforis/arena-core";
 
+import { Environment } from "./Environment";
+
+const { nativeBuildVersion: buildNumber, nativeApplicationVersion: version } =
+  Application;
+
+const appId = "mam";
+
+let SystemNavigationBar;
+let Clipboard;
+
+if (!Environment.isExpoGo) {
+  SystemNavigationBar = require("react-native-system-navigation-bar");
+  Clipboard = require("@react-native-clipboard/clipboard");
+}
+
+const getLastUpdateTime = async () =>
+  Environment.isAndroid ? Application.getLastUpdateTimeAsync() : null;
+
 const getApplicationInfo = async () => {
-  const lastUpdateTime = await Application.getLastUpdateTimeAsync();
+  const lastUpdateTime = await getLastUpdateTime();
   return {
-    buildNumber: Application.nativeBuildVersion,
-    version: Application.nativeApplicationVersion,
+    buildNumber,
+    version,
     lastUpdateTime: Dates.formatForStorage(lastUpdateTime),
   };
 };
 
-const getRecordAppInfo = async () => {
-  const { version } = await getApplicationInfo();
-  return {
-    appId: "mam",
-    appVersion: version,
-  };
-};
+const getRecordAppInfo = () => ({
+  appId,
+  appVersion: version,
+});
 
 const setFullScreen = async (fullScreen) => {
   try {
-    await SystemNavigationBar.stickyImmersive(fullScreen);
+    await SystemNavigationBar?.stickyImmersive(fullScreen);
   } catch (e) {
     // ignore it (not available)
   }
@@ -40,7 +53,7 @@ const setKeepScreenAwake = async (keepScreenAwake) => {
 
 const copyValueToClipboard = (value) => {
   try {
-    Clipboard.setString(value);
+    Clipboard?.setString(value);
     return true;
   } catch (_error) {
     // ignore it

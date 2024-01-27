@@ -1,6 +1,6 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -23,6 +23,7 @@
     "expo-asset": "~8.10.1",
     "expo-battery": "~7.3.0",
     "expo-camera": "~13.4.4",
+    "expo-constants": "~14.4.2",
     "expo-crypto": "~12.4.1",
     "expo-device": "~5.4.0",
     "expo-document-picker": "~11.5.4",

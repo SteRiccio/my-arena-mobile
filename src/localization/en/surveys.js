@@ -19,6 +19,7 @@ export default {
   selectSurvey: "Select a survey",
   surveysInTheCloud: "Surveys in the cloud",
   surveysInTheDevice: "Surveys in the device",
+  title: "Surveys",
   updateStatus: {
     error: "Error retrieving survey update status",
     networkNotAvailable:

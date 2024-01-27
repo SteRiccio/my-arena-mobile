@@ -55,7 +55,7 @@ const fetchRecords = async ({ survey }) => {
     ORDER BY date_modified DESC`,
     [surveyId]
   );
-  return Promise.all(rows.map(rowToRecord({ survey })));
+  return rows.map(rowToRecord({ survey }));
 };
 
 const insertRecord = async ({ survey, record }) => {
@@ -80,7 +80,7 @@ const insertRecord = async ({ survey, record }) => {
 };
 
 const updateRecord = async ({ survey, record }) => {
-  record.modifiedWith = await SystemUtils.getRecordAppInfo();
+  record.modifiedWith = SystemUtils.getRecordAppInfo();
   const keyColumnsSet = keysColumns.map((keyCol) => `${keyCol} = ?`).join(", ");
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
 
@@ -119,7 +119,7 @@ const rowToRecord = ({ survey }) => {
   const rootDef = Surveys.getNodeDefRoot({ survey });
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
 
-  return async (row) => {
+  return (row) => {
     let result = row.content
       ? JSON.parse(row.content)
       : Objects.camelize(row, { skip: ["content"] });
@@ -147,7 +147,7 @@ const rowToRecord = ({ survey }) => {
     });
 
     if (!result.createdWith) {
-      result.createdWith = await SystemUtils.getRecordAppInfo();
+      result.createdWith = SystemUtils.getRecordAppInfo();
     }
     return result;
   };

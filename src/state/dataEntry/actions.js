@@ -43,7 +43,7 @@ const createNewRecord =
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
-    const appInfo = await SystemUtils.getRecordAppInfo();
+    const appInfo = SystemUtils.getRecordAppInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
       cycle,
