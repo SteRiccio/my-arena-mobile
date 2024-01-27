@@ -17,7 +17,7 @@ import {
 } from "state";
 import { screenKeys } from "screens";
 import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
-import { Environments } from "utils/Environments";
+import { Environment } from "utils";
 
 export const AppBar = (props) => {
   const { back, navigation, options } = props;
@@ -102,7 +102,7 @@ export const AppBar = (props) => {
             }}
             title={t("settings:title")}
           />
-          {Environments.isAndroid && (
+          {Environment.isAndroid && (
             <Menu.Item
               onPress={() => {
                 toggleMenu();

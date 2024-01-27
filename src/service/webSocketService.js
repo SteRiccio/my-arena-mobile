@@ -1,9 +1,9 @@
 import { RemoteService } from "./remoteService";
-import { Environments } from "utils/Environments";
+import { Environment } from "utils";
 
 let io;
 
-if (!Environments.isExpoGo) {
+if (!Environment.isExpoGo) {
   io = require("socket.io-client")?.io;
 }
 

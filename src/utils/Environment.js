@@ -6,7 +6,7 @@ const isExpoGo =
 
 const isAndroid = Platform.OS === "android";
 
-export const Environments = {
+export const Environment = {
   isExpoGo,
   isAndroid,
 };

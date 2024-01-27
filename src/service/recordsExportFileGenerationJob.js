@@ -10,14 +10,14 @@ import {
 } from "@openforis/arena-core";
 
 import { JobMobile } from "model";
-import { Environments, Files } from "utils";
+import { Environment, Files } from "utils";
 
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
 
 let zip;
 
-if (!Environments.isExpoGo) {
+if (!Environment.isExpoGo) {
   zip = require("react-native-zip-archive")?.zip;
 }
 

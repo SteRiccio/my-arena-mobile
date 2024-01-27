@@ -3,7 +3,7 @@ import * as Application from "expo-application";
 
 import { Dates } from "@openforis/arena-core";
 
-import { Environments } from "./Environments";
+import { Environment } from "./Environment";
 
 const { nativeBuildVersion: buildNumber, nativeApplicationVersion: version } =
   Application;
@@ -13,13 +13,13 @@ const appId = "mam";
 let SystemNavigationBar;
 let Clipboard;
 
-if (!Environments.isExpoGo) {
+if (!Environment.isExpoGo) {
   SystemNavigationBar = require("react-native-system-navigation-bar");
   Clipboard = require("@react-native-clipboard/clipboard");
 }
 
 const getLastUpdateTime = async () =>
-  Environments.isAndroid ? Application.getLastUpdateTimeAsync() : null;
+  Environment.isAndroid ? Application.getLastUpdateTimeAsync() : null;
 
 const getApplicationInfo = async () => {
   const lastUpdateTime = await getLastUpdateTime();
