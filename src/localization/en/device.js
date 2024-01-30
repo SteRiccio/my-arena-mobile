@@ -16,4 +16,12 @@ export default {
     recordFilesSize: "Record files size",
     tempFilesSize: "Temporary files size",
   },
+  network: {
+    title: "Network",
+    statusLabel: "Network status",
+    status: {
+      connected: "Connected",
+      offline: "Offline",
+    },
+  },
 };

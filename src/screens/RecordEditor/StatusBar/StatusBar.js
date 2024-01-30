@@ -18,6 +18,7 @@ import {
   useBatteryStateListener,
   useFreeDiskStorageMonitor,
 } from "state";
+import { useIsNetworkConnectedMonitor } from "state/deviceInfo/useIsNetworkConnectedMonitor";
 import { Files, TimeUtils } from "utils";
 
 import { BatteryIcon } from "./BatteryIcon";
@@ -34,6 +35,7 @@ const StatusBarPanel = (props) => {
     batteryTimeToDischargeFormattedShort,
     batteryTimeToFullChargeFormattedShort,
     freeDiskStorageFormatted,
+    isNetworkConnected,
   } = props;
 
   const { t } = useTranslation();
@@ -85,6 +87,15 @@ const StatusBarPanel = (props) => {
           </FormItem>
         )}
       </FieldSet>
+      <FieldSet headerKey="device:network.title">
+        <FormItem labelKey="device:network.statusLabel">
+          {t(
+            `device:network.status.${
+              isNetworkConnected ? "connected" : "offline"
+            }`
+          )}
+        </FormItem>
+      </FieldSet>
       <FieldSet headerKey="device:internalMemory.title">
         <FormItem labelKey="device:internalMemory.storageAvailable">
           {freeDiskStorageFormatted}
@@ -108,6 +119,7 @@ StatusBarPanel.propTypes = {
   batteryTimeToDischargeFormattedShort: PropTypes.string,
   batteryTimeToFullChargeFormattedShort: PropTypes.string,
   freeDiskStorageFormatted: PropTypes.string,
+  isNetworkConnected: PropTypes.bool,
 };
 
 export const StatusBar = () => {
@@ -119,10 +131,12 @@ export const StatusBar = () => {
     batteryTimeToDischarge,
     batteryTimeToFullCharge,
     freeDiskStorage,
+    isNetworkConnected,
   } = DeviceInfoSelectors.useDeviceInfo();
 
   useBatteryStateListener();
   useFreeDiskStorageMonitor();
+  useIsNetworkConnectedMonitor();
 
   const formatRemainingTimeCompact = (time) =>
     TimeUtils.formatRemainingTimeIfLessThan1Day({
@@ -167,6 +181,10 @@ export const StatusBar = () => {
                 </Text>
               )}
           </HView>
+          <Icon
+            source={isNetworkConnected ? "web" : "cloud-off-outline"}
+            size={20}
+          />
           <HView>
             <Icon source="chart-pie" size={20} />
             <Text variant="titleSmall">
@@ -188,6 +206,7 @@ export const StatusBar = () => {
           batteryTimeToFullChargeFormattedShort
         }
         freeDiskStorageFormatted={freeDiskStorageFormatted}
+        isNetworkConnected={isNetworkConnected}
       />
     </CollapsiblePanel>
   );
