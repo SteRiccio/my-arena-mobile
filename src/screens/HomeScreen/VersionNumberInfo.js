@@ -12,6 +12,16 @@ import { UpdateStatus } from "model/UpdateStatus";
 
 import styles from "./versionNumberInfoStyles";
 
+const getLastUpdateTimeText = (lastUpdateTime) => {
+  if (!lastUpdateTime) return "";
+  const lastUpdateTimeFormatted = Dates.convertDate({
+    dateStr: lastUpdateTime,
+    formatFrom: DateFormats.datetimeStorage,
+    formatTo: DateFormats.dateDisplay,
+  });
+  return `(${lastUpdateTimeFormatted})`;
+};
+
 export const VersionNumberInfo = () => {
   const dispatch = useDispatch();
   const appInfo = useAppInfo();
@@ -79,16 +89,12 @@ export const VersionNumberInfo = () => {
     }
   }, [updateStatus, updateStatusError]);
 
+  const lastUpdateTimeText = getLastUpdateTimeText(appInfo.lastUpdateTime);
+
   return (
     <HView style={styles.container}>
       <Text style={styles.appVersionName} variant="labelLarge">
-        v{appInfo.version} [{appInfo.buildNumber}] (
-        {Dates.convertDate({
-          dateStr: appInfo.lastUpdateTime,
-          formatFrom: DateFormats.datetimeStorage,
-          formatTo: DateFormats.dateDisplay,
-        })}
-        )
+        v{appInfo.version} [{appInfo.buildNumber}] {lastUpdateTimeText}
       </Text>
       {updateStatus !== UpdateStatus.error && (
         <UpdateStatusIcon
