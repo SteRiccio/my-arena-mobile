@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
-import { NodeDefs, NodeValues, Objects } from "@openforis/arena-core";
+import { NodeDefs, NodeValues, Objects, Records } from "@openforis/arena-core";
 
 import { Button, Text, VView, View } from "components";
 import { Taxa } from "model/Taxa";
@@ -46,6 +46,7 @@ export const NodeTaxonComponent = (props) => {
   let taxa = _taxa;
   if (!Objects.isEmpty(nodeDef.propsAdvanced?.itemsFilter)) {
     const record = DataEntrySelectors.useRecord();
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
     taxa = useItemsFilter({
       survey,
       nodeDef,

@@ -20,6 +20,7 @@ export const ScrollView = (props) => {
 
   return (
     <RNScrollView
+      automaticallyAdjustKeyboardInsets
       persistentScrollbar={persistentScrollbar}
       style={style}
       {...otherProps}
