@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
-import mime from "mime";
 
 import { NodeDefFileType, UUIDs } from "@openforis/arena-core";
 
@@ -17,8 +16,8 @@ import { ConfirmActions } from "state/confirm";
 import { RecordFileService } from "service/recordFileService";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
-import { ImageUtils } from "./imageUtils";
 import { Files } from "utils";
+import { ImageUtils } from "./imageUtils";
 
 const mediaTypesByFileType = {
   [NodeDefFileType.image]: ImagePicker.MediaTypeOptions.Images,
@@ -53,6 +52,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
 
   const [pickedFileUri, setPickedFileUri] = useState(null);
   const [resizing, setResizing] = useState(false);
+  const [imagePreviewOpen, setImagePreviewOpen] = useState(false);
 
   useEffect(() => {
     const fileUri = fileUuid
@@ -73,9 +73,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
 
       const { name: assetFileName, uri: sourceFileUri } = asset;
 
-      const fileName =
-        assetFileName ??
-        sourceFileUri.substring(sourceFileUri.lastIndexOf("/") + 1);
+      const fileName = assetFileName ?? Files.getNameFromUri(sourceFileUri);
 
       const { size: sourceFileSize } = await Files.getInfo(sourceFileUri);
 
@@ -126,7 +124,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   }, [onFileSelected, requestMediaLibraryPermission, mediaTypes]);
 
   const onFileOpenPress = useCallback(async () => {
-    const mimeType = mime.getType(fileName);
+    const mimeType = Files.getMimeTypeFromName(fileName);
     await Files.shareFile({ url: pickedFileUri, mimeType });
   }, [fileName, pickedFileUri]);
 
@@ -148,12 +146,23 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
     );
   }, [updateNodeValue]);
 
+  const onImagePreviewPress = useCallback(() => {
+    setImagePreviewOpen(true);
+  }, []);
+
+  const closeImagePreview = useCallback(() => {
+    setImagePreviewOpen(false);
+  }, []);
+
   return {
+    closeImagePreview,
     fileName,
+    imagePreviewOpen,
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
     onFileOpenPress,
+    onImagePreviewPress,
     pickedFileUri,
     resizing,
   };

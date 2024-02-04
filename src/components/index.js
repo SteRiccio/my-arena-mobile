@@ -5,6 +5,7 @@ export { CollapsiblePanel } from "./CollapsiblePanel";
 export { DataTable } from "./DataTable";
 export { DataVisualizer } from "./DataVisualizer";
 export { DatePicker } from "./DatePicker";
+export { Dialog } from "./Dialog";
 export { Divider } from "./Divider";
 export { Dropdown } from "./Dropdown";
 export { Fade } from "./Fade";

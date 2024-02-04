@@ -30,6 +30,7 @@ export default {
   search: "Search",
   selectAnItem: "Select an item",
   selectNewItems: "Select new items",
+  size: "Size",
   sizeAvailable: "{{size}} available",
   somethingWentWrong: "Something went wrong: {{error}}",
   srs: "SRS",
