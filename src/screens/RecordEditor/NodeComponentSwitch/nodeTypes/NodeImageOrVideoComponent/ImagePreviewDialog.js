@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet } from "react-native";
+import PropTypes from "prop-types";
 
 import {
   CollapsiblePanel,
@@ -51,6 +52,10 @@ const ImageInfo = (props) => {
   );
 };
 
+ImageInfo.propTypes = {
+  imageUri: PropTypes.string.isRequired,
+};
+
 export const ImagePreviewDialog = (props) => {
   const { fileName, imageUri, onClose } = props;
 
@@ -79,4 +84,10 @@ export const ImagePreviewDialog = (props) => {
       </VView>
     </Dialog>
   );
+};
+
+ImagePreviewDialog.propTypes = {
+  fileName: PropTypes.string.isRequired,
+  imageUri: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
