@@ -1,4 +1,4 @@
-import { Image } from "react-native";
+import { Image, TouchableHighlight } from "react-native";
 import PropTypes from "prop-types";
 
 import {
@@ -14,6 +14,7 @@ import { useNodeFileComponent } from "./useNodeFileComponent";
 
 import styles from "./styles";
 import { NodeDefFileType } from "@openforis/arena-core";
+import { ImagePreviewDialog } from "./ImagePreviewDialog";
 
 const fileChooseTextKeySuffixByFileType = {
   [NodeDefFileType.audio]: "Audio",
@@ -35,11 +36,14 @@ export const NodeImageOrVideoComponent = (props) => {
   const fileChooseTextKeySuffix = fileChooseTextKeySuffixByFileType[fileType];
 
   const {
+    closeImagePreview,
     fileName,
+    imagePreviewOpen,
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
     onFileOpenPress,
+    onImagePreviewPress,
     pickedFileUri,
     resizing,
   } = useNodeFileComponent({ nodeDef, nodeUuid });
@@ -51,7 +55,9 @@ export const NodeImageOrVideoComponent = (props) => {
         {!resizing && pickedFileUri && (
           <>
             {fileType === NodeDefFileType.image ? (
-              <Image source={{ uri: pickedFileUri }} style={styles.image} />
+              <TouchableHighlight onPress={onImagePreviewPress}>
+                <Image source={{ uri: pickedFileUri }} style={styles.image} />
+              </TouchableHighlight>
             ) : (
               <VView>
                 <IconButton
@@ -89,11 +95,19 @@ export const NodeImageOrVideoComponent = (props) => {
           </>
         )}
       </VView>
+
+      {imagePreviewOpen && (
+        <ImagePreviewDialog
+          fileName={fileName}
+          imageUri={pickedFileUri}
+          onClose={closeImagePreview}
+        />
+      )}
     </HView>
   );
 };
 
 NodeImageOrVideoComponent.propTypes = {
   nodeDef: PropTypes.object.isRequired,
-  nodeUuid: PropTypes.string
-}
+  nodeUuid: PropTypes.string,
+};

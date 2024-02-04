@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import PropTypes from "prop-types";
 
 import { NodeDefType, NodeDefs, Objects } from "@openforis/arena-core";
 
@@ -9,13 +10,13 @@ import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState"
 import { useStyles } from "./styles";
 
 export const NodeTextComponent = (props) => {
-  const { nodeDef, nodeUuid, style } = props;
+  const { nodeDef, nodeUuid, style, wrapperStyle } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
   }
 
-  const styles = useStyles();
+  const styles = useStyles({ wrapperStyle });
 
   const isNumeric = [NodeDefType.decimal, NodeDefType.integer].includes(
     nodeDef.type
@@ -57,7 +58,7 @@ export const NodeTextComponent = (props) => {
   };
 
   return (
-    <HView style={{ width: "100%" }}>
+    <HView style={styles.wrapper}>
       <TextInput
         editable={editable}
         error={invalidValue}
@@ -81,4 +82,11 @@ export const NodeTextComponent = (props) => {
       )}
     </HView>
   );
+};
+
+NodeTextComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  nodeUuid: PropTypes.string,
+  style: PropTypes.object,
+  wrapperStyle: PropTypes.object,
 };

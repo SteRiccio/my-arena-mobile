@@ -1,6 +1,7 @@
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
+import mime from "mime";
 
 import { Promises, Strings, UUIDs } from "@openforis/arena-core";
 
@@ -86,6 +87,15 @@ const getInfo = async (fileUri, ignoreErrors = true) => {
   }
 };
 
+const getNameFromUri = (uri) => uri.substring(uri.lastIndexOf("/") + 1);
+
+const getMimeTypeFromUri = (uri) => {
+  const fileName = getNameFromUri(uri);
+  return getMimeTypeFromName(fileName);
+};
+
+const getMimeTypeFromName = (fileName) => mime.getType(fileName);
+
 const getSize = async (fileUri, ignoreErrors = true) => {
   const info = await getInfo(fileUri, ignoreErrors);
   return info?.size ?? 0;
@@ -120,7 +130,12 @@ const writeJsonToFile = async ({ content, fileUri }) =>
 
 const isSharingAvailable = async () => Sharing.isAvailableAsync();
 
-const shareFile = async ({ url, mimeType, dialogTitle }) => {
+const shareFile = async ({
+  url,
+  mimeType: mimeTypeParam = null,
+  dialogTitle,
+}) => {
+  const mimeType = mimeTypeParam ?? getMimeTypeFromUri(url);
   await Sharing.shareAsync(url, { mimeType, dialogTitle });
 };
 
@@ -164,6 +179,9 @@ export const Files = {
   getDirSize,
   getFreeDiskStorage,
   getInfo,
+  getMimeTypeFromName,
+  getMimeTypeFromUri,
+  getNameFromUri,
   getSize,
   readJsonFromFile,
   isSharingAvailable,

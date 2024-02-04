@@ -26,7 +26,9 @@ const getApplicationInfo = async () => {
   return {
     buildNumber,
     version,
-    lastUpdateTime: Dates.formatForStorage(lastUpdateTime),
+    lastUpdateTime: lastUpdateTime
+      ? Dates.formatForStorage(lastUpdateTime)
+      : null,
   };
 };
 
