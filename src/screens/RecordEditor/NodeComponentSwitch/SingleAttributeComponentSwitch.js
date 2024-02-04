@@ -34,6 +34,7 @@ export const SingleAttributeComponentSwitch = (props) => {
     onFocus,
     parentNodeUuid,
     style,
+    wrapperStyle,
   } = props;
 
   const component = nodeDefComponentByType[nodeDef.type];
@@ -52,6 +53,7 @@ export const SingleAttributeComponentSwitch = (props) => {
       onFocus,
       parentNodeUuid,
       style,
+      wrapperStyle,
     })
   ) : (
     <Text textKey={`Type not supported (${nodeDef.type})`} />

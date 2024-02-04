@@ -22,6 +22,7 @@ export default {
   modifiedOn: "Modified on",
   name: "Name",
   networkNotAvailable: "Network not available!",
+  newItemWithParam: "New {{item}}",
   no: "No",
   noItemsMatchingSearch: "There is no item matching your search",
   path: "Path",

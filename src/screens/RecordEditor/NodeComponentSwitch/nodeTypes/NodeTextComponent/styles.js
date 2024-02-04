@@ -5,6 +5,9 @@ export const useStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
+    wrapper: {
+      width: "100%",
+    },
     textInput: {
       display: "flex",
       flex: 1,

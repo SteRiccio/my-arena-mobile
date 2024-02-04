@@ -1,17 +1,16 @@
 import React from "react";
-import { RadioButton } from "react-native-paper";
 
-import { HView } from "components";
+import { HView, RadioButton, RadioButtonGroup } from "components";
 import styles from "./styles";
 
 export const NodeCodeSingleRadioComponent = (props) => {
   const { editable, itemLabelFunction, items, onChange, value } = props;
 
   return (
-    <RadioButton.Group onValueChange={onChange} value={value}>
+    <RadioButtonGroup onValueChange={onChange} value={value}>
       <HView style={styles.container}>
         {items.map((item) => (
-          <RadioButton.Item
+          <RadioButton
             key={item.uuid}
             disabled={!editable}
             label={itemLabelFunction(item)}
@@ -20,6 +19,6 @@ export const NodeCodeSingleRadioComponent = (props) => {
           />
         ))}
       </HView>
-    </RadioButton.Group>
+    </RadioButtonGroup>
   );
 };

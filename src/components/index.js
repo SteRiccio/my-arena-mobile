@@ -22,6 +22,7 @@ export { MessageDialog } from "./MessageDialog";
 export { Modal } from "./Modal";
 export { ProgressBar } from "./ProgressBar";
 export { RadioButton } from "./RadioButton";
+export { RadioButtonGroup } from "./RadioButtonGroup";
 export { ScrollView } from "./ScrollView";
 export { SegmentedButtons } from "./SegmentedButtons";
 export { Searchbar } from "./Searchbar";

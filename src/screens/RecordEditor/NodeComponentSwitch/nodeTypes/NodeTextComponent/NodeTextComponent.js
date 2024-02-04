@@ -9,7 +9,7 @@ import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState"
 import { useStyles } from "./styles";
 
 export const NodeTextComponent = (props) => {
-  const { nodeDef, nodeUuid, style } = props;
+  const { nodeDef, nodeUuid, style, wrapperStyle } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
@@ -57,7 +57,7 @@ export const NodeTextComponent = (props) => {
   };
 
   return (
-    <HView style={{ width: "100%" }}>
+    <HView style={[styles.wrapper, wrapperStyle]}>
       <TextInput
         editable={editable}
         error={invalidValue}
