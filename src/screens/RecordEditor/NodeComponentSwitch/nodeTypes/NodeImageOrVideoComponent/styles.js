@@ -11,7 +11,7 @@ export default StyleSheet.create({
   image: {
     width: "100%",
     aspectRatio: 1,
-    resizeMode: "center",
+    resizeMode: "contain",
   },
   buttonsContainer: {
     flex: 0.5,

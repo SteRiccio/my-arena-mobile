@@ -15,7 +15,7 @@ export const NodeTextComponent = (props) => {
     console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
   }
 
-  const styles = useStyles();
+  const styles = useStyles({ wrapperStyle });
 
   const isNumeric = [NodeDefType.decimal, NodeDefType.integer].includes(
     nodeDef.type
@@ -57,7 +57,7 @@ export const NodeTextComponent = (props) => {
   };
 
   return (
-    <HView style={[styles.wrapper, wrapperStyle]}>
+    <HView style={styles.wrapper}>
       <TextInput
         editable={editable}
         error={invalidValue}
