@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import PropTypes from "prop-types";
 
 import { NodeDefType, NodeDefs, Objects } from "@openforis/arena-core";
 
@@ -81,4 +82,11 @@ export const NodeTextComponent = (props) => {
       )}
     </HView>
   );
+};
+
+NodeTextComponent.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  nodeUuid: PropTypes.string,
+  style: PropTypes.object,
+  wrapperStyle: PropTypes.object,
 };
