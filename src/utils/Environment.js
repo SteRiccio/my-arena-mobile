@@ -5,8 +5,10 @@ const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 const isAndroid = Platform.OS === "android";
+const isIOS = Platform.OS === "ios";
 
 export const Environment = {
   isExpoGo,
   isAndroid,
+  isIOS,
 };

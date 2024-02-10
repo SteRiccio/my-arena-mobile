@@ -6,7 +6,6 @@ import { Objects } from "@openforis/arena-core";
 
 import { ConnectionToRemoteServerButton } from "appComponents/ConnectionToRemoteServerButton";
 import {
-  Divider,
   ScrollView,
   SegmentedButtons,
   Slider,
@@ -18,7 +17,7 @@ import {
 } from "components";
 import { SettingsActions, SettingsSelectors } from "state";
 import { SettingsModel } from "./SettingsModel";
-import { NumberUtils } from "utils/NumberUtils";
+import { NumberUtils } from "utils";
 
 import styles from "./styles";
 
@@ -183,21 +182,20 @@ export const SettingsScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <VView>
+      <VView style={styles.settingsWrapper}>
         <ConnectionToRemoteServerButton />
-        {settingsPropertiesEntries.map(([key, prop], index) => (
-          <VView key={key} style={styles.settingsItemWrapper}>
-            <SettingsItem
-              settings={settings}
-              settingKey={key}
-              prop={prop}
-              onPropValueChange={onPropValueChange}
-            />
-            {index < Object.entries(SettingsModel.properties).length - 1 && (
-              <Divider />
-            )}
-          </VView>
-        ))}
+        {settingsPropertiesEntries
+          .filter(([, prop]) => !prop.isDisabled?.())
+          .map(([key, prop]) => (
+            <VView key={key} style={styles.settingsItemWrapper}>
+              <SettingsItem
+                settings={settings}
+                settingKey={key}
+                prop={prop}
+                onPropValueChange={onPropValueChange}
+              />
+            </VView>
+          ))}
       </VView>
     </ScrollView>
   );

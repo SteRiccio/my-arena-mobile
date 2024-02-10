@@ -1,6 +1,5 @@
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import * as Application from "expo-application";
-
 import { Dates } from "@openforis/arena-core";
 
 import { Environment } from "./Environment";
@@ -11,11 +10,13 @@ const { nativeBuildVersion: buildNumber, nativeApplicationVersion: version } =
 const appId = "mam";
 
 let SystemNavigationBar;
-let Clipboard;
+if (!Environment.isExpoGo && Environment.isAndroid) {
+  SystemNavigationBar = require("react-native-system-navigation-bar")?.default;
+}
 
+let Clipboard;
 if (!Environment.isExpoGo) {
-  SystemNavigationBar = require("react-native-system-navigation-bar");
-  Clipboard = require("@react-native-clipboard/clipboard");
+  Clipboard = require("@react-native-clipboard/clipboard")?.default;
 }
 
 const getLastUpdateTime = async () =>

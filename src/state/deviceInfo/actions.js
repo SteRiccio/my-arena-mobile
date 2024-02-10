@@ -51,7 +51,7 @@ const initDeviceInfo = () => async (dispatch) => {
   );
 };
 
-const determineBatteryStateUpdateActionPaylod = ({
+const determineBatteryStateUpdateActionPayload = ({
   batteryLevel,
   batteryState,
   batteryStateChanged,
@@ -120,19 +120,14 @@ const updatePowerState = () => async (dispatch, getState) => {
     // do not update state
     return;
   }
-  const payload = {};
-  if (batteryLevelChanged || batteryStateChanged) {
-    Object.assign(
-      payload,
-      determineBatteryStateUpdateActionPaylod({
-        batteryLevel,
-        batteryState,
-        batteryStateChanged,
-        batteryLevelMeasureStartTime,
-        batteryLevelAtStartTime,
-      })
-    );
-  }
+  const payload = determineBatteryStateUpdateActionPayload({
+    batteryLevel,
+    batteryState,
+    batteryStateChanged,
+    batteryLevelMeasureStartTime,
+    batteryLevelAtStartTime,
+  });
+
   dispatch({ type: DEVICE_INFO_UPDATE, payload });
 };
 
