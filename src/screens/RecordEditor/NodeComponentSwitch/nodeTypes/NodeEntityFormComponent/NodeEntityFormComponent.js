@@ -38,7 +38,6 @@ export const NodeEntityFormComponent = (props) => {
   return (
     <VirtualizedList
       ref={listRef}
-      automaticallyAdjustKeyboardInsets
       getItemCount={() => childrenDefs.length}
       getItem={(_data, index) => childrenDefs[index]}
       initialNumToRender={10}

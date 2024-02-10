@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { RadioButton } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
 import {
@@ -8,6 +7,8 @@ import {
   HView,
   Icon,
   Link,
+  RadioButton,
+  RadioButtonGroup,
   ScrollView,
   Text,
   TextInput,
@@ -136,13 +137,13 @@ export const SettingsRemoteConnectionScreen = () => {
       <VView style={styles.container}>
         {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
         <FieldSet headerKey="settingsRemoteConnection:serverUrl">
-          <RadioButton.Group
+          <RadioButtonGroup
             onValueChange={onServerUrlTypeChange}
             value={serverUrlType}
           >
             <HView>
               {Object.values(serverUrlTypes).map((type) => (
-                <RadioButton.Item
+                <RadioButton
                   key={type}
                   disabled={!networkAvailable}
                   label={t(`settingsRemoteConnection:serverUrlType.${type}`)}
@@ -150,7 +151,7 @@ export const SettingsRemoteConnectionScreen = () => {
                 />
               ))}
             </HView>
-          </RadioButton.Group>
+          </RadioButtonGroup>
           <HView>
             <TextInput
               disabled={

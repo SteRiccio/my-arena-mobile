@@ -3,7 +3,6 @@ import { Menu } from "react-native-paper";
 import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
-import { IconButton } from "./IconButton";
 import { Button } from "./Button";
 
 export const MenuButton = (props) => {
@@ -20,13 +19,7 @@ export const MenuButton = (props) => {
       style={style}
       visible={visible}
       onDismiss={closeMenu}
-      anchor={
-        icon ? (
-          <IconButton icon={icon} onPress={openMenu} />
-        ) : (
-          <Button textKey={label} onPress={onPress} />
-        )
-      }
+      anchor={<Button icon={icon} onPress={openMenu} textKey={label} />}
     >
       {items.map(({ key, disabled, icon, label, onPress }) => (
         <Menu.Item

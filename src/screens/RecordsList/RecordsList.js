@@ -256,6 +256,7 @@ export const RecordsList = () => {
       </VView>
       <HView style={styles.bottomActionBar}>
         <Button
+          icon="plus"
           onPress={onNewRecordPress}
           style={styles.newRecordButton}
           textKey="dataEntry:newRecord"
@@ -282,6 +283,7 @@ export const RecordsList = () => {
                 onPress: onExportAllRecordsPress,
               },
             ]}
+            label="common:export"
             style={styles.exportDataMenuButton}
           />
         )}

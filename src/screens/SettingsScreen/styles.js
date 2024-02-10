@@ -5,8 +5,9 @@ export default StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  settingsWrapper: {},
   settingsItemWrapper: {
-    marginVertical: 4,
+    paddingVertical: 12,
     borderBottomWidth: 1,
   },
   settingsFormItemVertical: {
