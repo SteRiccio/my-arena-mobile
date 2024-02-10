@@ -9,11 +9,13 @@ import {
   Icon,
   Text,
 } from "components";
+import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { useTranslation } from "localization";
 import { BatteryState } from "model";
 import { RecordFileService } from "service";
 import {
   DeviceInfoSelectors,
+  SettingsSelectors,
   SurveySelectors,
   useBatteryStateListener,
   useFreeDiskStorageMonitor,
@@ -87,6 +89,9 @@ const StatusBarPanel = (props) => {
           </FormItem>
         )}
       </FieldSet>
+
+      <GpsLockingEnabledWarning />
+
       <FieldSet headerKey="device:network.title">
         <FormItem labelKey="device:network.statusLabel">
           {t(
@@ -138,6 +143,9 @@ export const StatusBar = () => {
   useFreeDiskStorageMonitor();
   useIsNetworkConnectedMonitor();
 
+  const settings = SettingsSelectors.useSettings();
+  const { locationGpsLocked } = settings;
+
   const formatRemainingTimeCompact = (time) =>
     TimeUtils.formatRemainingTimeIfLessThan1Day({
       time,
@@ -181,6 +189,7 @@ export const StatusBar = () => {
                 </Text>
               )}
           </HView>
+          {locationGpsLocked && <Icon source="crosshairs-gps" size={20} />}
           <Icon
             source={isNetworkConnected ? "web" : "cloud-off-outline"}
             size={20}
