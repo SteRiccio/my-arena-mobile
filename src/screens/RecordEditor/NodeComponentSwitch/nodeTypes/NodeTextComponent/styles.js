@@ -1,10 +1,16 @@
 import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 
-export const useStyles = () => {
+export const useStyles = ({ wrapperStyle }) => {
   const theme = useTheme();
 
   return StyleSheet.create({
+    wrapper: StyleSheet.compose([
+      {
+        width: "100%",
+      },
+      wrapperStyle,
+    ]),
     textInput: {
       display: "flex",
       flex: 1,

@@ -3,7 +3,7 @@
     "name": "Arena Mobile Experiments",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "1.0.6",
+    "version": "1.0.11",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,11 +22,19 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 48
+      "versionCode": 53
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "org.stericcio.myarenamobile"
+      "buildNumber": "53",
+      "bundleIdentifier": "org.stericcio.myarenamobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Camera is used only when collecting images in file attributes (if defined in your survey).",
+        "NSLocationWhenInUseUsageDescription": "Location is used only when collecting coordinates in coordinate attributes (if defined in your survey).",
+        "NSMicrophoneUsageDescription": "Microfone is used only when recording audio or video in file attributes (if defined in your survey).",
+        "NSMotionUsageDescription": "Devices's acceleraometer is used only when using the 'navigator' in coordinate attributes (if defined in your survey).",
+        "NSPhotoLibraryUsageDescription": "Access to the photo library is required only when selecting images to be used in file attributes (if defined in your survey)."
+      },
+      "supportsTablet": true
     },
     "web": {
       "favicon": "./assets/favicon.png"

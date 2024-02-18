@@ -1,18 +1,19 @@
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import { NodeDefs, Nodes } from "@openforis/arena-core";
 
 import { Button, HView, IconButton, VView } from "components";
+import { useTranslation } from "localization";
 import {
   ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
+  MessageActions,
   SurveySelectors,
 } from "state";
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
-import { MessageActions } from "state/message";
-import { useCallback } from "react";
 
 export const MultipleAttributeComponentWrapper = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -24,6 +25,7 @@ export const MultipleAttributeComponentWrapper = (props) => {
   }
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const { nodes } = DataEntrySelectors.useRecordChildNodes({
@@ -76,13 +78,13 @@ export const MultipleAttributeComponentWrapper = (props) => {
             nodeDef={nodeDef}
             nodeUuid={node.uuid}
             parentNodeUuid={parentNodeUuid}
-            style={{ flex: 1 }}
+            wrapperStyle={{ flex: 1 }}
           />
           <IconButton icon="trash-can-outline" onPress={onDeletePress(node)} />
         </HView>
       ))}
       <Button icon="plus" onPress={onNewPress}>
-        New {nodeDefLabel}
+        {t("common:newItemWithParam", { item: nodeDefLabel })}
       </Button>
     </VView>
   );

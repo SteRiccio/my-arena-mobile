@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { NodeDefs, Records } from "@openforis/arena-core";
 
 import { Button, DataTable, Text, VView } from "components";
+import { SurveyDefs } from "model/utils/SurveyNodeDefs";
+import { RecordNodes } from "model/utils/RecordNodes";
 import {
   ConfirmActions,
   DataEntryActions,
@@ -11,8 +13,7 @@ import {
   DeviceInfoSelectors,
   SurveySelectors,
 } from "state";
-import { SurveyDefs } from "model/utils/SurveyNodeDefs";
-import { RecordNodes } from "model/utils/RecordNodes";
+import { useTranslation } from "localization";
 
 import styles from "./styles";
 
@@ -20,6 +21,7 @@ export const NodeMultipleEntityListComponent = (props) => {
   const { entityDef, parentEntityUuid } = props;
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   if (__DEV__) {
@@ -90,9 +92,6 @@ export const NodeMultipleEntityListComponent = (props) => {
 
   return (
     <VView style={styles.container}>
-      <Button icon="plus" onPress={onNewPress}>
-        New {nodeDefLabel}
-      </Button>
       {rows.length === 0 && (
         <Text textKey="No entities defined" variant="titleMedium" />
       )}
@@ -110,6 +109,9 @@ export const NodeMultipleEntityListComponent = (props) => {
           selectable
         />
       )}
+      <Button icon="plus" onPress={onNewPress}>
+        {t("common:newItemWithParam", { item: nodeDefLabel })}
+      </Button>
     </VView>
   );
 };

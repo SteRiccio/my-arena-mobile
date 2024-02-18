@@ -8,6 +8,7 @@ export const RadioButton = (props) => {
     <RNPRadioButton.Item
       disabled={disabled}
       label={label}
+      mode="android"
       onPress={onPress}
       status={checked ? "checked" : "unchecked"}
       style={[{ paddingVertical: 0, paddingHorizontal: 0 }, style]}

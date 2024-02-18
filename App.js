@@ -1,4 +1,5 @@
 import React from "react";
+import { KeyboardAvoidingView } from "react-native";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider as PaperProvider, ThemeProvider } from "react-native-paper";
@@ -11,14 +12,12 @@ import { JobMonitorDialog } from "appComponents/JobMonitorDialog";
 import { AppToast } from "appComponents/AppToast";
 import { ErrorFallbackComponent } from "appComponents/ErrorFallbackComponent";
 
-import { View } from "components";
 import { AppStack } from "navigation/AppStack";
 import { rootReducer } from "state/reducers";
 import { useEffectiveTheme } from "hooks";
+import { BaseStyles, Environment } from "utils";
 
 import { AppInitializer } from "./src/AppInitializer";
-
-import styles from "appStyles";
 
 const store = configureStore({ reducer: rootReducer });
 
@@ -29,6 +28,12 @@ const AppInnerContainer = () => {
     console.log(stackTrace, error);
   };
 
+  const internalContainer = (
+    <AppInitializer>
+      <AppStack />
+    </AppInitializer>
+  );
+
   return (
     <PaperProvider theme={theme}>
       <ThemeProvider theme={theme}>
@@ -36,12 +41,14 @@ const AppInnerContainer = () => {
           onError={onError}
           FallbackComponent={ErrorFallbackComponent}
         >
-          <View style={styles.container}>
-            <StatusBar style={theme.dark ? "light" : "dark"} />
-            <AppInitializer>
-              <AppStack />
-            </AppInitializer>
-          </View>
+          <StatusBar style={theme.dark ? "light" : "dark"} />
+          {Environment.isIOS ? (
+            <KeyboardAvoidingView behavior="height" style={BaseStyles.flexOne}>
+              {internalContainer}
+            </KeyboardAvoidingView>
+          ) : (
+            internalContainer
+          )}
         </ErrorBoundary>
         <AppMessageDialog />
         <AppConfirmDialog />

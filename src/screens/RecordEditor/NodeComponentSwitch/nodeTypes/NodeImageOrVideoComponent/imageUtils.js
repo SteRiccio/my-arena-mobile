@@ -95,6 +95,16 @@ const resizeToFitMaxSize = async ({ fileUri, maxSize }) => {
   });
 };
 
+const getSize = async (fileUri) =>
+  new Promise((resolve, reject) => {
+    Image.getSize(
+      fileUri,
+      (width, height) => resolve({ width, height }),
+      (error) => reject(error)
+    );
+  });
+
 export const ImageUtils = {
+  getSize,
   resizeToFitMaxSize,
 };

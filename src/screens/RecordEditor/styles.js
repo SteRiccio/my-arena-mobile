@@ -4,6 +4,7 @@ import { BaseStyles } from "utils/BaseStyles";
 const internalContainerWrapperInTablet = {
   ...BaseStyles.fullWidthAndHeight,
 };
+
 export default StyleSheet.create({
   externalContainerInTablet: {
     flex: 1,
@@ -12,8 +13,9 @@ export default StyleSheet.create({
     ...BaseStyles.fullHeight,
     width: "40%",
   },
-  internalContainerWrapperInTablet,
-
+  internalContainerWrapperInTablet: {
+    flex: 1,
+  },
   internalContainerWrapperInTabletPageSelectorOpen: {
     ...internalContainerWrapperInTablet,
     width: "60%",

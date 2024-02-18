@@ -5,10 +5,10 @@ import { RecordEditViewMode } from "model";
 import { HView, VView, View } from "components";
 import {
   DataEntrySelectors,
+  DeviceInfoSelectors,
   SettingsSelectors,
   SurveyOptionsSelectors,
 } from "state";
-import { DeviceInfoSelectors } from "state/deviceInfo";
 
 import { BottomNavigationBar } from "./BottomNavigationBar";
 import { RecordPageForm } from "./RecordPageForm";

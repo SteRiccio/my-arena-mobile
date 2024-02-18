@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+
 import { NodeDefType } from "@openforis/arena-core";
 
 import { DataEntrySelectors } from "state";
@@ -34,6 +36,7 @@ export const SingleAttributeComponentSwitch = (props) => {
     onFocus,
     parentNodeUuid,
     style,
+    wrapperStyle,
   } = props;
 
   const component = nodeDefComponentByType[nodeDef.type];
@@ -52,8 +55,18 @@ export const SingleAttributeComponentSwitch = (props) => {
       onFocus,
       parentNodeUuid,
       style,
+      wrapperStyle,
     })
   ) : (
     <Text textKey={`Type not supported (${nodeDef.type})`} />
   );
+};
+
+SingleAttributeComponentSwitch.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  nodeUuid: PropTypes.string,
+  onFocus: PropTypes.func,
+  parentNodeUuid: PropTypes.string,
+  style: PropTypes.object,
+  wrapperStyle: PropTypes.object,
 };

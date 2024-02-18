@@ -3943,7 +3943,7 @@ __metadata:
     react-native-keychain: "npm:^8.1.2"
     react-native-open-maps: "npm:^0.4.3"
     react-native-pager-view: "npm:6.2.3"
-    react-native-paper: "npm:^5.11.4"
+    react-native-paper: "npm:^5.12.3"
     react-native-paper-dropdown: "npm:^1.0.7"
     react-native-reanimated: "npm:~3.6.2"
     react-native-safe-area-context: "npm:4.8.2"
@@ -10681,7 +10681,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-paper@npm:^5.11.4":
+"react-native-paper@npm:^5.12.3":
   version: 5.12.3
   resolution: "react-native-paper@npm:5.12.3"
   dependencies:

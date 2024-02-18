@@ -9,20 +9,25 @@ import {
   Icon,
   Text,
 } from "components";
+import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { useTranslation } from "localization";
 import { BatteryState } from "model";
 import { RecordFileService } from "service";
 import {
   DeviceInfoSelectors,
+  SettingsSelectors,
   SurveySelectors,
   useBatteryStateListener,
   useFreeDiskStorageMonitor,
 } from "state";
-import { Files, TimeUtils } from "utils";
+import { useIsNetworkConnectedMonitor } from "state/deviceInfo/useIsNetworkConnectedMonitor";
+import { Environment, Files, TimeUtils } from "utils";
 
 import { BatteryIcon } from "./BatteryIcon";
 
 import styles from "./styles.js";
+
+const batteryStatusAvailable = !Environment.isIOS;
 
 const getBatteryPercent = (batteryLevel) =>
   `${Math.round(batteryLevel * 100)}%`;
@@ -34,6 +39,7 @@ const StatusBarPanel = (props) => {
     batteryTimeToDischargeFormattedShort,
     batteryTimeToFullChargeFormattedShort,
     freeDiskStorageFormatted,
+    isNetworkConnected,
   } = props;
 
   const { t } = useTranslation();
@@ -65,25 +71,38 @@ const StatusBarPanel = (props) => {
 
   return (
     <>
-      <FieldSet headerKey="device:battery.title">
-        <FormItem labelKey="device:battery.level">
-          {getBatteryPercent(batteryLevel)}
+      {batteryStatusAvailable && (
+        <FieldSet headerKey="device:battery.title">
+          <FormItem labelKey="device:battery.level">
+            {getBatteryPercent(batteryLevel)}
+          </FormItem>
+          {batteryState && (
+            <FormItem labelKey="device:battery.statusLabel">
+              {t(`device:battery.status.${batteryState}`)}
+            </FormItem>
+          )}
+          {batteryTimeToDischargeFormattedShort && (
+            <FormItem labelKey="device:battery.timeLeftToDischarge">
+              {batteryTimeToDischargeFormattedShort}
+            </FormItem>
+          )}
+          {batteryTimeToFullChargeFormattedShort && (
+            <FormItem labelKey="device:battery.timeLeftToFullCharge">
+              {batteryTimeToFullChargeFormattedShort}
+            </FormItem>
+          )}
+        </FieldSet>
+      )}
+      <GpsLockingEnabledWarning />
+
+      <FieldSet headerKey="device:network.title">
+        <FormItem labelKey="device:network.statusLabel">
+          {t(
+            `device:network.status.${
+              isNetworkConnected ? "connected" : "offline"
+            }`
+          )}
         </FormItem>
-        {batteryState && (
-          <FormItem labelKey="device:battery.statusLabel">
-            {t(`device:battery.status.${batteryState}`)}
-          </FormItem>
-        )}
-        {batteryTimeToDischargeFormattedShort && (
-          <FormItem labelKey="device:battery.timeLeftToDischarge">
-            {batteryTimeToDischargeFormattedShort}
-          </FormItem>
-        )}
-        {batteryTimeToFullChargeFormattedShort && (
-          <FormItem labelKey="device:battery.timeLeftToFullCharge">
-            {batteryTimeToFullChargeFormattedShort}
-          </FormItem>
-        )}
       </FieldSet>
       <FieldSet headerKey="device:internalMemory.title">
         <FormItem labelKey="device:internalMemory.storageAvailable">
@@ -94,9 +113,11 @@ const StatusBarPanel = (props) => {
             {recordFilesSize}
           </FormItem>
         )}
-        <FormItem labelKey="device:internalMemory.tempFilesSize">
-          {tempFilesSize}
-        </FormItem>
+        {tempFilesSize > 0 && (
+          <FormItem labelKey="device:internalMemory.tempFilesSize">
+            {tempFilesSize}
+          </FormItem>
+        )}
       </FieldSet>
     </>
   );
@@ -108,6 +129,7 @@ StatusBarPanel.propTypes = {
   batteryTimeToDischargeFormattedShort: PropTypes.string,
   batteryTimeToFullChargeFormattedShort: PropTypes.string,
   freeDiskStorageFormatted: PropTypes.string,
+  isNetworkConnected: PropTypes.bool,
 };
 
 export const StatusBar = () => {
@@ -119,10 +141,15 @@ export const StatusBar = () => {
     batteryTimeToDischarge,
     batteryTimeToFullCharge,
     freeDiskStorage,
+    isNetworkConnected,
   } = DeviceInfoSelectors.useDeviceInfo();
 
   useBatteryStateListener();
   useFreeDiskStorageMonitor();
+  useIsNetworkConnectedMonitor();
+
+  const settings = SettingsSelectors.useSettings();
+  const { locationGpsLocked } = settings;
 
   const formatRemainingTimeCompact = (time) =>
     TimeUtils.formatRemainingTimeIfLessThan1Day({
@@ -154,19 +181,28 @@ export const StatusBar = () => {
     <CollapsiblePanel
       headerContent={
         <HView style={styles.headerContent}>
-          <HView>
-            <BatteryIcon
-              batteryLevel={batteryLevel}
-              batteryState={batteryState}
-            />
-            <Text variant="titleSmall">{getBatteryPercent(batteryLevel)}</Text>
-            {batteryState === BatteryState.unplugged &&
-              batteryTimeToDischargeFormatted && (
-                <Text variant="titleSmall">
-                  {batteryTimeToDischargeFormatted}
-                </Text>
-              )}
-          </HView>
+          {batteryStatusAvailable && (
+            <HView>
+              <BatteryIcon
+                batteryLevel={batteryLevel}
+                batteryState={batteryState}
+              />
+              <Text variant="titleSmall">
+                {getBatteryPercent(batteryLevel)}
+              </Text>
+              {batteryState === BatteryState.unplugged &&
+                batteryTimeToDischargeFormatted && (
+                  <Text variant="titleSmall">
+                    {batteryTimeToDischargeFormatted}
+                  </Text>
+                )}
+            </HView>
+          )}
+          {locationGpsLocked && <Icon source="crosshairs-gps" size={20} />}
+          <Icon
+            source={isNetworkConnected ? "web" : "cloud-off-outline"}
+            size={20}
+          />
           <HView>
             <Icon source="chart-pie" size={20} />
             <Text variant="titleSmall">
@@ -188,6 +224,7 @@ export const StatusBar = () => {
           batteryTimeToFullChargeFormattedShort
         }
         freeDiskStorageFormatted={freeDiskStorageFormatted}
+        isNetworkConnected={isNetworkConnected}
       />
     </CollapsiblePanel>
   );

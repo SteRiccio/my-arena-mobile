@@ -81,7 +81,9 @@ export default {
     deleteConfirmMessage: "Delete the existing file?",
   },
   fileAttributeImage: {
+    imagePreview: "Image preview",
     pictureResizedToSize: "Picture resized to {{size}}",
+    resolution: "Resolution",
   },
   dataExport: {
     error: "Error exporting data. Details: {{details}}",

@@ -1,5 +1,6 @@
 import * as Battery from "expo-battery";
 import * as Device from "expo-device";
+import NetInfo from "@react-native-community/netinfo";
 
 import { BatteryState } from "model";
 import { Files } from "utils";
@@ -35,6 +36,7 @@ const initDeviceInfo = () => async (dispatch) => {
   const { batteryLevel, batteryState } = await _getPowerState();
 
   const freeDiskStorage = await Files.getFreeDiskStorage();
+  const { isConnected: isNetworkConnected } = await NetInfo.fetch();
 
   dispatch(
     setDeviceInfo({
@@ -44,11 +46,12 @@ const initDeviceInfo = () => async (dispatch) => {
       batteryLevelMeasureStartTime: Date.now(),
       deviceType,
       freeDiskStorage,
+      isNetworkConnected,
     })
   );
 };
 
-const determineBatteryStateUpdateActionPaylod = ({
+const determineBatteryStateUpdateActionPayload = ({
   batteryLevel,
   batteryState,
   batteryStateChanged,
@@ -117,19 +120,14 @@ const updatePowerState = () => async (dispatch, getState) => {
     // do not update state
     return;
   }
-  const payload = {};
-  if (batteryLevelChanged || batteryStateChanged) {
-    Object.assign(
-      payload,
-      determineBatteryStateUpdateActionPaylod({
-        batteryLevel,
-        batteryState,
-        batteryStateChanged,
-        batteryLevelMeasureStartTime,
-        batteryLevelAtStartTime,
-      })
-    );
-  }
+  const payload = determineBatteryStateUpdateActionPayload({
+    batteryLevel,
+    batteryState,
+    batteryStateChanged,
+    batteryLevelMeasureStartTime,
+    batteryLevelAtStartTime,
+  });
+
   dispatch({ type: DEVICE_INFO_UPDATE, payload });
 };
 
@@ -144,6 +142,10 @@ const updateFreeDiskStorage = () => async (dispatch, getState) => {
   dispatch({ type: DEVICE_INFO_UPDATE, payload: { freeDiskStorage } });
 };
 
+const updateIsNetworkConnected = (isNetworkConnected) => async (dispatch) => {
+  dispatch({ type: DEVICE_INFO_UPDATE, payload: { isNetworkConnected } });
+};
+
 export const DeviceInfoActions = {
   DEVICE_INFO_SET,
   DEVICE_INFO_UPDATE,
@@ -153,4 +155,5 @@ export const DeviceInfoActions = {
   startPowerStateMonitor,
   updatePowerState,
   updateFreeDiskStorage,
+  updateIsNetworkConnected,
 };

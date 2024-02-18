@@ -1,10 +1,10 @@
 import React from "react";
-import { Dialog, Portal, RadioButton, useTheme } from "react-native-paper";
+import { Dialog, Portal, useTheme } from "react-native-paper";
 import SwipeButton from "rn-swipe-button";
 
 import { useConfirmDialog } from "state/confirm/useConfirmDialog";
 
-import { Button, Text, VView } from "components";
+import { Button, RadioButton, RadioButtonGroup, Text, VView } from "components";
 import { useTranslation } from "localization";
 
 export const AppConfirmDialog = () => {
@@ -41,20 +41,20 @@ export const AppConfirmDialog = () => {
             textParams={messageParams}
           />
           {singleChoiceOptions?.length > 0 && (
-            <RadioButton.Group
+            <RadioButtonGroup
               onValueChange={onSingleChoiceOptionChange}
               value={selectedSingleChoiceValue}
             >
               <VView transparent>
                 {singleChoiceOptions.map((option) => (
-                  <RadioButton.Item
+                  <RadioButton
                     key={option.value}
                     label={t(option.label)}
                     value={option.value}
                   />
                 ))}
               </VView>
-            </RadioButton.Group>
+            </RadioButtonGroup>
           )}
           {swipeToConfirm && (
             <SwipeButton

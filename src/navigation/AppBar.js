@@ -1,12 +1,14 @@
 import { useCallback, useState } from "react";
 import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { useDispatch } from "react-redux";
+import { BackHandler } from "react-native";
 import PropTypes from "prop-types";
 
 import { useScreenKey } from "hooks";
 import { ScreenViewMode } from "model";
 import { useTranslation } from "localization";
 import {
+  ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
   ScreenOptionsActions,
@@ -15,6 +17,7 @@ import {
 } from "state";
 import { screenKeys } from "screens";
 import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
+import { Environment } from "utils";
 
 export const AppBar = (props) => {
   const { back, navigation, options } = props;
@@ -86,19 +89,35 @@ export const AppBar = (props) => {
         >
           <Menu.Item
             onPress={() => {
-              navigation.navigate(screenKeys.surveysListLocal);
               toggleMenu();
+              navigation.navigate(screenKeys.surveysListLocal);
             }}
-            title="Surveys"
+            title={t("surveys:title")}
           />
           <Divider />
           <Menu.Item
             onPress={() => {
-              navigation.navigate(screenKeys.settings);
               toggleMenu();
+              navigation.navigate(screenKeys.settings);
             }}
-            title="Settings"
+            title={t("settings:title")}
           />
+          {Environment.isAndroid && (
+            <Menu.Item
+              onPress={() => {
+                toggleMenu();
+                dispatch(
+                  ConfirmActions.show({
+                    titleKey: "app:confirmExit.title",
+                    confirmButtonTextKey: "common:exit",
+                    messageKey: "app:confirmExit.message",
+                    onConfirm: BackHandler.exitApp,
+                  })
+                );
+              }}
+              title={t("common:exit")}
+            />
+          )}
         </Menu>
       )}
     </RNPAppbar.Header>

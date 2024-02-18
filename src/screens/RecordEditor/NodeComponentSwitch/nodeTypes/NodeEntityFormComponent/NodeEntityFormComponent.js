@@ -38,7 +38,6 @@ export const NodeEntityFormComponent = (props) => {
   return (
     <VirtualizedList
       ref={listRef}
-      style={styles.container}
       getItemCount={() => childrenDefs.length}
       getItem={(_data, index) => childrenDefs[index]}
       initialNumToRender={10}
@@ -52,6 +51,7 @@ export const NodeEntityFormComponent = (props) => {
           onFocus={onFormItemFocus}
         />
       )}
+      style={styles.container}
     />
     // <ScrollView
     //   nestedScrollEnabled

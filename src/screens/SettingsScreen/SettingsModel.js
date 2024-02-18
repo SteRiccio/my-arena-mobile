@@ -1,4 +1,5 @@
 import { ThemesSettings } from "model";
+import { Environment } from "utils/Environment";
 
 const propertyType = {
   boolean: "boolean",
@@ -19,6 +20,7 @@ const properties = {
   fullScreen: {
     type: propertyType.boolean,
     labelKey: "settings:fullScreen",
+    isDisabled: () => Environment.isIOS
   },
   keepScreenAwake: {
     type: propertyType.boolean,
