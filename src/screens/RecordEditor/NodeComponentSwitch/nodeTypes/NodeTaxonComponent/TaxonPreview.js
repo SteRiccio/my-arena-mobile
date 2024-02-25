@@ -39,5 +39,6 @@ ${vernacularName} (${vernacularNameLangCode})`;
 };
 
 TaxonPreview.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
   taxon: PropTypes.object.isRequired,
 };

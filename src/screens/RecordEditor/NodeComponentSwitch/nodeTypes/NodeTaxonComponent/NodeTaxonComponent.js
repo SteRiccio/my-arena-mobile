@@ -1,15 +1,11 @@
 import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
-import { NodeDefs, NodeValues, Objects, Records } from "@openforis/arena-core";
+import { NodeDefs, NodeValues } from "@openforis/arena-core";
 
 import { Button, Text, VView, View } from "components";
 import { Taxa } from "model/Taxa";
-import {
-  DataEntrySelectors,
-  SurveyOptionsSelectors,
-  SurveySelectors,
-} from "state";
+import { SurveyOptionsSelectors, SurveySelectors } from "state";
 
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { useItemsFilter } from "../useItemsFilter";
@@ -77,7 +73,11 @@ export const NodeTaxonComponent = (props) => {
         )}
       </View>
       {viewMode === RecordEditViewMode.oneNode && (
-        <NodeTaxonAutocomplete taxa={taxa} updateNodeValue={updateNodeValue} />
+        <NodeTaxonAutocomplete
+          nodeDef={nodeDef}
+          taxa={taxa}
+          updateNodeValue={updateNodeValue}
+        />
       )}
       {viewMode === RecordEditViewMode.form && (
         <>
