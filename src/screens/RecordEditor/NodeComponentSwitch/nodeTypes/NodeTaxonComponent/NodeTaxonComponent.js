@@ -43,20 +43,13 @@ export const NodeTaxonComponent = (props) => {
   const taxonomyUuid = NodeDefs.getTaxonomyUuid(nodeDef);
 
   const _taxa = useTaxa({ survey, taxonomyUuid });
-  let taxa = _taxa;
-  if (!Objects.isEmpty(nodeDef.propsAdvanced?.itemsFilter)) {
-    const record = DataEntrySelectors.useRecord();
-    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
-    taxa = useItemsFilter({
-      survey,
-      nodeDef,
-      record,
-      parentNode,
-      items: _taxa,
-      alwaysIncludeItemFunction: (item) =>
-        [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
-    });
-  }
+  const taxa = useItemsFilter({
+    nodeDef,
+    parentNodeUuid,
+    items: _taxa,
+    alwaysIncludeItemFunction: (item) =>
+      [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
+  });
 
   const selectedTaxon = useMemo(() => {
     if (!value) return null;
@@ -78,7 +71,7 @@ export const NodeTaxonComponent = (props) => {
     <VView>
       <View style={{ height: selectedTaxonContainerHeight }}>
         {selectedTaxon ? (
-          <TaxonPreview taxon={selectedTaxon} />
+          <TaxonPreview nodeDef={nodeDef} taxon={selectedTaxon} />
         ) : (
           <Text textKey="dataEntry:taxon.taxonNotSelected" />
         )}

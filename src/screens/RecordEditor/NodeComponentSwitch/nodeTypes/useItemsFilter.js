@@ -1,25 +1,31 @@
-import { useMemo } from "react";
+import { useSelector } from "react-redux";
 
-import { Objects, RecordExpressionEvaluator } from "@openforis/arena-core";
+import {
+  NodeDefs,
+  Objects,
+  RecordExpressionEvaluator,
+  Records,
+} from "@openforis/arena-core";
+
+import { DataEntrySelectors, SurveySelectors } from "state";
 
 export const useItemsFilter = ({
-  survey,
   nodeDef,
-  record,
-  parentNode,
+  parentNodeUuid,
   items,
   alwaysIncludeItemFunction = null,
-}) => {
-  const itemsFilter = nodeDef.propsAdvanced?.itemsFilter;
+}) =>
+  useSelector((state) => {
+    const itemsFilter = NodeDefs.getItemsFilter(nodeDef);
+    if (items.length === 0 || Objects.isEmpty(itemsFilter)) return items;
 
-  return useMemo(() => {
-    const itemsArray = Object.values(items || {});
-    if (itemsArray.length === 0 || Objects.isEmpty(itemsFilter))
-      return itemsArray;
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = DataEntrySelectors.selectRecord(state);
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
 
     const expressionEvaluator = new RecordExpressionEvaluator();
 
-    return itemsArray.filter((item) => {
+    return items.filter((item) => {
       if (alwaysIncludeItemFunction?.(item)) return true;
 
       try {
@@ -34,12 +40,4 @@ export const useItemsFilter = ({
         return false;
       }
     });
-  }, [
-    items,
-    itemsFilter,
-    alwaysIncludeItemFunction,
-    parentNode,
-    record,
-    survey,
-  ]);
-};
+  }, Objects.isEqual);
