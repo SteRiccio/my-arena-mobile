@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 
 import { Text } from "components/Text";
+import { NodeDefs } from "@openforis/arena-core";
 
 export const TaxonPreview = (props) => {
-  const { taxon } = props;
+  const { nodeDef, taxon } = props;
   const { code, scientificName } = taxon.props;
   const {
     scientificName: scientificNameUnlisted,
@@ -11,12 +12,20 @@ export const TaxonPreview = (props) => {
     vernacularNameLangCode,
   } = taxon;
 
+  const visibleFields = NodeDefs.getVisibleFields(nodeDef);
+  const codeVisible = !visibleFields || visibleFields.includes("code");
+  const vernacularNameVisible =
+    !visibleFields || visibleFields.includes("vernacularName");
+
   const scientificNameShown = scientificNameUnlisted ?? scientificName;
 
-  const vernacularNamePart = !vernacularName
-    ? ""
-    : `
+  const vernacularNamePart =
+    !vernacularName || !vernacularNameVisible
+      ? ""
+      : `
 ${vernacularName} (${vernacularNameLangCode})`;
+
+  const codePart = codeVisible ? `(${code})` : "";
 
   return (
     <Text
@@ -24,11 +33,12 @@ ${vernacularName} (${vernacularNameLangCode})`;
       style={{ flex: 1 }}
       variant="bodyLarge"
     >
-      {`${scientificNameShown} (${code})${vernacularNamePart}`}
+      {`${scientificNameShown} ${codePart}${vernacularNamePart}`}
     </Text>
   );
 };
 
 TaxonPreview.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
   taxon: PropTypes.object.isRequired,
 };

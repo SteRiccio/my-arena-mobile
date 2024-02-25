@@ -5,8 +5,6 @@ import {
   CategoryItems,
   NodeDefs,
   NodeValues,
-  Objects,
-  Records,
   Surveys,
 } from "@openforis/arena-core";
 
@@ -53,19 +51,12 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
         });
   }, [survey, nodeDef, parentItemUuid]);
 
-  let items = _items;
+  const items = useItemsFilter({
+    nodeDef,
+    parentNodeUuid,
+    items: _items,
+  });
 
-  if (!Objects.isEmpty(nodeDef.propsAdvanced?.itemsFilter)) {
-    const record = DataEntrySelectors.useRecord();
-    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
-    items = useItemsFilter({
-      survey,
-      nodeDef,
-      record,
-      parentNode,
-      items: _items,
-    });
-  }
   const selectedItems = useMemo(
     () =>
       items.filter((item) =>

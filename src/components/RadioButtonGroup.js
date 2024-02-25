@@ -13,5 +13,5 @@ export const RadioButtonGroup = (props) => {
 RadioButtonGroup.propTypes = {
   children: PropTypes.node.isRequired,
   onValueChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
 };

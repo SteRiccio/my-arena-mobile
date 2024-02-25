@@ -4,13 +4,23 @@ import PropTypes from "prop-types";
 import { SelectableListWithFilter } from "components";
 
 import { Taxa } from "model/Taxa";
+import { NodeDefs } from "@openforis/arena-core";
 
 const itemKeyExtractor = (item) => `${item?.uuid}_${item?.vernacularNameUuid}`;
 
-const itemLabelExtractor = (taxon) => {
-  const { code, scientificName } = taxon.props;
-  return `(${code}) ${scientificName}`;
-};
+const itemLabelExtractor =
+  ({ nodeDef }) =>
+  (taxon) => {
+    const { code, scientificName } = taxon.props;
+    const visibleFields = NodeDefs.getVisibleFields(nodeDef);
+    const codeVisible = !visibleFields || visibleFields.includes("code");
+    const parts = [];
+    if (codeVisible) {
+      parts.push(`(${code})`);
+    }
+    parts.push(scientificName);
+    return parts.join(" ");
+  };
 
 const itemDescriptionExtractor = (taxon) => {
   const { vernacularName, vernacularNameLangCode } = taxon;
@@ -43,7 +53,7 @@ const extractPartsForSearch = (value) =>
   value?.split(" ").map(preparePartForSearch) ?? [];
 
 const filterItems =
-  ({ unlistedTaxon, unknownTaxon }) =>
+  ({ nodeDef, unlistedTaxon, unknownTaxon }) =>
   ({ items: taxa, filterInputValue }) => {
     if ((filterInputValue?.trim().length ?? 0) === 0) {
       return [];
@@ -63,7 +73,7 @@ const filterItems =
       const codeForSearch = preparePartForSearch(code);
       const vernacularNameParts = extractPartsForSearch(vernacularName);
 
-      const itemLabel = itemLabelExtractor(taxon);
+      const itemLabel = itemLabelExtractor({ nodeDef })(taxon);
       const itemLabelParts = extractPartsForSearch(itemLabel);
 
       const match = inputValueParts.every(
@@ -83,7 +93,7 @@ const filterItems =
   };
 
 export const NodeTaxonAutocomplete = (props) => {
-  const { selectedTaxon, taxa, updateNodeValue } = props;
+  const { nodeDef, selectedTaxon, taxa, updateNodeValue } = props;
 
   const unlistedTaxon = taxa.find(
     (taxon) => taxon.props.code === Taxa.unlistedCode
@@ -103,9 +113,9 @@ export const NodeTaxonAutocomplete = (props) => {
 
   return (
     <SelectableListWithFilter
-      filterItems={filterItems({ unlistedTaxon, unknownTaxon })}
+      filterItems={filterItems({ nodeDef, unlistedTaxon, unknownTaxon })}
       itemKeyExtractor={itemKeyExtractor}
-      itemLabelExtractor={itemLabelExtractor}
+      itemLabelExtractor={itemLabelExtractor({ nodeDef })}
       itemDescriptionExtractor={itemDescriptionExtractor}
       items={taxa}
       onSelectedItemsChange={onSelectedItemsChange}
@@ -115,6 +125,7 @@ export const NodeTaxonAutocomplete = (props) => {
 };
 
 NodeTaxonAutocomplete.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
   selectedTaxon: PropTypes.object,
   taxa: PropTypes.array.isRequired,
   updateNodeValue: PropTypes.func.isRequired,

@@ -29,6 +29,7 @@ export const NodeTaxonEditDialog = (props) => {
       parentNodeUuid={parentNodeUuid}
     >
       <NodeTaxonAutocomplete
+        nodeDef={nodeDef}
         selectedTaxon={selectedTaxon}
         taxa={taxa}
         updateNodeValue={updateNodeValue}

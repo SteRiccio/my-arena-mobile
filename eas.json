@@ -12,11 +12,17 @@
     },
     "preview": {
       "distribution": "internal",
+      "android": {
+        "image": "latest"
+      },
       "ios": {
         "resourceClass": "m1-medium"
       }
     },
     "production": {
+      "android": {
+        "image": "latest"
+      },
       "ios": {
         "resourceClass": "m1-medium"
       }

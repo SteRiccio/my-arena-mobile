@@ -1,15 +1,11 @@
 import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
-import { NodeDefs, NodeValues, Objects, Records } from "@openforis/arena-core";
+import { NodeDefs, NodeValues } from "@openforis/arena-core";
 
 import { Button, Text, VView, View } from "components";
 import { Taxa } from "model/Taxa";
-import {
-  DataEntrySelectors,
-  SurveyOptionsSelectors,
-  SurveySelectors,
-} from "state";
+import { SurveyOptionsSelectors, SurveySelectors } from "state";
 
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { useItemsFilter } from "../useItemsFilter";
@@ -43,20 +39,13 @@ export const NodeTaxonComponent = (props) => {
   const taxonomyUuid = NodeDefs.getTaxonomyUuid(nodeDef);
 
   const _taxa = useTaxa({ survey, taxonomyUuid });
-  let taxa = _taxa;
-  if (!Objects.isEmpty(nodeDef.propsAdvanced?.itemsFilter)) {
-    const record = DataEntrySelectors.useRecord();
-    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
-    taxa = useItemsFilter({
-      survey,
-      nodeDef,
-      record,
-      parentNode,
-      items: _taxa,
-      alwaysIncludeItemFunction: (item) =>
-        [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
-    });
-  }
+  const taxa = useItemsFilter({
+    nodeDef,
+    parentNodeUuid,
+    items: _taxa,
+    alwaysIncludeItemFunction: (item) =>
+      [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
+  });
 
   const selectedTaxon = useMemo(() => {
     if (!value) return null;
@@ -78,13 +67,17 @@ export const NodeTaxonComponent = (props) => {
     <VView>
       <View style={{ height: selectedTaxonContainerHeight }}>
         {selectedTaxon ? (
-          <TaxonPreview taxon={selectedTaxon} />
+          <TaxonPreview nodeDef={nodeDef} taxon={selectedTaxon} />
         ) : (
           <Text textKey="dataEntry:taxon.taxonNotSelected" />
         )}
       </View>
       {viewMode === RecordEditViewMode.oneNode && (
-        <NodeTaxonAutocomplete taxa={taxa} updateNodeValue={updateNodeValue} />
+        <NodeTaxonAutocomplete
+          nodeDef={nodeDef}
+          taxa={taxa}
+          updateNodeValue={updateNodeValue}
+        />
       )}
       {viewMode === RecordEditViewMode.form && (
         <>
