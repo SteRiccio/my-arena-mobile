@@ -5,8 +5,6 @@ import {
   CategoryItems,
   NodeDefs,
   NodeValues,
-  Objects,
-  Records,
   Surveys,
 } from "@openforis/arena-core";
 
