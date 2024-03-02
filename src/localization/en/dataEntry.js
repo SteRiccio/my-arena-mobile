@@ -88,8 +88,7 @@ export default {
   dataExport: {
     error: "Error exporting data. Details: {{details}}",
     selectTarget: "Select export target",
-    selectTargetMessage: `Export file size: {{fileSize}}.
-Select the target of the export:`,
+    selectTargetMessage: `Select the target of the export:`,
     target: {
       remote: "Remote server",
       local: "Local folder (Download)",

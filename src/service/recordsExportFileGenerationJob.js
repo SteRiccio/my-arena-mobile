@@ -66,6 +66,9 @@ export class RecordsExportFileGenerationJob extends JobMobile {
         (nodeDef) => NodeDefs.getType(nodeDef) === NodeDefType.file
       );
 
+      const tempFilesDirUri = Files.path(tempFolderUri, FILES_FOLDER_NAME);
+      await Files.mkDir(tempFilesDirUri);
+
       const files = [];
 
       await Promises.each(recordsToExport, async (recordSummary) => {
@@ -99,8 +102,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
 
       if (files.length > 0) {
         const tempFilesSummaryJsonFileUri = Files.path(
-          tempFolderUri,
-          FILES_FOLDER_NAME,
+          tempFilesDirUri,
           FILES_SUMMARY_JSON_FILENAME
         );
         await Files.writeJsonToFile({

@@ -132,7 +132,7 @@ const _onExportFileGenerationSucceeded = async ({
         value: type,
         label: `dataEntry:dataExport.target.${type}`,
       })),
-      defaultSingleChoiceValue: exportType.remote,
+      defaultSingleChoiceValue: availableExportTypes[0],
       confirmButtonTextKey: "common:export",
     })
   );
