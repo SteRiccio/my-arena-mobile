@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Image, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
 import {
@@ -7,12 +7,14 @@ import {
   Dialog,
   FormItem,
   HView,
+  Image,
   IconButton,
   LoadingIcon,
   VView,
 } from "components";
 import { ImageUtils } from "./imageUtils";
 import { Files } from "utils";
+import { useImageFile } from "hooks/useImageFile";
 
 const styles = StyleSheet.create({
   dialog: { display: "flex", height: "90%", padding: 5 },
@@ -22,9 +24,11 @@ const styles = StyleSheet.create({
 });
 
 const ImageInfo = (props) => {
-  const { imageUri } = props;
+  const { imageUri: imageUriProp } = props;
 
   const [info, setInfo] = useState(null);
+
+  const imageUri = useImageFile(imageUriProp);
 
   const { width, height, size } = info ?? {};
 

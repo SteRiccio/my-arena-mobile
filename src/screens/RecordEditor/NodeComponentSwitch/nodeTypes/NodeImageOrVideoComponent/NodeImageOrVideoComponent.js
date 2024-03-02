@@ -1,10 +1,11 @@
-import { Image, TouchableHighlight } from "react-native";
+import { TouchableHighlight } from "react-native";
 import PropTypes from "prop-types";
 
 import {
   Button,
   HView,
   IconButton,
+  Image,
   Loader,
   Text,
   VView,

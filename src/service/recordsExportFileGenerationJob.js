@@ -34,7 +34,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
   async execute() {
     const { survey, recordUuids, user } = this.context;
 
-    const tempFolderUri = Files.createTempFolder();
+    const tempFolderUri = await Files.createTempFolder();
 
     try {
       const tempRecordsFolderUri = Files.path(
@@ -65,6 +65,9 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       const nodeDefsFile = Object.values(survey.nodeDefs).filter(
         (nodeDef) => NodeDefs.getType(nodeDef) === NodeDefType.file
       );
+
+      const tempFilesDirUri = Files.path(tempFolderUri, FILES_FOLDER_NAME);
+      await Files.mkDir(tempFilesDirUri);
 
       const files = [];
 
@@ -99,8 +102,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
 
       if (files.length > 0) {
         const tempFilesSummaryJsonFileUri = Files.path(
-          tempFolderUri,
-          FILES_FOLDER_NAME,
+          tempFilesDirUri,
           FILES_SUMMARY_JSON_FILENAME
         );
         await Files.writeJsonToFile({
