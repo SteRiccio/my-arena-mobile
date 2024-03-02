@@ -1,5 +1,6 @@
 export { useAppInfo } from "./useAppInfo";
 export { useEffectiveTheme } from "./useEffectiveTheme";
+export { useImageFile } from "./useImageFile";
 export { useIsMountedRef } from "./useIsMountedRef";
 export { useIsNetworkConnected } from "./useIsNetworkConnected";
 export { useKeyboardIsVisible } from "./useKeyboardIsVisible";

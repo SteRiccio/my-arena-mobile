@@ -34,7 +34,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
   async execute() {
     const { survey, recordUuids, user } = this.context;
 
-    const tempFolderUri = Files.createTempFolder();
+    const tempFolderUri = await Files.createTempFolder();
 
     try {
       const tempRecordsFolderUri = Files.path(

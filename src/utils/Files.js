@@ -13,14 +13,18 @@ const MIME_TYPES = {
   zip: "application/zip ",
 };
 
-const { cacheDirectory, documentDirectory, deleteAsync: del } = FileSystem;
+const { cacheDirectory, documentDirectory } = FileSystem;
 
 const path = (...parts) =>
   parts.map(Strings.removeSuffix(PATH_SEPARATOR)).join(PATH_SEPARATOR);
 
 const getTempFolderParentUri = () => path(cacheDirectory, TEMP_FOLDER_NAME);
 
-const createTempFolder = () => path(getTempFolderParentUri(), UUIDs.v4());
+const createTempFolder = async () => {
+  const uri = path(getTempFolderParentUri(), UUIDs.v4());
+  await mkDir(uri);
+  return uri;
+};
 
 const mkDir = async (dir) =>
   FileSystem.makeDirectoryAsync(dir, {
@@ -89,6 +93,13 @@ const getInfo = async (fileUri, ignoreErrors = true) => {
 
 const getNameFromUri = (uri) => uri.substring(uri.lastIndexOf("/") + 1);
 
+const getExtension = (uri) => {
+  const indexOfDot = uri.lastIndexOf(".");
+  return indexOfDot < 0 || indexOfDot === uri.length
+    ? ""
+    : uri.substring(indexOfDot + 1);
+};
+
 const getMimeTypeFromUri = (uri) => {
   const fileName = getNameFromUri(uri);
   return getMimeTypeFromName(fileName);
@@ -105,6 +116,12 @@ const readJsonFromFile = async ({ fileUri }) => {
   const content = await FileSystem.readAsStringAsync(fileUri);
   return JSON.parse(content);
 };
+
+const copyFile = async ({ from, to }) => FileSystem.copyAsync({ from, to });
+
+const moveFile = async ({ from, to }) => FileSystem.moveAsync({ from, to });
+
+const del = async (fileUri) => FileSystem.deleteAsync(fileUri);
 
 const moveFileToDownloadFolder = async (fileUri) => {
   const permissionsResponse = await MediaLibrary.requestPermissionsAsync(true);
@@ -182,10 +199,13 @@ export const Files = {
   getMimeTypeFromName,
   getMimeTypeFromUri,
   getNameFromUri,
+  getExtension,
   getSize,
   readJsonFromFile,
   isSharingAvailable,
   shareFile,
+  copyFile,
+  moveFile,
   moveFileToDownloadFolder,
   writeJsonToFile,
   writeStringToFile,
