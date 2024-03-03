@@ -8,19 +8,20 @@ const { nativeBuildVersion: buildNumber, nativeApplicationVersion: version } =
   Application;
 
 const appId = "mam";
+const { isAndroid, isExpoGo, platform } = Environment;
 
 let SystemNavigationBar;
-if (!Environment.isExpoGo && Environment.isAndroid) {
+if (!isExpoGo && isAndroid) {
   SystemNavigationBar = require("react-native-system-navigation-bar")?.default;
 }
 
 let Clipboard;
-if (!Environment.isExpoGo) {
+if (!isExpoGo) {
   Clipboard = require("@react-native-clipboard/clipboard")?.default;
 }
 
 const getLastUpdateTime = async () =>
-  Environment.isAndroid ? Application.getLastUpdateTimeAsync() : null;
+  isAndroid ? Application.getLastUpdateTimeAsync() : null;
 
 const getApplicationInfo = async () => {
   const lastUpdateTime = await getLastUpdateTime();
@@ -35,7 +36,8 @@ const getApplicationInfo = async () => {
 
 const getRecordAppInfo = () => ({
   appId,
-  appVersion: version,
+  version,
+  platform,
 });
 
 const setFullScreen = async (fullScreen) => {
