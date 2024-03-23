@@ -13,20 +13,12 @@ import styles from "../SelectableListWithFilter/styles";
 const ListItemIcon = (props) => {
   const { multiple, checked, editable, onItemSelect, item } = props;
 
-  if (multiple)
-    return (
-      <Checkbox
-        checked={checked}
-        disabled={!editable}
-        onPress={() => onItemSelect(item)}
-      />
-    );
-  return (
-    <RadioButton
-      checked={checked}
-      disabled={!editable}
-      onPress={() => onItemSelect(item)}
-    />
+  const onPress = useCallback(() => onItemSelect(item), [onItemSelect]);
+
+  return multiple ? (
+    <Checkbox checked={checked} disabled={!editable} onPress={onPress} />
+  ) : (
+    <RadioButton checked={checked} disabled={!editable} onPress={onPress} />
   );
 };
 
@@ -104,6 +96,7 @@ export const SelectableList = (props) => {
     <FlatList
       data={items}
       keyExtractor={itemKeyExtractor}
+      persistentScrollbar
       renderItem={renderItem}
       style={style}
     />
