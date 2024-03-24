@@ -4,6 +4,7 @@ export default StyleSheet.create({
   container: {
     height: "100%",
     gap: 10,
+    padding: 4,
   },
   header: {
     alignItems: "center",

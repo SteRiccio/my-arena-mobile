@@ -12,7 +12,7 @@ import { Text } from "../Text";
 import { VView } from "../VView";
 import { View } from "../View";
 
-import { SelectableList } from "../SelectableList/SelectableList";
+import { SelectableList } from "../SelectableList";
 
 import styles from "./styles";
 
@@ -223,7 +223,7 @@ SelectableListWithFilter.defaultProps = {
   itemDescriptionExtractor: (item) => item?.description,
   items: [],
   itemsCountToShowFilter: 10,
-  maxItemsToShow: 50,
+  maxItemsToShow: 1000,
   multiple: false,
   selectedItems: [],
 };
