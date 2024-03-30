@@ -3,8 +3,7 @@ import { Chip } from "react-native-paper";
 import PropTypes from "prop-types";
 import debounce from "lodash.debounce";
 
-import { Arrays } from "@openforis/arena-core";
-import { FilteredStaticItemsProvider } from "model/FilteredStaticItemsProvider";
+import { Arrays, Objects } from "@openforis/arena-core";
 
 import { IconButton } from "../IconButton";
 import { LoadingIcon } from "../LoadingIcon";
@@ -23,7 +22,7 @@ const _objToArray = (obj) => {
   return [obj];
 };
 
-export const SelectableListWithFilter = (props) => {
+export const SelectableListWithFilterAsync = (props) => {
   const {
     editable,
     filterItems,
@@ -32,7 +31,7 @@ export const SelectableListWithFilter = (props) => {
     itemDescriptionExtractor,
     items,
     itemsCountToShowFilter,
-    itemsProvider: itemsProviderProp,
+    itemsProvider,
     maxItemsToShow,
     multiple,
     onSelectedItemsChange,
@@ -41,46 +40,100 @@ export const SelectableListWithFilter = (props) => {
 
   const inputValueRef = useRef(null);
 
-  const [state, setState] = useState({
-    loading: true,
-    itemsCount: -1,
-    itemsUpdateTime: Date.now(),
-  });
-  const { loading, itemsCount, itemsUpdateTime } = state;
+  const filterVisible = items.length > itemsCountToShowFilter;
+  const debounceFiltering = items.length > maxItemsToShow;
 
-  const actualItemsProvider = useMemo(
-    () =>
-      itemsProviderProp ??
-      new FilteredStaticItemsProvider({ items, itemLabelExtractor }),
-    [items, itemsProviderProp, itemLabelExtractor]
-  );
-
-  const filterVisible = !loading && itemsCount > itemsCountToShowFilter;
-  const debounceFiltering = !loading && itemsCount > maxItemsToShow;
-
-  const updateItemsUpdateTime = useCallback(() => {
-    setState((statePrev) => ({ ...statePrev, itemsUpdateTime: Date.now() }));
+  const fetchAllItems = useCallback(async () => {
+    if (itemsProvider) {
+      return itemsProvider.fetchItems();
+    }
+    return items;
   }, []);
 
-  const updateItemsUpdateTimeDebouced = useMemo(
-    () => debounce(updateItemsUpdateTime, 500),
-    [updateItemsUpdateTime]
+  const calculateItemsFiltered = useCallback(async () => {
+    if (!filterVisible) {
+      return fetchAllItems();
+    }
+
+    const filterInputValue = inputValueRef.current;
+
+    if (Objects.isEmpty(filterInputValue)) {
+      const notSelectedItems =
+        selectedItems.length === 0
+          ? items
+          : items.filter((item) => !selectedItems.includes(item));
+      return notSelectedItems.slice(0, maxItemsToShow);
+    }
+    if (filterItems) {
+      return filterItems({ items, filterInputValue });
+    }
+    return items.filter(
+      (item) =>
+        !selectedItems.includes(item) &&
+        (Objects.isEmpty(filterInputValue) ||
+          itemLabelExtractor(item)
+            .toLocaleLowerCase()
+            .includes(filterInputValue.toLocaleLowerCase()))
+    );
+  }, [filterItems, filterVisible, items, selectedItems]);
+
+  const [state, setState] = useState({
+    loading: true,
+    itemsFiltered: [],
+    itemsCount: -1,
+  });
+
+  const { loading, itemsFiltered } = state;
+
+  useEffect(() => {
+    fetchAllItems()
+      .then((itemsFetched) => {
+        setState({
+          loading: false,
+          itemsFiltered: itemsFetched,
+        });
+      })
+      .catch((e) => {
+        throw e;
+      });
+  }, []);
+
+  const updateItemsFiltered = useCallback(async () => {
+    const itemsFilteredNext = await calculateItemsFiltered();
+    if (!Objects.isEqual(itemsFiltered, itemsFilteredNext)) {
+      setState((statePrev) => ({
+        ...statePrev,
+        loading: false,
+        itemsFiltered: itemsFilteredNext,
+      }));
+    } else if (debounceFiltering) {
+      setState((statePrev) => ({
+        ...statePrev,
+        loading: false,
+      }));
+    }
+  }, [calculateItemsFiltered, debounceFiltering]);
+
+  const updateItemsFilteredDebouced = useMemo(
+    () => debounce(updateItemsFiltered, 500),
+    [updateItemsFiltered]
   );
 
   const onFilterInputChange = useCallback(
-    (text) => {
+    async (text) => {
       inputValueRef.current = text;
       if (debounceFiltering) {
         setState((statePrev) => ({
           ...statePrev,
           loading: true,
+          itemsFiltered: [],
         }));
-        updateItemsUpdateTimeDebouced();
+        await updateItemsFilteredDebouced();
       } else {
-        updateItemsUpdateTime();
+        await updateItemsFiltered();
       }
     },
-    [debounceFiltering, updateItemsUpdateTime, updateItemsUpdateTimeDebouced]
+    [debounceFiltering, updateItemsFiltered]
   );
 
   const _onSelectedItemsChange = useCallback(
@@ -105,29 +158,12 @@ export const SelectableListWithFilter = (props) => {
   );
 
   useEffect(() => {
-    actualItemsProvider.fetchItems().then(({ count }) => {
-      setState({ loading: false, itemsCount: count });
-    });
-  }, [actualItemsProvider]);
+    updateItemsFiltered();
+  }, [updateItemsFiltered, items, selectedItems]);
 
   const onClearPress = useCallback(() => {
     _onSelectedItemsChange([]);
   }, [_onSelectedItemsChange]);
-
-  const itemsProvider = useMemo(() => {
-    if (!itemsProviderProp) return null;
-
-    return {
-      fetchItems: async ({ offset, limit }) => {
-        return itemsProviderProp.fetchItems({
-          offset,
-          limit,
-          search: inputValueRef.current,
-          excludedItems: selectedItems,
-        });
-      },
-    };
-  }, [inputValueRef, itemsProviderProp, selectedItems]);
 
   return (
     <VView style={styles.container}>
@@ -170,8 +206,7 @@ export const SelectableListWithFilter = (props) => {
         itemKeyExtractor={itemKeyExtractor}
         itemLabelExtractor={itemLabelExtractor}
         itemDescriptionExtractor={itemDescriptionExtractor}
-        itemsUpdateTime={itemsUpdateTime}
-        itemsProvider={itemsProvider}
+        items={itemsFiltered}
         multiple={multiple}
         onChange={onListSelectionChange}
         selectedItems={selectedItems}
@@ -210,7 +245,7 @@ SelectableListWithFilter.defaultProps = {
   itemDescriptionExtractor: (item) => item?.description,
   items: [],
   itemsCountToShowFilter: 10,
-  maxItemsToShow: 1000,
+  maxItemsToShow: 50,
   multiple: false,
   selectedItems: [],
 };

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, VirtualizedList } from "react-native";
+import React, { useCallback } from "react";
+import { FlatList } from "react-native";
 import { List as RNPList } from "react-native-paper";
 import PropTypes from "prop-types";
 
@@ -8,9 +8,6 @@ import { Arrays } from "@openforis/arena-core";
 import { ListItemIcon } from "./ListItemIcon";
 
 import styles from "./styles";
-import { StaticItemsProvider } from "model/StaticItemsProvider";
-
-const maxVisibleItems = 20;
 
 export const SelectableList = (props) => {
   const {
@@ -19,52 +16,11 @@ export const SelectableList = (props) => {
     itemLabelExtractor,
     itemDescriptionExtractor,
     items,
-    itemsProvider,
     multiple,
     onChange,
     selectedItems,
     style,
   } = props;
-
-  const asyncLoading = !items && !!itemsProvider;
-  const actualItemsProvider = useMemo(
-    () => itemsProvider ?? new StaticItemsProvider({ items }),
-    [items, itemsProvider]
-  );
-
-  const [state, setState] = useState({
-    loadedItems: [],
-    loading: true,
-    itemsCount: 0,
-    itemsOffset: 0,
-  });
-  const { loading, loadedItems, itemsCount, itemsOffset } = state;
-
-  useEffect(() => {
-    actualItemsProvider
-      .fetchItems({ offset: itemsOffset, limit: maxVisibleItems })
-      .then(({ items: itms, count }) => {
-        setState({
-          loading: false,
-          loadedItems: itms,
-          itemsCount: count,
-          itemsOffset,
-        });
-      });
-  }, [actualItemsProvider, itemsOffset]);
-
-  const getItemAtIndex = useCallback(
-    (index) => {
-      if (index >= itemsOffset && index < itemsOffset + maxVisibleItems) {
-        return loadedItems?.[index];
-      }
-      // if (asyncLoading) {
-      // } else {
-      //   return loadedItems[index];
-      // }
-    },
-    [asyncLoading, itemsOffset, loadedItems]
-  );
 
   const onItemSelect = useCallback(
     (item) => {
@@ -116,22 +72,13 @@ export const SelectableList = (props) => {
   );
 
   return (
-    <VirtualizedList
-      getItemCount={() => itemsCount}
-      getItem={(_data, index) => getItemAtIndex(index)}
-      initialNumToRender={10}
-      keyExtractor={(childDef) => childDef.uuid}
+    <FlatList
+      data={items}
+      keyExtractor={itemKeyExtractor}
       persistentScrollbar
       renderItem={renderItem}
       style={style}
     />
-    // <FlatList
-    //   data={items}
-    //   keyExtractor={itemKeyExtractor}
-    //   persistentScrollbar
-    //   renderItem={renderItem}
-    //   style={style}
-    // />
   );
 };
 

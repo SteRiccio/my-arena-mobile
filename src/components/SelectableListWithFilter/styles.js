@@ -16,9 +16,6 @@ export default StyleSheet.create({
   list: {
     flex: 1,
   },
-  item: {
-    paddingVertical: 0,
-  },
   clearButton: {
     alignSelf: "flex-end",
   },
