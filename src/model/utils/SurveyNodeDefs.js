@@ -15,18 +15,29 @@ const getEntitySummaryDefs = ({
   maxSummaryDefs = 3,
 }) => {
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
-
-  const summaryDefs = [...keyDefs];
-
-  if (!onlyKeys && summaryDefs.length < maxSummaryDefs) {
-    const cycle = record.cycle;
+  if (onlyKeys) {
+    return keyDefs;
+  }
+  const { cycle } = record;
+  const defsIncludedInSummary =
+    Surveys.getNodeDefsIncludedInMultipleEntitySummary({
+      survey,
+      cycle,
+      nodeDef: entityDef,
+    });
+  const summaryDefs = [...keyDefs, ...defsIncludedInSummary];
+  if (summaryDefs.length < maxSummaryDefs) {
+    // add other children defs
     const entityDefChildrenNotKeys = Surveys.getNodeDefChildrenSorted({
       survey,
       nodeDef: entityDef,
       cycle,
       includeAnalysis: false,
     }).filter(
-      (childDef) => !NodeDefs.isKey(childDef) && !NodeDefs.isMultiple(childDef)
+      (childDef) =>
+        !NodeDefs.isKey(childDef) &&
+        !NodeDefs.isMultiple(childDef) &&
+        !NodeDefs.isIncludedInMultipleEntitySummary(cycle)(childDef)
     );
     if (entityDefChildrenNotKeys.length > 0) {
       summaryDefs.push(

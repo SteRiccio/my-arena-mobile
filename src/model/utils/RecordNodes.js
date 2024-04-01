@@ -29,18 +29,21 @@ const getEntitySummaryValuesByNameFormatted = ({
   entity,
   onlyKeys = true,
   lang,
+  summaryDefs: summaryDefsParam = null,
 }) => {
   const cycle = record.cycle;
   const entityDef = Surveys.getNodeDefByUuid({
     survey,
     uuid: entity.nodeDefUuid,
   });
-  const summaryDefs = SurveyDefs.getEntitySummaryDefs({
-    survey,
-    entityDef,
-    record,
-    onlyKeys,
-  });
+  const summaryDefs =
+    summaryDefsParam ??
+    SurveyDefs.getEntitySummaryDefs({
+      survey,
+      record,
+      entityDef,
+      onlyKeys,
+    });
   return summaryDefs.reduce((acc, summaryDef) => {
     let formattedValue = "";
     try {

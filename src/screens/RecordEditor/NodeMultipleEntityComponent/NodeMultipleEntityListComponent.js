@@ -17,6 +17,11 @@ import { useTranslation } from "localization";
 
 import styles from "./styles";
 
+const determineMaxSummaryDefs = ({ isTablet, isLandscape }) => {
+  const result = isTablet ? 5 : 3;
+  return isLandscape ? result + 2 : result;
+};
+
 export const NodeMultipleEntityListComponent = (props) => {
   const { entityDef, parentEntityUuid } = props;
 
@@ -35,13 +40,15 @@ export const NodeMultipleEntityListComponent = (props) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
   const isTablet = DeviceInfoSelectors.useIsTablet();
+  const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+  const maxSummaryDefs = determineMaxSummaryDefs({ isTablet, isLandscape });
 
   const summaryDefs = SurveyDefs.getEntitySummaryDefs({
     survey,
     record,
     entityDef,
     onlyKeys: false,
-    maxSummaryDefs: isTablet ? 5 : 3,
+    maxSummaryDefs,
   });
   const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
   const entities = Records.getChildren(parentEntity, entityDefUuid)(record);
@@ -76,17 +83,21 @@ export const NodeMultipleEntityListComponent = (props) => {
     );
   }, []);
 
-  const entityToRow = (entity) => ({
-    key: entity.uuid,
-    uuid: entity.uuid,
-    ...RecordNodes.getEntitySummaryValuesByNameFormatted({
-      survey,
-      record,
-      entity,
-      onlyKeys: false,
-      lang,
+  const entityToRow = useCallback(
+    (entity) => ({
+      key: entity.uuid,
+      uuid: entity.uuid,
+      ...RecordNodes.getEntitySummaryValuesByNameFormatted({
+        survey,
+        record,
+        entity,
+        onlyKeys: false,
+        lang,
+        summaryDefs,
+      }),
     }),
-  });
+    [survey, record, summaryDefs]
+  );
 
   const rows = entities.map(entityToRow);
 
