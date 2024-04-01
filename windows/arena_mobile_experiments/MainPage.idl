@@ -1,0 +1,10 @@
+#include "NamespaceRedirect.h"
+
+namespace arena_mobile_experiments
+{
+    [default_interface]
+    runtimeclass MainPage : XAML_NAMESPACE.Controls.Page
+    {
+        MainPage();
+    }
+}
