@@ -1,13 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { IconButton } from "components/IconButton";
 import { RecordSyncStatus } from "model/RecordSyncStatus";
-import { Tooltip } from "components";
+import { Icon, Tooltip } from "components";
 
 const colorBySyncStatus = {
   [RecordSyncStatus.keysNotSpecified]: "red",
-  [RecordSyncStatus.new]: "white",
+  [RecordSyncStatus.new]: "darkgrey",
   [RecordSyncStatus.modifiedLocally]: "yellow",
   [RecordSyncStatus.modifiedRemotely]: "red",
   [RecordSyncStatus.notInEntryStepAnymore]: "red",
@@ -22,14 +21,7 @@ export const RecordSyncStatusIcon = (props) => {
 
   return (
     <Tooltip titleKey={`dataEntry:syncStatus.${syncStatus}`}>
-      <IconButton
-        icon="circle"
-        iconColor={colorBySyncStatus[syncStatus]}
-        onPress={(e) => {
-          // prevent table row press
-          e?.preventDefault();
-        }}
-      />
+      <Icon color={colorBySyncStatus[syncStatus]} size={24} source="circle" />
     </Tooltip>
   );
 };

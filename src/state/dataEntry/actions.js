@@ -237,9 +237,16 @@ const selectCurrentPageEntity =
       DataEntrySelectors.selectCurrentPageEntity(state);
 
     const nextEntityUuid =
-      entityDefUuid === prevEntityDef.uuid && entityUuid === prevEntityUuid
+      entityDefUuid === prevEntityDef.uuid &&
+      entityUuid === prevEntityUuid &&
+      NodeDefs.isMultiple(prevEntityDef)
         ? null // set pointer to list of entities
         : entityUuid;
+
+    if (!!nextEntityUuid && nextEntityUuid === prevEntityUuid) {
+      // same entity selected (e.g. single entity from breadcrumb): do nothing
+      return;
+    }
 
     dispatch({
       type: PAGE_ENTITY_SET,

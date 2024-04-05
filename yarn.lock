@@ -2468,9 +2468,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openforis/arena-core@npm:^0.0.183":
-  version: 0.0.183
-  resolution: "@openforis/arena-core@npm:0.0.183::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40openforis%2Farena-core%2F0.0.183%2F09804e975b19f48337f0c9f705f1606016678e48"
+"@openforis/arena-core@npm:^0.0.187":
+  version: 0.0.187
+  resolution: "@openforis/arena-core@npm:0.0.187::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40openforis%2Farena-core%2F0.0.187%2Fa6b3d96d5e7f1de958c15c78daece4b07477d5ec"
   dependencies:
     "@jsep-plugin/regex": "npm:^1.0.3"
     bignumber.js: "npm:^9.1.2"
@@ -2480,9 +2480,9 @@ __metadata:
     lodash.frompairs: "npm:^4.0.1"
     lodash.isequal: "npm:^4.5.0"
     lodash.topairs: "npm:^4.3.0"
-    proj4: "npm:^2.9.0"
+    proj4: "npm:^2.11.0"
     uuid: "npm:^9.0.1"
-  checksum: 3801a764a14148ad067a2cefa3d7f7201283c0ac0671dadc5e9c3f3d88f4edb79b10998cac882221b762f828a531317659224ee6ed9082e89a2cd448bb55833d
+  checksum: ed7fd39fa4893d54a44fb59b7b80e29b3c8b44bf9f943f7bf485612239a2892a26f52464a0c1da35c8bdf9e5765df566912d9bf5bca2625ab7fdd3edc3b04530
   languageName: node
   linkType: hard
 
@@ -3927,7 +3927,7 @@ __metadata:
     "@babel/core": "npm:^7.23.9"
     "@expo/webpack-config": "npm:~19.0.1"
     "@miblanchard/react-native-slider": "npm:^2.3.1"
-    "@openforis/arena-core": "npm:^0.0.183"
+    "@openforis/arena-core": "npm:^0.0.187"
     "@react-native-async-storage/async-storage": "npm:1.21.0"
     "@react-native-clipboard/clipboard": "npm:^1.13.2"
     "@react-native-community/datetimepicker": "npm:7.6.1"
@@ -3952,6 +3952,7 @@ __metadata:
     expo-image-picker: "npm:~14.7.1"
     expo-location: "npm:~16.5.5"
     expo-media-library: "npm:~15.9.1"
+    expo-screen-orientation: "npm:~6.4.1"
     expo-sensors: "npm:~12.9.1"
     expo-sharing: "npm:~11.10.0"
     expo-sqlite: "npm:~13.4.0"
@@ -6203,6 +6204,15 @@ __metadata:
   bin:
     expo-pwa: build/cli.js
   checksum: fa3cb77a8d36889566fa6440ea7e3726bd8de8d83c32d24ee8019f5000d807f450d910372580512b8cfd4db362bc1d3da276782bbf2f3e3eead6fe43e58efb5d
+  languageName: node
+  linkType: hard
+
+"expo-screen-orientation@npm:~6.4.1":
+  version: 6.4.1
+  resolution: "expo-screen-orientation@npm:6.4.1"
+  peerDependencies:
+    expo: "*"
+  checksum: d9e56944278b76a98098f808aa17a3db62fafe949091d450f7d1903752f2a60e70c41c87ec9c0ee3c827f70ff2a5c27b246013805c2d1753d86e53915daa5cb7
   languageName: node
   linkType: hard
 
@@ -10323,13 +10333,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proj4@npm:^2.9.0":
-  version: 2.10.0
-  resolution: "proj4@npm:2.10.0"
+"proj4@npm:^2.11.0":
+  version: 2.11.0
+  resolution: "proj4@npm:2.11.0"
   dependencies:
     mgrs: "npm:1.0.0"
     wkt-parser: "npm:^1.3.3"
-  checksum: 33d221d3b7fbd05835cb42645b14a1e5300f863df5db05afec2d5f8f29d36e2c25b014eb25b888c6d381a183744880e4513753bab0ef4f823e7ca210d58e5970
+  checksum: d3856090b99b5c8f45d78e0f0ba4ef85025e53b4b3bc1b0279ffa70990af6ae856c8330957879d553069e408412d93521f27440dd1d1f72d272ae030cc664774
   languageName: node
   linkType: hard
 

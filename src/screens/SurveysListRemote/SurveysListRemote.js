@@ -1,18 +1,22 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { screenKeys } from "../screenKeys";
+import { DateFormats, Dates } from "@openforis/arena-core";
+
 import { DataVisualizer, Loader, Searchbar, Text, VView } from "components";
 import { useNavigationFocus } from "hooks";
-import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
 import { SurveyService } from "service";
 import {
   ConfirmActions,
+  DeviceInfoSelectors,
   ScreenOptionsSelectors,
   SurveyActions,
   SurveySelectors,
 } from "state";
+
+import { screenKeys } from "../screenKeys";
+import { useSurveysSearch } from "../SurveysList/useSurveysSearch";
 
 import styles from "./styles";
 
@@ -27,6 +31,33 @@ export const SurveysListRemote = () => {
   const dispatch = useDispatch();
   const surveysLocal = SurveySelectors.useSurveysLocal();
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+
+  const dataFields = useMemo(() => {
+    const fields = [
+      {
+        key: "name",
+        header: "common:name",
+      },
+      {
+        key: "defaultLabel",
+        header: "common:label",
+      },
+    ];
+    if (isLandscape) {
+      fields.push({
+        key: "datePublished",
+        header: "surveys:publishedOn",
+        cellRenderer: ({ item }) =>
+          Dates.convertDate({
+            dateStr: item.datePublished,
+            formatFrom: DateFormats.datetimeStorage,
+            formatTo: DateFormats.datetimeDisplay,
+          }),
+      });
+    }
+    return fields;
+  }, [isLandscape]);
 
   const [state, setState] = useState(INITIAL_STATE);
   const { surveys, loading, errorKey } = state;
@@ -36,6 +67,7 @@ export const SurveysListRemote = () => {
 
     const data = await SurveyService.fetchSurveySummariesRemote();
     const { surveys: _surveys = [], errorKey } = data;
+
     if (errorKey) {
       dispatch(
         ConfirmActions.show({
@@ -128,16 +160,7 @@ export const SurveysListRemote = () => {
       )}
       {surveysFiltered.length > 0 && (
         <DataVisualizer
-          fields={[
-            {
-              key: "name",
-              header: "common:name",
-            },
-            {
-              key: "defaultLabel",
-              header: "common:label",
-            },
-          ]}
+          fields={dataFields}
           items={surveysFiltered.map((survey) => ({
             key: survey.uuid,
             ...survey,
