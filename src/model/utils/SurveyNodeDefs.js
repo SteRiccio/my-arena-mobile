@@ -26,8 +26,10 @@ const getEntitySummaryDefs = ({
       nodeDef: entityDef,
     });
   const summaryDefs = [...keyDefs, ...defsIncludedInSummary];
-  if (summaryDefs.length < maxSummaryDefs) {
-    // add other children defs
+
+  const otherDefsToAddCount = maxSummaryDefs - summaryDefs.length;
+
+  if (otherDefsToAddCount > 0) {
     const entityDefChildrenNotKeys = Surveys.getNodeDefChildrenSorted({
       survey,
       nodeDef: entityDef,
@@ -41,10 +43,7 @@ const getEntitySummaryDefs = ({
     );
     if (entityDefChildrenNotKeys.length > 0) {
       summaryDefs.push(
-        ...entityDefChildrenNotKeys.slice(
-          0,
-          maxSummaryDefs - summaryDefs.length
-        )
+        ...entityDefChildrenNotKeys.slice(0, otherDefsToAddCount)
       );
     }
   }
