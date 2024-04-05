@@ -75,11 +75,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
-    "@react-native/metro-config": "0.75.0-main",
+    "@expo/metro-config": "^0.17.6",
     "babel-plugin-module-resolver": "^5.0.0",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "dotenv": "^16.4.5",
-    "metro-config": "^0.80.5",
+    "metro-config": "^0.80.8",
     "metro-react-native-babel-preset": "^0.77.0"
   },
   "private": true,
