@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
@@ -24,6 +24,20 @@ export const SurveysListLocal = () => {
   const [state, setState] = useState({ surveys: [], loading: true });
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const { loading, surveys } = state;
+
+  const dataFields = useMemo(
+    () => [
+      {
+        key: "name",
+        header: "common:name",
+      },
+      {
+        key: "label",
+        header: "common:label",
+      },
+    ],
+    []
+  );
 
   const loadSurveys = async () => {
     const _surveys = await SurveyService.fetchSurveySummariesLocal();
@@ -77,16 +91,7 @@ export const SurveysListLocal = () => {
       )}
       {surveysFiltered.length > 0 && (
         <DataVisualizer
-          fields={[
-            {
-              key: "name",
-              header: "common:name",
-            },
-            {
-              key: "label",
-              header: "common:label",
-            },
-          ]}
+          fields={dataFields}
           mode={screenViewMode}
           onDeleteSelectedItemIds={onDeleteSelectedItemIds}
           onItemPress={onItemPress}

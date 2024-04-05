@@ -16,6 +16,7 @@ export default {
   manageSurveys: "Manage surveys",
   noAvailableSurveysFound: "No available surveys found",
   noSurveysMatchYourSearch: "No surveys match your search",
+  publishedOn: "Published on",
   selectSurvey: "Select a survey",
   surveysInTheCloud: "Surveys in the cloud",
   surveysInTheDevice: "Surveys in the device",
