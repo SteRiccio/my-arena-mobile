@@ -31,6 +31,7 @@ export const useTreeData = () => {
 
   const currentEntityUuid = entityUuid || parentEntityUuid;
   const currentEntity = Records.getNodeByUuid(currentEntityUuid)(record);
+  const { cycle } = record;
 
   const createTreeItem = ({ nodeDef, parentEntityUuid, entityUuid }) => ({
     id: nodeDef.uuid,
@@ -70,6 +71,7 @@ export const useTreeData = () => {
         survey,
         nodeDef: visitedEntityDef,
         parentEntity: visitedEntity,
+        cycle,
       }).filter(
         (childDef) =>
           Surveys.isNodeDefAncestor({

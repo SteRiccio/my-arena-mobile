@@ -7,7 +7,7 @@ import {
   Records,
   Surveys,
 } from "@openforis/arena-core";
-import { SurveyDefs } from "./SurveyNodeDefs";
+import { SurveyDefs } from "./SurveyDefs";
 
 const EMPTY_VALUE = "---EMPTY---";
 
@@ -74,12 +74,13 @@ const getEntitySummaryValuesByNameFormatted = ({
   }, {});
 };
 
-const getApplicableChildrenEntityDefs = ({ survey, nodeDef, parentEntity }) =>
-  Surveys.getNodeDefChildren({
-    survey,
-    nodeDef,
-    includeAnalysis: false,
-  }).filter(
+const getApplicableChildrenEntityDefs = ({
+  survey,
+  nodeDef,
+  parentEntity,
+  cycle,
+}) =>
+  SurveyDefs.getChildrenDefs({ survey, nodeDef, cycle }).filter(
     (childDef) =>
       NodeDefs.isEntity(childDef) &&
       Nodes.isChildApplicable(parentEntity, childDef.uuid)

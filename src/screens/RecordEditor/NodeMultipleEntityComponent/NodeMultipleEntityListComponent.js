@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { NodeDefs, Records } from "@openforis/arena-core";
 
 import { Button, DataTable, Text, VView } from "components";
-import { SurveyDefs } from "model/utils/SurveyNodeDefs";
+import { SurveyDefs } from "model/utils/SurveyDefs";
 import { RecordNodes } from "model/utils/RecordNodes";
 import {
   ConfirmActions,

@@ -21,7 +21,7 @@ RadioButton.propTypes = {
   checked: PropTypes.bool,
   disabled: PropTypes.bool,
   label: PropTypes.string,
-  onPress: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
   style: PropTypes.object,
   value: PropTypes.string,
 };
