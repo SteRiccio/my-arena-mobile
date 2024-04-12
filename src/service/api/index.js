@@ -50,8 +50,12 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
 };
 
 const test = async (serverUrl, uri, params = {}) => {
-  const response = await _sendGet(serverUrl, uri, params);
-  return response.ok;
+  try {
+    const response = await _sendGet(serverUrl, uri, params);
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
 };
 
 const post = async (serverUrl, uri, data, options = {}) => {
