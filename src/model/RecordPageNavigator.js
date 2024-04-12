@@ -75,6 +75,7 @@ const getNextOrPrevSiblingEntityPointer = ({
     return null;
   }
 
+  const { cycle } = record;
   const entity = entityUuid ? Records.getNodeByUuid(entityUuid)(record) : null;
 
   if (NodeDefs.isMultiple(entityDef) && entity) {
@@ -85,6 +86,7 @@ const getNextOrPrevSiblingEntityPointer = ({
     survey,
     nodeDef: parentEntityDef,
     parentEntity,
+    cycle,
   });
   const currentEntityDefIndex = siblingEntityDefs.indexOf(entityDef);
   const siblingEntityDef = siblingEntityDefs[currentEntityDefIndex + offset];
@@ -109,10 +111,12 @@ const getFirstChildEntityPointer = ({
   entityUuid,
   actualEntity,
 }) => {
+  const { cycle } = record;
   const childrenEntityDefs = RecordNodes.getApplicableChildrenEntityDefs({
     survey,
     nodeDef: entityDef,
     parentEntity: actualEntity,
+    cycle,
   });
   if (childrenEntityDefs.length > 0) {
     const firstChildEntityDef = childrenEntityDefs[0];

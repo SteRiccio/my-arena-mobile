@@ -12,6 +12,7 @@ import {
 } from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
+import { SurveyDefs } from "model/index";
 
 const getDataEntryState = (state) => state.dataEntry;
 
@@ -146,20 +147,15 @@ const selectChildDefs =
   ({ nodeDef }) => {
     const cycle = selectRecordCycle(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
-    const childDefs = Surveys.getNodeDefChildrenSorted({
+    const childDefs = SurveyDefs.getChildrenDefs({
       survey,
       nodeDef,
       cycle,
-      includeAnalysis: false,
-    }) // only child defs not hidden in mobile and in same page
-      .filter((childDef) => {
-        const layoutProps = NodeDefs.getLayoutProps(cycle)(childDef);
-        return (
-          !childDef.props.hidden &&
-          !layoutProps.hiddenInMobile &&
-          !layoutProps.pageUuid
-        );
-      });
+    }).filter((childDef) => {
+      // only child defs not hidden in mobile and in same page
+      const layoutProps = NodeDefs.getLayoutProps(cycle)(childDef);
+      return !layoutProps.pageUuid;
+    });
     return childDefs;
   };
 
