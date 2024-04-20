@@ -3,7 +3,12 @@ import { useDispatch } from "react-redux";
 
 import { DowngradeError, initialize as initializeDb } from "db";
 import { Text, View } from "components";
-import { PreferencesService, SettingsService, SurveyService } from "service";
+import {
+  DataMigrationService,
+  PreferencesService,
+  SettingsService,
+  SurveyService,
+} from "service";
 import {
   DeviceInfoActions,
   RemoteConnectionActions,
@@ -50,7 +55,10 @@ export const AppInitializer = (props) => {
         await dispatch(SettingsActions.startGpsLocking());
       }
 
-      await initializeDb();
+      const { dbMigrationsRun, prevDbVersion } = await initializeDb();
+      if (dbMigrationsRun) {
+        await DataMigrationService.migrateData({ prevDbVersion });
+      }
 
       // initialize local surveys
       const surveySummaries = await SurveyService.fetchSurveySummariesLocal();
