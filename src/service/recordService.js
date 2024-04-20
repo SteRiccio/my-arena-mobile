@@ -4,8 +4,14 @@ import { RecordRepository } from "./repository/recordRepository";
 import { RecordSyncStatus } from "model";
 import { Files } from "utils";
 
-const { fetchRecord, fetchRecords, insertRecord, updateRecord, deleteRecords } =
-  RecordRepository;
+const {
+  fetchRecord,
+  fetchRecords,
+  insertRecord,
+  updateRecord,
+  deleteRecords,
+  fixRecordCycle,
+} = RecordRepository;
 
 const fetchRecordsSummariesRemote = async ({ surveyRemoteId }) => {
   try {
@@ -96,4 +102,5 @@ export const RecordService = {
   updateRecord,
   deleteRecords,
   uploadRecordsToRemoteServer,
+  fixRecordCycle,
 };

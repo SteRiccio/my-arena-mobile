@@ -1,62 +1,38 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import {
-  DateFormats,
-  Dates,
-  NodeDefs,
-  NodeValueFormatter,
-  Objects,
-  Surveys,
-} from "@openforis/arena-core";
+import { Surveys } from "@openforis/arena-core";
 
 import {
   Button,
   CollapsiblePanel,
-  DataVisualizer,
   HView,
   Loader,
-  LoadingIcon,
   MenuButton,
   Text,
   VView,
 } from "components";
 
 import { useIsNetworkConnected, useNavigationFocus } from "hooks";
-import { useTranslation } from "localization";
+import { Cycles, RecordSyncStatus } from "model";
 import { RecordService } from "service";
-import {
-  ConfirmActions,
-  DataEntryActions,
-  MessageActions,
-  ScreenOptionsSelectors,
-  SurveySelectors,
-} from "state";
-import { RecordSyncStatus } from "model";
+import { DataEntryActions, MessageActions, SurveySelectors } from "state";
 
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
-import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
-
+import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
 import styles from "./styles";
+import { SurveyCycleSelector } from "./SurveyCycleSelector";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const networkAvailable = useIsNetworkConnected();
   const survey = SurveySelectors.useCurrentSurvey();
-  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const cycle = SurveySelectors.useCurrentSurveyCycle();
   const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
-  const defaultCycle = String(Number(defaultCycleKey) + 1);
+  const defaultCycleText = Cycles.labelFunction(defaultCycleKey);
   const cycles = Surveys.getCycleKeys(survey);
-
-  const rootDefKeys = useMemo(() => {
-    if (!survey) return [];
-    const rootDef = Surveys.getNodeDefRoot({ survey });
-    return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
-  }, [survey]);
 
   const [state, setState] = useState({
     records: [],
@@ -67,7 +43,7 @@ export const RecordsList = () => {
   const { records, loading, syncStatusLoading, syncStatusFetched } = state;
 
   const loadRecords = useCallback(async () => {
-    const _records = await RecordService.fetchRecords({ survey });
+    const _records = await RecordService.fetchRecords({ survey, cycle });
     setState((statePrev) => ({
       ...statePrev,
       records: _records,
@@ -75,7 +51,12 @@ export const RecordsList = () => {
       syncStatusLoading: false,
       loading: false,
     }));
-  }, [survey]);
+  }, [survey, cycle]);
+
+  // refresh records list on cycle change
+  useEffect(() => {
+    loadRecords();
+  }, [cycle]);
 
   const loadRecordsWithSyncStatus = useCallback(async () => {
     setState((statePrev) => ({
@@ -116,26 +97,6 @@ export const RecordsList = () => {
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };
 
-  const onItemPress = useCallback((row) => {
-    dispatch(
-      DataEntryActions.fetchAndEditRecord({ navigation, recordId: row.id })
-    );
-  }, []);
-
-  const onDeleteSelectedItemIds = useCallback((recordUuids) => {
-    dispatch(
-      ConfirmActions.show({
-        titleKey: "Delete records",
-        messageKey: "Delete the selected records?",
-        onConfirm: async () => {
-          await dispatch(DataEntryActions.deleteRecords(recordUuids));
-          await loadRecords();
-        },
-        swipeToConfirm: true,
-      })
-    );
-  }, []);
-
   const onExportNewOrUpdatedRecordsPress = useCallback(() => {
     const newRecordsUuids = records
       .filter((record) =>
@@ -162,41 +123,6 @@ export const RecordsList = () => {
     );
   }, [records]);
 
-  const recordToItem = (record) => {
-    const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
-      const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
-      const value = record[recordKeyProp];
-      const valueFormatted = NodeValueFormatter.format({
-        survey,
-        nodeDef: keyDef,
-        value,
-        showLabel: true,
-        lang,
-      });
-      acc[recordKeyProp] = Objects.isEmpty(valueFormatted)
-        ? t("common:empty")
-        : valueFormatted;
-      return acc;
-    }, {});
-
-    const formatDateToDateTimeDisplay = (date) =>
-      typeof date === "string"
-        ? Dates.convertDate({
-            dateStr: date,
-            formatFrom: DateFormats.datetimeStorage,
-            formatTo: DateFormats.datetimeDisplay,
-          })
-        : Dates.format(date, DateFormats.datetimeDisplay);
-
-    return {
-      ...record,
-      key: record.uuid,
-      ...valuesByKey,
-      dateCreated: formatDateToDateTimeDisplay(record.dateCreated),
-      dateModified: formatDateToDateTimeDisplay(record.dateModified),
-    };
-  };
-
   if (loading) {
     return <Loader />;
   }
@@ -208,13 +134,16 @@ export const RecordsList = () => {
           <>
             <SurveyLanguageSelector />
             {cycles.length > 1 && (
-              <HView style={styles.formItem}>
-                <Text
-                  style={styles.formItemLabel}
-                  textKey="dataEntry:cycleForNewRecords"
-                />
-                <Text textKey={defaultCycle} />
-              </HView>
+              <>
+                <HView style={styles.formItem}>
+                  <Text
+                    style={styles.formItemLabel}
+                    textKey="dataEntry:cycleForNewRecords"
+                  />
+                  <Text textKey={defaultCycleText} />
+                </HView>
+                <SurveyCycleSelector />
+              </>
             )}
           </>
         </CollapsiblePanel>
@@ -223,34 +152,11 @@ export const RecordsList = () => {
           <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
         )}
         {records.length > 0 && (
-          <DataVisualizer
-            fields={[
-              ...rootDefKeys.map((keyDef) => ({
-                key: Objects.camelize(NodeDefs.getName(keyDef)),
-                header: NodeDefs.getLabelOrName(keyDef, lang),
-              })),
-              {
-                key: "dateModified",
-                header: "common:modifiedOn",
-                style: { minWidth: 50 },
-              },
-              ...(syncStatusLoading || syncStatusFetched
-                ? [
-                    {
-                      key: "syncStatus",
-                      header: "dataEntry:syncStatusHeader",
-                      cellRenderer: syncStatusLoading
-                        ? LoadingIcon
-                        : RecordSyncStatusIcon,
-                    },
-                  ]
-                : []),
-            ]}
-            mode={screenViewMode}
-            items={records.map(recordToItem)}
-            onItemPress={onItemPress}
-            onDeleteSelectedItemIds={onDeleteSelectedItemIds}
-            selectable
+          <RecordsDataVisualizer
+            loadRecords={loadRecords}
+            records={records}
+            syncStatusFetched={syncStatusFetched}
+            syncStatusLoading={syncStatusLoading}
           />
         )}
       </VView>

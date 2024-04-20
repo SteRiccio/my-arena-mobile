@@ -20,6 +20,7 @@ import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
 import { SurveySelectors } from "../survey";
 
+import { RemoteConnectionSelectors } from "../remoteConnection";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
 
@@ -40,28 +41,33 @@ const removeNodesFlags = (nodes) => {
 const createNewRecord =
   ({ navigation }) =>
   async (dispatch, getState) => {
-    const state = getState();
-    const survey = SurveySelectors.selectCurrentSurvey(state);
-    const cycle = Surveys.getDefaultCycleKey(survey);
-    const appInfo = SystemUtils.getRecordAppInfo();
-    const recordEmpty = RecordFactory.createInstance({
-      surveyUuid: survey.uuid,
-      cycle,
-      user: {},
-      appInfo,
-    });
+    try {
+      const state = getState();
+      const user = RemoteConnectionSelectors.selectLoggedUser(state);
+      const survey = SurveySelectors.selectCurrentSurvey(state);
+      const cycle = Surveys.getDefaultCycleKey(survey);
+      const appInfo = SystemUtils.getRecordAppInfo();
+      const recordEmpty = RecordFactory.createInstance({
+        surveyUuid: survey.uuid,
+        cycle,
+        user: user ?? {},
+        appInfo,
+      });
 
-    let { record, nodes } = await RecordUpdater.createRootEntity({
-      survey,
-      record: recordEmpty,
-    });
+      let { record, nodes } = await RecordUpdater.createRootEntity({
+        survey,
+        record: recordEmpty,
+      });
 
-    record.surveyId = survey.id;
-    removeNodesFlags(nodes);
+      record.surveyId = survey.id;
+      removeNodesFlags(nodes);
 
-    record = await RecordService.insertRecord({ survey, record });
+      record = await RecordService.insertRecord({ survey, record });
 
-    dispatch(editRecord({ navigation, record }));
+      dispatch(editRecord({ navigation, record }));
+    } catch (error) {
+      console.log("---error", error);
+    }
   };
 
 const addNewEntity = async (dispatch, getState) => {

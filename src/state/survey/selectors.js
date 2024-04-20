@@ -26,6 +26,9 @@ const selectSurveysLocal = (state) => getSurveyState(state).surveysLocal;
 const selectCurrentSurveyPreferredLang = (state) =>
   getSurveyState(state).currentSurveyPreferredLanguage;
 
+const selectCurrentSurveyCycle = (state) =>
+  getSurveyState(state).currentSurveyCycle;
+
 export const SurveySelectors = {
   selectCurrentSurvey,
 
@@ -34,6 +37,7 @@ export const SurveySelectors = {
     useSelector(selectCurrentSurveySrsIndex, Objects.isEqual),
   useCurrentSurveyPreferredLang: () =>
     useSelector(selectCurrentSurveyPreferredLang),
+  useCurrentSurveyCycle: () => useSelector(selectCurrentSurveyCycle),
   useCurrentSurveyRootDef: () => useSelector(selectCurrentSurveyRootDef),
   useIsNodeDefEnumerator: (nodeDef) =>
     useSelector(selectIsNodeDefEnumerator(nodeDef)),
