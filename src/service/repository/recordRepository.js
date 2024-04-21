@@ -7,12 +7,15 @@ import {
 } from "@openforis/arena-core";
 
 import { DbUtils, dbClient } from "db";
+import { RecordLoadStatus } from "model/RecordLoadStatus";
 import { SystemUtils } from "utils";
 
 const SUPPORTED_KEYS = 5;
 const keysColumns = Array.from(Array(SUPPORTED_KEYS).keys()).map(
   (keyIdx) => `key${keyIdx + 1}`
 );
+const keyColumnNamesJoint = keysColumns.join(", ");
+const summarySelectFieldsJoint = `id, uuid, date_created, date_modified, cycle, owner_uuid, load_status, ${keyColumnNamesJoint}`;
 
 const extractKeyColumnsValues = ({ survey, record }) => {
   const keyValues = Records.getEntityKeyValues({
@@ -35,9 +38,7 @@ const getPlaceholders = (count) =>
 const fetchRecord = async ({ survey, recordId }) => {
   const { id: surveyId } = survey;
   const row = await dbClient.one(
-    `SELECT id, uuid, ${keysColumns.join(
-      ", "
-    )}, date_created, date_modified, content
+    `SELECT ${summarySelectFieldsJoint}, content
     FROM record
     WHERE survey_id = ? AND id = ?`,
     [surveyId, recordId]
@@ -45,34 +46,41 @@ const fetchRecord = async ({ survey, recordId }) => {
   return rowToRecord({ survey })(row);
 };
 
-const fetchRecords = async ({ survey }) => {
+const fetchRecords = async ({ survey, cycle }) => {
   const { id: surveyId } = survey;
 
   const rows = await dbClient.many(
-    `SELECT id, uuid, ${keysColumns.join(", ")}, date_created, date_modified
+    `SELECT ${summarySelectFieldsJoint}
     FROM record
-    WHERE survey_id = ?
+    WHERE survey_id = ? AND cycle = ?
     ORDER BY date_modified DESC`,
-    [surveyId]
+    [surveyId, cycle]
   );
   return rows.map(rowToRecord({ survey }));
 };
 
-const insertRecord = async ({ survey, record }) => {
+const insertRecord = async ({
+  survey,
+  record,
+  loadStatus = RecordLoadStatus.complete,
+}) => {
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
-
+  const { uuid, surveyId, dateCreated, dateModified, cycle, ownerUuid } =
+    record;
   const { insertId } = await dbClient.executeSql(
-    `INSERT INTO record (uuid, survey_id, ${keysColumns.join(
-      ", "
-    )}, content, date_created, date_modified)
-    VALUES (?, ?, ${getPlaceholders(SUPPORTED_KEYS)}, ?, ?, ?)`,
+    `INSERT INTO record (uuid, survey_id, content, date_created, date_modified, cycle, 
+       owner_uuid, load_status, ${keyColumnNamesJoint})
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ${getPlaceholders(SUPPORTED_KEYS)})`,
     [
-      record.uuid,
-      record.surveyId,
-      ...keyColumnsValues,
+      uuid,
+      surveyId,
       JSON.stringify(record),
-      record.dateCreated || Date.now(),
-      record.dateModified || Date.now(),
+      dateCreated || Date.now(),
+      dateModified || Date.now(),
+      cycle,
+      ownerUuid,
+      loadStatus,
+      ...keyColumnsValues,
     ]
   );
   record.id = insertId;
@@ -93,6 +101,15 @@ const updateRecord = async ({ survey, record }) => {
       record.id,
     ]
   );
+};
+
+const fixRecordCycle = async ({ survey, recordId }) => {
+  const record = await fetchRecord({ survey, recordId });
+  const { cycle = Surveys.getDefaultCycleKey(survey) } = record;
+  return dbClient.executeSql(`UPDATE record SET cycle = ? WHERE id = ?`, [
+    cycle,
+    recordId,
+  ]);
 };
 
 const deleteRecords = async ({ surveyId, recordUuids }) => {
@@ -120,7 +137,7 @@ const rowToRecord = ({ survey }) => {
   const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
 
   return (row) => {
-    let result = row.content
+    const result = row.content
       ? JSON.parse(row.content)
       : Objects.camelize(row, { skip: ["content"] });
 
@@ -158,5 +175,6 @@ export const RecordRepository = {
   fetchRecords,
   insertRecord,
   updateRecord,
+  fixRecordCycle,
   deleteRecords,
 };

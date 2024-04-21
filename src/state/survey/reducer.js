@@ -1,3 +1,4 @@
+import { Surveys } from "@openforis/arena-core";
 import { StoreUtils } from "../storeUtils";
 import { SurveyActionTypes } from "./actionTypes";
 
@@ -7,7 +8,8 @@ const actionHandlers = {
     return {
       ...state,
       currentSurvey: survey,
-      currentSurveyPreferredLanguage: survey?.props?.languages?.[0],
+      currentSurveyPreferredLanguage: Surveys.getDefaultLanguage(survey),
+      currentSurveyCycle: Surveys.getDefaultCycleKey(survey),
     };
   },
   [SurveyActionTypes.CURRENT_SURVEY_PREFERRED_LANG_SET]: ({
@@ -16,6 +18,10 @@ const actionHandlers = {
   }) => ({
     ...state,
     currentSurveyPreferredLanguage: action.lang,
+  }),
+  [SurveyActionTypes.CURRENT_SURVEY_CYCLE_SET]: ({ state, action }) => ({
+    ...state,
+    currentSurveyCycle: action.cycleKey,
   }),
   [SurveyActionTypes.SURVEYS_LOCAL_SET]: ({ state, action }) => ({
     ...state,

@@ -7,6 +7,7 @@ import { SurveyActionTypes } from "./actionTypes";
 const {
   CURRENT_SURVEY_SET,
   CURRENT_SURVEY_PREFERRED_LANG_SET,
+  CURRENT_SURVEY_CYCLE_SET,
   SURVEYS_LOCAL_SET,
 } = SurveyActionTypes;
 
@@ -22,6 +23,12 @@ const setCurrentSurveyPreferredLanguage =
   ({ lang }) =>
   (dispatch) => {
     dispatch({ type: CURRENT_SURVEY_PREFERRED_LANG_SET, lang });
+  };
+
+const setCurrentSurveyCycle =
+  ({ cycleKey }) =>
+  (dispatch) => {
+    dispatch({ type: CURRENT_SURVEY_CYCLE_SET, cycleKey });
   };
 
 const fetchAndSetCurrentSurvey =
@@ -97,6 +104,7 @@ const deleteSurveys = (surveyIds) => async (dispatch, getState) => {
 export const SurveyActions = {
   setCurrentSurvey,
   setCurrentSurveyPreferredLanguage,
+  setCurrentSurveyCycle,
   fetchAndSetCurrentSurvey,
   fetchAndSetLocalSurveys,
   importSurveyRemote,

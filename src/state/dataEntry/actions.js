@@ -20,6 +20,7 @@ import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
 import { SurveySelectors } from "../survey";
 
+import { RemoteConnectionSelectors } from "../remoteConnection";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
 
@@ -41,13 +42,14 @@ const createNewRecord =
   ({ navigation }) =>
   async (dispatch, getState) => {
     const state = getState();
+    const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
     const appInfo = SystemUtils.getRecordAppInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
       cycle,
-      user: {},
+      user: user ?? {},
       appInfo,
     });
 

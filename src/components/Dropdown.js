@@ -38,7 +38,7 @@ export const Dropdown = (props) => {
       if (disabled) return;
       await onChange(val);
     },
-    [disabled, onChange, value]
+    [disabled, onChange]
   );
 
   return (
