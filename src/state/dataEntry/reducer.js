@@ -18,6 +18,10 @@ const actionHandlers = {
     recordPageSelectorMenuOpen: false,
     record: action.record,
   }),
+  [DataEntryActions.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
+    ...state,
+    recordPreviousCycle: action.record,
+  }),
   [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => {
     const { parentEntityUuid, entityDefUuid, entityUuid } = action;
 

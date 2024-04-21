@@ -7,6 +7,7 @@ import { Files } from "utils";
 const {
   fetchRecord,
   fetchRecords,
+  findRecordIdsByKeys,
   insertRecord,
   updateRecord,
   deleteRecords,
@@ -98,6 +99,7 @@ export const RecordService = {
   fetchRecord,
   fetchRecords,
   fetchRecordsWithSyncStatus,
+  findRecordIdsByKeys,
   insertRecord,
   updateRecord,
   deleteRecords,

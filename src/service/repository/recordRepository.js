@@ -7,7 +7,7 @@ import {
 } from "@openforis/arena-core";
 
 import { DbUtils, dbClient } from "db";
-import { RecordLoadStatus } from "model/RecordLoadStatus";
+import { RecordLoadStatus } from "model";
 import { SystemUtils } from "utils";
 
 const SUPPORTED_KEYS = 5;
@@ -57,6 +57,31 @@ const fetchRecords = async ({ survey, cycle }) => {
     [surveyId, cycle]
   );
   return rows.map(rowToRecord({ survey }));
+};
+
+const findRecordIdsByKeys = async ({ survey, cycle, keyValues }) => {
+  const { id: surveyId } = survey;
+  const keyColumnsConditions = keysColumns
+    .map((keyCol, index) => {
+      const val = keyValues[index];
+      return Objects.isNil(val) ? `${keyCol} IS NULL` : `${keyCol} = ?`;
+    })
+    .join(" AND ");
+  const keyColumnsParams = keysColumns.reduce((acc, _keyCol, index) => {
+    const val = keyValues[index];
+    if (!Objects.isNil(val)) {
+      acc.push(JSON.stringify(val));
+    }
+    return acc;
+  }, []);
+
+  const rows = await dbClient.many(
+    `SELECT id
+    FROM record
+    WHERE survey_id = ? AND cycle = ? AND ${keyColumnsConditions}`,
+    [surveyId, cycle, ...keyColumnsParams]
+  );
+  return rows.map((row) => Number(row.id));
 };
 
 const insertRecord = async ({
@@ -173,6 +198,7 @@ const rowToRecord = ({ survey }) => {
 export const RecordRepository = {
   fetchRecord,
   fetchRecords,
+  findRecordIdsByKeys,
   insertRecord,
   updateRecord,
   fixRecordCycle,

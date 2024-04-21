@@ -23,12 +23,17 @@ import { SurveySelectors } from "../survey";
 import { RemoteConnectionSelectors } from "../remoteConnection";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
+import { Cycles } from "model/Cycles";
+import { ToastActions } from "state/toast";
 
 const RECORD_SET = "RECORD_SET";
+const RECORD_PREVIOUS_CYCLE_SET = "RECORD_PREVIOUS_CYCLE_SET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
 const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
+
+const recordPreviousCycleLinkEnabled = true;
 
 const removeNodesFlags = (nodes) => {
   Object.values(nodes).forEach((node) => {
@@ -137,12 +142,51 @@ const editRecord =
     navigation.navigate(screenKeys.recordEditor);
   };
 
+const _fetchRecordFromPreviousCycle = async ({ survey, record }) => {
+  const rootEntity = Records.getRoot(record);
+  const keyValues = Records.getEntityKeyValues({
+    survey,
+    record,
+    entity: rootEntity,
+  });
+  const prevCycle = Cycles.getPrevCycleKey(record.cycle);
+  const prevCycleRecordIds = await RecordService.findRecordIdsByKeys({
+    survey,
+    cycle: prevCycle,
+    keyValues,
+  });
+  if (prevCycleRecordIds.length === 0) {
+    dispatch(
+      ToastActions.show({ textKey: "dataEntry:previousCycleRecordNotFound" })
+    );
+  } else if (prevCycleRecordIds.length === 1) {
+    const prevCycleRecord = await RecordService.fetchRecord({
+      survey,
+      recordId: prevCycleRecordIds[0],
+    });
+    dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record: prevCycleRecord });
+
+    dispatch(
+      ToastActions.show({ textKey: "dataEntry:previousCycleRecordFound" })
+    );
+  } else {
+    dispatch(
+      ToastActions.show({
+        textKey: "dataEntry:previousCycleMultipleRecordsFound",
+      })
+    );
+  }
+};
+
 const fetchAndEditRecord =
   ({ navigation, recordId }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = await RecordService.fetchRecord({ survey, recordId });
+    if (recordPreviousCycleLinkEnabled && Number(record.cycle) > 0) {
+      await _fetchRecordFromPreviousCycle({ survey, record });
+    }
     dispatch(editRecord({ navigation, record }));
   };
 
@@ -287,6 +331,7 @@ const navigateToRecordsList =
 
 export const DataEntryActions = {
   RECORD_SET,
+  RECORD_PREVIOUS_CYCLE_SET,
   PAGE_ENTITY_SET,
   PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
