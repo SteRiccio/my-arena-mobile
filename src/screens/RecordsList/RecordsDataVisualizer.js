@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import PropTypes from "prop-types";
 
 import {
   DateFormats,
@@ -132,4 +133,11 @@ export const RecordsDataVisualizer = (props) => {
       selectable
     />
   );
+};
+
+RecordsDataVisualizer.propTypes = {
+  loadRecords: PropTypes.func.isRequired,
+  records: PropTypes.array.isRequired,
+  syncStatusFetched: PropTypes.bool,
+  syncStatusLoading: PropTypes.bool,
 };
