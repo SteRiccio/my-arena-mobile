@@ -16,7 +16,8 @@ const getChildrenDefs = ({ survey, nodeDef, cycle }) =>
   }).filter(
     (childDef) =>
       !NodeDefs.isHidden(childDef) &&
-      !NodeDefs.isHiddenInMobile(cycle)(childDef)
+      !NodeDefs.isHiddenInMobile(cycle)(childDef) &&
+      NodeDefs.isInCycle(cycle)(childDef)
   );
 
 const getEntitySummaryDefs = ({
