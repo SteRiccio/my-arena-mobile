@@ -7,6 +7,7 @@ const initialState = {
   record: null,
   recordCurrentPageEntity: null,
   recordPageSelectorMenuOpen: false,
+  previousCycleRecord: null,
 };
 
 const actionHandlers = {
@@ -20,17 +21,25 @@ const actionHandlers = {
   }),
   [DataEntryActions.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
     ...state,
-    recordPreviousCycle: action.record,
+    previousCycleRecord: action.record,
   }),
   [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => {
-    const { parentEntityUuid, entityDefUuid, entityUuid } = action;
+    const {
+      entityDefUuid,
+      parentEntityUuid,
+      entityUuid,
+      previousCycleParentEntityUuid,
+      previousCycleEntityUuid,
+    } = action;
 
     return {
       ...state,
       recordCurrentPageEntity: {
-        parentEntityUuid,
         entityDefUuid,
+        parentEntityUuid,
         entityUuid,
+        previousCycleParentEntityUuid,
+        previousCycleEntityUuid,
       },
       activeChildDefIndex: 0,
     };

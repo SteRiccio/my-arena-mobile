@@ -33,7 +33,7 @@ const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
 const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
 
-const recordPreviousCycleLinkEnabled = true;
+const recordPreviousCycleLinkEnabled = true; // TODO move it to settings
 
 const removeNodesFlags = (nodes) => {
   Object.values(nodes).forEach((node) => {
@@ -142,7 +142,10 @@ const editRecord =
     navigation.navigate(screenKeys.recordEditor);
   };
 
-const _fetchRecordFromPreviousCycle = async ({ survey, record }) => {
+const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
+  if (__DEV__) {
+    console.log("=== fetching record in previous cycle...");
+  }
   const rootEntity = Records.getRoot(record);
   const keyValues = Records.getEntityKeyValues({
     survey,
@@ -160,10 +163,19 @@ const _fetchRecordFromPreviousCycle = async ({ survey, record }) => {
       ToastActions.show({ textKey: "dataEntry:previousCycleRecordNotFound" })
     );
   } else if (prevCycleRecordIds.length === 1) {
+    const prevCycleRecordId = prevCycleRecordIds[0];
+    if (__DEV__) {
+      console.log(
+        `=== record in previous cycle found with id ${prevCycleRecordId}, fetching content...`
+      );
+    }
     const prevCycleRecord = await RecordService.fetchRecord({
       survey,
-      recordId: prevCycleRecordIds[0],
+      recordId: prevCycleRecordId,
     });
+    if (__DEV__) {
+      console.log(`=== record in previous cycle: content loaded`);
+    }
     dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record: prevCycleRecord });
 
     dispatch(
@@ -185,7 +197,7 @@ const fetchAndEditRecord =
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = await RecordService.fetchRecord({ survey, recordId });
     if (recordPreviousCycleLinkEnabled && Number(record.cycle) > 0) {
-      await _fetchRecordFromPreviousCycle({ survey, record });
+      await _fetchRecordFromPreviousCycle({ dispatch, survey, record });
     }
     dispatch(editRecord({ navigation, record }));
   };
@@ -294,12 +306,39 @@ const selectCurrentPageEntity =
       return;
     }
 
-    dispatch({
-      type: PAGE_ENTITY_SET,
+    const payload = {
       parentEntityUuid,
       entityDefUuid,
       entityUuid: nextEntityUuid,
-    });
+    };
+
+    const previousCycleRecord =
+      DataEntrySelectors.selectPreviousCycleRecord(state);
+
+    if (previousCycleRecord) {
+      console.log(
+        "===previous cycle record set: look for previous cycle entity"
+      );
+      const previousCycleParentEntity =
+        DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
+          entityUuid: parentEntityUuid,
+        })(state);
+      const previousCycleNextEntity =
+        DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
+          entityUuid: nextEntityUuid,
+        })(state);
+      console.log(
+        `===previous cycle entity ${
+          !previousCycleNextEntity ? "NOT " : ""
+        }found`
+      );
+      Object.assign(payload, {
+        previousCycleParentEntityUuid: previousCycleParentEntity?.uuid,
+        previousCycleEntityUuid: previousCycleNextEntity?.uuid,
+      });
+    }
+
+    dispatch({ type: PAGE_ENTITY_SET, ...payload });
   };
 
 const selectCurrentPageEntityActiveChildIndex = (index) => (dispatch) => {
