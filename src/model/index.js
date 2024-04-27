@@ -9,4 +9,5 @@ export { ScreenOrientation } from "./ScreenOrientation";
 export { ScreenViewMode } from "./ScreenViewMode";
 export { Themes, ThemesSettings } from "./Themes";
 export { UpdateStatus } from "./UpdateStatus";
+export { RecordNodes } from "./utils/RecordNodes";
 export { SurveyDefs } from "./utils/SurveyDefs";
