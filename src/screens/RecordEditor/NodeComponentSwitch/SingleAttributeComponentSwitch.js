@@ -48,18 +48,18 @@ export const SingleAttributeComponentSwitch = (props) => {
 
   const nodeUuid = nodeUuidProp ?? nodes[0]?.uuid;
 
-  return component ? (
-    React.createElement(component, {
-      nodeDef,
-      nodeUuid,
-      onFocus,
-      parentNodeUuid,
-      style,
-      wrapperStyle,
-    })
-  ) : (
-    <Text textKey={`Type not supported (${nodeDef.type})`} />
-  );
+  if (!component) {
+    return <Text textKey={`Type not supported (${nodeDef.type})`} />;
+  }
+
+  return React.createElement(component, {
+    nodeDef,
+    nodeUuid,
+    onFocus,
+    parentNodeUuid,
+    style,
+    wrapperStyle,
+  });
 };
 
 SingleAttributeComponentSwitch.propTypes = {
