@@ -32,6 +32,7 @@ export { SelectableList } from "./SelectableList";
 export { SelectableListWithFilter } from "./SelectableListWithFilter";
 export { Slider } from "./Slider";
 export { Snackbar } from "./Snackbar";
+export { Spacer } from "./Spacer";
 export { Switch } from "./Switch";
 export { Text } from "./Text";
 export { TextInput } from "./TextInput";

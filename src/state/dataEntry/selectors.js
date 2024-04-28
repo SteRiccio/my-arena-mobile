@@ -239,6 +239,9 @@ const selectRecordPageSelectorMenuOpen = (state) =>
 const selectPreviousCycleRecord = (state) =>
   getDataEntryState(state).previousCycleRecord;
 
+  const selectIsLinkedToPreviousCycleRecord = state => 
+  getDataEntryState(state).previousCycleRecordLinked
+
 const selectPreviousCycleRecordAttributeValue =
   ({ nodeDef, parentNodeUuid }) =>
   (state) => {
@@ -366,8 +369,10 @@ export const DataEntrySelectors = {
   // record previous cycle
   selectPreviousCycleRecord,
   useSelectPreviousCycleRecord: () => useSelector(selectPreviousCycleRecord),
-  useIsLinkedToPreviousCycleRecord: () =>
+  useCanRecordBeLinkedToPreviousCycle: () =>
     useSelector((state) => !!selectPreviousCycleRecord(state)),
+  useIsLinkedToPreviousCycleRecord: () =>
+    useSelector(selectIsLinkedToPreviousCycleRecord),
   selectPreviousCycleEntityWithSameKeys,
   selectPreviousCycleRecordAttributeValue,
   usePreviousCycleRecordAttributeValue: ({ nodeDef, parentNodeUuid }) =>

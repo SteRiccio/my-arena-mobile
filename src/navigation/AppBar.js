@@ -1,14 +1,13 @@
 import { useCallback, useState } from "react";
-import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
+import { Appbar as RNPAppbar } from "react-native-paper";
 import { useDispatch } from "react-redux";
-import { BackHandler } from "react-native";
 import PropTypes from "prop-types";
 
+import { HView, Spacer, Text } from "components";
 import { useScreenKey } from "hooks";
 import { ScreenViewMode } from "model";
 import { useTranslation } from "localization";
 import {
-  ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
   ScreenOptionsActions,
@@ -17,7 +16,9 @@ import {
 } from "state";
 import { screenKeys } from "screens";
 import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
-import { Environment } from "utils";
+import { OptionsMenu } from "./OptionsMenu";
+
+import styles from "./styles";
 
 export const AppBar = (props) => {
   const { back, navigation, options } = props;
@@ -39,6 +40,8 @@ export const AppBar = (props) => {
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
+  const canRecordBeLinkedToPreviousCycle =
+    DataEntrySelectors.useCanRecordBeLinkedToPreviousCycle();
 
   const [state, setState] = useState({ menuVisible: false });
 
@@ -56,69 +59,51 @@ export const AppBar = (props) => {
   );
 
   return (
-    <RNPAppbar.Header>
+    <RNPAppbar.Header mode={editingRecord ? "medium" : "small"}>
+      <HView fullWidth>
+        {editingRecord && (
+          <RNPAppbar.Action
+            icon="menu"
+            onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
+          />
+        )}
+
+        {hasBack && back && (
+          <RNPAppbar.BackAction onPress={navigation.goBack} />
+        )}
+
+        {!editingRecord && (
+          <Text style={styles.title} variant="titleLarge">
+            {title}
+          </Text>
+        )}
+
+        {editingRecord && (
+          <>
+            <Spacer />
+            {canRecordBeLinkedToPreviousCycle && (
+              <RNPAppbar.Action icon="link" />
+            )}
+          </>
+        )}
+
+        {!editingRecord && hasToggleScreenView && (
+          <RNPAppbar.Action
+            icon={
+              screenViewMode === ScreenViewMode.list ? "table" : "view-list"
+            }
+            onPress={() =>
+              dispatch(ScreenOptionsActions.toggleScreenViewMode({ screenKey }))
+            }
+          />
+        )}
+
+        {screenKey !== screenKeys.settings && (
+          <OptionsMenu menuVisible={menuVisible} toggleMenu={toggleMenu} />
+        )}
+      </HView>
       {editingRecord && (
-        <RNPAppbar.Action
-          icon="menu"
-          onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
-        />
-      )}
-
-      {hasBack && back && <RNPAppbar.BackAction onPress={navigation.goBack} />}
-
-      {editingRecord && <Breadcrumbs />}
-
-      {!editingRecord && <RNPAppbar.Content title={title} />}
-
-      {!editingRecord && hasToggleScreenView && (
-        <RNPAppbar.Action
-          icon={screenViewMode === ScreenViewMode.list ? "table" : "view-list"}
-          onPress={() =>
-            dispatch(ScreenOptionsActions.toggleScreenViewMode({ screenKey }))
-          }
-        />
-      )}
-
-      {!editingRecord && screenKey !== screenKeys.settings && (
-        <Menu
-          visible={menuVisible}
-          onDismiss={toggleMenu}
-          anchor={
-            <RNPAppbar.Action icon="dots-vertical" onPress={toggleMenu} />
-          }
-        >
-          <Menu.Item
-            onPress={() => {
-              toggleMenu();
-              navigation.navigate(screenKeys.surveysListLocal);
-            }}
-            title={t("surveys:title")}
-          />
-          <Divider />
-          <Menu.Item
-            onPress={() => {
-              toggleMenu();
-              navigation.navigate(screenKeys.settings);
-            }}
-            title={t("settings:title")}
-          />
-          {Environment.isAndroid && (
-            <Menu.Item
-              onPress={() => {
-                toggleMenu();
-                dispatch(
-                  ConfirmActions.show({
-                    titleKey: "app:confirmExit.title",
-                    confirmButtonTextKey: "common:exit",
-                    messageKey: "app:confirmExit.message",
-                    onConfirm: BackHandler.exitApp,
-                  })
-                );
-              }}
-              title={t("common:exit")}
-            />
-          )}
-        </Menu>
+        <RNPAppbar.Content title={<Breadcrumbs />}></RNPAppbar.Content>
       )}
     </RNPAppbar.Header>
   );

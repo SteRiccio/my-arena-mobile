@@ -22,6 +22,7 @@ const actionHandlers = {
   [DataEntryActions.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
     ...state,
     previousCycleRecord: action.record,
+    previousCycleRecordLinked: true,
   }),
   [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => {
     const {
