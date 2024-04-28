@@ -112,13 +112,13 @@ export const Breadcrumbs = () => {
   };
 
   return (
-    <HView style={styles.container}>
+    <HView style={styles.container} transparent>
       <ScrollView horizontal ref={scrollViewRef}>
-        <HView style={styles.container}>
+        <HView style={styles.container} transparent>
           {items.map((item, index) => {
             const isLastItem = index === items.length - 1;
             return (
-              <HView key={item.entityDefUuid} style={styles.item}>
+              <HView key={item.entityDefUuid} style={styles.item} transparent>
                 <Button
                   compact
                   labelStyle={styles.itemButtonLabel}

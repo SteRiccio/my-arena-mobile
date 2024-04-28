@@ -59,8 +59,8 @@ export const AppBar = (props) => {
   );
 
   return (
-    <RNPAppbar.Header mode={editingRecord ? "medium" : "small"}>
-      <HView fullWidth>
+    <RNPAppbar.Header elevated mode={editingRecord ? "medium" : "small"}>
+      <HView fullWidth transparent>
         {editingRecord && (
           <RNPAppbar.Action
             icon="menu"
