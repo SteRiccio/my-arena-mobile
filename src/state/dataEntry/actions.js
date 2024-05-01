@@ -32,6 +32,7 @@ const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
 const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
 const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
+const PREVIOUS_CYCLE_PAGE_ENTITY_SET = "PREVIOUS_CYCLE_PAGE_ENTITY_SET";
 
 const recordPreviousCycleLinkEnabled = true; // TODO move it to settings
 
@@ -143,9 +144,6 @@ const editRecord =
   };
 
 const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
-  if (__DEV__) {
-    console.log("=== fetching record in previous cycle...");
-  }
   const rootEntity = Records.getRoot(record);
   const keyValues = Records.getEntityKeyValues({
     survey,
@@ -159,28 +157,26 @@ const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
     keyValues,
   });
   if (prevCycleRecordIds.length === 0) {
+    dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record: null });
     dispatch(
       ToastActions.show({ textKey: "dataEntry:previousCycleRecordNotFound" })
     );
   } else if (prevCycleRecordIds.length === 1) {
     const prevCycleRecordId = prevCycleRecordIds[0];
-    if (__DEV__) {
-      console.log(
-        `=== record in previous cycle found with id ${prevCycleRecordId}, fetching content...`
-      );
-    }
     const prevCycleRecord = await RecordService.fetchRecord({
       survey,
       recordId: prevCycleRecordId,
     });
-    if (__DEV__) {
-      console.log(`=== record in previous cycle: content loaded`);
-    }
-    dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record: prevCycleRecord });
+    await dispatch({
+      type: RECORD_PREVIOUS_CYCLE_SET,
+      record: prevCycleRecord,
+    });
 
     dispatch(
       ToastActions.show({ textKey: "dataEntry:previousCycleRecordFound" })
     );
+
+    dispatch(updatePreviousCyclePageEntity);
   } else {
     dispatch(
       ToastActions.show({
@@ -196,11 +192,35 @@ const fetchAndEditRecord =
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = await RecordService.fetchRecord({ survey, recordId });
+    await dispatch(editRecord({ navigation, record }));
+
     if (recordPreviousCycleLinkEnabled && Number(record.cycle) > 0) {
       await _fetchRecordFromPreviousCycle({ dispatch, survey, record });
     }
-    dispatch(editRecord({ navigation, record }));
   };
+
+const updatePreviousCyclePageEntity = (dispatch, getState) => {
+  const state = getState();
+  const { parentEntityUuid, entityUuid } =
+    DataEntrySelectors.selectCurrentPageEntity(state);
+
+  const previousCycleParentEntity =
+    DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
+      entityUuid: parentEntityUuid,
+    })(state);
+  const previousCycleEntity =
+    DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
+      entityUuid,
+    })(state);
+
+  dispatch({
+    type: PREVIOUS_CYCLE_PAGE_ENTITY_SET,
+    payload: {
+      previousCycleParentEntityUuid: previousCycleParentEntity?.uuid,
+      previousCycleEntityUuid: previousCycleEntity?.uuid,
+    },
+  });
+};
 
 const updateAttribute =
   ({ uuid, value, fileUri = null }) =>
@@ -250,7 +270,31 @@ const updateAttribute =
     }
     await RecordService.updateRecord({ survey, record: recordUpdated });
 
-    dispatch({ type: RECORD_SET, record: recordUpdated });
+    await dispatch({ type: RECORD_SET, record: recordUpdated });
+
+    if (NodeDefs.isKey(nodeDef)) {
+      // updating key attribute; check if record has previous cycle record;
+      const { cycle } = record;
+      if (cycle > "0") {
+        const rootKeys = Surveys.getNodeDefKeys({
+          survey,
+          nodeDef: Surveys.getNodeDefRoot({ survey }),
+          cycle,
+        });
+        const nodeDefIsRootKey = rootKeys.includes(nodeDef);
+        if (nodeDefIsRootKey) {
+          await _fetchRecordFromPreviousCycle({
+            dispatch,
+            survey,
+            record: recordUpdated,
+          });
+        } else if (
+          DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state)
+        ) {
+          dispatch(updatePreviousCyclePageEntity);
+        }
+      }
+    }
   };
 
 const addNewAttribute =
@@ -312,33 +356,11 @@ const selectCurrentPageEntity =
       entityUuid: nextEntityUuid,
     };
 
-    const previousCycleRecord =
-      DataEntrySelectors.selectPreviousCycleRecord(state);
+    dispatch({ type: PAGE_ENTITY_SET, payload });
 
-    if (previousCycleRecord) {
-      console.log(
-        "===previous cycle record set: look for previous cycle entity"
-      );
-      const previousCycleParentEntity =
-        DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
-          entityUuid: parentEntityUuid,
-        })(state);
-      const previousCycleNextEntity =
-        DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
-          entityUuid: nextEntityUuid,
-        })(state);
-      console.log(
-        `===previous cycle entity ${
-          !previousCycleNextEntity ? "NOT " : ""
-        }found`
-      );
-      Object.assign(payload, {
-        previousCycleParentEntityUuid: previousCycleParentEntity?.uuid,
-        previousCycleEntityUuid: previousCycleNextEntity?.uuid,
-      });
+    if (DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state)) {
+      dispatch(updatePreviousCyclePageEntity);
     }
-
-    dispatch({ type: PAGE_ENTITY_SET, ...payload });
   };
 
 const selectCurrentPageEntityActiveChildIndex = (index) => (dispatch) => {
@@ -375,6 +397,7 @@ export const DataEntryActions = {
   PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
   DATA_ENTRY_RESET,
+  PREVIOUS_CYCLE_PAGE_ENTITY_SET,
 
   createNewRecord,
   addNewEntity,

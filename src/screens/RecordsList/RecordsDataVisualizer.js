@@ -41,6 +41,7 @@ export const RecordsDataVisualizer = (props) => {
   const { t } = useTranslation();
 
   const survey = SurveySelectors.useCurrentSurvey();
+  const cycle = SurveySelectors.useCurrentSurveyCycle();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
@@ -48,8 +49,8 @@ export const RecordsDataVisualizer = (props) => {
   const rootDefKeys = useMemo(() => {
     if (!survey) return [];
     const rootDef = Surveys.getNodeDefRoot({ survey });
-    return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
-  }, [survey]);
+    return Surveys.getNodeDefKeys({ survey, cycle, nodeDef: rootDef });
+  }, [survey, cycle]);
 
   const recordToItem = (record) => {
     const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {

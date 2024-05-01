@@ -190,19 +190,11 @@ const selectCurrentPageEntity = (state) => {
   } = getDataEntryState(state).recordCurrentPageEntity || {};
 
   if (!parentEntityUuid) {
-    const result = {
+    return {
       parentEntityUuid: null,
       entityDef: Surveys.getNodeDefRoot({ survey }),
       entityUuid: Records.getRoot(record).uuid,
     };
-    const previousCycleRecord = selectPreviousCycleRecord(state);
-    if (!!previousCycleRecord) {
-      Object.assign(result, {
-        previousCycleParentEntityUuid: null,
-        previousCycleEntityUuid: Records.getRoot(previousCycleRecord).uuid,
-      });
-    }
-    return result;
   }
   const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
 
@@ -236,11 +228,30 @@ const selectRecordPageSelectorMenuOpen = (state) =>
   getDataEntryState(state).recordPageSelectorMenuOpen;
 
 // record previous cycle
+const selectCanRecordBeLinkedToPreviousCycleRecord = (state) => {
+  const record = selectRecord(state);
+  return record?.cycle > "0";
+};
 const selectPreviousCycleRecord = (state) =>
   getDataEntryState(state).previousCycleRecord;
 
-  const selectIsLinkedToPreviousCycleRecord = state => 
-  getDataEntryState(state).previousCycleRecordLinked
+const selectIsLinkedToPreviousCycleRecord = (state) =>
+  !!selectPreviousCycleRecord(state);
+
+const selectPreviousCycleRecordPageEntity = (state) => {
+  const { entityDef } = selectCurrentPageEntity(state);
+  if (NodeDefs.isRoot(entityDef)) {
+    const previousCycleRecord = selectPreviousCycleRecord(state);
+    return !previousCycleRecord
+      ? {}
+      : {
+          previousCycleParentEntityUuid: null,
+          previousCycleEntityUuid: Records.getRoot(previousCycleRecord).uuid,
+        };
+  } else {
+    return getDataEntryState(state).previousCycleRecordPageEntity;
+  }
+};
 
 const selectPreviousCycleRecordAttributeValue =
   ({ nodeDef, parentNodeUuid }) =>
@@ -267,12 +278,22 @@ const selectPreviousCycleRecordAttributeValue =
 const selectPreviousCycleEntityWithSameKeys =
   ({ entityUuid }) =>
   (state) => {
-    const previousCycleRecord = selectPreviousCycleRecord(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = selectRecord(state);
+    const previousCycleRecord = selectPreviousCycleRecord(state);
 
-    return RecordNodes.findEntityWithSameKeysInAnotherRecord({
+    if (!record) {
+      console.log("===record is null");
+    }
+    if (!previousCycleRecord) {
+      console.log("===prev record is null");
+    }
+
+    if (!record || !previousCycleRecord) return null;
+
+    return Records.findEntityWithSameKeysInAnotherRecord({
       survey,
+      cycle: record.cycle,
       entityUuid,
       record,
       recordOther: previousCycleRecord,
@@ -369,11 +390,19 @@ export const DataEntrySelectors = {
   // record previous cycle
   selectPreviousCycleRecord,
   useSelectPreviousCycleRecord: () => useSelector(selectPreviousCycleRecord),
+  usePreviousCycleRecordPageEntity: () =>
+    useSelector(selectPreviousCycleRecordPageEntity, Objects.isEqual),
+
+  selectCanRecordBeLinkedToPreviousCycleRecord,
   useCanRecordBeLinkedToPreviousCycle: () =>
-    useSelector((state) => !!selectPreviousCycleRecord(state)),
+    useSelector(selectCanRecordBeLinkedToPreviousCycleRecord),
+
+  selectIsLinkedToPreviousCycleRecord,
   useIsLinkedToPreviousCycleRecord: () =>
     useSelector(selectIsLinkedToPreviousCycleRecord),
+
   selectPreviousCycleEntityWithSameKeys,
+
   selectPreviousCycleRecordAttributeValue,
   usePreviousCycleRecordAttributeValue: ({ nodeDef, parentNodeUuid }) =>
     useSelector(

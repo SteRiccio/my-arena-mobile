@@ -42,6 +42,8 @@ export const AppBar = (props) => {
     screenKey === screenKeys.recordEditor;
   const canRecordBeLinkedToPreviousCycle =
     DataEntrySelectors.useCanRecordBeLinkedToPreviousCycle();
+  const isLinkedToPreviousCycleRecord =
+    DataEntrySelectors.useIsLinkedToPreviousCycleRecord();
 
   const [state, setState] = useState({ menuVisible: false });
 
@@ -82,7 +84,9 @@ export const AppBar = (props) => {
           <>
             <Spacer />
             {canRecordBeLinkedToPreviousCycle && (
-              <RNPAppbar.Action icon="link" />
+              <RNPAppbar.Action
+                icon={isLinkedToPreviousCycleRecord ? "link" : "link-off"}
+              />
             )}
           </>
         )}

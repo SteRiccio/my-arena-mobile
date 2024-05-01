@@ -8,6 +8,7 @@ const initialState = {
   recordCurrentPageEntity: null,
   recordPageSelectorMenuOpen: false,
   previousCycleRecord: null,
+  previousCycleRecordPageEntity: {},
 };
 
 const actionHandlers = {
@@ -22,29 +23,13 @@ const actionHandlers = {
   [DataEntryActions.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
     ...state,
     previousCycleRecord: action.record,
-    previousCycleRecordLinked: true,
+    previousCycleRecordPageEntity: {},
   }),
-  [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => {
-    const {
-      entityDefUuid,
-      parentEntityUuid,
-      entityUuid,
-      previousCycleParentEntityUuid,
-      previousCycleEntityUuid,
-    } = action;
-
-    return {
-      ...state,
-      recordCurrentPageEntity: {
-        entityDefUuid,
-        parentEntityUuid,
-        entityUuid,
-        previousCycleParentEntityUuid,
-        previousCycleEntityUuid,
-      },
-      activeChildDefIndex: 0,
-    };
-  },
+  [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => ({
+    ...state,
+    recordCurrentPageEntity: action.payload,
+    activeChildDefIndex: 0,
+  }),
   [DataEntryActions.PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({
     state,
     action,
@@ -52,6 +37,10 @@ const actionHandlers = {
   [DataEntryActions.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: action.open,
+  }),
+  [DataEntryActions.PREVIOUS_CYCLE_PAGE_ENTITY_SET]: ({ state, action }) => ({
+    ...state,
+    previousCycleRecordPageEntity: action.payload,
   }),
 };
 

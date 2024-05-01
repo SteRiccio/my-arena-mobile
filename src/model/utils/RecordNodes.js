@@ -1,7 +1,6 @@
 import {
   NodeDefs,
   NodeValueFormatter,
-  NodeValues,
   Nodes,
   Objects,
   RecordExpressionEvaluator,
@@ -150,85 +149,10 @@ const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
   return null;
 };
 
-const findEntityByKeyValues = ({
-  survey,
-  record,
-  parentEntity,
-  entityDefUuid,
-  keyValues,
-}) => {
-  const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
-  const siblingEntities = Records.getChildren(
-    parentEntity,
-    entityDefUuid
-  )(record);
-  if (NodeDefs.isSingle(entityDef)) {
-    return siblingEntities[0];
-  }
-  return siblingEntities.find((siblingEntity) => {
-    const siblingEntityKeyValues = Records.getEntityKeyValues({
-      survey,
-      record,
-      entity: siblingEntity,
-    });
-    const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
-
-    return siblingEntityKeyValues.every((keyValue, index) => {
-      const keyValueSearch = keyValues[index];
-      const keyDef = keyDefs[index];
-
-      return NodeValues.isValueEqual({
-        survey,
-        nodeDef: keyDef,
-        value: keyValue,
-        valueSearch: keyValueSearch,
-      });
-    });
-  });
-};
-
-const findEntityWithSameKeysInAnotherRecord = ({
-  survey,
-  entityUuid,
-  record,
-  recordOther,
-}) => {
-  const entity = Records.getNodeByUuid(entityUuid)(record);
-  const entityAncestorsAndSelf = Records.getAncestorsAndSelf({
-    record,
-    node: entity,
-  });
-  const ancestorDefUuidsAndKeys = entityAncestorsAndSelf.map((ancestor) => ({
-    entityDefUuid: ancestor.nodeDefUuid,
-    keyValues: Records.getEntityKeyValues({
-      survey,
-      record,
-      entity: ancestor,
-    }),
-  }));
-
-  let otherRecordCurrentParentEntity = Records.getRoot(recordOther);
-
-  const ancestorDefUuidsAndKeysToVisit = [...ancestorDefUuidsAndKeys].reverse();
-
-  for (let index = 1; index < ancestorDefUuidsAndKeysToVisit.length; index++) {
-    const { entityDefUuid, keyValues } = ancestorDefUuidsAndKeysToVisit[index];
-    otherRecordCurrentParentEntity = findEntityByKeyValues({
-      survey,
-      record: recordOther,
-      parentEntity: otherRecordCurrentParentEntity,
-      entityDefUuid,
-      keyValues,
-    });
-  }
-  return otherRecordCurrentParentEntity;
-};
-
 export const RecordNodes = {
   getNodeName,
   getEntitySummaryValuesByNameFormatted,
   getApplicableChildrenEntityDefs,
   getSiblingNode,
   getCoordinateDistanceTarget,
-  findEntityWithSameKeysInAnotherRecord,
 };

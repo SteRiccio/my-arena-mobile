@@ -8,7 +8,8 @@ export const PreviousCycleNodeValuePreview = (props) => {
     console.log("rendering PreviousCycleNodeValuePreview");
   }
 
-  const { previousCycleEntityUuid } = DataEntrySelectors.useCurrentPageEntity();
+  const { previousCycleEntityUuid } =
+    DataEntrySelectors.usePreviousCycleRecordPageEntity();
 
   const previousCycleValue =
     DataEntrySelectors.usePreviousCycleRecordAttributeValue({

@@ -27,11 +27,12 @@ const getEntitySummaryDefs = ({
   onlyKeys = true,
   maxSummaryDefs = 3,
 }) => {
-  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
+  const { cycle } = record;
+  const keyDefs = Surveys.getNodeDefKeys({ survey, cycle, nodeDef: entityDef });
+
   if (onlyKeys) {
     return keyDefs;
   }
-  const { cycle } = record;
   const defsIncludedInSummary =
     Surveys.getNodeDefsIncludedInMultipleEntitySummary({
       survey,
@@ -55,7 +56,10 @@ const getEntitySummaryDefs = ({
     );
     if (entityDefChildrenNotKeys.length > 0) {
       summaryDefs.push(
-        ...entityDefChildrenNotKeys.slice(0, otherDefsToAddCount)
+        ...entityDefChildrenNotKeys.slice(
+          0,
+          Math.min(entityDefChildrenNotKeys.length, otherDefsToAddCount)
+        )
       );
     }
   }
