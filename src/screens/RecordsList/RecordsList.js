@@ -7,15 +7,18 @@ import { Surveys } from "@openforis/arena-core";
 import {
   Button,
   CollapsiblePanel,
+  FormItem,
   HView,
+  IconButton,
   Loader,
   MenuButton,
+  Switch,
   Text,
   VView,
 } from "components";
 
 import { useIsNetworkConnected, useNavigationFocus } from "hooks";
-import { Cycles, RecordSyncStatus } from "model";
+import { Cycles, RecordOrigin, RecordSyncStatus } from "model";
 import { RecordService } from "service";
 import { DataEntryActions, MessageActions, SurveySelectors } from "state";
 
@@ -36,15 +39,28 @@ export const RecordsList = () => {
   const cycles = Surveys.getCycleKeys(survey);
 
   const [state, setState] = useState({
+    loading: true,
+    onlyLocal: true,
     records: [],
+    searchValue: "",
     syncStatusLoading: false,
     syncStatusFetched: false,
-    loading: true,
   });
-  const { records, loading, syncStatusLoading, syncStatusFetched } = state;
+  const {
+    loading,
+    onlyLocal,
+    records,
+    searchValue,
+    syncStatusLoading,
+    syncStatusFetched,
+  } = state;
 
   const loadRecords = useCallback(async () => {
-    const _records = await RecordService.fetchRecords({ survey, cycle });
+    const _records = await RecordService.fetchRecords({
+      survey,
+      cycle,
+      onlyLocal,
+    });
     setState((statePrev) => ({
       ...statePrev,
       records: _records,
@@ -52,12 +68,12 @@ export const RecordsList = () => {
       syncStatusLoading: false,
       loading: false,
     }));
-  }, [survey, cycle]);
+  }, [survey, cycle, onlyLocal]);
 
   // refresh records list on cycle change
   useEffect(() => {
     loadRecords();
-  }, [cycle]);
+  }, [cycle, loadRecords, onlyLocal]);
 
   const loadRecordsWithSyncStatus = useCallback(async () => {
     setState((statePrev) => ({
@@ -66,8 +82,9 @@ export const RecordsList = () => {
       syncStatusFetched: false,
     }));
     try {
-      const _records = await RecordService.fetchRecordsWithSyncStatus({
+      const _records = await RecordService.syncRecordSummaries({
         survey,
+        cycle,
       });
       setState((statePrev) => ({
         ...statePrev,
@@ -88,7 +105,26 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [survey]);
+  }, [survey, cycle]);
+
+  const onOnlyLocalChange = useCallback(
+    (onlyLocalUpdated) =>
+      setState((statePrev) => ({ ...statePrev, onlyLocal: onlyLocalUpdated })),
+    []
+  );
+
+  const onSearchValueChange = useCallback(
+    (searchValueUpdated) =>
+      setState((statePrev) => ({
+        ...statePrev,
+        searchValue: searchValueUpdated,
+      })),
+    []
+  );
+
+  const onRemoteSyncPress = useCallback(async () => {
+    await loadRecordsWithSyncStatus();
+  }, [loadRecordsWithSyncStatus]);
 
   // reload records on navigation focus (e.g. going back to records list screen)
   useNavigationFocus({ onFocus: loadRecords });
@@ -115,10 +151,12 @@ export const RecordsList = () => {
   }, [loadRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
-    const recordsUuids = records.map((record) => record.uuid);
+    const recordUuids = records
+      .filter((record) => record.origin === RecordOrigin.local)
+      .map((record) => record.uuid);
     dispatch(
       DataEntryActions.exportRecords({
-        recordUuids: recordsUuids,
+        recordUuids,
         onlyLocally: true,
       })
     );
@@ -149,12 +187,27 @@ export const RecordsList = () => {
           </>
         </CollapsiblePanel>
 
+        <FormItem
+          labelKey="dataEntry:showOnlyLocalRecords"
+          style={styles.formItem}
+        >
+          <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
+          <IconButton
+            icon="cloud-refresh"
+            loading={syncStatusLoading}
+            onPress={onRemoteSyncPress}
+          />
+        </FormItem>
+        {records.length > 5 && (
+          <Searchbar value={searchValue} onChange={onSearchValueChange} />
+        )}
         {records.length === 0 && (
           <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
         )}
         {records.length > 0 && (
           <RecordsDataVisualizer
             loadRecords={loadRecords}
+            showOrigin={!onlyLocal}
             records={records}
             syncStatusFetched={syncStatusFetched}
             syncStatusLoading={syncStatusLoading}

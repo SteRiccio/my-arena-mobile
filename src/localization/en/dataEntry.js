@@ -27,6 +27,14 @@ export default {
   newRecord: "New record",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
+  records: {
+    deleteRecordsConfirm: {
+      title: "Delete records",
+      message: "Delete the selected records?",
+    },
+    origin: "Origin",
+  },
+  showOnlyLocalRecords: "Show only local records",
   syncStatusHeader: "Status",
   syncStatus: {
     keysNotSpecified: `Key attributes not specified`,

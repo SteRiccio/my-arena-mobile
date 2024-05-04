@@ -3,21 +3,25 @@ import { RemoteService } from "./remoteService";
 import { RecordRepository } from "./repository/recordRepository";
 import { RecordSyncStatus } from "model";
 import { Files } from "utils";
+import { RecordOrigin } from "model/RecordOrigin";
+import { MAMArrays } from "utils/Arrays";
 
 const {
   fetchRecord,
   fetchRecords,
   findRecordIdsByKeys,
   insertRecord,
+  insertRecordSummaries,
   updateRecord,
   deleteRecords,
   fixRecordCycle,
 } = RecordRepository;
 
-const fetchRecordsSummariesRemote = async ({ surveyRemoteId }) => {
+const fetchRecordsSummariesRemote = async ({ surveyRemoteId, cycle }) => {
   try {
     const { data } = await RemoteService.get(
-      `api/survey/${surveyRemoteId}/records/summary`
+      `api/survey/${surveyRemoteId}/records/summary`,
+      { cycle }
     );
     const { list } = data;
     return list;
@@ -57,12 +61,53 @@ const determineRecordSyncStatus = ({
   }
 };
 
-const fetchRecordsWithSyncStatus = async ({ survey }) => {
-  const recordsSummariesLocal = await fetchRecords({ survey });
+const syncRecordSummaries = async ({ survey, cycle }) => {
+  const { id: surveyId } = survey;
+
+  const recordsSummariesInDevice = await fetchRecords({
+    survey,
+    cycle,
+    onlyLocal: false,
+  });
   const recordsSummariesRemote = await fetchRecordsSummariesRemote({
     surveyRemoteId: survey.remoteId,
+    cycle,
   });
-  return recordsSummariesLocal.map((recordSummaryLocal) => {
+  console.log("---cycle", cycle);
+  console.log("===remote", recordsSummariesRemote);
+
+  const recordsSummariesLocalToDelete = recordsSummariesInDevice.filter(
+    (recordSummaryLocal) =>
+      // record summary is not locally modified and is no more in server
+      recordSummaryLocal.origin === RecordOrigin.remote &&
+      !MAMArrays.findByUuid(recordSummaryLocal.uuid)(recordsSummariesRemote)
+  );
+  if (recordsSummariesLocalToDelete.length > 0) {
+    deleteRecords({
+      surveyId,
+      recordUuids: recordsSummariesLocalToDelete.map((record) => record.uuid),
+    });
+  }
+
+  const recordSummariesToAdd = recordsSummariesRemote.filter(
+    (recordSummaryRemote) =>
+      !MAMArrays.findByUuid(recordSummaryRemote.uuid)(recordsSummariesInDevice)
+  );
+  if (recordSummariesToAdd.length > 0) {
+    insertRecordSummaries({
+      survey,
+      cycle,
+      recordSummaries: recordSummariesToAdd,
+    });
+  }
+
+  const recordsSummariesLocalReloaded = await fetchRecords({
+    survey,
+    cycle,
+    onlyLocal: true,
+  });
+
+  return recordsSummariesLocalReloaded.map((recordSummaryLocal) => {
     const recordSummaryRemote = recordsSummariesRemote.find(
       (summary) => summary.uuid === recordSummaryLocal.uuid
     );
@@ -74,6 +119,17 @@ const fetchRecordsWithSyncStatus = async ({ survey }) => {
     recordSummaryLocal.syncStatus = syncStatus;
     return recordSummaryLocal;
   });
+};
+
+const fetchRecordsWithSyncStatus = async ({ survey, cycle }) => {
+  const recordsSummaries = await fetchRecords({
+    survey,
+    cycle,
+    onlyLocal: false,
+  });
+  const recordsSummariesLocal = recordsSummaries.filter(
+    (recordSummary) => recordSummary.origin === RecordOrigin.local
+  );
 };
 
 const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
@@ -98,7 +154,7 @@ const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
 export const RecordService = {
   fetchRecord,
   fetchRecords,
-  fetchRecordsWithSyncStatus,
+  syncRecordSummaries,
   findRecordIdsByKeys,
   insertRecord,
   updateRecord,

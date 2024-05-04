@@ -32,13 +32,11 @@ const _sendGet = async (serverUrl, uri, params = {}, options = {}) => {
     acc.append(key, value);
     return acc;
   }, new URLSearchParams());
-
-  return fetchWithTimeout(
+  const requestParamsString = requestParams.toString();
+  const url =
     getUrl({ serverUrl, uri }) +
-      (requestParams.size > 0 ? "?" + requestParams.toString() : ""),
-    options,
-    options?.timeout
-  );
+    (requestParamsString ? "?" + requestParamsString : "");
+  return fetchWithTimeout(url, options, options?.timeout);
 };
 
 const get = async (serverUrl, uri, params = {}, options = {}) => {

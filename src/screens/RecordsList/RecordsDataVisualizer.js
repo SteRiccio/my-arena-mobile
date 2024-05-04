@@ -34,7 +34,13 @@ const formatDateToDateTimeDisplay = (date) =>
     : Dates.format(date, DateFormats.datetimeDisplay);
 
 export const RecordsDataVisualizer = (props) => {
-  const { loadRecords, records, syncStatusFetched, syncStatusLoading } = props;
+  const {
+    loadRecords,
+    records,
+    showOrigin,
+    syncStatusFetched,
+    syncStatusLoading,
+  } = props;
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -52,43 +58,54 @@ export const RecordsDataVisualizer = (props) => {
     return Surveys.getNodeDefKeys({ survey, cycle, nodeDef: rootDef });
   }, [survey, cycle]);
 
-  const recordToItem = (record) => {
-    const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
-      const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
-      const value = record[recordKeyProp];
-      const valueFormatted = NodeValueFormatter.format({
-        survey,
-        nodeDef: keyDef,
-        value,
-        showLabel: true,
-        lang,
-      });
-      acc[recordKeyProp] = Objects.isEmpty(valueFormatted)
-        ? t("common:empty")
-        : valueFormatted;
-      return acc;
-    }, {});
+  const recordToItem = useCallback(
+    (record) => {
+      const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
+        const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
+        const value = record[recordKeyProp];
+        let valueFormatted = NodeValueFormatter.format({
+          survey,
+          nodeDef: keyDef,
+          value,
+          showLabel: true,
+          lang,
+        });
+        if (Objects.isEmpty(valueFormatted)) {
+          valueFormatted = Objects.isEmpty(value)
+            ? t("common:empty")
+            : String(value);
+        }
+        acc[recordKeyProp] = valueFormatted;
+        return acc;
+      }, {});
 
-    return {
-      ...record,
-      key: record.uuid,
-      ...valuesByKey,
-      dateCreated: formatDateToDateTimeDisplay(record.dateCreated),
-      dateModified: formatDateToDateTimeDisplay(record.dateModified),
-    };
-  };
+      return {
+        ...record,
+        key: record.uuid,
+        ...valuesByKey,
+        dateCreated: formatDateToDateTimeDisplay(record.dateCreated),
+        dateModified: formatDateToDateTimeDisplay(record.dateModified),
+      };
+    },
+    [lang, rootDefKeys]
+  );
 
-  const onItemPress = useCallback((row) => {
+  const recordItems = useMemo(
+    () => records.map(recordToItem),
+    [records, recordToItem]
+  );
+
+  const onItemPress = useCallback((recordSummary) => {
     dispatch(
-      DataEntryActions.fetchAndEditRecord({ navigation, recordId: row.id })
+      DataEntryActions.fetchAndEditRecord({ navigation, recordSummary })
     );
   }, []);
 
   const onDeleteSelectedItemIds = useCallback((recordUuids) => {
     dispatch(
       ConfirmActions.show({
-        titleKey: "Delete records",
-        messageKey: "Delete the selected records?",
+        titleKey: "dataEntry:records.deleteRecordsConfirm.title",
+        messageKey: "dataEntry:records.deleteRecordsConfirm.message",
         onConfirm: async () => {
           await dispatch(DataEntryActions.deleteRecords(recordUuids));
           await loadRecords();
@@ -109,6 +126,15 @@ export const RecordsDataVisualizer = (props) => {
         header: "common:modifiedOn",
         style: { minWidth: 50 },
       },
+      ...(showOrigin
+        ? [
+            {
+              key: "origin",
+              header: "dataEntry:records.origin",
+              style: { minWidth: 10 },
+            },
+          ]
+        : []),
       ...(syncStatusLoading || syncStatusFetched
         ? [
             {
@@ -121,14 +147,14 @@ export const RecordsDataVisualizer = (props) => {
           ]
         : []),
     ],
-    [rootDefKeys, syncStatusLoading, syncStatusFetched]
+    [rootDefKeys, showOrigin, syncStatusLoading, syncStatusFetched]
   );
 
   return (
     <DataVisualizer
       fields={fields}
       mode={screenViewMode}
-      items={records.map(recordToItem)}
+      items={recordItems}
       onItemPress={onItemPress}
       onDeleteSelectedItemIds={onDeleteSelectedItemIds}
       selectable

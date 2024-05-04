@@ -25,6 +25,8 @@ import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
 import { Cycles } from "model/Cycles";
 import { ToastActions } from "state/toast";
+import { RecordOrigin } from "model/RecordOrigin";
+import { RecordLoadStatus } from "model/RecordLoadStatus";
 
 const RECORD_SET = "RECORD_SET";
 const RECORD_PREVIOUS_CYCLE_SET = "RECORD_PREVIOUS_CYCLE_SET";
@@ -187,10 +189,24 @@ const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
 };
 
 const fetchAndEditRecord =
-  ({ navigation, recordId }) =>
+  ({ navigation, recordSummary }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
+    if (
+      recordSummary.origin === RecordOrigin.remote &&
+      recordSummary.loadStatus !== RecordLoadStatus.complete
+    ) {
+      dispatch(
+        ConfirmActions.show({
+          confirmButtonTextKey: "dataEntry:recordContentNotFetchedFromServer",
+          messageKey: "dataEntry:confirmFetchRecordContentFromServer",
+          onConfirm: () => {},
+        })
+      );
+      return;
+    }
+    const { id: recordId } = record;
     const record = await RecordService.fetchRecord({ survey, recordId });
     await dispatch(editRecord({ navigation, record }));
 
