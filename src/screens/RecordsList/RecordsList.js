@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { Surveys } from "@openforis/arena-core";
+import { Objects, Surveys } from "@openforis/arena-core";
 
 import {
   Button,
@@ -12,12 +12,13 @@ import {
   IconButton,
   Loader,
   MenuButton,
+  Searchbar,
   Switch,
   Text,
   VView,
 } from "components";
-
 import { useIsNetworkConnected, useNavigationFocus } from "hooks";
+import { useTranslation } from "localization";
 import { Cycles, RecordOrigin, RecordSyncStatus } from "model";
 import { RecordService } from "service";
 import { DataEntryActions, MessageActions, SurveySelectors } from "state";
@@ -27,11 +28,14 @@ import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
 import { SurveyCycleSelector } from "./SurveyCycleSelector";
 
 import styles from "./styles";
+import { RecordsUtils } from "./RecordsUtils";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const networkAvailable = useIsNetworkConnected();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
   const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
@@ -63,6 +67,7 @@ export const RecordsList = () => {
     });
     setState((statePrev) => ({
       ...statePrev,
+      searchValue: "",
       records: _records,
       syncStatusFetched: false,
       syncStatusLoading: false,
@@ -162,6 +167,28 @@ export const RecordsList = () => {
     );
   }, [records]);
 
+  const recordsFiltered = useMemo(
+    () =>
+      Objects.isEmpty(searchValue)
+        ? records
+        : records.filter((recordSummary) => {
+            const valuesByKey = RecordsUtils.getValuesByKeyFormatted({
+              survey,
+              lang,
+              recordSummary,
+              t,
+            });
+            return Object.values(valuesByKey).some((value) =>
+              Objects.isEmpty(value)
+                ? false
+                : String(value)
+                    .toLocaleLowerCase()
+                    .includes(searchValue.toLocaleLowerCase())
+            );
+          }),
+    [survey, lang, records, searchValue]
+  );
+
   if (loading) {
     return <Loader />;
   }
@@ -208,7 +235,7 @@ export const RecordsList = () => {
           <RecordsDataVisualizer
             loadRecords={loadRecords}
             showOrigin={!onlyLocal}
-            records={records}
+            records={recordsFiltered}
             syncStatusFetched={syncStatusFetched}
             syncStatusLoading={syncStatusLoading}
           />

@@ -23,6 +23,7 @@ import {
 } from "state";
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
+import { RecordsUtils } from "./RecordsUtils";
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -59,35 +60,22 @@ export const RecordsDataVisualizer = (props) => {
   }, [survey, cycle]);
 
   const recordToItem = useCallback(
-    (record) => {
-      const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
-        const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
-        const value = record[recordKeyProp];
-        let valueFormatted = NodeValueFormatter.format({
-          survey,
-          nodeDef: keyDef,
-          value,
-          showLabel: true,
-          lang,
-        });
-        if (Objects.isEmpty(valueFormatted)) {
-          valueFormatted = Objects.isEmpty(value)
-            ? t("common:empty")
-            : String(value);
-        }
-        acc[recordKeyProp] = valueFormatted;
-        return acc;
-      }, {});
-
+    (recordSummary) => {
+      const valuesByKey = RecordsUtils.getValuesByKeyFormatted({
+        survey,
+        lang,
+        recordSummary,
+        t,
+      });
       return {
-        ...record,
-        key: record.uuid,
+        ...recordSummary,
+        key: recordSummary.uuid,
         ...valuesByKey,
-        dateCreated: formatDateToDateTimeDisplay(record.dateCreated),
-        dateModified: formatDateToDateTimeDisplay(record.dateModified),
+        dateCreated: formatDateToDateTimeDisplay(recordSummary.dateCreated),
+        dateModified: formatDateToDateTimeDisplay(recordSummary.dateModified),
       };
     },
-    [lang, rootDefKeys]
+    [lang, survey]
   );
 
   const recordItems = useMemo(
