@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Appbar as RNPAppbar } from "react-native-paper";
+import { IconButton, Appbar as RNPAppbar } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -40,6 +40,7 @@ export const AppBar = (props) => {
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
+  const recordHasErrors = DataEntrySelectors.useRecordHasErrors();
   const canRecordBeLinkedToPreviousCycle =
     DataEntrySelectors.useCanRecordBeLinkedToPreviousCycle();
   const isLinkedToPreviousCycleRecord =
@@ -82,10 +83,25 @@ export const AppBar = (props) => {
 
         {editingRecord && (
           <>
+            {recordHasErrors && (
+              <IconButton
+                icon="alert"
+                onPress={() =>
+                  navigation.navigate(screenKeys.recordValidationReport)
+                }
+              />
+            )}
             <Spacer />
             {canRecordBeLinkedToPreviousCycle && (
               <RNPAppbar.Action
                 icon={isLinkedToPreviousCycleRecord ? "link" : "link-off"}
+                onPress={() =>
+                  dispatch(
+                    isLinkedToPreviousCycleRecord
+                      ? DataEntryActions.unlinkFromRecordInPreviousCycle()
+                      : DataEntryActions.linkToRecordInPreviousCycle()
+                  )
+                }
               />
             )}
           </>

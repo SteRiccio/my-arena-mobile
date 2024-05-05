@@ -30,6 +30,7 @@ import { RecordLoadStatus } from "model/RecordLoadStatus";
 
 const RECORD_SET = "RECORD_SET";
 const RECORD_PREVIOUS_CYCLE_SET = "RECORD_PREVIOUS_CYCLE_SET";
+const RECORD_PREVIOUS_CYCLE_RESET = "RECORD_PREVIOUS_CYCLE_RESET";
 const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
 const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
 const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
@@ -159,7 +160,7 @@ const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
     keyValues,
   });
   if (prevCycleRecordIds.length === 0) {
-    dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record: null });
+    dispatch({ type: RECORD_PREVIOUS_CYCLE_RESET });
     dispatch(
       ToastActions.show({ textKey: "dataEntry:previousCycleRecordNotFound" })
     );
@@ -206,14 +207,21 @@ const fetchAndEditRecord =
       );
       return;
     }
-    const { id: recordId } = record;
+    const { id: recordId } = recordSummary;
     const record = await RecordService.fetchRecord({ survey, recordId });
     await dispatch(editRecord({ navigation, record }));
-
-    if (recordPreviousCycleLinkEnabled && Number(record.cycle) > 0) {
-      await _fetchRecordFromPreviousCycle({ dispatch, survey, record });
-    }
   };
+
+const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
+  const state = getState();
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const record = DataEntrySelectors.selectRecord(state);
+  await _fetchRecordFromPreviousCycle({ dispatch, survey, record });
+};
+
+const unlinkFromRecordInPreviousCycle = () => async (dispatch) => {
+  dispatch({ type: RECORD_PREVIOUS_CYCLE_RESET });
+};
 
 const updatePreviousCyclePageEntity = (dispatch, getState) => {
   const state = getState();
@@ -409,6 +417,7 @@ const navigateToRecordsList =
 export const DataEntryActions = {
   RECORD_SET,
   RECORD_PREVIOUS_CYCLE_SET,
+  RECORD_PREVIOUS_CYCLE_RESET,
   PAGE_ENTITY_SET,
   PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
@@ -428,4 +437,7 @@ export const DataEntryActions = {
 
   navigateToRecordsList,
   exportRecords,
+
+  linkToRecordInPreviousCycle,
+  unlinkFromRecordInPreviousCycle,
 };

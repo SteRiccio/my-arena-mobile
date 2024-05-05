@@ -7,6 +7,7 @@ const initialState = {
   record: null,
   recordCurrentPageEntity: null,
   recordPageSelectorMenuOpen: false,
+  linkToPreviousCycleRecord: false,
   previousCycleRecord: null,
   previousCycleRecordPageEntity: {},
 };
@@ -22,7 +23,14 @@ const actionHandlers = {
   }),
   [DataEntryActions.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
     ...state,
+    linkToPreviousCycleRecord: true,
     previousCycleRecord: action.record,
+    previousCycleRecordPageEntity: {},
+  }),
+  [DataEntryActions.RECORD_PREVIOUS_CYCLE_RESET]: ({ state }) => ({
+    ...state,
+    linkToPreviousCycleRecord: false,
+    previousCycleRecord: null,
     previousCycleRecordPageEntity: {},
   }),
   [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => ({
