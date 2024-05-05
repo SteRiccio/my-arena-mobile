@@ -2,9 +2,9 @@ import { Dates, NodeDefs, Objects, Surveys } from "@openforis/arena-core";
 import { RemoteService } from "./remoteService";
 import { RecordRepository } from "./repository/recordRepository";
 import { RecordSyncStatus } from "model";
-import { Files } from "utils";
 import { RecordOrigin } from "model/RecordOrigin";
 import { MAMArrays } from "utils/Arrays";
+import { RecordRemoteService } from "./recordRemoteService";
 
 const {
   fetchRecord,
@@ -16,6 +16,8 @@ const {
   deleteRecords,
   fixRecordCycle,
 } = RecordRepository;
+
+const { uploadRecordsToRemoteServer } = RecordRemoteService;
 
 const fetchRecordsSummariesRemote = async ({ surveyRemoteId, cycle }) => {
   try {
@@ -73,8 +75,6 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
     surveyRemoteId: survey.remoteId,
     cycle,
   });
-  console.log("---cycle", cycle);
-  console.log("===remote", recordsSummariesRemote);
 
   const recordsSummariesLocalToDelete = recordsSummariesInDevice.filter(
     (recordSummaryLocal) =>
@@ -119,36 +119,6 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
     recordSummaryLocal.syncStatus = syncStatus;
     return recordSummaryLocal;
   });
-};
-
-const fetchRecordsWithSyncStatus = async ({ survey, cycle }) => {
-  const recordsSummaries = await fetchRecords({
-    survey,
-    cycle,
-    onlyLocal: false,
-  });
-  const recordsSummariesLocal = recordsSummaries.filter(
-    (recordSummary) => recordSummary.origin === RecordOrigin.local
-  );
-};
-
-const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
-  const surveyRemoteId = survey.remoteId;
-  const params = {
-    file: {
-      uri: fileUri,
-      name: "arena-mobile-data.zip",
-      type: Files.MIME_TYPES.zip,
-    },
-    cycle,
-    conflictResolutionStrategy: "overwriteIfUpdated",
-  };
-  const { data } = await RemoteService.postMultipartData(
-    `api/mobile/survey/${surveyRemoteId}`,
-    params
-  );
-  const { job } = data;
-  return job;
 };
 
 export const RecordService = {

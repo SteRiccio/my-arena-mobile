@@ -1,4 +1,5 @@
-import { Strings } from "@openforis/arena-core";
+import { Strings, UUIDs } from "@openforis/arena-core";
+import * as FileSystem from "expo-file-system";
 
 const defaultOptions = {
   credentials: "include",
@@ -27,15 +28,20 @@ const fetchWithTimeout = async (url, opts = {}, timeout = 120000) => {
   return result;
 };
 
-const _sendGet = async (serverUrl, uri, params = {}, options = {}) => {
+const getUrlWithParams = ({ serverUrl, uri, params }) => {
   const requestParams = Object.entries(params).reduce((acc, [key, value]) => {
     acc.append(key, value);
     return acc;
   }, new URLSearchParams());
   const requestParamsString = requestParams.toString();
-  const url =
+  return (
     getUrl({ serverUrl, uri }) +
-    (requestParamsString ? "?" + requestParamsString : "");
+    (requestParamsString ? "?" + requestParamsString : "")
+  );
+};
+
+const _sendGet = async (serverUrl, uri, params = {}, options = {}) => {
+  const url = getUrlWithParams({ serverUrl, uri, params });
   return fetchWithTimeout(url, options, options?.timeout);
 };
 
@@ -45,6 +51,27 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
   const data = await response.json();
 
   return { data };
+};
+
+const getFile = async (
+  serverUrl,
+  uri,
+  params = {},
+  callback,
+  targetFileUri = null,
+  options = {}
+) => {
+  const url = getUrlWithParams({ serverUrl, uri, params });
+  const actualTargetFileUri =
+    targetFileUri ?? FileSystem.cacheDirectory + UUIDs.v4() + ".tmp";
+  const downloadResumable = FileSystem.createDownloadResumable(
+    url,
+    actualTargetFileUri,
+    options,
+    callback
+  );
+  const { uri: finalTargetUri } = await downloadResumable.downloadAsync();
+  return finalTargetUri;
 };
 
 const test = async (serverUrl, uri, params = {}) => {
@@ -73,6 +100,7 @@ const post = async (serverUrl, uri, data, options = {}) => {
 
 export const API = {
   get,
+  getFile,
   post,
   test,
 };
