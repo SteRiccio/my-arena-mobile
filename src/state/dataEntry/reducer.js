@@ -1,7 +1,7 @@
 import { SurveyActionTypes } from "state/survey";
 import { StoreUtils } from "../storeUtils";
 
-import { DataEntryActions } from "./actions";
+import { DataEntryActionTypes } from "./actionTypes";
 
 const initialState = {
   record: null,
@@ -14,39 +14,42 @@ const initialState = {
 
 const actionHandlers = {
   [SurveyActionTypes.CURRENT_SURVEY_SET]: () => ({ ...initialState }),
-  [DataEntryActions.DATA_ENTRY_RESET]: () => ({ ...initialState }),
+  [DataEntryActionTypes.DATA_ENTRY_RESET]: () => ({ ...initialState }),
 
-  [DataEntryActions.RECORD_SET]: ({ state, action }) => ({
+  [DataEntryActionTypes.RECORD_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: false,
     record: action.record,
   }),
-  [DataEntryActions.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
+  [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
     ...state,
     linkToPreviousCycleRecord: true,
     previousCycleRecord: action.record,
     previousCycleRecordPageEntity: {},
   }),
-  [DataEntryActions.RECORD_PREVIOUS_CYCLE_RESET]: ({ state }) => ({
+  [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_RESET]: ({ state }) => ({
     ...state,
     linkToPreviousCycleRecord: false,
     previousCycleRecord: null,
     previousCycleRecordPageEntity: {},
   }),
-  [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => ({
+  [DataEntryActionTypes.PAGE_ENTITY_SET]: ({ state, action }) => ({
     ...state,
     recordCurrentPageEntity: action.payload,
     activeChildDefIndex: 0,
   }),
-  [DataEntryActions.PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({
+  [DataEntryActionTypes.PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({
     state,
     action,
   }) => ({ ...state, activeChildDefIndex: action.index }),
-  [DataEntryActions.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
+  [DataEntryActionTypes.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: action.open,
   }),
-  [DataEntryActions.PREVIOUS_CYCLE_PAGE_ENTITY_SET]: ({ state, action }) => ({
+  [DataEntryActionTypes.PREVIOUS_CYCLE_PAGE_ENTITY_SET]: ({
+    state,
+    action,
+  }) => ({
     ...state,
     previousCycleRecordPageEntity: action.payload,
   }),

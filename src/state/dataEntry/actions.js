@@ -23,21 +23,26 @@ import { SurveySelectors } from "../survey";
 import { RemoteConnectionSelectors } from "../remoteConnection";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
-import { Cycles } from "model/Cycles";
-import { ToastActions } from "state/toast";
+
 import { RecordOrigin } from "model/RecordOrigin";
 import { RecordLoadStatus } from "model/RecordLoadStatus";
+import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
+import { DataEntryActionTypes } from "./actionTypes";
 
-const RECORD_SET = "RECORD_SET";
-const RECORD_PREVIOUS_CYCLE_SET = "RECORD_PREVIOUS_CYCLE_SET";
-const RECORD_PREVIOUS_CYCLE_RESET = "RECORD_PREVIOUS_CYCLE_RESET";
-const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
-const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
-const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
-const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
-const PREVIOUS_CYCLE_PAGE_ENTITY_SET = "PREVIOUS_CYCLE_PAGE_ENTITY_SET";
+const {
+  DATA_ENTRY_RESET,
+  PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
+  PAGE_ENTITY_SET,
+  PAGE_SELECTOR_MENU_OPEN_SET,
+  RECORD_SET,
+} = DataEntryActionTypes;
 
-const recordPreviousCycleLinkEnabled = true; // TODO move it to settings
+const {
+  fetchRecordFromPreviousCycle: _fetchRecordFromPreviousCycle,
+  linkToRecordInPreviousCycle,
+  unlinkFromRecordInPreviousCycle,
+  updatePreviousCyclePageEntity,
+} = DataEntryActionsRecordPreviousCycle;
 
 const removeNodesFlags = (nodes) => {
   Object.values(nodes).forEach((node) => {
@@ -146,49 +151,6 @@ const editRecord =
     navigation.navigate(screenKeys.recordEditor);
   };
 
-const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
-  const rootEntity = Records.getRoot(record);
-  const keyValues = Records.getEntityKeyValues({
-    survey,
-    record,
-    entity: rootEntity,
-  });
-  const prevCycle = Cycles.getPrevCycleKey(record.cycle);
-  const prevCycleRecordIds = await RecordService.findRecordIdsByKeys({
-    survey,
-    cycle: prevCycle,
-    keyValues,
-  });
-  if (prevCycleRecordIds.length === 0) {
-    dispatch({ type: RECORD_PREVIOUS_CYCLE_RESET });
-    dispatch(
-      ToastActions.show({ textKey: "dataEntry:previousCycleRecordNotFound" })
-    );
-  } else if (prevCycleRecordIds.length === 1) {
-    const prevCycleRecordId = prevCycleRecordIds[0];
-    const prevCycleRecord = await RecordService.fetchRecord({
-      survey,
-      recordId: prevCycleRecordId,
-    });
-    await dispatch({
-      type: RECORD_PREVIOUS_CYCLE_SET,
-      record: prevCycleRecord,
-    });
-
-    dispatch(
-      ToastActions.show({ textKey: "dataEntry:previousCycleRecordFound" })
-    );
-
-    dispatch(updatePreviousCyclePageEntity);
-  } else {
-    dispatch(
-      ToastActions.show({
-        textKey: "dataEntry:previousCycleMultipleRecordsFound",
-      })
-    );
-  }
-};
-
 const fetchAndEditRecord =
   ({ navigation, recordSummary }) =>
   async (dispatch, getState) => {
@@ -211,40 +173,6 @@ const fetchAndEditRecord =
     const record = await RecordService.fetchRecord({ survey, recordId });
     await dispatch(editRecord({ navigation, record }));
   };
-
-const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
-  const state = getState();
-  const survey = SurveySelectors.selectCurrentSurvey(state);
-  const record = DataEntrySelectors.selectRecord(state);
-  await _fetchRecordFromPreviousCycle({ dispatch, survey, record });
-};
-
-const unlinkFromRecordInPreviousCycle = () => async (dispatch) => {
-  dispatch({ type: RECORD_PREVIOUS_CYCLE_RESET });
-};
-
-const updatePreviousCyclePageEntity = (dispatch, getState) => {
-  const state = getState();
-  const { parentEntityUuid, entityUuid } =
-    DataEntrySelectors.selectCurrentPageEntity(state);
-
-  const previousCycleParentEntity =
-    DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
-      entityUuid: parentEntityUuid,
-    })(state);
-  const previousCycleEntity =
-    DataEntrySelectors.selectPreviousCycleEntityWithSameKeys({
-      entityUuid,
-    })(state);
-
-  dispatch({
-    type: PREVIOUS_CYCLE_PAGE_ENTITY_SET,
-    payload: {
-      previousCycleParentEntityUuid: previousCycleParentEntity?.uuid,
-      previousCycleEntityUuid: previousCycleEntity?.uuid,
-    },
-  });
-};
 
 const updateAttribute =
   ({ uuid, value, fileUri = null }) =>
@@ -415,15 +343,6 @@ const navigateToRecordsList =
   };
 
 export const DataEntryActions = {
-  RECORD_SET,
-  RECORD_PREVIOUS_CYCLE_SET,
-  RECORD_PREVIOUS_CYCLE_RESET,
-  PAGE_ENTITY_SET,
-  PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
-  PAGE_SELECTOR_MENU_OPEN_SET,
-  DATA_ENTRY_RESET,
-  PREVIOUS_CYCLE_PAGE_ENTITY_SET,
-
   createNewRecord,
   addNewEntity,
   addNewAttribute,

@@ -3,7 +3,7 @@ import { RemoteService } from "./remoteService";
 import { RecordRepository } from "./repository/recordRepository";
 import { RecordSyncStatus } from "model";
 import { RecordOrigin } from "model/RecordOrigin";
-import { MAMArrays } from "utils/Arrays";
+import { ArrayUtils } from "utils";
 import { RecordRemoteService } from "./recordRemoteService";
 
 const {
@@ -17,7 +17,11 @@ const {
   fixRecordCycle,
 } = RecordRepository;
 
-const { uploadRecordsToRemoteServer } = RecordRemoteService;
+const {
+  startExportRecords: startExportRecordsFromRemoteServer,
+  downloadExportedRecordsFile: downloadExportedRecordsFileFromRemoteServer,
+  uploadRecords: uploadRecordsToRemoteServer,
+} = RecordRemoteService;
 
 const fetchRecordsSummariesRemote = async ({ surveyRemoteId, cycle }) => {
   try {
@@ -80,7 +84,7 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
     (recordSummaryLocal) =>
       // record summary is not locally modified and is no more in server
       recordSummaryLocal.origin === RecordOrigin.remote &&
-      !MAMArrays.findByUuid(recordSummaryLocal.uuid)(recordsSummariesRemote)
+      !ArrayUtils.findByUuid(recordSummaryLocal.uuid)(recordsSummariesRemote)
   );
   if (recordsSummariesLocalToDelete.length > 0) {
     deleteRecords({
@@ -91,7 +95,7 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
 
   const recordSummariesToAdd = recordsSummariesRemote.filter(
     (recordSummaryRemote) =>
-      !MAMArrays.findByUuid(recordSummaryRemote.uuid)(recordsSummariesInDevice)
+      !ArrayUtils.findByUuid(recordSummaryRemote.uuid)(recordsSummariesInDevice)
   );
   if (recordSummariesToAdd.length > 0) {
     insertRecordSummaries({
@@ -129,6 +133,9 @@ export const RecordService = {
   insertRecord,
   updateRecord,
   deleteRecords,
-  uploadRecordsToRemoteServer,
   fixRecordCycle,
+  // remote server
+  startExportRecordsFromRemoteServer,
+  downloadExportedRecordsFileFromRemoteServer,
+  uploadRecordsToRemoteServer,
 };

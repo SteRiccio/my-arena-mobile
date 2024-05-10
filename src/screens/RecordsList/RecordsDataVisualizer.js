@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
@@ -7,23 +7,25 @@ import {
   DateFormats,
   Dates,
   NodeDefs,
-  NodeValueFormatter,
   Objects,
   Surveys,
 } from "@openforis/arena-core";
 
 import { DataVisualizer, LoadingIcon } from "components";
 
-import { useTranslation } from "localization";
+import { i18n, useTranslation } from "localization";
 import {
   ConfirmActions,
   DataEntryActions,
+  JobMonitorActions,
   ScreenOptionsSelectors,
   SurveySelectors,
 } from "state";
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import { RecordsUtils } from "./RecordsUtils";
+import { RecordOrigin } from "model/RecordOrigin";
+import { RecordService } from "service/recordService";
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -52,6 +54,7 @@ export const RecordsDataVisualizer = (props) => {
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
 
   const rootDefKeys = useMemo(() => {
     if (!survey) return [];
@@ -138,6 +141,45 @@ export const RecordsDataVisualizer = (props) => {
     [rootDefKeys, showOrigin, syncStatusLoading, syncStatusFetched]
   );
 
+  const onSelectionChange = useCallback((selection) => {
+    setSelectedRecordUuids(selection);
+  }, []);
+
+  const onExportJobComplete = useCallback((job) => {
+    const { outputFileName: fileName } = job.result;
+    RecordService.downloadExportedRecordsFileFromRemoteServer({
+      survey,
+      fileName,
+    })
+      .then((fileUri) => {
+        console.log("===downloaded", fileUri);
+      })
+      .catch((e) => console.log("===error", e));
+  }, []);
+
+  const onDownloadSelectedRecords = useCallback(() => {
+    const selectedRecords = recordItems.filter((record) =>
+      selectedRecordUuids.includes(record.uuid)
+    );
+    if (
+      selectedRecords.every((record) => record.origin === RecordOrigin.remote)
+    ) {
+      RecordService.startExportRecordsFromRemoteServer({
+        survey,
+        cycle,
+        recordUuids: selectedRecordUuids,
+      }).then((job) => {
+        dispatch(
+          JobMonitorActions.start({
+            jobUuid: job.uuid,
+            titleKey: "dataEntry:records.downloadRecords.title",
+            onJobComplete: onExportJobComplete,
+          })
+        );
+      });
+    }
+  }, [survey, cycle, recordItems, selectedRecordUuids, onExportJobComplete]);
+
   return (
     <DataVisualizer
       fields={fields}
@@ -145,7 +187,14 @@ export const RecordsDataVisualizer = (props) => {
       items={recordItems}
       onItemPress={onItemPress}
       onDeleteSelectedItemIds={onDeleteSelectedItemIds}
+      onSelectionChange={onSelectionChange}
       selectable
+      selectedItemsCustomActions={[
+        {
+          label: i18n.t("dataEntry:records.downloadFromServer"),
+          onPress: onDownloadSelectedRecords,
+        },
+      ]}
     />
   );
 };

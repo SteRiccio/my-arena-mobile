@@ -1,4 +1,5 @@
 import { JobStatus } from "@openforis/arena-core";
+
 import { WebSocketService } from "service";
 
 const JOB_MONITOR_START = "JOB_MONITOR_START";
@@ -37,8 +38,8 @@ const start =
 
     const ws = await WebSocketService.open();
 
-    ws.on(WebSocketService.EVENTS.jobUpdate, (job) => {
-      const { progressPercent, status } = job;
+    const notifyJobUpdate = (job) => {
+      const { ended, progressPercent, status } = job;
       dispatch({
         type: JOB_MONITOR_UPDATE,
         payload: {
@@ -46,10 +47,15 @@ const start =
           status,
         },
       });
-      if (status === JobStatus.succeeded && onJobComplete) {
-        onJobComplete();
+      if (ended) {
+        WebSocketService.close();
       }
-    });
+      if (onJobComplete && status === JobStatus.succeeded) {
+        onJobComplete(job);
+      }
+    };
+
+    ws.on(WebSocketService.EVENTS.jobUpdate, notifyJobUpdate);
   };
 
 const cancel = () => (dispatch, getState) => {

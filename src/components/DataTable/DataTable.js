@@ -17,6 +17,7 @@ export const DataTable = (props) => {
     onSelectionChange,
     onDeleteSelectedItemIds,
     selectable,
+    selectedItemsCustomActions,
     showPagination,
   } = props;
 
@@ -56,6 +57,7 @@ export const DataTable = (props) => {
       <ItemSelectedBanner
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
+        customActions={selectedItemsCustomActions}
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
@@ -129,10 +131,12 @@ DataTable.propTypes = {
   onSelectionChange: PropTypes.func,
   onDeleteSelectedItemIds: PropTypes.func,
   selectable: PropTypes.bool,
+  selectedItemsCustomActions: PropTypes.array,
   showPagination: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
   selectable: false,
+  selectedItemsCustomActions: [],
   showPagination: false,
 };

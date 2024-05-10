@@ -32,6 +32,9 @@ export default {
       title: "Delete records",
       message: "Delete the selected records?",
     },
+    downloadRecords: {
+      title: "Download records",
+    },
     origin: "Origin",
   },
   showOnlyLocalRecords: "Show only local records",

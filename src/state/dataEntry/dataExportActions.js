@@ -1,6 +1,6 @@
 import { JobStatus, Surveys } from "@openforis/arena-core";
 
-import { AuthService, RecordService, WebSocketService } from "service";
+import { AuthService, RecordService } from "service";
 import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerationJob";
 
 import { i18n } from "localization";
@@ -46,7 +46,6 @@ const startUploadDataToRemoteServer =
         JobMonitorActions.start({
           jobUuid: remoteJob.uuid,
           titleKey: "dataEntry:exportData",
-          onClose: () => WebSocketService.close(),
           onJobComplete,
         })
       );
