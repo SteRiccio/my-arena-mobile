@@ -18,14 +18,18 @@ import {
   ConfirmActions,
   DataEntryActions,
   JobMonitorActions,
+  RemoteConnectionSelectors,
   ScreenOptionsSelectors,
   SurveySelectors,
+  ToastActions,
 } from "state";
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import { RecordsUtils } from "./RecordsUtils";
 import { RecordOrigin } from "model/RecordOrigin";
 import { RecordService } from "service/recordService";
+import { RecordsImportJob } from "service/recordsImportJob";
+import { ScreenViewMode } from "model/ScreenViewMode";
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -40,7 +44,7 @@ export const RecordsDataVisualizer = (props) => {
   const {
     loadRecords,
     records,
-    showOrigin,
+    showRemoteProps,
     syncStatusFetched,
     syncStatusLoading,
   } = props;
@@ -49,6 +53,7 @@ export const RecordsDataVisualizer = (props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
+  const user = RemoteConnectionSelectors.useLoggedInUser();
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -117,12 +122,37 @@ export const RecordsDataVisualizer = (props) => {
         header: "common:modifiedOn",
         style: { minWidth: 50 },
       },
-      ...(showOrigin
+      ...(showRemoteProps
         ? [
             {
               key: "origin",
-              header: "dataEntry:records.origin",
+              header: "dataEntry:records.origin.title",
               style: { minWidth: 10 },
+              cellRenderer: ({ item }) => {
+                const { origin } = item;
+                return screenViewMode === ScreenViewMode.table
+                  ? origin
+                  : t(`dataEntry:records.origin.${origin}`);
+              },
+            },
+            ...(screenViewMode === ScreenViewMode.list
+              ? [
+                  {
+                    key: "dateModifiedRemote",
+                    header: "dataEntry:records.dateModifiedRemotely",
+                  },
+                ]
+              : []),
+            {
+              key: "loadStatus",
+              header: "dataEntry:records.loadStatus.title",
+              style: { minWidth: 10 },
+              cellRenderer: ({ item }) => {
+                const { loadStatus } = item;
+                return screenViewMode === ScreenViewMode.table
+                  ? loadStatus
+                  : t(`dataEntry:records.loadStatus.${loadStatus}`);
+              },
             },
           ]
         : []),
@@ -138,23 +168,40 @@ export const RecordsDataVisualizer = (props) => {
           ]
         : []),
     ],
-    [rootDefKeys, showOrigin, syncStatusLoading, syncStatusFetched]
+    [
+      rootDefKeys,
+      screenViewMode,
+      showRemoteProps,
+      syncStatusLoading,
+      syncStatusFetched,
+    ]
   );
 
   const onSelectionChange = useCallback((selection) => {
     setSelectedRecordUuids(selection);
   }, []);
 
+  const downloadRecordsFileFromServerAndImport = async ({ fileName }) => {
+    const fileUri =
+      await RecordService.downloadExportedRecordsFileFromRemoteServer({
+        survey,
+        fileName,
+      });
+    const recordsImportJob = new RecordsImportJob({
+      survey,
+      user,
+      fileUri,
+    });
+    await recordsImportJob.start();
+    dispatch(ToastActions.show("dataEntry:records.importCompleteSuccessfully"));
+    await loadRecords();
+  };
+
   const onExportJobComplete = useCallback((job) => {
     const { outputFileName: fileName } = job.result;
-    RecordService.downloadExportedRecordsFileFromRemoteServer({
-      survey,
-      fileName,
-    })
-      .then((fileUri) => {
-        console.log("===downloaded", fileUri);
-      })
-      .catch((e) => console.log("===error", e));
+    downloadRecordsFileFromServerAndImport({ fileName }).catch((e) => {
+      throw e;
+    });
   }, []);
 
   const onDownloadSelectedRecords = useCallback(() => {
@@ -191,7 +238,7 @@ export const RecordsDataVisualizer = (props) => {
       selectable
       selectedItemsCustomActions={[
         {
-          label: i18n.t("dataEntry:records.downloadFromServer"),
+          label: i18n.t("dataEntry:records.downloadRecords.title"),
           onPress: onDownloadSelectedRecords,
         },
       ]}

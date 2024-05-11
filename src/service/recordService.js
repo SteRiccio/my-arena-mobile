@@ -13,6 +13,7 @@ const {
   insertRecord,
   insertRecordSummaries,
   updateRecord,
+  updateRecordWithContentFetchedRemotely,
   deleteRecords,
   fixRecordCycle,
 } = RecordRepository;
@@ -132,6 +133,7 @@ export const RecordService = {
   findRecordIdsByKeys,
   insertRecord,
   updateRecord,
+  updateRecordWithContentFetchedRemotely,
   deleteRecords,
   fixRecordCycle,
   // remote server

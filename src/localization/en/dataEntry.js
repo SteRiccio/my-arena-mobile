@@ -28,14 +28,21 @@ export default {
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
   records: {
+    dateModifiedRemotely: "Date modified remotely",
     deleteRecordsConfirm: {
       title: "Delete records",
       message: "Delete the selected records?",
     },
     downloadRecords: {
-      title: "Download records",
+      title: "Download records from server",
     },
-    origin: "Origin",
+    loadStatus: {
+      title: "Loaded",
+      C: "Complete",
+      P: "Partial (without files)",
+      S: "Only summary",
+    },
+    origin: { title: "Origin", L: "Local", R: "Remote" },
   },
   showOnlyLocalRecords: "Show only local records",
   syncStatusHeader: "Status",

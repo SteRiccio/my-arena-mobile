@@ -193,23 +193,38 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   });
 };
 
-const updateRecord = async ({ survey, record }) => {
-  record.modifiedWith = SystemUtils.getRecordAppInfo();
+const updateRecordKeysAndContent = async ({
+  survey,
+  record,
+  remote = false,
+}) => {
   const keyColumnsSet = keyColumnNames
     .map((keyCol) => `${keyCol} = ?`)
     .join(", ");
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
-
+  const dateModifiedColumn = remote ? "date_modified_remote" : "date_modified";
   return dbClient.executeSql(
-    `UPDATE record SET content = ?, date_modified = ?, ${keyColumnsSet} WHERE id = ?`,
+    `UPDATE record SET content = ?, ${dateModifiedColumn} = ?, load_status = ?, ${keyColumnsSet} 
+    WHERE survey_id = ? AND uuid = ?`,
     [
       JSON.stringify(record),
       record.dateModified || Date.now(),
+      RecordLoadStatus.complete,
       ...keyColumnsValues,
-      record.id,
+      survey.id,
+      record.uuid,
     ]
   );
 };
+
+const updateRecord = async ({ survey, record }) => {
+  if (!record.info) record.info = {};
+  record.info.modifiedWith = SystemUtils.getRecordAppInfo();
+  return updateRecordKeysAndContent({ survey, record });
+};
+
+const updateRecordWithContentFetchedRemotely = async ({ survey, record }) =>
+  updateRecordKeysAndContent({ survey, record, remote: true });
 
 const fixRecordCycle = async ({ survey, recordId }) => {
   const record = await fetchRecord({ survey, recordId });
@@ -254,6 +269,7 @@ const rowToRecord = ({ survey }) => {
     // fix record dates format
     result.dateModified = fixDatetime(result.dateModified);
     result.dateCreated = fixDatetime(result.dateCreated);
+    result.dateModifiedRemote = fixDatetime(result.dateModifiedRemote);
 
     // fix node dates format
     Records.getNodesArray(result).forEach((node) => {
@@ -271,8 +287,10 @@ const rowToRecord = ({ survey }) => {
       delete result[keyCol];
     });
 
-    if (!result.createdWith) {
-      result.createdWith = SystemUtils.getRecordAppInfo();
+    if (!result.info?.createdWith) {
+      result.info = {
+        createdWith: SystemUtils.getRecordAppInfo(),
+      };
     }
     return result;
   };
@@ -285,6 +303,7 @@ export const RecordRepository = {
   insertRecord,
   insertRecordSummaries,
   updateRecord,
+  updateRecordWithContentFetchedRemotely,
   fixRecordCycle,
   deleteRecords,
 };

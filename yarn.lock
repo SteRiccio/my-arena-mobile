@@ -4030,7 +4030,7 @@ __metadata:
     react-native-version-number: "npm:^0.3.6"
     react-native-view-more-text: "npm:^2.2.0"
     react-native-web: "npm:~0.19.10"
-    react-native-zip-archive: "npm:^6.1.0"
+    react-native-zip-archive: "npm:^6.1.1"
     react-redux: "npm:^9.1.0"
     redux: "npm:^5.0.1"
     rn-swipe-button: "npm:^1.3.8"
@@ -10880,13 +10880,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-zip-archive@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "react-native-zip-archive@npm:6.1.0"
+"react-native-zip-archive@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "react-native-zip-archive@npm:6.1.1"
   peerDependencies:
     react: ">=16.8.6"
     react-native: ">=0.60.0"
-  checksum: 9fc39ef14285e936fca9bb59be15c4b32207cb802b0600a63a8e41d2de8b94308638c31cd6d365c5dbc8e85edb5dff19141f178d3cee43bcc4e27bbcf66be7c5
+  checksum: 69b2fb4a16077004f6d11738797b71338eec8293c080db56d66d9dab16b2f954a66e290d1c8fd04eb761954c05ecaf1d4f2b765566e248b5c8539cf36f8635d9
   languageName: node
   linkType: hard
 

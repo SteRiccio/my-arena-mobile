@@ -75,7 +75,7 @@ export const RecordsList = () => {
     }));
   }, [survey, cycle, onlyLocal]);
 
-  // refresh records list on cycle change
+  // refresh records list on cycle and "only local" change
   useEffect(() => {
     loadRecords();
   }, [cycle, loadRecords, onlyLocal]);
@@ -234,7 +234,7 @@ export const RecordsList = () => {
         {records.length > 0 && (
           <RecordsDataVisualizer
             loadRecords={loadRecords}
-            showOrigin={!onlyLocal}
+            showRemoteProps={!onlyLocal}
             records={recordsFiltered}
             syncStatusFetched={syncStatusFetched}
             syncStatusLoading={syncStatusLoading}
