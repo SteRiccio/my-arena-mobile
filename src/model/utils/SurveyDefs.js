@@ -7,6 +7,11 @@ import {
 
 const samplingPointDataCategoryName = "sampling_point_data";
 
+const getRootKeyDefs = ({ survey, cycle }) => {
+  const rootDef = Surveys.getNodeDefRoot({ survey });
+  return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef, cycle });
+};
+
 const getChildrenDefs = ({ survey, nodeDef, cycle }) =>
   Surveys.getNodeDefChildrenSorted({
     survey,
@@ -90,6 +95,7 @@ const isCodeAttributeFromSamplingPointData = ({ survey, nodeDef }) => {
 };
 
 export const SurveyDefs = {
+  getRootKeyDefs,
   getChildrenDefs,
   getEntitySummaryDefs,
   hasSamplingPointDataLocation,

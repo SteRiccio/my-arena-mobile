@@ -167,27 +167,25 @@ export const RecordsList = () => {
     );
   }, [records]);
 
-  const recordsFiltered = useMemo(
-    () =>
-      Objects.isEmpty(searchValue)
-        ? records
-        : records.filter((recordSummary) => {
-            const valuesByKey = RecordsUtils.getValuesByKeyFormatted({
-              survey,
-              lang,
-              recordSummary,
-              t,
-            });
-            return Object.values(valuesByKey).some((value) =>
-              Objects.isEmpty(value)
-                ? false
-                : String(value)
-                    .toLocaleLowerCase()
-                    .includes(searchValue.toLocaleLowerCase())
-            );
-          }),
-    [survey, lang, records, searchValue]
-  );
+  const recordsFiltered = useMemo(() => {
+    if (Objects.isEmpty(searchValue)) return records;
+
+    return records.filter((recordSummary) => {
+      const valuesByKey = RecordsUtils.getValuesByKeyFormatted({
+        survey,
+        lang,
+        recordSummary,
+        t,
+      });
+      return Object.values(valuesByKey).some((value) =>
+        Objects.isEmpty(value)
+          ? false
+          : String(value)
+              .toLocaleLowerCase()
+              .includes(searchValue.toLocaleLowerCase())
+      );
+    });
+  }, [survey, lang, records, searchValue]);
 
   if (loading) {
     return <Loader />;

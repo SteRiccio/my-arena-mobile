@@ -1,8 +1,7 @@
-import { Dates, NodeDefs, Objects, Surveys } from "@openforis/arena-core";
+import { Dates, NodeDefs, Objects } from "@openforis/arena-core";
 import { RemoteService } from "./remoteService";
 import { RecordRepository } from "./repository/recordRepository";
-import { RecordSyncStatus } from "model";
-import { RecordOrigin } from "model/RecordOrigin";
+import { RecordOrigin, RecordSyncStatus, SurveyDefs } from "model";
 import { ArrayUtils } from "utils";
 import { RecordRemoteService } from "./recordRemoteService";
 
@@ -42,8 +41,8 @@ const determineRecordSyncStatus = ({
   recordSummaryLocal,
   recordSummaryRemote,
 }) => {
-  const rootDef = Surveys.getNodeDefRoot({ survey });
-  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
+  const { cycle } = recordSummaryLocal;
+  const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
   const keysSpecified = keyDefs.every(
     (keyDef) => !!recordSummaryLocal[Objects.camelize(NodeDefs.getName(keyDef))]
   );

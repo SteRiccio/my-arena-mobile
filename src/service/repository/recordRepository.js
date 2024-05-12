@@ -8,7 +8,7 @@ import {
 } from "@openforis/arena-core";
 
 import { DbUtils, dbClient } from "db";
-import { RecordLoadStatus, RecordOrigin } from "model";
+import { RecordLoadStatus, RecordOrigin, SurveyDefs } from "model";
 import { SystemUtils } from "utils";
 
 const SUPPORTED_KEYS = 5;
@@ -35,6 +35,7 @@ const summarySelectFieldsJoint = `id, uuid, date_created, date_modified, date_mo
 const extractKeyColumnsValues = ({ survey, record }) => {
   const keyValues = Records.getEntityKeyValues({
     survey,
+    cycle: record.cycle,
     record,
     entity: Records.getRoot(record),
   });
@@ -49,10 +50,7 @@ const extractRemoteRecordSummaryKeyColumnsValues = ({
   survey,
   recordSummary,
 }) => {
-  const keyDefs = Surveys.getNodeDefKeys({
-    survey,
-    nodeDef: Surveys.getNodeDefRoot({ survey }),
-  });
+  const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
   const keyColumnsValues = keyDefs.map((keyDef) => {
     const keyColName = Objects.camelize(NodeDefs.getName(keyDef));
     const value = recordSummary[keyColName];
@@ -255,11 +253,11 @@ const fixDatetime = (dateStr) => {
   return Dates.formatForStorage(parsed);
 };
 
-const rowToRecord = ({ survey }) => {
-  const rootDef = Surveys.getNodeDefRoot({ survey });
-  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
-
-  return (row) => {
+const rowToRecord =
+  ({ survey }) =>
+  (row) => {
+    const { cycle } = row;
+    const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
     const result = row.content
       ? JSON.parse(row.content)
       : Objects.camelize(row, { skip: ["content"] });
@@ -294,7 +292,6 @@ const rowToRecord = ({ survey }) => {
     }
     return result;
   };
-};
 
 export const RecordRepository = {
   fetchRecord,

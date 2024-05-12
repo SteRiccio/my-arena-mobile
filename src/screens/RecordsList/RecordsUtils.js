@@ -1,15 +1,9 @@
-import {
-  NodeDefs,
-  NodeValueFormatter,
-  Objects,
-  Surveys,
-} from "@openforis/arena-core";
+import { NodeDefs, NodeValueFormatter, Objects } from "@openforis/arena-core";
+import { SurveyDefs } from "model";
 
 const getValuesByKeyFormatted = ({ survey, lang, recordSummary, t }) => {
-  const rootDefKeys = Surveys.getNodeDefKeys({
-    survey,
-    nodeDef: Surveys.getNodeDefRoot({ survey }),
-  });
+  const { cycle } = recordSummary;
+  const rootDefKeys = SurveyDefs.getRootKeyDefs({ survey, cycle });
   return rootDefKeys.reduce((acc, keyDef) => {
     const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
     const value = recordSummary[recordKeyProp];

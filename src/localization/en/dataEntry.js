@@ -36,6 +36,8 @@ export default {
     downloadRecords: {
       title: "Download records from server",
     },
+    importCompleteSuccessfully: "Records import complete successfully!",
+    importFailed: "Records import failed: {{details}}",
     loadStatus: {
       title: "Loaded",
       C: "Complete",

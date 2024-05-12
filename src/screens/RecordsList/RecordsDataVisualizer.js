@@ -6,9 +6,9 @@ import PropTypes from "prop-types";
 import {
   DateFormats,
   Dates,
+  JobStatus,
   NodeDefs,
   Objects,
-  Surveys,
 } from "@openforis/arena-core";
 
 import { DataVisualizer, LoadingIcon } from "components";
@@ -26,10 +26,9 @@ import {
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import { RecordsUtils } from "./RecordsUtils";
-import { RecordOrigin } from "model/RecordOrigin";
+import { RecordOrigin, ScreenViewMode, SurveyDefs } from "model";
 import { RecordService } from "service/recordService";
 import { RecordsImportJob } from "service/recordsImportJob";
-import { ScreenViewMode } from "model/ScreenViewMode";
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -61,11 +60,10 @@ export const RecordsDataVisualizer = (props) => {
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
 
-  const rootDefKeys = useMemo(() => {
-    if (!survey) return [];
-    const rootDef = Surveys.getNodeDefRoot({ survey });
-    return Surveys.getNodeDefKeys({ survey, cycle, nodeDef: rootDef });
-  }, [survey, cycle]);
+  const rootDefKeys = useMemo(
+    () => (survey ? SurveyDefs.getRootKeyDefs({ survey, cycle }) : []),
+    [survey, cycle]
+  );
 
   const recordToItem = useCallback(
     (recordSummary) => {
@@ -193,15 +191,30 @@ export const RecordsDataVisualizer = (props) => {
       fileUri,
     });
     await recordsImportJob.start();
-    dispatch(ToastActions.show("dataEntry:records.importCompleteSuccessfully"));
-    await loadRecords();
+    const { status, errors } = recordsImportJob.summary;
+    if (status === JobStatus.succeeded) {
+      dispatch(
+        ToastActions.show({
+          textKey: "dataEntry:records.importCompleteSuccessfully",
+        })
+      );
+      await loadRecords();
+    } else {
+      dispatch(
+        ToastActions.show({
+          textKey: "dataEntry:records.importFailed",
+          textParams: {
+            details: JSON.stringify(errors),
+          },
+        })
+      );
+    }
   };
 
   const onExportJobComplete = useCallback((job) => {
     const { outputFileName: fileName } = job.result;
-    downloadRecordsFileFromServerAndImport({ fileName }).catch((e) => {
-      throw e;
-    });
+    dispatch(JobMonitorActions.close());
+    downloadRecordsFileFromServerAndImport({ fileName });
   }, []);
 
   const onDownloadSelectedRecords = useCallback(() => {

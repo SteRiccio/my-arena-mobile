@@ -9,6 +9,7 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
+import { RecordOrigin, RecordLoadStatus, SurveyDefs } from "model";
 import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
@@ -21,13 +22,10 @@ import { DeviceInfoActions } from "../deviceInfo";
 import { SurveySelectors } from "../survey";
 
 import { RemoteConnectionSelectors } from "../remoteConnection";
+import { DataEntryActionTypes } from "./actionTypes";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
-
-import { RecordOrigin } from "model/RecordOrigin";
-import { RecordLoadStatus } from "model/RecordLoadStatus";
 import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
-import { DataEntryActionTypes } from "./actionTypes";
 
 const {
   DATA_ENTRY_RESET,
@@ -228,11 +226,7 @@ const updateAttribute =
       // updating key attribute; check if record has previous cycle record;
       const { cycle } = record;
       if (cycle > "0") {
-        const rootKeys = Surveys.getNodeDefKeys({
-          survey,
-          nodeDef: Surveys.getNodeDefRoot({ survey }),
-          cycle,
-        });
+        const rootKeys = SurveyDefs.getRootKeyDefs({ survey, cycle });
         const nodeDefIsRootKey = rootKeys.includes(nodeDef);
         if (nodeDefIsRootKey) {
           await _fetchRecordFromPreviousCycle({
