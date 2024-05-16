@@ -88,6 +88,14 @@ export const AppBar = (props) => {
           <>
             <Spacer />
 
+            {recordHasErrors && (
+              <IconButton
+                icon="alert"
+                onPress={() =>
+                  navigation.navigate(screenKeys.recordValidationReport)
+                }
+              />
+            )}
             {recordEditViewMode === RecordEditViewMode.form && (
               <RNPAppbar.Action
                 icon="numeric-1-box-outline"
@@ -121,14 +129,6 @@ export const AppBar = (props) => {
                       ? DataEntryActions.unlinkFromRecordInPreviousCycle()
                       : DataEntryActions.linkToRecordInPreviousCycle()
                   )
-                }
-              />
-            )}
-            {recordHasErrors && (
-              <IconButton
-                icon="alert"
-                onPress={() =>
-                  navigation.navigate(screenKeys.recordValidationReport)
                 }
               />
             )}

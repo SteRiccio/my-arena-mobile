@@ -50,6 +50,7 @@ const extractRemoteRecordSummaryKeyColumnsValues = ({
   survey,
   recordSummary,
 }) => {
+  const { cycle } = recordSummary;
   const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
   const keyColumnsValues = keyDefs.map((keyDef) => {
     const keyColName = Objects.camelize(NodeDefs.getName(keyDef));
