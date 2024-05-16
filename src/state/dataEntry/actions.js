@@ -26,6 +26,7 @@ import { DataEntryActionTypes } from "./actionTypes";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
 import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
+import { importRecordsFromServer } from "./actionsRecordsImport";
 
 const {
   DATA_ENTRY_RESET,
@@ -353,4 +354,6 @@ export const DataEntryActions = {
 
   linkToRecordInPreviousCycle,
   unlinkFromRecordInPreviousCycle,
+
+  importRecordsFromServer,
 };

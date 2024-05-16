@@ -26,9 +26,9 @@ import { DataEntryActions, MessageActions, SurveySelectors } from "state";
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
 import { SurveyCycleSelector } from "./SurveyCycleSelector";
+import { RecordsUtils } from "./RecordsUtils";
 
 import styles from "./styles";
-import { RecordsUtils } from "./RecordsUtils";
 
 export const RecordsList = () => {
   const navigation = useNavigation();

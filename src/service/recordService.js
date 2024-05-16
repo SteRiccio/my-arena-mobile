@@ -1,9 +1,16 @@
 import { Dates, NodeDefs, Objects } from "@openforis/arena-core";
-import { RemoteService } from "./remoteService";
-import { RecordRepository } from "./repository/recordRepository";
-import { RecordOrigin, RecordSyncStatus, SurveyDefs } from "model";
+
+import {
+  RecordLoadStatus,
+  RecordOrigin,
+  RecordSyncStatus,
+  SurveyDefs,
+} from "model";
 import { ArrayUtils } from "utils";
+
+import { RecordRepository } from "./repository/recordRepository";
 import { RecordRemoteService } from "./recordRemoteService";
+import { RemoteService } from "./remoteService";
 
 const {
   fetchRecord,
@@ -84,6 +91,7 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
     (recordSummaryLocal) =>
       // record summary is not locally modified and is no more in server
       recordSummaryLocal.origin === RecordOrigin.remote &&
+      recordSummaryLocal.loadStatus === RecordLoadStatus.summary &&
       !ArrayUtils.findByUuid(recordSummaryLocal.uuid)(recordsSummariesRemote)
   );
   if (recordsSummariesLocalToDelete.length > 0) {

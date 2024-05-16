@@ -31,6 +31,7 @@ const selectCurrentSurveyCycle = (state) =>
 
 export const SurveySelectors = {
   selectCurrentSurvey,
+  selectCurrentSurveyCycle,
 
   useCurrentSurvey: () => useSelector(selectCurrentSurvey),
   useCurrentSurveySrsIndex: () =>

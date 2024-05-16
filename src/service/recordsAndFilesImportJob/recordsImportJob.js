@@ -1,23 +1,15 @@
-import { unzip } from "react-native-zip-archive";
+import { JobMobile } from "model";
+import { Files } from "utils";
 
-import { JobMobile } from "model/JobMobile";
-import { Files } from "utils/Files";
-import { RecordsExportFile } from "./recordsExportFile";
-import { RecordService } from "./recordService";
+import { RecordsExportFile } from "../recordsExportFile";
+import { RecordService } from "../recordService";
 
 export class RecordsImportJob extends JobMobile {
-  constructor({ survey, recordUuids, user, fileUri }) {
-    super({ survey, recordUuids, user, fileUri });
-  }
-
   async execute() {
-    const { survey, user, fileUri } = this.context;
+    const { survey, unzippedFolderUri } = this.context;
 
-    const targetPath = await Files.createTempFolder();
-
-    const unzippedPath = await unzip(fileUri, targetPath, "UTF-8");
     const recordsSummaryJsonUri = Files.path(
-      unzippedPath,
+      unzippedFolderUri,
       RecordsExportFile.recordsSummaryJsonPath
     );
     const recordsSummary = await Files.readJsonFromFile({
@@ -29,7 +21,7 @@ export class RecordsImportJob extends JobMobile {
     for await (const recordUuidAndCycle of recordsSummary) {
       const { uuid: recordUuid } = recordUuidAndCycle;
       const contentPath = Files.path(
-        unzippedPath,
+        unzippedFolderUri,
         RecordsExportFile.getRecordContentJsonPath(recordUuid)
       );
       const record = await Files.readJsonFromFile({ fileUri: contentPath });

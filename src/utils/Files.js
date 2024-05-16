@@ -13,7 +13,7 @@ const MIME_TYPES = {
   zip: "application/zip ",
 };
 
-const { cacheDirectory, documentDirectory } = FileSystem;
+const { cacheDirectory, documentDirectory, readDirectoryAsync } = FileSystem;
 
 const path = (...parts) =>
   parts.map(Strings.removeSuffix(PATH_SEPARATOR)).join(PATH_SEPARATOR);
@@ -117,6 +117,15 @@ const readJsonFromFile = async ({ fileUri }) => {
   return JSON.parse(content);
 };
 
+const listDirectory = async (fileUri) => {
+  try {
+    return readDirectoryAsync(fileUri);
+  } catch (e) {
+    // ignore it
+    return [];
+  }
+};
+
 const copyFile = async ({ from, to }) => FileSystem.copyAsync({ from, to });
 
 const moveFile = async ({ from, to }) => FileSystem.moveAsync({ from, to });
@@ -202,6 +211,7 @@ export const Files = {
   getExtension,
   getSize,
   readJsonFromFile,
+  listDirectory,
   isSharingAvailable,
   shareFile,
   copyFile,

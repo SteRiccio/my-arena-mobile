@@ -17,6 +17,7 @@ export const DataTable = (props) => {
     onSelectionChange,
     onDeleteSelectedItemIds,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
     selectedItemsCustomActions,
     showPagination,
   } = props;
@@ -36,6 +37,7 @@ export const DataTable = (props) => {
     onItemLongPress: onItemLongPressProp,
     onSelectionChange,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
   });
 
   const {

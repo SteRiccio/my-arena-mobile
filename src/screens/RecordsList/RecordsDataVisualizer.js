@@ -3,13 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
 
-import {
-  DateFormats,
-  Dates,
-  JobStatus,
-  NodeDefs,
-  Objects,
-} from "@openforis/arena-core";
+import { DateFormats, Dates, NodeDefs, Objects } from "@openforis/arena-core";
 
 import { DataVisualizer, LoadingIcon } from "components";
 
@@ -17,18 +11,14 @@ import { i18n, useTranslation } from "localization";
 import {
   ConfirmActions,
   DataEntryActions,
-  JobMonitorActions,
   RemoteConnectionSelectors,
   ScreenOptionsSelectors,
   SurveySelectors,
-  ToastActions,
 } from "state";
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import { RecordsUtils } from "./RecordsUtils";
-import { RecordOrigin, ScreenViewMode, SurveyDefs } from "model";
-import { RecordService } from "service/recordService";
-import { RecordsImportJob } from "service/recordsImportJob";
+import { ScreenViewMode, SurveyDefs } from "model";
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -52,7 +42,6 @@ export const RecordsDataVisualizer = (props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const user = RemoteConnectionSelectors.useLoggedInUser();
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -179,66 +168,16 @@ export const RecordsDataVisualizer = (props) => {
     setSelectedRecordUuids(selection);
   }, []);
 
-  const downloadRecordsFileFromServerAndImport = async ({ fileName }) => {
-    const fileUri =
-      await RecordService.downloadExportedRecordsFileFromRemoteServer({
-        survey,
-        fileName,
-      });
-    const recordsImportJob = new RecordsImportJob({
-      survey,
-      user,
-      fileUri,
-    });
-    await recordsImportJob.start();
-    const { status, errors } = recordsImportJob.summary;
-    if (status === JobStatus.succeeded) {
-      dispatch(
-        ToastActions.show({
-          textKey: "dataEntry:records.importCompleteSuccessfully",
-        })
-      );
-      await loadRecords();
-    } else {
-      dispatch(
-        ToastActions.show({
-          textKey: "dataEntry:records.importFailed",
-          textParams: {
-            details: JSON.stringify(errors),
-          },
-        })
-      );
-    }
-  };
-
-  const onExportJobComplete = useCallback((job) => {
-    const { outputFileName: fileName } = job.result;
-    dispatch(JobMonitorActions.close());
-    downloadRecordsFileFromServerAndImport({ fileName });
-  }, []);
-
   const onDownloadSelectedRecords = useCallback(() => {
     const selectedRecords = recordItems.filter((record) =>
       selectedRecordUuids.includes(record.uuid)
     );
-    if (
-      selectedRecords.every((record) => record.origin === RecordOrigin.remote)
-    ) {
-      RecordService.startExportRecordsFromRemoteServer({
-        survey,
-        cycle,
-        recordUuids: selectedRecordUuids,
-      }).then((job) => {
-        dispatch(
-          JobMonitorActions.start({
-            jobUuid: job.uuid,
-            titleKey: "dataEntry:records.downloadRecords.title",
-            onJobComplete: onExportJobComplete,
-          })
-        );
-      });
-    }
-  }, [survey, cycle, recordItems, selectedRecordUuids, onExportJobComplete]);
+    dispatch(
+      DataEntryActions.importRecordsFromServer({
+        recordSummaries: selectedRecords,
+      })
+    );
+  }, [recordItems, selectedRecordUuids]);
 
   return (
     <DataVisualizer
@@ -249,6 +188,7 @@ export const RecordsDataVisualizer = (props) => {
       onDeleteSelectedItemIds={onDeleteSelectedItemIds}
       onSelectionChange={onSelectionChange}
       selectable
+      selectedItemIds={selectedRecordUuids}
       selectedItemsCustomActions={[
         {
           label: i18n.t("dataEntry:records.downloadRecords.title"),

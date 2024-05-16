@@ -15,15 +15,25 @@ export const useSelectableList = (props) => {
     onSelectionChange,
     onDeleteSelectedItemIds,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
   } = props;
 
   const [state, setState] = useState({ ...initialState });
 
   const { selectedItemIds, selectionEnabled } = state;
 
+  // reset state on items change
   useEffect(() => {
     setState((statePrev) => ({ ...statePrev, ...initialState }));
   }, [items]);
+
+  // update internal selected item ids on prop change
+  useEffect(() => {
+    setState((statePrev) => ({
+      ...statePrev,
+      selectedItemIds: selectedItemIdsProp,
+    }));
+  }, [selectedItemIdsProp]);
 
   const onItemSelect = useCallback(
     (item) => {
