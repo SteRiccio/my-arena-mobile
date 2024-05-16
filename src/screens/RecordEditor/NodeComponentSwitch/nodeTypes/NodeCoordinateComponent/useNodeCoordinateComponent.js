@@ -69,29 +69,6 @@ export const useNodeCoordinateComponent = (props) => {
     compassNavigatorVisible: false,
   });
 
-  const locationCallback = useCallback(({ location }) => {
-    if (!location) return;
-
-    const valueNext = locationToUiValue({
-      location,
-      nodeDef,
-      srsTo: srs,
-      srsIndex,
-    });
-
-    onValueChange(valueNext);
-  }, []);
-
-  const {
-    locationAccuracyThreshold,
-    locationWatchElapsedTime,
-    locationWatchProgress,
-    locationWatchTimeout,
-    startLocationWatch,
-    stopLocationWatch,
-    watchingLocation,
-  } = useLocationWatch({ locationCallback });
-
   const { compassNavigatorVisible } = state;
 
   const nodeValueToUiValue = useCallback(
@@ -108,7 +85,7 @@ export const useNodeCoordinateComponent = (props) => {
       });
       return result;
     },
-    [nodeDef, srss]
+    [includedExtraFields, srss]
   );
 
   const uiValueToNodeValue = useCallback(
@@ -128,7 +105,7 @@ export const useNodeCoordinateComponent = (props) => {
       });
       return result;
     },
-    [nodeDef]
+    [includedExtraFields]
   );
 
   const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
@@ -137,6 +114,34 @@ export const useNodeCoordinateComponent = (props) => {
     nodeValueToUiValue,
     uiValueToNodeValue,
   });
+
+  const { accuracy, srs = srss[0].code } = uiValue || {};
+
+  const locationCallback = useCallback(
+    ({ location }) => {
+      if (!location) return;
+
+      const valueNext = locationToUiValue({
+        location,
+        nodeDef,
+        srsTo: srs,
+        srsIndex,
+      });
+
+      onValueChange(valueNext);
+    },
+    [srs]
+  );
+
+  const {
+    locationAccuracyThreshold,
+    locationWatchElapsedTime,
+    locationWatchProgress,
+    locationWatchTimeout,
+    startLocationWatch,
+    stopLocationWatch,
+    watchingLocation,
+  } = useLocationWatch({ locationCallback });
 
   const distanceTarget = useSelector((state) => {
     const record = DataEntrySelectors.selectRecord(state);
@@ -152,8 +157,6 @@ export const useNodeCoordinateComponent = (props) => {
   const editable =
     !NodeDefs.isReadOnly(nodeDef) &&
     !NodeDefs.isAllowOnlyDeviceCoordinate(nodeDef);
-
-  const { accuracy, srs = srss[0].code } = uiValue || {};
 
   useEffect(() => {
     return stopLocationWatch;
@@ -179,7 +182,7 @@ export const useNodeCoordinateComponent = (props) => {
 
   const onStopGpsPress = useCallback(() => {
     stopLocationWatch();
-  }, []);
+  }, [stopLocationWatch]);
 
   const setCompassNavigatorVisible = useCallback(
     (visible) =>
