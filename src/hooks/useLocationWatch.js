@@ -110,6 +110,7 @@ export const useLocationWatch = ({
       locationAccuracyThreshold,
       stopOnAccuracyThreshold,
       stopOnTimeout,
+      _stopLocationWatch,
     ]
   );
 
@@ -156,6 +157,8 @@ export const useLocationWatch = ({
     locationAccuracyThreshold,
     locationWatchTimeout,
     stopOnTimeout,
+    stopLocationWatch,
+    _stopLocationWatch,
   ]);
 
   return {
