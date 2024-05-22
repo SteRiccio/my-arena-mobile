@@ -63,7 +63,7 @@ export const useNodeCoordinateComponent = (props) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const srss = useMemo(() => Surveys.getSRSs(survey), [survey]);
   const singleSrs = srss.length === 1;
-  const defaultSrsCode = srss?.[0]?.code;
+  const defaultSrsCode = srss[0].code;
   const includedExtraFields = useMemo(
     () => NodeDefs.getCoordinateAdditionalFields(nodeDef),
     [nodeDef]
@@ -117,6 +117,24 @@ export const useNodeCoordinateComponent = (props) => {
 
   const { accuracy, srs = defaultSrsCode, x, y } = uiValue || {};
 
+  const onValueChange = useCallback(
+    (valueNext) => {
+      if (!valueNext.srs && singleSrs) {
+        // set default SRS
+        valueNext.srs = defaultSrsCode;
+      }
+      updateNodeValue(valueNext);
+    },
+    [defaultSrsCode, singleSrs, updateNodeValue]
+  );
+
+  const onChangeValueField = useCallback(
+    (fieldKey) => (val) => {
+      onValueChange({ ...uiValue, [fieldKey]: val });
+    },
+    [onValueChange, uiValue]
+  );
+
   const locationCallback = useCallback(
     ({ location }) => {
       if (!location) return;
@@ -161,24 +179,6 @@ export const useNodeCoordinateComponent = (props) => {
   useEffect(() => {
     return stopLocationWatch;
   }, []);
-
-  const onValueChange = useCallback(
-    (valueNext) => {
-      if (!valueNext.srs && singleSrs) {
-        // set default SRS
-        valueNext.srs = defaultSrsCode;
-      }
-      updateNodeValue(valueNext);
-    },
-    [defaultSrsCode, singleSrs, updateNodeValue]
-  );
-
-  const onChangeValueField = useCallback(
-    (fieldKey) => (val) => {
-      onValueChange({ ...uiValue, [fieldKey]: val });
-    },
-    [onValueChange, uiValue]
-  );
 
   const performCoordinateConversion = useCallback(
     (srsTo) => {
