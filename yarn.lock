@@ -4015,7 +4015,6 @@ __metadata:
     react-native-collapsible: "npm:^1.6.1"
     react-native-device-info: "npm:^10.13.0"
     react-native-dots-pagination: "npm:^0.3.1"
-    react-native-dropdown-picker: "npm:^5.4.6"
     react-native-error-boundary: "npm:^1.2.4"
     react-native-final-tree-view: "npm:^3.0.0"
     react-native-keychain: "npm:^8.1.3"
@@ -10701,16 +10700,6 @@ __metadata:
   dependencies:
     prop-types: "npm:^15.7.2"
   checksum: d3d1d22498cf86d2cd1de5876cf98484e611510c461823ff698ab2d3e2d4a27d547ce271c093f860974106e7a8110a0719ff3d4264aa24a4d182ace84ac7a6a4
-  languageName: node
-  linkType: hard
-
-"react-native-dropdown-picker@npm:^5.4.6":
-  version: 5.4.6
-  resolution: "react-native-dropdown-picker@npm:5.4.6"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 29b29d6168dc71386a0fd9dc5dedebd23cbb7baa977e4f37f6ff6fd13a800628e73e6624d0563b7471cec9a5dd76e196aed0e41d2da4bac8abefacbd1f0eb347
   languageName: node
   linkType: hard
 
