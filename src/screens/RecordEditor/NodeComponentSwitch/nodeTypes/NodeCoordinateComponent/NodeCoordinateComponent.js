@@ -29,6 +29,7 @@ export const NodeCoordinateComponent = (props) => {
     locationAccuracyThreshold,
     locationWatchElapsedTime,
     locationWatchTimeout,
+    onChangeSrs,
     onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
@@ -80,11 +81,7 @@ export const NodeCoordinateComponent = (props) => {
       </HView>
       <HView style={styles.formItem}>
         <Text style={styles.formItemLabel} textKey="common:srs" />
-        <SrsDropdown
-          editable={editable}
-          onChange={onChangeValueField("srs")}
-          value={srs}
-        />
+        <SrsDropdown editable={editable} onChange={onChangeSrs} value={srs} />
       </HView>
       {includedExtraFields.map((fieldKey) =>
         createNumericFieldFormItem({

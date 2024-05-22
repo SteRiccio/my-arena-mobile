@@ -56,11 +56,15 @@ export default {
   coordinate: {
     accuracy: "Accuracy (m)",
     angleToTargetLocation: "Angle to target",
+    confirmConvertCoordinate:
+      "Convert coordinate from SRS {{srsFrom}} to SRS {{srsTo}}?",
+    convert: "Convert",
     currentLocation: "Current location",
     distance: "Distance (m)",
     altitude: "Altitude (m)",
     altitudeAccuracy: "Altitude accuracy (m)",
     heading: "Heading (deg)",
+    keepXAndY: "Keep X and Y",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
     startGPS: "Start GPS",
