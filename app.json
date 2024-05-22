@@ -3,7 +3,7 @@
     "name": "Arena Mobile Experiments",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -21,10 +21,10 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 58
+      "versionCode": 59
     },
     "ios": {
-      "buildNumber": "58",
+      "buildNumber": "59",
       "bundleIdentifier": "org.stericcio.myarenamobile",
       "infoPlist": {
         "NSCameraUsageDescription": "Camera is used only when collecting images in file attributes (if defined in your survey).",
