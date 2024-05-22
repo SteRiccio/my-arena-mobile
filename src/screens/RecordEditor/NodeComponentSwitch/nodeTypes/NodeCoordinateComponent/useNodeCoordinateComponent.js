@@ -62,8 +62,8 @@ export const useNodeCoordinateComponent = (props) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const srss = useMemo(() => Surveys.getSRSs(survey), [survey]);
-  const singleSrs = useMemo(() => srss.length === 1, [srss]);
-  const defaultSrsCode = useMemo(() => srss[0].code, [srss]);
+  const singleSrs = srss.length === 1;
+  const defaultSrsCode = srss?.[0]?.code;
   const includedExtraFields = useMemo(
     () => NodeDefs.getCoordinateAdditionalFields(nodeDef),
     [nodeDef]
