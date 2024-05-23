@@ -126,6 +126,15 @@ export const useNodeComponentLocalState = ({
     [nodeUuid, updateDelay, uiValueToNodeValue]
   );
 
+  const getUiValueFromState = () => {
+    let uiVal = null;
+    setState((statePrev) => {
+      uiVal = statePrev.uiValue;
+      return statePrev;
+    });
+    return uiVal;
+  };
+
   return {
     applicable,
     invalidValue,
@@ -133,5 +142,6 @@ export const useNodeComponentLocalState = ({
     uiValue,
     validation: updateDelay ? validation : nodeValidation,
     updateNodeValue,
+    getUiValueFromState,
   };
 };

@@ -108,12 +108,13 @@ export const useNodeCoordinateComponent = (props) => {
     [includedExtraFields]
   );
 
-  const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
-    nodeUuid,
-    updateDelay: 500,
-    nodeValueToUiValue,
-    uiValueToNodeValue,
-  });
+  const { applicable, uiValue, updateNodeValue, getUiValueFromState } =
+    useNodeComponentLocalState({
+      nodeUuid,
+      updateDelay: 500,
+      nodeValueToUiValue,
+      uiValueToNodeValue,
+    });
 
   const { accuracy, srs = defaultSrsCode, x, y } = uiValue || {};
 
@@ -181,18 +182,23 @@ export const useNodeCoordinateComponent = (props) => {
   }, []);
 
   const performCoordinateConversion = useCallback(
-    (srsTo) => {
+    (uiVal, srsTo) => {
+      const { x, y, srs } = uiVal;
       const pointFrom = PointFactory.createInstance({ x, y, srs });
       const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
 
       const uiValueNext = { ...uiValue, ...pointToUiValue(pointTo) };
       onValueChange(uiValueNext);
     },
-    [onValueChange, x, y, srs]
+    [onValueChange]
   );
 
   const onChangeSrs = useCallback(
     (val) => {
+      // workaround related to onChange callback passed to Dropdown:
+      // get uiValue from state otherwise it will use an old value of it
+      const uiVal = getUiValueFromState();
+      const { x, y, srs } = uiVal;
       if (!Objects.isEmpty(x) && !Objects.isEmpty(y)) {
         dispatch(
           ConfirmActions.show({
@@ -200,15 +206,15 @@ export const useNodeCoordinateComponent = (props) => {
             messageParams: { srsFrom: srs, srsTo: val },
             confirmButtonTextKey: "dataEntry:coordinate.convert",
             cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
-            onConfirm: () => performCoordinateConversion(val),
-            onCancel: () => onChangeValueField("srs")(val),
+            onConfirm: () => performCoordinateConversion(uiVal, val),
+            onCancel: () => updateNodeValue({ ...uiVal, srs: val }),
           })
         );
       } else {
-        onChangeValueField("srs")(val);
+        updateNodeValue({ ...uiVal, srs: val });
       }
     },
-    [x, y, srs, performCoordinateConversion, onChangeValueField]
+    [performCoordinateConversion, onChangeValueField]
   );
 
   const onStartGpsPress = useCallback(async () => {
