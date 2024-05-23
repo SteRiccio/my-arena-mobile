@@ -8,7 +8,6 @@ import {
   CloseIconButton,
   HView,
   IconButton,
-  SegmentedButtons,
   Text,
   View,
 } from "components";
@@ -18,7 +17,6 @@ import { screenKeys } from "screens/screenKeys";
 import {
   DataEntryActions,
   DataEntrySelectors,
-  SurveyOptionsActions,
   SurveyOptionsSelectors,
   SurveySelectors,
 } from "state";
@@ -61,27 +59,6 @@ export const RecordEditorDrawer = () => {
       ) : (
         <PagesNavigationTree />
       )}
-
-      <Button
-        icon="alert"
-        textKey="dataEntry:validationReport.title"
-        onPress={() => navigation.navigate(screenKeys.recordValidationReport)}
-      />
-
-      <SegmentedButtons
-        buttons={Object.values(RecordEditViewMode).map((mode) => ({
-          icon:
-            mode === RecordEditViewMode.form
-              ? "format-list-bulleted"
-              : "numeric-1-box-outline",
-          label: `dataEntry:viewMode.${mode}`,
-          value: mode,
-        }))}
-        onChange={(value) =>
-          dispatch(SurveyOptionsActions.setRecordEditViewMode(value))
-        }
-        value={viewMode}
-      />
 
       <GpsLockingEnabledWarning />
 

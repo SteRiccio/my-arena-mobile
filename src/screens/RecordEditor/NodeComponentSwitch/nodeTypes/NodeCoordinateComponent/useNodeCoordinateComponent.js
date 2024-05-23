@@ -199,6 +199,9 @@ export const useNodeCoordinateComponent = (props) => {
       // get uiValue from state otherwise it will use an old value of it
       const uiVal = getUiValueFromState();
       const { x, y, srs } = uiVal;
+
+      if (val === srs) return;
+
       if (!Objects.isEmpty(x) && !Objects.isEmpty(y)) {
         dispatch(
           ConfirmActions.show({
