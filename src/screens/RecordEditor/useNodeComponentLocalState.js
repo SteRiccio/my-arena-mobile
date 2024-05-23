@@ -8,6 +8,7 @@ const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
 
 const isNodeValueEqual = (nodeValueA, nodeValueB) =>
   Objects.isEqual(nodeValueA, nodeValueB) ||
+  JSON.stringify(nodeValueA) === JSON.stringify(nodeValueB) ||
   (Objects.isEmpty(nodeValueA) && Objects.isEmpty(nodeValueB));
 
 export const useNodeComponentLocalState = ({
@@ -52,14 +53,24 @@ export const useNodeComponentLocalState = ({
       // component is dirty (value being updated by the user): do not update UI using node value
     } else if (!invalidValue) {
       // UI value not in sync with node value: update UI
+      const uiValueNext = nodeValueToUiValue(nodeValue);
+
       setState((statePrev) => ({
         ...statePrev,
         value: nodeValue,
-        uiValue: nodeValueToUiValue(nodeValue),
+        uiValue: uiValueNext,
         validation: nodeValidation,
       }));
     }
-  }, [invalidValue, nodeValue, nodeValidation, uiValue, updateDelay]);
+  }, [
+    invalidValue,
+    nodeValue,
+    nodeValidation,
+    nodeValueToUiValue,
+    uiValue,
+    uiValueToNodeValue,
+    updateDelay,
+  ]);
 
   const updateNodeValue = useCallback(
     async (uiValueUpdated, fileUri = null) => {
@@ -115,6 +126,15 @@ export const useNodeComponentLocalState = ({
     [nodeUuid, updateDelay, uiValueToNodeValue]
   );
 
+  const getUiValueFromState = () => {
+    let uiVal = null;
+    setState((statePrev) => {
+      uiVal = statePrev.uiValue;
+      return statePrev;
+    });
+    return uiVal;
+  };
+
   return {
     applicable,
     invalidValue,
@@ -122,5 +142,6 @@ export const useNodeComponentLocalState = ({
     uiValue,
     validation: updateDelay ? validation : nodeValidation,
     updateNodeValue,
+    getUiValueFromState,
   };
 };

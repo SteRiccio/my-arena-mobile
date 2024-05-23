@@ -1,6 +1,7 @@
 import React from "react";
 import { View as RNView } from "react-native";
 import { useTheme } from "react-native-paper";
+import PropTypes from "prop-types";
 
 export const View = (props) => {
   const {
@@ -24,6 +25,13 @@ export const View = (props) => {
       {children}
     </RNView>
   );
+};
+
+View.propTypes = {
+  children: PropTypes.node,
+  fullWidth: PropTypes.bool,
+  style: PropTypes.object,
+  transparent: PropTypes.bool,
 };
 
 View.defaultProps = {

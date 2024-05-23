@@ -1,7 +1,12 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  container: {
+  externalContainer: {
+    flex: 1,
+    alignItems: "center",
+    width: "100%",
+  },
+  internalContainer: {
     flex: 1,
     alignItems: "center",
     width: "100%",

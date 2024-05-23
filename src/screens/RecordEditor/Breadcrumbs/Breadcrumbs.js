@@ -112,9 +112,9 @@ export const Breadcrumbs = () => {
   };
 
   return (
-    <HView style={styles.container} transparent>
+    <HView style={styles.externalContainer} transparent>
       <ScrollView horizontal ref={scrollViewRef}>
-        <HView style={styles.container} transparent>
+        <HView style={styles.internalContainer} transparent>
           {items.map((item, index) => {
             const isLastItem = index === items.length - 1;
             return (

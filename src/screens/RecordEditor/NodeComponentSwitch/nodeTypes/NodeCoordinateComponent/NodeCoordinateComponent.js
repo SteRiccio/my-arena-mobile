@@ -3,13 +3,13 @@ import React, { useCallback } from "react";
 import { Objects } from "@openforis/arena-core";
 
 import { HView, IconButton, Text, TextInput, VView } from "components";
+import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
 import { LocationNavigator } from "./LocationNavigator";
 import { OpenMapButton } from "./OpenMapButton";
 
 import styles from "./styles";
-import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef } = props;
@@ -29,6 +29,7 @@ export const NodeCoordinateComponent = (props) => {
     locationAccuracyThreshold,
     locationWatchElapsedTime,
     locationWatchTimeout,
+    onChangeSrs,
     onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
@@ -80,11 +81,7 @@ export const NodeCoordinateComponent = (props) => {
       </HView>
       <HView style={styles.formItem}>
         <Text style={styles.formItemLabel} textKey="common:srs" />
-        <SrsDropdown
-          editable={editable}
-          onChange={onChangeValueField("srs")}
-          value={srs}
-        />
+        <SrsDropdown editable={editable} onChange={onChangeSrs} value={srs} />
       </HView>
       {includedExtraFields.map((fieldKey) =>
         createNumericFieldFormItem({

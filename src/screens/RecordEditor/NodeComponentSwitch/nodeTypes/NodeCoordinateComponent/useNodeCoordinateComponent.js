@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   NodeDefs,
@@ -11,11 +11,11 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { NumberUtils } from "utils/NumberUtils";
-import { RecordNodes } from "model/utils/RecordNodes";
-import { DataEntrySelectors, SurveySelectors } from "state";
-import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { useLocationWatch } from "hooks";
+import { RecordNodes } from "model/utils/RecordNodes";
+import { ConfirmActions, DataEntrySelectors, SurveySelectors } from "state";
+import { NumberUtils } from "utils";
+import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 
 const stringToNumber = (str) => Numbers.toNumber(str);
 const numberToString = (num, roundToDecimals = NaN) => {
@@ -26,6 +26,11 @@ const numberToString = (num, roundToDecimals = NaN) => {
       : NumberUtils.roundToDecimals(num, roundToDecimals)
   );
 };
+const pointToUiValue = ({ x, y, srs }) => ({
+  x: numberToString(x),
+  y: numberToString(y),
+  srs,
+});
 
 const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   const { coords } = location;
@@ -40,11 +45,7 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
 
   const includedExtraFields = NodeDefs.getCoordinateAdditionalFields(nodeDef);
 
-  const result = {
-    x: numberToString(x),
-    y: numberToString(y),
-    srs: srsTo,
-  };
+  const result = pointToUiValue({ x, y, srs: srsTo });
 
   includedExtraFields.forEach((field) => {
     result[field] = numberToString(coords[field], 2);
@@ -57,9 +58,12 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
 export const useNodeCoordinateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
+  const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const srss = useMemo(() => Surveys.getSRSs(survey), [survey]);
+  const singleSrs = srss.length === 1;
+  const defaultSrsCode = srss[0].code;
   const includedExtraFields = useMemo(
     () => NodeDefs.getCoordinateAdditionalFields(nodeDef),
     [nodeDef]
@@ -73,19 +77,15 @@ export const useNodeCoordinateComponent = (props) => {
 
   const nodeValueToUiValue = useCallback(
     (nodeValue) => {
-      const { x, y, srs = srss[0].code } = nodeValue || {};
+      const { x, y, srs = defaultSrsCode } = nodeValue || {};
 
-      const result = {
-        x: numberToString(x),
-        y: numberToString(y),
-        srs,
-      };
+      const result = pointToUiValue({ x, y, srs });
       includedExtraFields.forEach((fieldKey) => {
         result[fieldKey] = numberToString(nodeValue?.[fieldKey]);
       });
       return result;
     },
-    [includedExtraFields, srss]
+    [includedExtraFields, defaultSrsCode]
   );
 
   const uiValueToNodeValue = useCallback(
@@ -108,14 +108,33 @@ export const useNodeCoordinateComponent = (props) => {
     [includedExtraFields]
   );
 
-  const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
-    nodeUuid,
-    updateDelay: 500,
-    nodeValueToUiValue,
-    uiValueToNodeValue,
-  });
+  const { applicable, uiValue, updateNodeValue, getUiValueFromState } =
+    useNodeComponentLocalState({
+      nodeUuid,
+      updateDelay: 500,
+      nodeValueToUiValue,
+      uiValueToNodeValue,
+    });
 
-  const { accuracy, srs = srss[0].code } = uiValue || {};
+  const { accuracy, srs = defaultSrsCode } = uiValue || {};
+
+  const onValueChange = useCallback(
+    (valueNext) => {
+      if (!valueNext.srs && singleSrs) {
+        // set default SRS
+        valueNext.srs = defaultSrsCode;
+      }
+      updateNodeValue(valueNext);
+    },
+    [defaultSrsCode, singleSrs, updateNodeValue]
+  );
+
+  const onChangeValueField = useCallback(
+    (fieldKey) => (val) => {
+      onValueChange({ ...uiValue, [fieldKey]: val });
+    },
+    [onValueChange, uiValue]
+  );
 
   const locationCallback = useCallback(
     ({ location }) => {
@@ -130,7 +149,7 @@ export const useNodeCoordinateComponent = (props) => {
 
       onValueChange(valueNext);
     },
-    [srs]
+    [onValueChange, srs]
   );
 
   const {
@@ -162,19 +181,44 @@ export const useNodeCoordinateComponent = (props) => {
     return stopLocationWatch;
   }, []);
 
-  const onValueChange = useCallback(
-    (valueNext) => {
-      if (!valueNext.srs && srss.length === 1) {
-        // set default SRS
-        valueNext.srs = srss[0].code;
-      }
-      updateNodeValue(valueNext);
+  const performCoordinateConversion = useCallback(
+    (uiVal, srsTo) => {
+      const { x, y, srs } = uiVal;
+      const pointFrom = PointFactory.createInstance({ x, y, srs });
+      const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
+
+      const uiValueNext = { ...uiValue, ...pointToUiValue(pointTo) };
+      onValueChange(uiValueNext);
     },
-    [srss, updateNodeValue]
+    [onValueChange]
   );
 
-  const onChangeValueField = (fieldKey) => (val) =>
-    onValueChange({ ...uiValue, [fieldKey]: val });
+  const onChangeSrs = useCallback(
+    (val) => {
+      // workaround related to onChange callback passed to Dropdown:
+      // get uiValue from state otherwise it will use an old value of it
+      const uiVal = getUiValueFromState();
+      const { x, y, srs } = uiVal;
+
+      if (val === srs) return;
+
+      if (!Objects.isEmpty(x) && !Objects.isEmpty(y)) {
+        dispatch(
+          ConfirmActions.show({
+            messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
+            messageParams: { srsFrom: srs, srsTo: val },
+            confirmButtonTextKey: "dataEntry:coordinate.convert",
+            cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
+            onConfirm: () => performCoordinateConversion(uiVal, val),
+            onCancel: () => updateNodeValue({ ...uiVal, srs: val }),
+          })
+        );
+      } else {
+        updateNodeValue({ ...uiVal, srs: val });
+      }
+    },
+    [performCoordinateConversion, onChangeValueField]
+  );
 
   const onStartGpsPress = useCallback(async () => {
     await startLocationWatch();
@@ -227,6 +271,7 @@ export const useNodeCoordinateComponent = (props) => {
     locationWatchElapsedTime,
     locationWatchProgress,
     locationWatchTimeout,
+    onChangeSrs,
     onChangeValueField,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,

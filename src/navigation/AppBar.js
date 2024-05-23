@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { IconButton, Appbar as RNPAppbar } from "react-native-paper";
+import { Appbar as RNPAppbar } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
-import { HView, Spacer, Text } from "components";
+import { HView, IconButton, Spacer, Text } from "components";
 import { useScreenKey } from "hooks";
 import { RecordEditViewMode, ScreenViewMode } from "model";
 import { useTranslation } from "localization";
@@ -64,9 +64,19 @@ export const AppBar = (props) => {
     [menuVisible]
   );
 
+  const toggleRecordEditViewMode = useCallback(() => {
+    dispatch(
+      SurveyOptionsActions.setRecordEditViewMode(
+        recordEditViewMode === RecordEditViewMode.form
+          ? RecordEditViewMode.oneNode
+          : RecordEditViewMode.form
+      )
+    );
+  }, [recordEditViewMode]);
+
   return (
     <RNPAppbar.Header elevated mode={editingRecord ? "medium" : "small"}>
-      <HView fullWidth transparent>
+      <HView style={styles.topBarContainer} fullWidth transparent>
         {editingRecord && (
           <RNPAppbar.Action
             icon="menu"
@@ -96,30 +106,6 @@ export const AppBar = (props) => {
                 }
               />
             )}
-            {recordEditViewMode === RecordEditViewMode.form && (
-              <RNPAppbar.Action
-                icon="numeric-1-box-outline"
-                onPress={() =>
-                  dispatch(
-                    SurveyOptionsActions.setRecordEditViewMode(
-                      RecordEditViewMode.oneNode
-                    )
-                  )
-                }
-              />
-            )}
-            {recordEditViewMode === RecordEditViewMode.oneNode && (
-              <RNPAppbar.Action
-                icon="format-list-bulleted"
-                onPress={() =>
-                  dispatch(
-                    SurveyOptionsActions.setRecordEditViewMode(
-                      RecordEditViewMode.form
-                    )
-                  )
-                }
-              />
-            )}
             {canRecordBeLinkedToPreviousCycle && (
               <RNPAppbar.Action
                 icon={isLinkedToPreviousCycleRecord ? "link" : "link-off"}
@@ -132,6 +118,14 @@ export const AppBar = (props) => {
                 }
               />
             )}
+            <RNPAppbar.Action
+              icon={
+                recordEditViewMode === RecordEditViewMode.form
+                  ? "numeric-1-box-outline"
+                  : "format-list-bulleted"
+              }
+              onPress={toggleRecordEditViewMode}
+            />
           </>
         )}
 
@@ -147,7 +141,7 @@ export const AppBar = (props) => {
         )}
 
         {screenKey !== screenKeys.settings && (
-          <OptionsMenu menuVisible={menuVisible} toggleMenu={toggleMenu} />
+          <OptionsMenu toggleMenu={toggleMenu} visible={menuVisible} />
         )}
       </HView>
       {editingRecord && (

@@ -2735,12 +2735,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/datetimepicker@npm:7.6.1":
-  version: 7.6.1
-  resolution: "@react-native-community/datetimepicker@npm:7.6.1"
+"@react-native-community/datetimepicker@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "@react-native-community/datetimepicker@npm:8.0.1"
   dependencies:
     invariant: "npm:^2.2.4"
-  checksum: 20d9b35747532e2031b981305f16998e1bd4c651e2c44cd65c4dd5bd4ebe66fd0ed49292bc6883821faf56c1cb3698b16c2b8fb1e9782b8c6f00f3506cf8ee55
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: 3f4597035de551f5bf77374097d0cb1707058cb591db45d18d312eb9e533274aa789380e7698ff1944437793dcf148d484f9d5ce3246c03258f24eb3a75c11e5
   languageName: node
   linkType: hard
 
@@ -3974,7 +3981,7 @@ __metadata:
     "@openforis/arena-core": "npm:^0.0.189"
     "@react-native-async-storage/async-storage": "npm:1.21.0"
     "@react-native-clipboard/clipboard": "npm:^1.13.2"
-    "@react-native-community/datetimepicker": "npm:7.6.1"
+    "@react-native-community/datetimepicker": "npm:^8.0.1"
     "@react-native-community/netinfo": "npm:11.1.0"
     "@react-navigation/native": "npm:^6.1.12"
     "@react-navigation/native-stack": "npm:^6.9.20"

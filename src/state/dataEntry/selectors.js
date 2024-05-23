@@ -180,7 +180,8 @@ const selectRecordCodeParentItemUuid =
 
 const selectRecordHasErrors = (state) => {
   const record = selectRecord(state);
-  return record && !Validations.getValidation(record).valid;
+  const validation = record ? Validations.getValidation(record) : null;
+  return validation && !validation.valid;
 };
 
 const selectCurrentPageEntity = (state) => {
@@ -375,6 +376,8 @@ export const DataEntrySelectors = {
 
   useRecordCodeParentItemUuid: ({ parentNodeUuid, nodeDef }) =>
     useSelector(selectRecordCodeParentItemUuid({ parentNodeUuid, nodeDef })),
+
+  useRecordHasErrors: () => useSelector(selectRecordHasErrors),
 
   useRecordHasErrors: () => useSelector(selectRecordHasErrors),
 
