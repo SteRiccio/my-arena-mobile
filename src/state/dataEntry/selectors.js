@@ -9,6 +9,7 @@ import {
   Records,
   RecordValidations,
   Surveys,
+  Validations,
 } from "@openforis/arena-core";
 
 import { SurveySelectors } from "../survey/selectors";
@@ -176,6 +177,12 @@ const selectRecordCodeParentItemUuid =
       : null;
   };
 
+const selectRecordHasErrors = (state) => {
+  const record = selectRecord(state);
+  const validation = record ? Validations.getValidation(record) : null;
+  return validation && !validation.valid;
+};
+
 const selectCurrentPageEntity = (state) => {
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = selectRecord(state);
@@ -296,6 +303,8 @@ export const DataEntrySelectors = {
     useSelector((state) =>
       selectRecordCodeParentItemUuid(state)({ parentNodeUuid, nodeDef })
     ),
+
+  useRecordHasErrors: () => useSelector(selectRecordHasErrors),
 
   useCurrentPageEntity: () =>
     useSelector((state) => selectCurrentPageEntity(state), Objects.isEqual),
