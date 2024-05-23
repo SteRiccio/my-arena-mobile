@@ -3,13 +3,13 @@ import React, { useCallback } from "react";
 import { Objects } from "@openforis/arena-core";
 
 import { HView, IconButton, Text, TextInput, VView } from "components";
+import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
 import { SrsDropdown } from "../../../SrsDropdown";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
 import { LocationNavigator } from "./LocationNavigator";
 import { OpenMapButton } from "./OpenMapButton";
 
 import styles from "./styles";
-import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef } = props;

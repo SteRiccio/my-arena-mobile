@@ -124,7 +124,7 @@ export const AppBar = (props) => {
         )}
 
         {screenKey !== screenKeys.settings && (
-          <OptionsMenu menuVisible={menuVisible} toggleMenu={toggleMenu} />
+          <OptionsMenu toggleMenu={toggleMenu} visible={menuVisible} />
         )}
       </HView>
       {editingRecord && (
