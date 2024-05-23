@@ -116,7 +116,7 @@ export const useNodeCoordinateComponent = (props) => {
       uiValueToNodeValue,
     });
 
-  const { accuracy, srs = defaultSrsCode, x, y } = uiValue || {};
+  const { accuracy, srs = defaultSrsCode } = uiValue || {};
 
   const onValueChange = useCallback(
     (valueNext) => {
