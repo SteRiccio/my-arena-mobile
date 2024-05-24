@@ -7,6 +7,7 @@ import { Files } from "utils";
 const {
   fetchRecord,
   fetchRecords,
+  fetchRecordsWithEmptyCycle,
   insertRecord,
   updateRecord,
   deleteRecords,
@@ -97,6 +98,7 @@ const uploadRecordsToRemoteServer = async ({ survey, cycle, fileUri }) => {
 export const RecordService = {
   fetchRecord,
   fetchRecords,
+  fetchRecordsWithEmptyCycle,
   fetchRecordsWithSyncStatus,
   insertRecord,
   updateRecord,

@@ -109,21 +109,23 @@ export const RecordsList = () => {
       .map((record) => record.uuid);
     dispatch(
       DataEntryActions.exportRecords({
+        cycle,
         recordUuids: newRecordsUuids,
         onJobComplete: () => loadRecordsWithSyncStatus(),
       })
     );
-  }, [loadRecords, records]);
+  }, [cycle, loadRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
     const recordsUuids = records.map((record) => record.uuid);
     dispatch(
       DataEntryActions.exportRecords({
+        cycle,
         recordUuids: recordsUuids,
         onlyLocally: true,
       })
     );
-  }, [records]);
+  }, [cycle, records]);
 
   if (loading) {
     return <Loader />;

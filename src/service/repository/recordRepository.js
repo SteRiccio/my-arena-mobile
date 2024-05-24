@@ -46,15 +46,29 @@ const fetchRecord = async ({ survey, recordId }) => {
   return rowToRecord({ survey })(row);
 };
 
-const fetchRecords = async ({ survey, cycle }) => {
+const fetchRecords = async ({ survey, cycle = null }) => {
   const { id: surveyId } = survey;
 
   const rows = await dbClient.many(
     `SELECT ${summarySelectFieldsJoint}
     FROM record
-    WHERE survey_id = ? AND cycle = ?
+    WHERE survey_id = ? 
+    ${Objects.isEmpty(cycle) ? "" : "AND cycle = ?"}
     ORDER BY date_modified DESC`,
     [surveyId, cycle]
+  );
+  return rows.map(rowToRecord({ survey }));
+};
+
+const fetchRecordsWithEmptyCycle = async ({ survey }) => {
+  const { id: surveyId } = survey;
+
+  const rows = await dbClient.many(
+    `SELECT ${summarySelectFieldsJoint}
+    FROM record
+    WHERE survey_id = ? AND cycle IS NULL"}
+    ORDER BY date_modified DESC`,
+    [surveyId]
   );
   return rows.map(rowToRecord({ survey }));
 };
@@ -173,6 +187,7 @@ const rowToRecord = ({ survey }) => {
 export const RecordRepository = {
   fetchRecord,
   fetchRecords,
+  fetchRecordsWithEmptyCycle,
   insertRecord,
   updateRecord,
   fixRecordCycle,
