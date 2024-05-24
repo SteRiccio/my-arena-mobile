@@ -30,7 +30,7 @@ export const View = (props) => {
 View.propTypes = {
   children: PropTypes.node,
   fullWidth: PropTypes.bool,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   transparent: PropTypes.bool,
 };
 

@@ -68,6 +68,7 @@ export const RecordsList = () => {
     try {
       const _records = await RecordService.fetchRecordsWithSyncStatus({
         survey,
+        cycle,
       });
       setState((statePrev) => ({
         ...statePrev,
@@ -88,7 +89,7 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [survey]);
+  }, [survey, cycle]);
 
   // reload records on navigation focus (e.g. going back to records list screen)
   useNavigationFocus({ onFocus: loadRecords });

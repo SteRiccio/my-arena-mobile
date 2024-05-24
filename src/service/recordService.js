@@ -56,8 +56,8 @@ const determineRecordSyncStatus = ({
   }
 };
 
-const fetchRecordsWithSyncStatus = async ({ survey }) => {
-  const recordsSummariesLocal = await fetchRecords({ survey });
+const fetchRecordsWithSyncStatus = async ({ survey, cycle }) => {
+  const recordsSummariesLocal = await fetchRecords({ survey, cycle });
   const recordsSummariesRemote = await fetchRecordsSummariesRemote({
     surveyRemoteId: survey.remoteId,
   });

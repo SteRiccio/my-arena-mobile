@@ -1,8 +1,9 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "scripts": {
     "start": "expo start",
+    "start-tunnel": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
