@@ -138,7 +138,7 @@ const _onExportFileGenerationSucceeded = async ({
 };
 
 export const exportRecords =
-  ({ recordUuids, onlyLocally = false, onJobComplete = null }) =>
+  ({ cycle, recordUuids, onlyLocally = false, onJobComplete = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
@@ -148,6 +148,7 @@ export const exportRecords =
 
       const job = new RecordsExportFileGenerationJob({
         survey,
+        cycle,
         recordUuids,
         user,
       });

@@ -27,12 +27,12 @@ const FILES_FOLDER_NAME = "files";
 const FILES_SUMMARY_JSON_FILENAME = "files.json";
 
 export class RecordsExportFileGenerationJob extends JobMobile {
-  constructor({ survey, recordUuids, user }) {
-    super({ survey, recordUuids, user });
+  constructor({ survey, cycle, recordUuids, user }) {
+    super({ survey, cycle, recordUuids, user });
   }
 
   async execute() {
-    const { survey, recordUuids, user } = this.context;
+    const { survey, cycle, recordUuids, user } = this.context;
 
     const tempFolderUri = await Files.createTempFolder();
 
@@ -44,7 +44,10 @@ export class RecordsExportFileGenerationJob extends JobMobile {
 
       await Files.mkDir(tempRecordsFolderUri);
 
-      const recordsSummary = await RecordService.fetchRecords({ survey });
+      const recordsSummary = await RecordService.fetchRecords({
+        survey,
+        cycle,
+      });
 
       const recordsToExport = recordsSummary.filter((recordSummary) =>
         recordUuids.includes(recordSummary.uuid)

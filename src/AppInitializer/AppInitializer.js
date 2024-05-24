@@ -56,8 +56,12 @@ export const AppInitializer = (props) => {
       }
 
       const { dbMigrationsRun, prevDbVersion } = await initializeDb();
+
       if (dbMigrationsRun) {
         await DataMigrationService.migrateData({ prevDbVersion });
+      } else {
+        // TODO remove it, temporary fix until db version 3 is released
+        await DataMigrationService.fixRecordCycle();
       }
 
       // initialize local surveys

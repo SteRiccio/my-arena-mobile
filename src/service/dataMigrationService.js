@@ -7,13 +7,13 @@ const fixRecordCycle = async () => {
     try {
       const surveyId = surveySummary.id;
       const survey = await SurveyService.fetchSurveyById(surveyId);
-      const records = await RecordService.fetchRecords({ survey });
+      const records = await RecordService.fetchRecordsWithEmptyCycle({ survey });
       for await (const recordSummary of records) {
         try {
           const { id: recordId } = recordSummary;
           await RecordService.fixRecordCycle({ survey, recordId });
         } catch (error) {
-          // ignore id
+          // ignore it
         }
       }
     } catch (error) {
@@ -23,11 +23,12 @@ const fixRecordCycle = async () => {
 };
 
 const migrateData = async ({ prevDbVersion }) => {
-  if (prevDbVersion === 1) {
+  if (prevDbVersion <= 2) {
     await fixRecordCycle();
   }
 };
 
 export const DataMigrationService = {
+  fixRecordCycle,
   migrateData,
 };

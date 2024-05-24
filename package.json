@@ -1,8 +1,9 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "scripts": {
     "start": "expo start",
+    "start-tunnel": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -80,5 +81,5 @@
     "metro-react-native-babel-preset": "^0.77.0"
   },
   "private": true,
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.2.2"
 }

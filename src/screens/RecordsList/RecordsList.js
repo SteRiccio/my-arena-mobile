@@ -149,11 +149,12 @@ export const RecordsList = () => {
       .map((record) => record.uuid);
     dispatch(
       DataEntryActions.exportRecords({
+        cycle,
         recordUuids: newRecordsUuids,
         onJobComplete: () => loadRecordsWithSyncStatus(),
       })
     );
-  }, [loadRecords, records]);
+  }, [cycle, loadRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
     const recordUuids = records
@@ -161,11 +162,12 @@ export const RecordsList = () => {
       .map((record) => record.uuid);
     dispatch(
       DataEntryActions.exportRecords({
+        cycle,
         recordUuids,
         onlyLocally: true,
       })
     );
-  }, [records]);
+  }, [cycle, records]);
 
   const recordsFiltered = useMemo(() => {
     if (Objects.isEmpty(searchValue)) return records;

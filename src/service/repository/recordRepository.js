@@ -76,10 +76,15 @@ const fetchRecord = async ({ survey, recordId }) => {
   return rowToRecord({ survey })(row);
 };
 
-const fetchRecords = async ({ survey, cycle, onlyLocal = true }) => {
+const fetchRecords = async ({ survey, cycle = null, onlyLocal = true }) => {
   const { id: surveyId } = survey;
-  const whereConditions = ["survey_id = ?", "cycle = ?"];
-  const queryParams = [surveyId, cycle];
+  const whereConditions = ["survey_id = ?"];
+  const queryParams = [surveyId];
+
+  if (!Objects.isEmpty(cycle)) {
+    whereConditions.push("cycle = ?");
+    queryParams.push(cycle);
+  }
   if (onlyLocal) {
     whereConditions.push("origin = ?");
     queryParams.push(RecordOrigin.local);
@@ -119,6 +124,19 @@ const findRecordIdsByKeys = async ({ survey, cycle, keyValues }) => {
     [surveyId, cycle, ...keyColumnsParams]
   );
   return rows.map((row) => Number(row.id));
+};
+
+const fetchRecordsWithEmptyCycle = async ({ survey }) => {
+  const { id: surveyId } = survey;
+
+  const rows = await dbClient.many(
+    `SELECT ${summarySelectFieldsJoint}
+    FROM record
+    WHERE survey_id = ? AND cycle IS NULL"}
+    ORDER BY date_modified DESC`,
+    [surveyId]
+  );
+  return rows.map(rowToRecord({ survey }));
 };
 
 const insertRecord = async ({
@@ -298,6 +316,7 @@ export const RecordRepository = {
   fetchRecord,
   fetchRecords,
   findRecordIdsByKeys,
+  fetchRecordsWithEmptyCycle,
   insertRecord,
   insertRecordSummaries,
   updateRecord,

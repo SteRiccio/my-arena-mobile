@@ -15,6 +15,7 @@ import { RemoteService } from "./remoteService";
 const {
   fetchRecord,
   fetchRecords,
+  fetchRecordsWithEmptyCycle,
   findRecordIdsByKeys,
   insertRecord,
   insertRecordSummaries,
@@ -82,6 +83,7 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
     cycle,
     onlyLocal: false,
   });
+
   const recordsSummariesRemote = await fetchRecordsSummariesRemote({
     surveyRemoteId: survey.remoteId,
     cycle,
@@ -137,6 +139,7 @@ export const RecordService = {
   fetchRecord,
   fetchRecords,
   syncRecordSummaries,
+  fetchRecordsWithEmptyCycle,
   findRecordIdsByKeys,
   insertRecord,
   updateRecord,
