@@ -63,6 +63,23 @@ const visitDirFilesRecursively = async ({
   }
 };
 
+const getInfo = async (fileUri, ignoreErrors = true) => {
+  try {
+    const info = await FileSystem.getInfoAsync(fileUri);
+    return info;
+  } catch (error) {
+    if (ignoreErrors) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+const getSize = async (fileUri, ignoreErrors = true) => {
+  const info = await getInfo(fileUri, ignoreErrors);
+  return info?.size ?? 0;
+};
+
 const getDirSize = async (dirUri) => {
   let total = 0;
   await visitDirFilesRecursively({
@@ -79,18 +96,6 @@ const getFreeDiskStorage = async () => FileSystem.getFreeDiskStorageAsync();
 
 const jsonToString = (obj) => JSON.stringify(obj, null, 2);
 
-const getInfo = async (fileUri, ignoreErrors = true) => {
-  try {
-    const info = await FileSystem.getInfoAsync(fileUri);
-    return info;
-  } catch (error) {
-    if (ignoreErrors) {
-      return null;
-    }
-    throw error;
-  }
-};
-
 const getNameFromUri = (uri) => uri.substring(uri.lastIndexOf("/") + 1);
 
 const getExtension = (uri) => {
@@ -106,11 +111,6 @@ const getMimeTypeFromUri = (uri) => {
 };
 
 const getMimeTypeFromName = (fileName) => mime.getType(fileName);
-
-const getSize = async (fileUri, ignoreErrors = true) => {
-  const info = await getInfo(fileUri, ignoreErrors);
-  return info?.size ?? 0;
-};
 
 const readJsonFromFile = async ({ fileUri }) => {
   const content = await FileSystem.readAsStringAsync(fileUri);
