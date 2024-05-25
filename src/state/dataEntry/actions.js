@@ -186,7 +186,7 @@ const updateAttribute =
       uuid: node.nodeDefUuid,
     });
 
-    const { record: recordUpdated, nodes: nodesUpdated } =
+    let { record: recordUpdated, nodes: nodesUpdated } =
       await RecordUpdater.updateAttributeValue({
         survey,
         record,
@@ -219,11 +219,17 @@ const updateAttribute =
       }
       dispatch(DeviceInfoActions.updateFreeDiskStorage());
     }
-    await RecordService.updateRecord({ survey, record: recordUpdated });
+    recordUpdated = await RecordService.updateRecord({
+      survey,
+      record: recordUpdated,
+    });
 
     await dispatch({ type: RECORD_SET, record: recordUpdated });
 
-    if (NodeDefs.isKey(nodeDef)) {
+    const isLinkedToPreviousCycleRecord =
+      DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state);
+
+    if (isLinkedToPreviousCycleRecord && NodeDefs.isKey(nodeDef)) {
       // updating key attribute; check if record has previous cycle record;
       const { cycle } = record;
       if (cycle > "0") {
@@ -235,9 +241,7 @@ const updateAttribute =
             survey,
             record: recordUpdated,
           });
-        } else if (
-          DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state)
-        ) {
+        } else {
           dispatch(updatePreviousCyclePageEntity);
         }
       }

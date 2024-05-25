@@ -24,4 +24,9 @@ export class RecordsAndFilesImportJob extends JobMobile {
 
     this.context.unzippedFolderUri = unzippedFolderUri;
   }
+
+  async onEnd() {
+    await super.onEnd();
+    await Files.del(this.context.unzippedFolderUri, true);
+  }
 }

@@ -11,7 +11,6 @@ import { i18n, useTranslation } from "localization";
 import {
   ConfirmActions,
   DataEntryActions,
-  RemoteConnectionSelectors,
   ScreenOptionsSelectors,
   SurveySelectors,
 } from "state";
@@ -168,6 +167,11 @@ export const RecordsDataVisualizer = (props) => {
     setSelectedRecordUuids(selection);
   }, []);
 
+  const onSelectedRecordsImportComplete = useCallback(
+    async () => loadRecords(),
+    [loadRecords]
+  );
+
   const onDownloadSelectedRecords = useCallback(() => {
     const selectedRecords = recordItems.filter((record) =>
       selectedRecordUuids.includes(record.uuid)
@@ -175,6 +179,7 @@ export const RecordsDataVisualizer = (props) => {
     dispatch(
       DataEntryActions.importRecordsFromServer({
         recordSummaries: selectedRecords,
+        onImportComplete: onSelectedRecordsImportComplete,
       })
     );
   }, [recordItems, selectedRecordUuids]);

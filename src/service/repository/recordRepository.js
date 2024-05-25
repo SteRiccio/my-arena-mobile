@@ -221,12 +221,18 @@ const updateRecordKeysAndContent = async ({
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
   const dateModifiedColumn = remote ? "date_modified_remote" : "date_modified";
   return dbClient.executeSql(
-    `UPDATE record SET content = ?, ${dateModifiedColumn} = ?, load_status = ?, ${keyColumnsSet} 
+    `UPDATE record SET 
+      content = ?, 
+      ${dateModifiedColumn} = ?, 
+      load_status = ?, 
+      origin = ?,
+      ${keyColumnsSet} 
     WHERE survey_id = ? AND uuid = ?`,
     [
       JSON.stringify(record),
       record.dateModified || Date.now(),
       RecordLoadStatus.complete,
+      remote ? RecordOrigin.remote : RecordOrigin.local,
       ...keyColumnsValues,
       survey.id,
       record.uuid,
@@ -235,9 +241,13 @@ const updateRecordKeysAndContent = async ({
 };
 
 const updateRecord = async ({ survey, record }) => {
-  if (!record.info) record.info = {};
-  record.info.modifiedWith = SystemUtils.getRecordAppInfo();
-  return updateRecordKeysAndContent({ survey, record });
+  const recordUpdated = Objects.assocPath({
+    obj: record,
+    path: ["info", "modifiedWith"],
+    value: SystemUtils.getRecordAppInfo(),
+  });
+  await updateRecordKeysAndContent({ survey, record: recordUpdated });
+  return recordUpdated;
 };
 
 const updateRecordWithContentFetchedRemotely = async ({ survey, record }) =>
@@ -287,6 +297,11 @@ const rowToRecord =
     result.dateModified = fixDatetime(result.dateModified);
     result.dateCreated = fixDatetime(result.dateCreated);
     result.dateModifiedRemote = fixDatetime(result.dateModifiedRemote);
+
+    if (!result._nodesIndex) {
+      // re-create nodes index
+      Records.addNodes(Records.getNodes(result), { sideEffect: true })(result);
+    }
 
     // fix node dates format
     Records.getNodesArray(result).forEach((node) => {

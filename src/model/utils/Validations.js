@@ -1,4 +1,4 @@
-import { ValidationSeverity } from "@openforis/arena-core";
+import { Objects, ValidationSeverity } from "@openforis/arena-core";
 
 const customValidationKey = "record.attribute.customValidation";
 
@@ -12,18 +12,22 @@ const getJointTexts = ({ validation, severity, t, customMessageLang }) => {
 
     const validationResults =
       severity === ValidationSeverity.error ? v.errors : v.warnings;
-    const messages = validationResults.map(({ key, params, messages }) => {
-      if (key === customValidationKey) {
-        const message = messages[customMessageLang];
-        if (message) {
-          return message;
-        }
-      }
-      return t(`validation:${key}`, params);
-    });
-    result.push(...messages);
 
-    stack.push(...Object.values(v.fields || {}));
+    if (!Objects.isEmpty(validationResults)) {
+      const messages =
+        validationResults.map(({ key, params, messages }) => {
+          if (key === customValidationKey) {
+            const message = messages[customMessageLang];
+            if (message) {
+              return message;
+            }
+          }
+          return t(`validation:${key}`, params);
+        }) ?? [];
+      result.push(...messages);
+
+      stack.push(...Object.values(v.fields ?? {}));
+    }
   }
 
   return result.length > 0 ? result.join(", ") : null;
@@ -47,7 +51,7 @@ const getJointWarningText = ({ validation, t, customMessageLang }) =>
 
 const isError = (validation) =>
   validation?.errors?.length > 0 ||
-  Object.values(validation.fields || {}).some(isError);
+  Object.values(validation?.fields ?? {}).some(isError);
 const isWarning = (validation) => validation?.warnings?.length > 0;
 
 export const Validations = {
