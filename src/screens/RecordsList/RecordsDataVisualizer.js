@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
@@ -6,8 +6,8 @@ import PropTypes from "prop-types";
 import { DateFormats, Dates, NodeDefs, Objects } from "@openforis/arena-core";
 
 import { DataVisualizer, LoadingIcon } from "components";
-
 import { i18n, useTranslation } from "localization";
+import { ScreenViewMode, SurveyDefs } from "model";
 import {
   ConfirmActions,
   DataEntryActions,
@@ -17,7 +17,6 @@ import {
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import { RecordsUtils } from "./RecordsUtils";
-import { ScreenViewMode, SurveyDefs } from "model";
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -47,6 +46,11 @@ export const RecordsDataVisualizer = (props) => {
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
+
+  // reset selected record uuids on records change
+  useEffect(() => {
+    setSelectedRecordUuids([]);
+  }, [records]);
 
   const rootDefKeys = useMemo(
     () => (survey ? SurveyDefs.getRootKeyDefs({ survey, cycle }) : []),
@@ -95,7 +99,7 @@ export const RecordsDataVisualizer = (props) => {
         swipeToConfirm: true,
       })
     );
-  }, []);
+  }, [loadRecords]);
 
   const fields = useMemo(
     () => [

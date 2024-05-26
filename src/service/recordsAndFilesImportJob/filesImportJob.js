@@ -18,6 +18,7 @@ export class FilesImportJob extends JobMobile {
     const filesSummary = await Files.readJsonFromFile({
       fileUri: filesSummaryJsonUri,
     });
+    if (!filesSummary) return;
 
     this.summary.total = filesSummary.length;
 

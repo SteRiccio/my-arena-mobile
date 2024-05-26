@@ -92,6 +92,11 @@ const getDirSize = async (dirUri) => {
   return total;
 };
 
+const exists = async (fileUri) => {
+  const info = await getInfo(fileUri);
+  return info?.exists;
+};
+
 const getFreeDiskStorage = async () => FileSystem.getFreeDiskStorageAsync();
 
 const jsonToString = (obj) => JSON.stringify(obj, null, 2);
@@ -113,8 +118,11 @@ const getMimeTypeFromUri = (uri) => {
 const getMimeTypeFromName = (fileName) => mime.getType(fileName);
 
 const readJsonFromFile = async ({ fileUri }) => {
-  const content = await FileSystem.readAsStringAsync(fileUri);
-  return JSON.parse(content);
+  if (await exists(fileUri)) {
+    const content = await FileSystem.readAsStringAsync(fileUri);
+    return JSON.parse(content);
+  }
+  return null;
 };
 
 const listDirectory = async (fileUri) => {
@@ -206,6 +214,7 @@ export const Files = {
   getDirSize,
   getFreeDiskStorage,
   getInfo,
+  exists,
   getMimeTypeFromName,
   getMimeTypeFromUri,
   getNameFromUri,

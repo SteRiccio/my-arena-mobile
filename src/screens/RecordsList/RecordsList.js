@@ -90,6 +90,7 @@ export const RecordsList = () => {
       const _records = await RecordService.syncRecordSummaries({
         survey,
         cycle,
+        onlyLocal,
       });
       setState((statePrev) => ({
         ...statePrev,
@@ -110,7 +111,7 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [survey, cycle]);
+  }, [survey, cycle, onlyLocal]);
 
   const onOnlyLocalChange = useCallback(
     (onlyLocalUpdated) =>
@@ -151,10 +152,10 @@ export const RecordsList = () => {
       DataEntryActions.exportRecords({
         cycle,
         recordUuids: newRecordsUuids,
-        onJobComplete: () => loadRecordsWithSyncStatus(),
+        onJobComplete: loadRecordsWithSyncStatus,
       })
     );
-  }, [cycle, loadRecords, records]);
+  }, [cycle, loadRecordsWithSyncStatus, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
     const recordUuids = records

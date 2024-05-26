@@ -63,22 +63,28 @@ const determineRecordSyncStatus = ({
   if (recordSummaryRemote.step > 1) {
     return RecordSyncStatus.notInEntryStepAnymore;
   }
+
   const dateModifiedLocal = new Date(recordSummaryLocal.dateModified);
   const dateModifiedRemote = Dates.parseISO(recordSummaryRemote.dateModified);
 
-  if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
-    return RecordSyncStatus.modifiedLocally;
-  } else if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
-    return RecordSyncStatus.modifiedRemotely;
+  if (recordSummaryLocal.origin === RecordOrigin.local) {
+    if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
+      return RecordSyncStatus.modifiedLocally;
+    } else if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
+      return RecordSyncStatus.modifiedRemotely;
+    }
   } else {
-    return RecordSyncStatus.notModified;
+    if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
+      return RecordSyncStatus.notUpToDate;
+    }
   }
+  return RecordSyncStatus.notModified;
 };
 
-const syncRecordSummaries = async ({ survey, cycle }) => {
+const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
   const { id: surveyId } = survey;
 
-  const recordsSummariesInDevice = await fetchRecords({
+  const allRecordsSummariesInDevice = await fetchRecords({
     survey,
     cycle,
     onlyLocal: false,
@@ -89,7 +95,7 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
     cycle,
   });
 
-  const recordsSummariesLocalToDelete = recordsSummariesInDevice.filter(
+  const recordsSummariesLocalToDelete = allRecordsSummariesInDevice.filter(
     (recordSummaryLocal) =>
       // record summary is not locally modified and is no more in server
       recordSummaryLocal.origin === RecordOrigin.remote &&
@@ -97,7 +103,7 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
       !ArrayUtils.findByUuid(recordSummaryLocal.uuid)(recordsSummariesRemote)
   );
   if (recordsSummariesLocalToDelete.length > 0) {
-    deleteRecords({
+    await deleteRecords({
       surveyId,
       recordUuids: recordsSummariesLocalToDelete.map((record) => record.uuid),
     });
@@ -105,10 +111,12 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
 
   const recordSummariesToAdd = recordsSummariesRemote.filter(
     (recordSummaryRemote) =>
-      !ArrayUtils.findByUuid(recordSummaryRemote.uuid)(recordsSummariesInDevice)
+      !ArrayUtils.findByUuid(recordSummaryRemote.uuid)(
+        allRecordsSummariesInDevice
+      )
   );
   if (recordSummariesToAdd.length > 0) {
-    insertRecordSummaries({
+    await insertRecordSummaries({
       survey,
       cycle,
       recordSummaries: recordSummariesToAdd,
@@ -118,7 +126,7 @@ const syncRecordSummaries = async ({ survey, cycle }) => {
   const recordsSummariesLocalReloaded = await fetchRecords({
     survey,
     cycle,
-    onlyLocal: true,
+    onlyLocal,
   });
 
   return recordsSummariesLocalReloaded.map((recordSummaryLocal) => {
