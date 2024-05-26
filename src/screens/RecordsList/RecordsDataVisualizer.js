@@ -5,9 +5,14 @@ import PropTypes from "prop-types";
 
 import { DateFormats, Dates, NodeDefs, Objects } from "@openforis/arena-core";
 
-import { DataVisualizer, LoadingIcon } from "components";
+import { DataVisualizer, Icon, LoadingIcon } from "components";
 import { i18n, useTranslation } from "localization";
-import { ScreenViewMode, SurveyDefs } from "model";
+import {
+  RecordLoadStatus,
+  RecordOrigin,
+  ScreenViewMode,
+  SurveyDefs,
+} from "model";
 import {
   ConfirmActions,
   DataEntryActions,
@@ -17,6 +22,17 @@ import {
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import { RecordsUtils } from "./RecordsUtils";
+
+const iconByLoadStatus = {
+  [RecordLoadStatus.complete]: "circle-slice-8",
+  [RecordLoadStatus.partial]: "circle-slice-4",
+  [RecordLoadStatus.summary]: "circle-outline",
+};
+
+const iconByOrigin = {
+  [RecordOrigin.local]: "cellphone",
+  [RecordOrigin.remote]: "cloud-outline",
+};
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -87,19 +103,22 @@ export const RecordsDataVisualizer = (props) => {
     );
   }, []);
 
-  const onDeleteSelectedItemIds = useCallback((recordUuids) => {
-    dispatch(
-      ConfirmActions.show({
-        titleKey: "dataEntry:records.deleteRecordsConfirm.title",
-        messageKey: "dataEntry:records.deleteRecordsConfirm.message",
-        onConfirm: async () => {
-          await dispatch(DataEntryActions.deleteRecords(recordUuids));
-          await loadRecords();
-        },
-        swipeToConfirm: true,
-      })
-    );
-  }, [loadRecords]);
+  const onDeleteSelectedItemIds = useCallback(
+    (recordUuids) => {
+      dispatch(
+        ConfirmActions.show({
+          titleKey: "dataEntry:records.deleteRecordsConfirm.title",
+          messageKey: "dataEntry:records.deleteRecordsConfirm.message",
+          onConfirm: async () => {
+            await dispatch(DataEntryActions.deleteRecords(recordUuids));
+            await loadRecords();
+          },
+          swipeToConfirm: true,
+        })
+      );
+    },
+    [loadRecords]
+  );
 
   const fields = useMemo(
     () => [
@@ -120,9 +139,11 @@ export const RecordsDataVisualizer = (props) => {
               style: { minWidth: 10 },
               cellRenderer: ({ item }) => {
                 const { origin } = item;
-                return screenViewMode === ScreenViewMode.table
-                  ? origin
-                  : t(`dataEntry:records.origin.${origin}`);
+                return screenViewMode === ScreenViewMode.table ? (
+                  <Icon source={iconByOrigin[origin]} />
+                ) : (
+                  t(`dataEntry:records.origin.${origin}`)
+                );
               },
             },
             ...(screenViewMode === ScreenViewMode.list
@@ -139,9 +160,11 @@ export const RecordsDataVisualizer = (props) => {
               style: { minWidth: 10 },
               cellRenderer: ({ item }) => {
                 const { loadStatus } = item;
-                return screenViewMode === ScreenViewMode.table
-                  ? loadStatus
-                  : t(`dataEntry:records.loadStatus.${loadStatus}`);
+                return screenViewMode === ScreenViewMode.table ? (
+                  <Icon source={iconByLoadStatus[loadStatus]} />
+                ) : (
+                  t(`dataEntry:records.loadStatus.${loadStatus}`)
+                );
               },
             },
           ]

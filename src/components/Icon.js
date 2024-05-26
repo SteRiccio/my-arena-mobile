@@ -5,3 +5,7 @@ export const Icon = (props) => {
   const theme = useTheme();
   return <RNPIcon color={theme.colors.onBackground} {...props} />;
 };
+
+Icon.defaultProps = {
+  size: 20,
+};
