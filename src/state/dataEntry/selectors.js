@@ -289,13 +289,6 @@ const selectPreviousCycleEntityWithSameKeys =
     const record = selectRecord(state);
     const previousCycleRecord = selectPreviousCycleRecord(state);
 
-    if (!record) {
-      console.log("===record is null");
-    }
-    if (!previousCycleRecord) {
-      console.log("===prev record is null");
-    }
-
     if (!record || !previousCycleRecord) return null;
 
     return Records.findEntityWithSameKeysInAnotherRecord({

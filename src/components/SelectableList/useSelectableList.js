@@ -15,12 +15,12 @@ export const useSelectableList = (props) => {
     onSelectionChange,
     onDeleteSelectedItemIds,
     selectable,
-    selectedItemIds: selectedItemIdsProp = [],
+    selectedItemIds: selectedItemIdsProp,
   } = props;
 
   const [state, setState] = useState({
     ...initialState,
-    selectedItemIds: selectedItemIdsProp,
+    selectedItemIds: selectedItemIdsProp ?? [],
   });
 
   const { selectedItemIds, selectionEnabled } = state;
@@ -38,9 +38,13 @@ export const useSelectableList = (props) => {
     ) {
       return;
     }
+    const selectedItemIdsNext = selectedItemIdsProp ?? selectedItemIds;
+    const selectionEnabledNext = selectedItemIdsNext?.length > 0;
+
     setState((statePrev) => ({
       ...statePrev,
-      selectedItemIds: selectedItemIdsProp,
+      selectedItemIds: selectedItemIdsNext,
+      selectionEnabled: selectionEnabledNext,
     }));
   }, [selectedItemIds, selectedItemIdsProp]);
 

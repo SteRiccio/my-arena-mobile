@@ -199,13 +199,18 @@ export const RecordsDataVisualizer = (props) => {
     [loadRecords]
   );
 
-  const onDownloadSelectedRecords = useCallback(() => {
+  const onImportSelectedRecords = useCallback(() => {
     const selectedRecords = recordItems.filter((record) =>
       selectedRecordUuids.includes(record.uuid)
     );
+    if (
+      selectedRecords.some((record) => record.origin !== RecordOrigin.remote)
+    ) {
+      return;
+    }
     dispatch(
       DataEntryActions.importRecordsFromServer({
-        recordSummaries: selectedRecords,
+        recordUuids: selectedRecordUuids,
         onImportComplete: onSelectedRecordsImportComplete,
       })
     );
@@ -223,8 +228,8 @@ export const RecordsDataVisualizer = (props) => {
       selectedItemIds={selectedRecordUuids}
       selectedItemsCustomActions={[
         {
-          label: i18n.t("dataEntry:records.downloadRecords.title"),
-          onPress: onDownloadSelectedRecords,
+          label: i18n.t("dataEntry:records.importRecords.title"),
+          onPress: onImportSelectedRecords,
         },
       ]}
     />

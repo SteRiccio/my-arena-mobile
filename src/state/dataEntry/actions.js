@@ -37,7 +37,7 @@ const {
 } = DataEntryActionTypes;
 
 const {
-  fetchRecordFromPreviousCycle: _fetchRecordFromPreviousCycle,
+  fetchRecordFromPreviousCycle,
   linkToRecordInPreviousCycle,
   unlinkFromRecordInPreviousCycle,
   updatePreviousCyclePageEntity,
@@ -58,6 +58,7 @@ const createNewRecord =
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
+    // const cycle = SurveySelectors.selectCurrentSurveyCycle(state);
     const appInfo = SystemUtils.getRecordAppInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
@@ -150,27 +151,60 @@ const editRecord =
     navigation.navigate(screenKeys.recordEditor);
   };
 
+const _fetchAndEditRecordInternal = async ({
+  dispatch,
+  navigation,
+  survey,
+  recordId,
+}) => {
+  const record = await RecordService.fetchRecord({ survey, recordId });
+  await dispatch(editRecord({ navigation, record }));
+};
+
 const fetchAndEditRecord =
   ({ navigation, recordSummary }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
+    const {
+      id: recordId,
+      uuid: recordUuid,
+      origin,
+      loadStatus,
+    } = recordSummary;
     if (
-      recordSummary.origin === RecordOrigin.remote &&
-      recordSummary.loadStatus !== RecordLoadStatus.complete
+      origin === RecordOrigin.remote &&
+      loadStatus !== RecordLoadStatus.complete
     ) {
       dispatch(
         ConfirmActions.show({
-          confirmButtonTextKey: "dataEntry:recordContentNotFetchedFromServer",
-          messageKey: "dataEntry:confirmFetchRecordContentFromServer",
-          onConfirm: () => {},
+          confirmButtonTextKey: "dataEntry:records.importRecord",
+          messageKey: "dataEntry:records.confirmImportRecordFromServer",
+          onConfirm: () => {
+            dispatch(
+              importRecordsFromServer({
+                recordUuids: [recordUuid],
+                onImportComplete: async () => {
+                  await _fetchAndEditRecordInternal({
+                    dispatch,
+                    navigation,
+                    survey,
+                    recordId,
+                  });
+                },
+              })
+            );
+          },
         })
       );
-      return;
+    } else {
+      await _fetchAndEditRecordInternal({
+        dispatch,
+        navigation,
+        survey,
+        recordId,
+      });
     }
-    const { id: recordId } = recordSummary;
-    const record = await RecordService.fetchRecord({ survey, recordId });
-    await dispatch(editRecord({ navigation, record }));
   };
 
 const updateAttribute =
@@ -179,6 +213,7 @@ const updateAttribute =
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
+    const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
 
     const node = Records.getNodeByUuid(uuid)(record);
     const nodeDef = Surveys.getNodeDefByUuid({
@@ -236,10 +271,11 @@ const updateAttribute =
         const rootKeys = SurveyDefs.getRootKeyDefs({ survey, cycle });
         const nodeDefIsRootKey = rootKeys.includes(nodeDef);
         if (nodeDefIsRootKey) {
-          await _fetchRecordFromPreviousCycle({
+          await fetchRecordFromPreviousCycle({
             dispatch,
             survey,
             record: recordUpdated,
+            lang,
           });
         } else {
           dispatch(updatePreviousCyclePageEntity);

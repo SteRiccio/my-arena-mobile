@@ -32,6 +32,7 @@ const selectCurrentSurveyCycle = (state) =>
 export const SurveySelectors = {
   selectCurrentSurvey,
   selectCurrentSurveyCycle,
+  selectCurrentSurveyPreferredLang,
 
   useCurrentSurvey: () => useSelector(selectCurrentSurvey),
   useCurrentSurveySrsIndex: () =>

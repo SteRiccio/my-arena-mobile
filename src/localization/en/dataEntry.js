@@ -10,6 +10,7 @@ export default {
       "Items found at a distance of {{minDistance}}m",
     useSelectedItem: "Use selected item",
   },
+  cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
   options: "Data entry options",
   errorFetchingRecordsSyncStatus:
@@ -26,15 +27,20 @@ export default {
   listOfRecords: "List of records",
   newRecord: "New record",
   noRecordsFound: "No records found",
+  recordInPreviousCycleFound: "Record in previous cycle found!",
+  recordInCycleWithKeysNotFound:
+    "Record in cycle {{cycle}} with keys {{keyValues}} not found",
   recordEditor: "Record editor",
   records: {
+    confirmImportRecordFromServer: "Import record from server?",
     dateModifiedRemotely: "Date modified remotely",
     deleteRecordsConfirm: {
       title: "Delete records",
       message: "Delete the selected records?",
     },
-    downloadRecords: {
-      title: "Download records from server",
+    importRecord: "Import record",
+    importRecords: {
+      title: "Import records from server",
     },
     importCompleteSuccessfully: "Records import complete successfully!",
     importFailed: "Records import failed: {{details}}",

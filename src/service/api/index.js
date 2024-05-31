@@ -85,7 +85,8 @@ const test = async (serverUrl, uri, params = {}) => {
 
 const post = async (serverUrl, uri, data, options = {}) => {
   const formData = Object.entries(data).reduce((acc, [key, value]) => {
-    acc.append(key, value);
+    const formDataValue = Array.isArray(value) ? JSON.stringify(value) : value;
+    acc.append(key, formDataValue);
     return acc;
   }, new FormData());
 

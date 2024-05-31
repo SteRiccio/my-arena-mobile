@@ -8,8 +8,10 @@ const actionHandlers = {
     return {
       ...state,
       currentSurvey: survey,
-      currentSurveyPreferredLanguage: Surveys.getDefaultLanguage(survey),
-      currentSurveyCycle: Surveys.getDefaultCycleKey(survey),
+      currentSurveyPreferredLanguage: survey
+        ? Surveys.getDefaultLanguage(survey)
+        : null,
+      currentSurveyCycle: survey ? Surveys.getDefaultCycleKey(survey) : null,
     };
   },
   [SurveyActionTypes.CURRENT_SURVEY_PREFERRED_LANG_SET]: ({

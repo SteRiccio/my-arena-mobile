@@ -60,6 +60,7 @@ export const RecordsList = () => {
   } = state;
 
   const loadRecords = useCallback(async () => {
+    console.log("===loading records");
     const _records = await RecordService.fetchRecords({
       survey,
       cycle,

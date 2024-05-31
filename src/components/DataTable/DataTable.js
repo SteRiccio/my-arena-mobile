@@ -133,6 +133,7 @@ DataTable.propTypes = {
   onSelectionChange: PropTypes.func,
   onDeleteSelectedItemIds: PropTypes.func,
   selectable: PropTypes.bool,
+  selectedItemIds: PropTypes.array,
   selectedItemsCustomActions: PropTypes.array,
   showPagination: PropTypes.bool,
 };
