@@ -210,6 +210,27 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   });
 };
 
+const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
+  survey,
+  recordSummary,
+}) => {
+  const { dateModified, uuid } = recordSummary;
+  const keyColumnsSet = keyColumnNames
+    .map((keyCol) => `${keyCol} = ?`)
+    .join(", ");
+  const keyColumnsValues = extractRemoteRecordSummaryKeyColumnsValues({
+    survey,
+    recordSummary,
+  });
+  return dbClient.executeSql(
+    `UPDATE record SET 
+      date_modified_remote = ?, 
+      ${keyColumnsSet} 
+    WHERE survey_id = ? AND uuid = ?`,
+    [fixDatetime(dateModified), ...keyColumnsValues, survey.id, uuid]
+  );
+};
+
 const updateRecordKeysAndContent = async ({
   survey,
   record,
@@ -336,6 +357,7 @@ export const RecordRepository = {
   insertRecordSummaries,
   updateRecord,
   updateRecordWithContentFetchedRemotely,
+  updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely,
   fixRecordCycle,
   deleteRecords,
 };

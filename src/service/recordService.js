@@ -110,6 +110,7 @@ const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
 
   const recordSummariesToAdd = recordsSummariesRemote.filter(
     (recordSummaryRemote) =>
+      // remote records not in local db
       !ArrayUtils.findByUuid(recordSummaryRemote.uuid)(
         allRecordsSummariesInDevice
       )
@@ -120,6 +121,22 @@ const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
       cycle,
       recordSummaries: recordSummariesToAdd,
     });
+  }
+
+  for await (const recordSummaryLocal of allRecordsSummariesInDevice) {
+    const { origin, loadStatus, uuid } = recordSummaryLocal;
+    const recordSummaryRemote = ArrayUtils.findByUuid(uuid)(
+      recordsSummariesRemote
+    );
+    if (
+      origin === RecordOrigin.remote &&
+      loadStatus === RecordLoadStatus.summary &&
+      recordSummaryRemote
+    ) {
+      await RecordRepository.updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely(
+        { survey, recordSummary: recordSummaryRemote }
+      );
+    }
   }
 
   const recordsSummariesLocalReloaded = await fetchRecords({
