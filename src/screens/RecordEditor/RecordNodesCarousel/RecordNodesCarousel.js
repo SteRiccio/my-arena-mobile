@@ -72,7 +72,7 @@ export const RecordNodesCarousel = () => {
         ))}
       </PagerView>
     );
-  }, [childrenDefs, onPageSelected, onPageScrollStateChanged]);
+  }, [childrenDefs, entityUuid, onPageSelected, onPageScrollStateChanged]);
 
   if (
     NodeDefs.isMultiple(entityDef) &&
