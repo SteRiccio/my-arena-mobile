@@ -1,4 +1,10 @@
-import { NodeDefs, Nodes, Records, Surveys } from "@openforis/arena-core";
+import {
+  NodeDefs,
+  Nodes,
+  Records,
+  Surveys,
+  Validations,
+} from "@openforis/arena-core";
 
 import { RecordNodes } from "model/utils/RecordNodes";
 
@@ -15,6 +21,31 @@ const getChildEntity = ({ record, entity, currentEntity, childDef }) => {
   const children = Records.getChildren(entity, childDef.uuid)(record);
   return children.find((child) =>
     currentEntityAndAncestorUuids.includes(child.uuid)
+  );
+};
+
+const findNotValidTreeItemIds = ({ record, treeItemsById }) => {
+  const validation = Validations.getValidation(record);
+  const fieldValidations = Validations.getFieldValidations(validation);
+  return Object.entries(fieldValidations).reduce(
+    (acc, [nodeUuid, fieldValidation]) => {
+      if (fieldValidation.valid) return acc;
+
+      const node = Records.getNodeByUuid(nodeUuid)(record);
+      if (!node) return acc;
+
+      const notValidNodeInTree = RecordNodes.findAncestor({
+        record,
+        node,
+        predicate: (visitedAncestor) =>
+          !!treeItemsById[visitedAncestor.nodeDefUuid],
+      });
+      if (notValidNodeInTree) {
+        acc.add(notValidNodeInTree.nodeDefUuid);
+      }
+      return acc;
+    },
+    new Set()
   );
 };
 
@@ -59,6 +90,9 @@ export const useTreeData = () => {
     { treeItem: rootTreeItem, entityDef: rootDef, entity: rootNode },
   ];
 
+  const treeItemsById = {};
+  treeItemsById[rootDef.uuid] = rootTreeItem;
+
   while (stack.length) {
     const {
       treeItem: parentTreeItem,
@@ -102,11 +136,22 @@ export const useTreeData = () => {
 
       parentTreeItem.children.push(treeItem);
 
+      treeItemsById[treeItem.id] = treeItem;
+
       if (childEntity) {
         stack.push({ treeItem, entityDef: childDef, entity: childEntity });
       }
     });
   }
+
+  const notValidTreeItemsIds = findNotValidTreeItemIds({
+    record,
+    treeItemsById,
+  });
+
+  notValidTreeItemsIds.forEach((notValidTreeItemId) => {
+    treeItemsById[notValidTreeItemId].isNotValid = true;
+  });
 
   return [rootTreeItem];
 };

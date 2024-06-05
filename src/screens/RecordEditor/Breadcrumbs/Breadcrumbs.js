@@ -12,7 +12,7 @@ import { DataEntryActions } from "../../../state/dataEntry/actions";
 
 import styles from "./styles";
 
-const Separator = () => <Icon source="greater-than" size={20} />;
+const Separator = () => <Icon source="greater-than" />;
 
 export const Breadcrumbs = () => {
   const dispatch = useDispatch();

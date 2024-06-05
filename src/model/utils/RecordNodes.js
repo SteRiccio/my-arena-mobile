@@ -149,10 +149,21 @@ const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
   return null;
 };
 
+const findAncestor = ({ record, node, predicate }) => {
+  let result = null;
+  Records.visitAncestorsAndSelf(node, (visitedAncestor) => {
+    if (!result && predicate(visitedAncestor)) {
+      result = visitedAncestor;
+    }
+  })(record);
+  return result;
+};
+
 export const RecordNodes = {
   getNodeName,
   getEntitySummaryValuesByNameFormatted,
   getApplicableChildrenEntityDefs,
   getSiblingNode,
   getCoordinateDistanceTarget,
+  findAncestor,
 };

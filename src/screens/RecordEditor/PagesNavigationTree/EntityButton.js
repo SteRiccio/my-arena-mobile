@@ -2,11 +2,13 @@ import { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 
-import { Text } from "components";
+import { HView, Icon, Text } from "components";
 import { DataEntryActions } from "state";
 
+import styles from "./styles";
+
 export const EntityButton = ({ treeNode, isCurrentEntity }) => {
-  const { label, entityPointer } = treeNode;
+  const { label, entityPointer, isNotValid } = treeNode;
 
   const dispatch = useDispatch();
 
@@ -16,13 +18,17 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <Text
-        style={{
-          fontSize: isCurrentEntity ? 24 : 20,
-          fontWeight: isCurrentEntity ? "bold" : "normal",
-        }}
-        textKey={label}
-      />
+      <HView style={styles.entityButtonContent} transparent>
+        <Text
+          style={
+            isCurrentEntity
+              ? styles.currentEntityButtonText
+              : styles.entityButtonText
+          }
+          textKey={label}
+        />
+        {isNotValid && <Icon source="alert" />}
+      </HView>
     </TouchableOpacity>
   );
 };
