@@ -348,10 +348,13 @@ const selectCurrentPageEntity =
     if (DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state)) {
       dispatch(updatePreviousCyclePageEntity);
     }
+
+    dispatch(closeRecordPageMenu);
   };
 
 const selectCurrentPageEntityActiveChildIndex = (index) => (dispatch) => {
   dispatch({ type: PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET, index });
+  dispatch(closeRecordPageMenu);
 };
 
 const toggleRecordPageMenuOpen = (dispatch, getState) => {
@@ -359,6 +362,15 @@ const toggleRecordPageMenuOpen = (dispatch, getState) => {
   const state = getState();
   const open = DataEntrySelectors.selectRecordPageSelectorMenuOpen(state);
   dispatch({ type: PAGE_SELECTOR_MENU_OPEN_SET, open: !open });
+};
+
+const closeRecordPageMenu = (dispatch, getState) => {
+  const state = getState();
+  const pageSelectorMenuOpen =
+    DataEntrySelectors.selectRecordPageSelectorMenuOpen(state);
+  if (pageSelectorMenuOpen) {
+    dispatch({ type: PAGE_SELECTOR_MENU_OPEN_SET, open: false });
+  }
 };
 
 const navigateToRecordsList =

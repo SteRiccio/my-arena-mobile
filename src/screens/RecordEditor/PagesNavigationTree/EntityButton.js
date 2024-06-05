@@ -12,7 +12,6 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
 
   const onPress = useCallback(() => {
     dispatch(DataEntryActions.selectCurrentPageEntity(entityPointer));
-    dispatch(DataEntryActions.toggleRecordPageMenuOpen);
   }, [entityPointer]);
 
   return (
