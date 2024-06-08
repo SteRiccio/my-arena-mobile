@@ -99,7 +99,7 @@ export const AppBar = (props) => {
             <Spacer />
 
             {recordHasErrors && (
-              <IconButton
+              <RNPAppbar.Action
                 icon="alert"
                 onPress={() =>
                   navigation.navigate(screenKeys.recordValidationReport)

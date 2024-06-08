@@ -1,5 +1,3 @@
-export const FileValuePreview = (props) => {
-  const { nodeDef, value } = props;
-
+export const FileValuePreview = () => {
   return null;
 };

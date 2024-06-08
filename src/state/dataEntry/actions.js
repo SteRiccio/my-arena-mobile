@@ -9,7 +9,7 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { RecordOrigin, RecordLoadStatus, SurveyDefs } from "model";
+import { RecordOrigin, RecordLoadStatus } from "model";
 import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
@@ -37,7 +37,6 @@ const {
 } = DataEntryActionTypes;
 
 const {
-  fetchRecordFromPreviousCycle,
   linkToRecordInPreviousCycle,
   unlinkFromRecordInPreviousCycle,
   updatePreviousCyclePageEntity,
@@ -213,7 +212,6 @@ const updateAttribute =
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
-    const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
 
     const node = Records.getNodeByUuid(uuid)(record);
     const nodeDef = Surveys.getNodeDefByUuid({

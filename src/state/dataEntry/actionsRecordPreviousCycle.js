@@ -8,7 +8,7 @@ import { DataEntrySelectors } from "./selectors";
 import { DataEntryActionTypes } from "./actionTypes";
 import { RecordNodes } from "model/index";
 
-const fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
+const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
   try {
     const rootEntity = Records.getRoot(record);
     const { cycle } = record;
@@ -35,7 +35,7 @@ const fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
     });
 
     if (prevCycleRecordIds.length === 0) {
-      dispatch(unlinkFromRecordInPreviousCycle())
+      dispatch(unlinkFromRecordInPreviousCycle());
       dispatch(
         ToastActions.show({
           textKey: "dataEntry:recordInCycleWithKeysNotFound",
@@ -82,11 +82,18 @@ const fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
 };
 
 const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
-  const state = getState();
-  const survey = SurveySelectors.selectCurrentSurvey(state);
-  const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
-  const record = DataEntrySelectors.selectRecord(state);
-  await fetchRecordFromPreviousCycle({ dispatch, survey, record, lang });
+  try {
+    const state = getState();
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = DataEntrySelectors.selectRecord(state);
+    await _fetchRecordFromPreviousCycle({ dispatch, survey, record });
+  } catch (error) {
+    const details = `${error.toString()} - ${error.stack}`;
+    ToastActions.show({
+      textKey: "dataEntry:recordInPreviousCycleFetchError",
+      textParams: { details },
+    });
+  }
 };
 
 const unlinkFromRecordInPreviousCycle = () => async (dispatch) => {
@@ -117,7 +124,6 @@ const updatePreviousCyclePageEntity = (dispatch, getState) => {
 };
 
 export const DataEntryActionsRecordPreviousCycle = {
-  fetchRecordFromPreviousCycle,
   linkToRecordInPreviousCycle,
   unlinkFromRecordInPreviousCycle,
   updatePreviousCyclePageEntity,
