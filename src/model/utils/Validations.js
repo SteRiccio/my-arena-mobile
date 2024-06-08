@@ -1,4 +1,4 @@
-import { Objects, ValidationSeverity } from "@openforis/arena-core";
+import { ValidationSeverity } from "@openforis/arena-core";
 
 const customValidationKey = "record.attribute.customValidation";
 
@@ -13,21 +13,18 @@ const getJointTexts = ({ validation, severity, t, customMessageLang }) => {
     const validationResults =
       severity === ValidationSeverity.error ? v.errors : v.warnings;
 
-    if (!Objects.isEmpty(validationResults)) {
-      const messages =
-        validationResults.map(({ key, params, messages }) => {
-          if (key === customValidationKey) {
-            const message = messages[customMessageLang];
-            if (message) {
-              return message;
-            }
+    const messages =
+      validationResults?.map(({ key, params, messages }) => {
+        if (key === customValidationKey) {
+          const message = messages[customMessageLang];
+          if (message) {
+            return message;
           }
-          return t(`validation:${key}`, params);
-        }) ?? [];
-      result.push(...messages);
-
-      stack.push(...Object.values(v.fields ?? {}));
-    }
+        }
+        return t(`validation:${key}`, params);
+      }) ?? [];
+    result.push(...messages);
+    stack.push(...Object.values(v.fields ?? {}));
   }
 
   return result.length > 0 ? result.join(", ") : null;

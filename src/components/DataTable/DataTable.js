@@ -84,21 +84,13 @@ export const DataTable = (props) => {
               onLongPress={() => onItemLongPress(item)}
             >
               {fields.map(
-                ({
-                  key: fieldKey,
-                  style,
-                  cellRenderer: CellRenderer = null,
-                }) => (
+                ({ key: fKey, style, cellRenderer: CellRenderer = null }) => (
                   <RNPDataTable.Cell
-                    key={fieldKey}
+                    key={fKey}
                     style={style}
                     textStyle={{ flex: 1 }}
                   >
-                    {CellRenderer ? (
-                      <CellRenderer item={item} />
-                    ) : (
-                      item[fieldKey]
-                    )}
+                    {CellRenderer ? <CellRenderer item={item} /> : item[fKey]}
                   </RNPDataTable.Cell>
                 )
               )}
