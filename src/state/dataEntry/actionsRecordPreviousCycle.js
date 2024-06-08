@@ -41,12 +41,9 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   if (prevCycleRecordIds.length === 0) {
     dispatch(unlinkFromRecordInPreviousCycle());
     dispatch(
-      ToastActions.show({
-        textKey: "dataEntry:recordInPreviousCycle.notFoundMessage",
-        textParams: {
-          cycle: prevCycleString,
-          keyValues: keyValuesString,
-        },
+      ToastActions.show("dataEntry:recordInPreviousCycle.notFoundMessage", {
+        cycle: prevCycleString,
+        keyValues: keyValuesString,
       })
     );
   } else if (prevCycleRecordIds.length === 1) {
@@ -60,22 +57,18 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
       record: prevCycleRecord,
     });
 
-    dispatch(
-      ToastActions.show({
-        textKey: "dataEntry:recordInPreviousCycle.foundMessage",
-      })
-    );
+    dispatch(ToastActions.show("dataEntry:recordInPreviousCycle.foundMessage"));
 
     dispatch(updatePreviousCyclePageEntity);
   } else {
     dispatch(
-      ToastActions.show({
-        textKey: "dataEntry:recordInPreviousCycle.multipleRecordsFoundMessage",
-        textParams: {
+      ToastActions.show(
+        "dataEntry:recordInPreviousCycle.multipleRecordsFoundMessage",
+        {
           cycle: prevCycleString,
           keyValues: keyValuesString,
-        },
-      })
+        }
+      )
     );
   }
   return { keyValues: keyValuesString, prevCycle, prevCycleRecordIds };
@@ -115,10 +108,7 @@ const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
     }
   } catch (error) {
     const details = `${error.toString()} - ${error.stack}`;
-    ToastActions.show({
-      textKey: "dataEntry:recordInPreviousCycleFetchError",
-      textParams: { details },
-    });
+    ToastActions.show("dataEntry:recordInPreviousCycleFetchError", { details });
   }
 };
 

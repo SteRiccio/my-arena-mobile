@@ -9,12 +9,7 @@ import { ToastActions } from "../toast";
 
 const handleImportErrors = ({ dispatch, error = null, errors = null }) => {
   const details = error?.toString() ?? JSON.stringify(errors);
-  dispatch(
-    ToastActions.show({
-      textKey: "dataEntry:records.importFailed",
-      textParams: { details },
-    })
-  );
+  dispatch(ToastActions.show("dataEntry:records.importFailed", { details }));
 };
 
 const _onExportFromServerJobComplete = async ({
@@ -49,9 +44,7 @@ const _onExportFromServerJobComplete = async ({
 
     if (status === JobStatus.succeeded) {
       dispatch(
-        ToastActions.show({
-          textKey: "dataEntry:records.importCompleteSuccessfully",
-        })
+        ToastActions.show("dataEntry:records.importCompleteSuccessfully")
       );
       await onImportComplete();
     } else {

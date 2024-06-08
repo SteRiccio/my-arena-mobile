@@ -60,9 +60,7 @@ const _startGpsLocking = async () => {
 const startGpsLocking = () => async (dispatch) => {
   const started = await _startGpsLocking();
   if (!started) {
-    dispatch(
-      ToastActions.show({ textKey: "settings:locationGpsLocked.error" })
-    );
+    dispatch(ToastActions.show("settings:locationGpsLocked.error"));
   }
   return started;
 };
