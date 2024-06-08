@@ -3,7 +3,7 @@ import { Appbar as RNPAppbar } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
-import { HView, IconButton, Spacer, Text } from "components";
+import { HView, Spacer, Text } from "components";
 import { useScreenKey } from "hooks";
 import { RecordEditViewMode, ScreenViewMode } from "model";
 import { useTranslation } from "localization";

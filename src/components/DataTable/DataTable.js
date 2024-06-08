@@ -83,15 +83,25 @@ export const DataTable = (props) => {
               onPress={() => onItemPress(item)}
               onLongPress={() => onItemLongPress(item)}
             >
-              {fields.map(({ key: fieldKey, style, cellRenderer = null }) => (
-                <RNPDataTable.Cell
-                  key={fieldKey}
-                  style={style}
-                  textStyle={{ flex: 1 }}
-                >
-                  {cellRenderer ? cellRenderer({ item }) : item[fieldKey]}
-                </RNPDataTable.Cell>
-              ))}
+              {fields.map(
+                ({
+                  key: fieldKey,
+                  style,
+                  cellRenderer: CellRenderer = null,
+                }) => (
+                  <RNPDataTable.Cell
+                    key={fieldKey}
+                    style={style}
+                    textStyle={{ flex: 1 }}
+                  >
+                    {CellRenderer ? (
+                      <CellRenderer item={item} />
+                    ) : (
+                      item[fieldKey]
+                    )}
+                  </RNPDataTable.Cell>
+                )
+              )}
               {selectionEnabled && (
                 <RNPDataTable.Cell style={{ maxWidth: 40, minWidth: 40 }}>
                   <Checkbox

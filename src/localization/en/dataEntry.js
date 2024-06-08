@@ -32,11 +32,16 @@ export default {
   listOfRecords: "List of records",
   newRecord: "New record",
   noRecordsFound: "No records found",
-  recordInPreviousCycleFound: "Record in previous cycle found!",
-  recordInCycleWithKeysNotFound:
-    "Record in cycle {{cycle}} with keys {{keyValues}} not found",
-  recordInPreviousCycleFetchError:
-    "Error fetching record in previuos cycle: {{details}}",
+  recordInPreviousCycle: {
+    foundMessage: "Record in previous cycle found!",
+    notFoundMessage:
+      "Record in cycle {{cycle}} with keys {{keyValues}} not found",
+    confirmSyncRecordsSummaryAndTryAgain:
+      "$t(dataEntry:recordInPreviousCycle.notFoundMessage): fetch the list of records from the server and try again?",
+    fetchError: "Error fetching record in previuos cycle: {{details}}",
+    multipleRecordsFound:
+      "Multiple records with keys {{keyValues}} found in cycle {{cycle}}",
+  },
   recordEditor: "Record editor",
   records: {
     confirmImportRecordFromServer: "Import record from server?",

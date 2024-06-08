@@ -175,8 +175,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   const origin = RecordOrigin.remote;
   const insertedIds = [];
   await dbClient.transaction((tx) => {
-    for (let i = 0; i < recordSummaries.length; i++) {
-      const recordSummary = recordSummaries[i];
+    recordSummaries.forEach((recordSummary) => {
       const { dateCreated, dateModified, ownerUuid, uuid } = recordSummary;
       const keyColumnsValues = extractRemoteRecordSummaryKeyColumnsValues({
         survey,
@@ -206,7 +205,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
           throw error;
         }
       );
-    }
+    });
   });
 };
 

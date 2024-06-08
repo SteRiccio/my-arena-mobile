@@ -56,7 +56,7 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
 const getFile = async (
   serverUrl,
   uri,
-  params = {},
+  params,
   callback,
   targetFileUri = null,
   options = {}

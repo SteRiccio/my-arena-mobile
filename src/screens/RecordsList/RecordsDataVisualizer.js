@@ -42,6 +42,24 @@ const formatDateToDateTimeDisplay = (date) =>
       })
     : Dates.format(date, DateFormats.datetimeDisplay);
 
+const RecordOriginTableCellRenderer = ({ item }) => (
+  <Icon source={iconByOrigin[item.origin]} />
+);
+
+const RecordOriginListCellRenderer = ({ item }) => {
+  const { t } = useTranslation();
+  return t(`dataEntry:records.origin.${item.origin}`);
+};
+
+const RecordLoadStatusTableCellRenderer = ({ item }) => (
+  <Icon source={iconByLoadStatus[item.loadStatus]} />
+);
+
+const RecordLoadStatusListCellRenderer = ({ item }) => {
+  const { t } = useTranslation();
+  return t(`dataEntry:records.loadStatus.${item.loadStatus}`);
+};
+
 export const RecordsDataVisualizer = (props) => {
   const {
     onDeleteSelectedRecordUuids,
@@ -123,14 +141,10 @@ export const RecordsDataVisualizer = (props) => {
               key: "origin",
               header: "dataEntry:records.origin.title",
               style: { minWidth: 10 },
-              cellRenderer: ({ item }) => {
-                const { origin } = item;
-                return screenViewMode === ScreenViewMode.table ? (
-                  <Icon source={iconByOrigin[origin]} />
-                ) : (
-                  t(`dataEntry:records.origin.${origin}`)
-                );
-              },
+              cellRenderer:
+                screenViewMode === ScreenViewMode.table
+                  ? RecordOriginTableCellRenderer
+                  : RecordOriginListCellRenderer,
             },
             ...(screenViewMode === ScreenViewMode.list
               ? [
@@ -144,14 +158,10 @@ export const RecordsDataVisualizer = (props) => {
               key: "loadStatus",
               header: "dataEntry:records.loadStatus.title",
               style: { minWidth: 10 },
-              cellRenderer: ({ item }) => {
-                const { loadStatus } = item;
-                return screenViewMode === ScreenViewMode.table ? (
-                  <Icon source={iconByLoadStatus[loadStatus]} />
-                ) : (
-                  t(`dataEntry:records.loadStatus.${loadStatus}`)
-                );
-              },
+              cellRenderer:
+                screenViewMode === ScreenViewMode.table
+                  ? RecordLoadStatusTableCellRenderer
+                  : RecordLoadStatusListCellRenderer,
             },
           ]
         : []),

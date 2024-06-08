@@ -1,84 +1,84 @@
 import { Records } from "@openforis/arena-core";
 
-import { Cycles } from "model/Cycles";
+import { Cycles, RecordNodes } from "model";
 import { RecordService } from "service/recordService";
 import { ToastActions } from "state/toast";
 import { SurveySelectors } from "../survey/selectors";
 import { DataEntrySelectors } from "./selectors";
 import { DataEntryActionTypes } from "./actionTypes";
-import { RecordNodes } from "model/index";
+import { ConfirmActions } from "..";
 
-const _fetchRecordFromPreviousCycle = async ({ dispatch, survey, record }) => {
-  try {
-    const rootEntity = Records.getRoot(record);
-    const { cycle } = record;
-    const prevCycle = Cycles.getPrevCycleKey(cycle);
+const _fetchRecordFromPreviousCycleAndLinkIt = async ({
+  dispatch,
+  survey,
+  record,
+  lang,
+}) => {
+  const rootEntity = Records.getRoot(record);
+  const { cycle } = record;
+  const prevCycle = Cycles.getPrevCycleKey(cycle);
+  const prevCycleString = Cycles.labelFunction(prevCycle);
+  const keyValues = Records.getEntityKeyValues({
+    survey,
+    cycle,
+    record,
+    entity: rootEntity,
+  });
+  const keyValuesFormatted = RecordNodes.getRootEntityKeysFormatted({
+    survey,
+    record,
+    lang,
+  });
+  const keyValuesString = keyValuesFormatted.join(", ");
 
-    const keyValues = Records.getEntityKeyValues({
+  const prevCycleRecordIds = await RecordService.findRecordIdsByKeys({
+    survey,
+    cycle: prevCycle,
+    keyValues,
+    keyValuesFormatted,
+  });
+
+  if (prevCycleRecordIds.length === 0) {
+    dispatch(unlinkFromRecordInPreviousCycle());
+    dispatch(
+      ToastActions.show({
+        textKey: "dataEntry:recordInPreviousCycle.notFoundMessage",
+        textParams: {
+          cycle: prevCycleString,
+          keyValues: keyValuesString,
+        },
+      })
+    );
+  } else if (prevCycleRecordIds.length === 1) {
+    const prevCycleRecordId = prevCycleRecordIds[0];
+    const prevCycleRecord = await RecordService.fetchRecord({
       survey,
-      cycle,
-      record,
-      entity: rootEntity,
+      recordId: prevCycleRecordId,
     });
-    const keyValuesFormatted = RecordNodes.getRootEntityKeysFormatted({
-      survey,
-      record,
-      lang,
-    });
-    const keyValuesString = keyValuesFormatted.join(", ");
-
-    const prevCycleRecordIds = await RecordService.findRecordIdsByKeys({
-      survey,
-      cycle: prevCycle,
-      keyValues,
-      keyValuesFormatted,
+    await dispatch({
+      type: DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_SET,
+      record: prevCycleRecord,
     });
 
-    if (prevCycleRecordIds.length === 0) {
-      dispatch(unlinkFromRecordInPreviousCycle());
-      dispatch(
-        ToastActions.show({
-          textKey: "dataEntry:recordInCycleWithKeysNotFound",
-          textParams: {
-            cycle: prevCycle,
-            keyValues: keyValuesString,
-          },
-        })
-      );
-    } else if (prevCycleRecordIds.length === 1) {
-      const prevCycleRecordId = prevCycleRecordIds[0];
-      const prevCycleRecord = await RecordService.fetchRecord({
-        survey,
-        recordId: prevCycleRecordId,
-      });
-      await dispatch({
-        type: DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_SET,
-        record: prevCycleRecord,
-      });
+    dispatch(
+      ToastActions.show({
+        textKey: "dataEntry:recordInPreviousCycle.foundMessage",
+      })
+    );
 
-      dispatch(
-        ToastActions.show({ textKey: "dataEntry:recordInPreviousCycleFound" })
-      );
-
-      dispatch(updatePreviousCyclePageEntity);
-    } else {
-      dispatch(
-        ToastActions.show({
-          textKey: "dataEntry:multipleRecordsFoundInCycleWithKeys",
-          textParams: {
-            cycle: prevCycle,
-            keyValues: keyValuesString,
-          },
-        })
-      );
-    }
-  } catch (error) {
-    const details = `${error.toString()} - ${error.stack}`;
-    ToastActions.show({
-      textKey: "dataEntry:recordInPreviousCycleFetchError",
-      textParams: { details },
-    });
+    dispatch(updatePreviousCyclePageEntity);
+  } else {
+    dispatch(
+      ToastActions.show({
+        textKey: "dataEntry:recordInPreviousCycle.multipleRecordsFoundMessage",
+        textParams: {
+          cycle: prevCycleString,
+          keyValues: keyValuesString,
+        },
+      })
+    );
   }
+  return { keyValues: keyValuesString, prevCycle, prevCycleRecordIds };
 };
 
 const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
@@ -86,7 +86,33 @@ const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
-    await _fetchRecordFromPreviousCycle({ dispatch, survey, record });
+    const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
+    const fetchRecordFromPreviousCycleInternal = async () =>
+      _fetchRecordFromPreviousCycleAndLinkIt({
+        dispatch,
+        survey,
+        record,
+        lang,
+      });
+    const { keyValues, prevCycle, prevCycleRecordIds } =
+      await fetchRecordFromPreviousCycleInternal();
+    if (prevCycleRecordIds.length === 0) {
+      // record in previous cycle not found: ask to to sync records list and try again
+      dispatch(
+        ConfirmActions.show({
+          messageKey:
+            "dataEntry:recordInPreviousCycle.confirmSyncRecordsSummaryAndTryAgain",
+          messageParams: { cycle: Cycles.labelFunction(prevCycle), keyValues },
+          onConfirm: async () => {
+            await RecordService.syncRecordSummaries({
+              survey,
+              cycle: prevCycle,
+            });
+            await fetchRecordFromPreviousCycleInternal();
+          },
+        })
+      );
+    }
   } catch (error) {
     const details = `${error.toString()} - ${error.stack}`;
     ToastActions.show({
