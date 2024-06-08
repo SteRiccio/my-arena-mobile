@@ -12,7 +12,7 @@ import {
   Validations,
 } from "@openforis/arena-core";
 
-import { RecordNodes, SurveyDefs } from "model";
+import { SurveyDefs } from "model";
 import { SurveySelectors } from "../survey/selectors";
 
 const getDataEntryState = (state) => state.dataEntry;
@@ -369,8 +369,6 @@ export const DataEntrySelectors = {
 
   useRecordCodeParentItemUuid: ({ parentNodeUuid, nodeDef }) =>
     useSelector(selectRecordCodeParentItemUuid({ parentNodeUuid, nodeDef })),
-
-  useRecordHasErrors: () => useSelector(selectRecordHasErrors),
 
   useRecordHasErrors: () => useSelector(selectRecordHasErrors),
 

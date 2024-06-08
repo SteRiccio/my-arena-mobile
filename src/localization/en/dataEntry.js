@@ -17,7 +17,12 @@ export default {
     "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
-  exportData: "Export data",
+  exportData: {
+    title: "Export data",
+    noRecordsInDeviceToExport: "No records in the device to export",
+    onlyRecordsInRemoteServerCanBeImported:
+      "Only records in remote server can be imported",
+  },
   exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
@@ -30,6 +35,8 @@ export default {
   recordInPreviousCycleFound: "Record in previous cycle found!",
   recordInCycleWithKeysNotFound:
     "Record in cycle {{cycle}} with keys {{keyValues}} not found",
+  recordInPreviousCycleFetchError:
+    "Error fetching record in previuos cycle: {{details}}",
   recordEditor: "Record editor",
   records: {
     confirmImportRecordFromServer: "Import record from server?",

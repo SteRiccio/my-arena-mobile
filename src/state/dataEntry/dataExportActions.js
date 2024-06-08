@@ -45,7 +45,7 @@ const startUploadDataToRemoteServer =
       dispatch(
         JobMonitorActions.start({
           jobUuid: remoteJob.uuid,
-          titleKey: "dataEntry:exportData",
+          titleKey: "dataEntry:exportData.title",
           onJobComplete,
         })
       );
@@ -138,10 +138,23 @@ const _onExportFileGenerationSucceeded = async ({
 };
 
 export const exportRecords =
-  ({ cycle, recordUuids, onlyLocally = false, onJobComplete = null }) =>
+  ({
+    cycle,
+    recordUuids,
+    onlyLocally = false,
+    onJobComplete: onJobCompleteParam = null,
+  }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
+
+    const onJobComplete = async (jobComplete) => {
+      await RecordService.updateRecordsDateSync({
+        surveyId: survey.id,
+        recordUuids,
+      });
+      await onJobCompleteParam?.(jobComplete);
+    };
 
     try {
       const user = onlyLocally ? {} : await AuthService.fetchUser();
