@@ -14,7 +14,6 @@ import {
   SurveyDefs,
 } from "model";
 import {
-  ConfirmActions,
   DataEntryActions,
   ScreenOptionsSelectors,
   SurveySelectors,
@@ -45,7 +44,8 @@ const formatDateToDateTimeDisplay = (date) =>
 
 export const RecordsDataVisualizer = (props) => {
   const {
-    loadRecords,
+    onDeleteSelectedRecordUuids,
+    onImportSelectedRecordUuids,
     records,
     showRemoteProps,
     syncStatusFetched,
@@ -87,6 +87,9 @@ export const RecordsDataVisualizer = (props) => {
         ...valuesByKey,
         dateCreated: formatDateToDateTimeDisplay(recordSummary.dateCreated),
         dateModified: formatDateToDateTimeDisplay(recordSummary.dateModified),
+        dateModifiedRemote: formatDateToDateTimeDisplay(
+          recordSummary.dateModifiedRemote
+        ),
       };
     },
     [lang, survey]
@@ -102,23 +105,6 @@ export const RecordsDataVisualizer = (props) => {
       DataEntryActions.fetchAndEditRecord({ navigation, recordSummary })
     );
   }, []);
-
-  const onDeleteSelectedItemIds = useCallback(
-    (recordUuids) => {
-      dispatch(
-        ConfirmActions.show({
-          titleKey: "dataEntry:records.deleteRecordsConfirm.title",
-          messageKey: "dataEntry:records.deleteRecordsConfirm.message",
-          onConfirm: async () => {
-            await dispatch(DataEntryActions.deleteRecords(recordUuids));
-            await loadRecords();
-          },
-          swipeToConfirm: true,
-        })
-      );
-    },
-    [loadRecords]
-  );
 
   const fields = useMemo(
     () => [
@@ -194,27 +180,9 @@ export const RecordsDataVisualizer = (props) => {
     setSelectedRecordUuids(selection);
   }, []);
 
-  const onSelectedRecordsImportComplete = useCallback(
-    async () => loadRecords(),
-    [loadRecords]
-  );
-
-  const onImportSelectedRecords = useCallback(() => {
-    const selectedRecords = recordItems.filter((record) =>
-      selectedRecordUuids.includes(record.uuid)
-    );
-    if (
-      selectedRecords.some((record) => record.origin !== RecordOrigin.remote)
-    ) {
-      return;
-    }
-    dispatch(
-      DataEntryActions.importRecordsFromServer({
-        recordUuids: selectedRecordUuids,
-        onImportComplete: onSelectedRecordsImportComplete,
-      })
-    );
-  }, [recordItems, selectedRecordUuids]);
+  const onImportSelectedItems = useCallback(() => {
+    onImportSelectedRecordUuids(selectedRecordUuids);
+  }, [selectedRecordUuids, onImportSelectedRecordUuids]);
 
   return (
     <DataVisualizer
@@ -222,14 +190,14 @@ export const RecordsDataVisualizer = (props) => {
       mode={screenViewMode}
       items={recordItems}
       onItemPress={onItemPress}
-      onDeleteSelectedItemIds={onDeleteSelectedItemIds}
+      onDeleteSelectedItemIds={onDeleteSelectedRecordUuids}
       onSelectionChange={onSelectionChange}
       selectable
       selectedItemIds={selectedRecordUuids}
       selectedItemsCustomActions={[
         {
           label: i18n.t("dataEntry:records.importRecords.title"),
-          onPress: onImportSelectedRecords,
+          onPress: onImportSelectedItems,
         },
       ]}
     />
@@ -237,7 +205,8 @@ export const RecordsDataVisualizer = (props) => {
 };
 
 RecordsDataVisualizer.propTypes = {
-  loadRecords: PropTypes.func.isRequired,
+  onDeleteSelectedRecordUuids: PropTypes.func.isRequired,
+  onImportSelectedRecordUuids: PropTypes.func.isRequired,
   records: PropTypes.array.isRequired,
   syncStatusFetched: PropTypes.bool,
   syncStatusLoading: PropTypes.bool,

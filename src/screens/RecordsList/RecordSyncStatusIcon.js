@@ -25,7 +25,8 @@ export const RecordSyncStatusIcon = (props) => {
   const { item } = props;
   const { syncStatus } = item;
 
-  if (!syncStatus) return null;
+  if (!syncStatus || syncStatus === RecordSyncStatus.syncNotApplicable)
+    return null;
 
   return (
     <Tooltip titleKey={`dataEntry:syncStatus.${syncStatus}`}>

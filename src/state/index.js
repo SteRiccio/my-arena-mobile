@@ -1,4 +1,4 @@
-export { ConfirmActions, ConfirmReducer } from "./confirm";
+export { ConfirmActions, ConfirmReducer, useConfirm } from "./confirm";
 
 export {
   DataEntryActions,

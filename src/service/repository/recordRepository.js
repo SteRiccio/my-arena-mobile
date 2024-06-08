@@ -214,7 +214,7 @@ const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
   survey,
   recordSummary,
 }) => {
-  const { dateModified, uuid } = recordSummary;
+  const { dateModified, ownerUuid, uuid } = recordSummary;
   const keyColumnsSet = keyColumnNames
     .map((keyCol) => `${keyCol} = ?`)
     .join(", ");
@@ -224,10 +224,19 @@ const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
   });
   return dbClient.executeSql(
     `UPDATE record SET 
+      owner_uuid = ?,
       date_modified_remote = ?, 
+      date_synced = ?,
       ${keyColumnsSet} 
     WHERE survey_id = ? AND uuid = ?`,
-    [fixDatetime(dateModified), ...keyColumnsValues, survey.id, uuid]
+    [
+      ownerUuid,
+      fixDatetime(dateModified),
+      Dates.nowFormattedForStorage(),
+      ...keyColumnsValues,
+      survey.id,
+      uuid,
+    ]
   );
 };
 
@@ -247,6 +256,7 @@ const updateRecordKeysAndContent = async ({
       ${dateModifiedColumn} = ?, 
       load_status = ?, 
       origin = ?,
+      date_synced = ?,
       ${keyColumnsSet} 
     WHERE survey_id = ? AND uuid = ?`,
     [
@@ -254,6 +264,7 @@ const updateRecordKeysAndContent = async ({
       record.dateModified || Date.now(),
       RecordLoadStatus.complete,
       remote ? RecordOrigin.remote : RecordOrigin.local,
+      Dates.nowFormattedForStorage(),
       ...keyColumnsValues,
       survey.id,
       record.uuid,
@@ -273,6 +284,14 @@ const updateRecord = async ({ survey, record }) => {
 
 const updateRecordWithContentFetchedRemotely = async ({ survey, record }) =>
   updateRecordKeysAndContent({ survey, record, remote: true });
+
+const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
+  const sql = `UPDATE record 
+  SET date_synced = ?
+  WHERE survey_id = ? 
+    AND uuid IN (${DbUtils.quoteValues(recordUuids)})`;
+  return dbClient.executeSql(sql, [Dates.nowFormattedForStorage(), surveyId]);
+};
 
 const fixRecordCycle = async ({ survey, recordId }) => {
   const record = await fetchRecord({ survey, recordId });
@@ -358,6 +377,7 @@ export const RecordRepository = {
   updateRecord,
   updateRecordWithContentFetchedRemotely,
   updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely,
+  updateRecordsDateSync,
   fixRecordCycle,
   deleteRecords,
 };

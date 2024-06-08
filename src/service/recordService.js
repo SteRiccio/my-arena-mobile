@@ -20,6 +20,7 @@ const {
   insertRecordSummaries,
   updateRecord,
   updateRecordWithContentFetchedRemotely,
+  updateRecordsDateSync,
   deleteRecords,
   fixRecordCycle,
 } = RecordRepository;
@@ -43,6 +44,8 @@ const fetchRecordsSummariesRemote = async ({ surveyRemoteId, cycle }) => {
   }
 };
 
+const toDate = (dateStr) => (dateStr ? new Date(dateStr) : null);
+
 const determineRecordSyncStatus = ({
   survey,
   recordSummaryLocal,
@@ -53,31 +56,35 @@ const determineRecordSyncStatus = ({
   const keysSpecified = keyDefs.every(
     (keyDef) => !!recordSummaryLocal[Objects.camelize(NodeDefs.getName(keyDef))]
   );
-  if (!keysSpecified) {
-    return RecordSyncStatus.keysNotSpecified;
-  }
-  if (!recordSummaryRemote) {
-    return RecordSyncStatus.new;
-  }
-  if (recordSummaryRemote.step > 1) {
-    return RecordSyncStatus.notInEntryStepAnymore;
-  }
 
-  const dateModifiedLocal = new Date(recordSummaryLocal.dateModified);
-  const dateModifiedRemote = Dates.parseISO(recordSummaryRemote.dateModified);
+  const dateModifiedLocal = toDate(recordSummaryLocal.dateModified);
+  const dateSynced = toDate(recordSummaryLocal.dateSynced);
+  const dateModifiedRemote = recordSummaryRemote
+    ? Dates.parseISO(recordSummaryRemote.dateModified)
+    : null;
 
   if (recordSummaryLocal.origin === RecordOrigin.local) {
+    if (!keysSpecified) {
+      return RecordSyncStatus.keysNotSpecified;
+    }
+    if (!recordSummaryRemote) {
+      return RecordSyncStatus.new;
+    }
+    if (recordSummaryRemote.step > 1) {
+      return RecordSyncStatus.notInEntryStepAnymore;
+    }
     if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
       return RecordSyncStatus.modifiedLocally;
     } else if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
       return RecordSyncStatus.modifiedRemotely;
     }
-  } else {
-    if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
+    return RecordSyncStatus.notModified;
+  } else if (recordSummaryLocal.loadStatus !== RecordLoadStatus.summary) {
+    if (Dates.isBefore(dateSynced, dateModifiedRemote)) {
       return RecordSyncStatus.notUpToDate;
     }
   }
-  return RecordSyncStatus.notModified;
+  return RecordSyncStatus.syncNotApplicable;
 };
 
 const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
@@ -190,6 +197,7 @@ export const RecordService = {
   insertRecord,
   updateRecord,
   updateRecordWithContentFetchedRemotely,
+  updateRecordsDateSync,
   deleteRecords,
   fixRecordCycle,
   // remote server

@@ -6,4 +6,5 @@ export const RecordSyncStatus = {
   notModified: "notModified",
   notUpToDate: "notUpToDate",
   new: "new",
+  syncNotApplicable: "syncNotApplicable",
 };

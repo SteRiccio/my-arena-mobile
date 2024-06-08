@@ -68,10 +68,25 @@ export const useSelectableList = (props) => {
   );
 
   const onDeleteSelected = useCallback(() => {
-    onDeleteSelectedItemIds?.(selectedItemIds);
-    onSelectionChange?.([]);
-    setState((statePrev) => ({ ...statePrev, ...initialState }));
-  }, [selectedItemIds, onDeleteSelectedItemIds]);
+    const performDelete = () => {
+      onSelectionChange?.([]);
+      setState((statePrev) => ({ ...statePrev, ...initialState }));
+    };
+    if (onDeleteSelectedItemIds) {
+      onDeleteSelectedItemIds?.(selectedItemIds)
+        .then(performDelete)
+        .catch(() => {
+          // ignore it
+        });
+    } else {
+      performDelete();
+    }
+  }, [
+    initialState,
+    selectedItemIds,
+    onDeleteSelectedItemIds,
+    onSelectionChange,
+  ]);
 
   const onItemPress = useCallback(
     (item) => {

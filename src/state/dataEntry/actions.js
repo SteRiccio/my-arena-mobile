@@ -261,26 +261,11 @@ const updateAttribute =
 
     await dispatch({ type: RECORD_SET, record: recordUpdated });
 
-    const isLinkedToPreviousCycleRecord =
-      DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state);
-
-    if (isLinkedToPreviousCycleRecord && NodeDefs.isKey(nodeDef)) {
-      // updating key attribute; check if record has previous cycle record;
-      const { cycle } = record;
-      if (cycle > "0") {
-        const rootKeys = SurveyDefs.getRootKeyDefs({ survey, cycle });
-        const nodeDefIsRootKey = rootKeys.includes(nodeDef);
-        if (nodeDefIsRootKey) {
-          await fetchRecordFromPreviousCycle({
-            dispatch,
-            survey,
-            record: recordUpdated,
-            lang,
-          });
-        } else {
-          dispatch(updatePreviousCyclePageEntity);
-        }
-      }
+    if (
+      DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state) &&
+      NodeDefs.isKey(nodeDef)
+    ) {
+      dispatch(unlinkFromRecordInPreviousCycle());
     }
   };
 
