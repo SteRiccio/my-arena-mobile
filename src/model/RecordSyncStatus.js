@@ -4,5 +4,7 @@ export const RecordSyncStatus = {
   modifiedRemotely: "modifiedRemotely",
   notInEntryStepAnymore: "notInEntryStepAnymore",
   notModified: "notModified",
+  notUpToDate: "notUpToDate",
   new: "new",
+  syncNotApplicable: "syncNotApplicable",
 };
