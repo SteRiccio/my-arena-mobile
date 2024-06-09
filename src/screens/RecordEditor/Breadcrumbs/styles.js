@@ -9,7 +9,7 @@ export default StyleSheet.create({
   internalContainer: {
     flex: 1,
     alignItems: "center",
-    width: "auto",
+    width: "100%",
   },
   item: { alignItems: "center", width: "auto" },
   itemButton: {},
