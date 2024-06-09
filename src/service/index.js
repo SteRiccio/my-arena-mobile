@@ -3,6 +3,7 @@ export { DataMigrationService } from "./dataMigrationService";
 export { PreferencesService } from "./preferencesService";
 export { RecordFileService } from "./recordFileService";
 export { RecordService } from "./recordService";
+export { RemoteJobService } from "./remoteJobService";
 export { SettingsService } from "./settingsService";
 export { SurveyService } from "./surveyService";
 export { WebSocketService } from "./webSocketService";

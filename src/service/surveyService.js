@@ -66,10 +66,8 @@ const fetchSurveySummaryRemote = async ({ id, name }) => {
   }
 };
 
-const fetchSurveyRemoteById = async ({ id, cycle = null }) => {
-  const { data } = await RemoteService.get(`api/mobile/survey/${id}`, {
-    cycle,
-  });
+const fetchSurveyRemoteById = async ({ id }) => {
+  const { data } = await RemoteService.get(`api/mobile/survey/${id}`);
   const { survey } = data;
   return survey;
 };

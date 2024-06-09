@@ -25,7 +25,7 @@ const saveRecordFile = async ({ surveyId, fileUuid, sourceFileUri }) => {
 
   const fileUriTarget = getRecordFileUri({ surveyId, fileUuid });
 
-  await GenericFileRepository.moveFile({
+  await GenericFileRepository.copyFile({
     from: sourceFileUri,
     to: fileUriTarget,
   });
