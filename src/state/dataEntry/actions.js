@@ -9,6 +9,7 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
+import { RecordOrigin, RecordLoadStatus } from "model";
 import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
@@ -21,14 +22,18 @@ import { DeviceInfoActions } from "../deviceInfo";
 import { SurveySelectors } from "../survey";
 
 import { RemoteConnectionSelectors } from "../remoteConnection";
+import { DataEntryActionTypes } from "./actionTypes";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
+import { importRecordsFromServer } from "./actionsRecordsImport";
 
-const RECORD_SET = "RECORD_SET";
-const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
-const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
-const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
-const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
+const {
+  DATA_ENTRY_RESET,
+  PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
+  PAGE_ENTITY_SET,
+  PAGE_SELECTOR_MENU_OPEN_SET,
+  RECORD_SET,
+} = DataEntryActionTypes;
 
 const removeNodesFlags = (nodes) => {
   Object.values(nodes).forEach((node) => {
@@ -45,6 +50,7 @@ const createNewRecord =
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
+    // to always use the selected cycle, use this: const cycle = SurveySelectors.selectCurrentSurveyCycle(state);
     const appInfo = SystemUtils.getRecordAppInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
@@ -137,13 +143,60 @@ const editRecord =
     navigation.navigate(screenKeys.recordEditor);
   };
 
+const _fetchAndEditRecordInternal = async ({
+  dispatch,
+  navigation,
+  survey,
+  recordId,
+}) => {
+  const record = await RecordService.fetchRecord({ survey, recordId });
+  await dispatch(editRecord({ navigation, record }));
+};
+
 const fetchAndEditRecord =
-  ({ navigation, recordId }) =>
+  ({ navigation, recordSummary }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
-    const record = await RecordService.fetchRecord({ survey, recordId });
-    dispatch(editRecord({ navigation, record }));
+    const {
+      id: recordId,
+      uuid: recordUuid,
+      origin,
+      loadStatus,
+    } = recordSummary;
+    if (
+      origin === RecordOrigin.remote &&
+      loadStatus !== RecordLoadStatus.complete
+    ) {
+      dispatch(
+        ConfirmActions.show({
+          confirmButtonTextKey: "dataEntry:records.importRecord",
+          messageKey: "dataEntry:records.confirmImportRecordFromServer",
+          onConfirm: () => {
+            dispatch(
+              importRecordsFromServer({
+                recordUuids: [recordUuid],
+                onImportComplete: async () => {
+                  await _fetchAndEditRecordInternal({
+                    dispatch,
+                    navigation,
+                    survey,
+                    recordId,
+                  });
+                },
+              })
+            );
+          },
+        })
+      );
+    } else {
+      await _fetchAndEditRecordInternal({
+        dispatch,
+        navigation,
+        survey,
+        recordId,
+      });
+    }
   };
 
 const updateAttribute =
@@ -159,7 +212,7 @@ const updateAttribute =
       uuid: node.nodeDefUuid,
     });
 
-    const { record: recordUpdated, nodes: nodesUpdated } =
+    let { record: recordUpdated, nodes: nodesUpdated } =
       await RecordUpdater.updateAttributeValue({
         survey,
         record,
@@ -192,9 +245,11 @@ const updateAttribute =
       }
       dispatch(DeviceInfoActions.updateFreeDiskStorage());
     }
-    await RecordService.updateRecord({ survey, record: recordUpdated });
-
-    dispatch({ type: RECORD_SET, record: recordUpdated });
+    recordUpdated = await RecordService.updateRecord({
+      survey,
+      record: recordUpdated,
+    });
+    await dispatch({ type: RECORD_SET, record: recordUpdated });
   };
 
 const addNewAttribute =
@@ -250,12 +305,13 @@ const selectCurrentPageEntity =
       return;
     }
 
-    dispatch({
-      type: PAGE_ENTITY_SET,
+    const payload = {
       parentEntityUuid,
       entityDefUuid,
       entityUuid: nextEntityUuid,
-    });
+    };
+
+    dispatch({ type: PAGE_ENTITY_SET, payload });
 
     dispatch(closeRecordPageMenu);
   };
@@ -317,4 +373,6 @@ export const DataEntryActions = {
 
   navigateToRecordsList,
   exportRecords,
+
+  importRecordsFromServer,
 };

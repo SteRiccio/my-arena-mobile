@@ -17,7 +17,6 @@ export default {
     "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
-  exportData: "Export data",
   exportData: {
     title: "Export data",
     noRecordsInDeviceToExport: "No records in the device to export",
@@ -56,7 +55,8 @@ export default {
     },
     origin: { title: "Origin", L: "Local", R: "Remote" },
   },
-  showOnlyLocalRecords: "Show only local records",syncStatusHeader: "Status",
+  showOnlyLocalRecords: "Show only local records",
+  syncStatusHeader: "Status",
   syncStatus: {
     keysNotSpecified: `Key attributes not specified`,
     new: "New (not uploaded yet)",

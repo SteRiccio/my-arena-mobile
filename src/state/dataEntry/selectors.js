@@ -12,8 +12,8 @@ import {
   Validations,
 } from "@openforis/arena-core";
 
+import { SurveyDefs } from "model";
 import { SurveySelectors } from "../survey/selectors";
-import { SurveyDefs } from "model/index";
 
 const getDataEntryState = (state) => state.dataEntry;
 
@@ -32,8 +32,8 @@ const selectRecordCycle = (state) => {
 };
 
 const selectRecordSingleNodeUuid =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const record = selectRecord(state);
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
     const node = Records.getChild(parentNode, nodeDefUuid)(record);
@@ -69,8 +69,8 @@ const selectRecordNodePointerValidation =
   };
 
 const selectRecordNodePointerValidationChildrenCount =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const record = selectRecord(state);
     const validationChildrenCount =
       RecordValidations.getValidationChildrenCount({
@@ -81,8 +81,8 @@ const selectRecordNodePointerValidationChildrenCount =
   };
 
 const selectRecordNodePointerVisibility =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = selectRecord(state);
 
@@ -115,8 +115,8 @@ const _cleanupAttributeValue = ({ value, attributeDef }) => {
 };
 
 const selectRecordAttributeInfo =
-  (state) =>
-  ({ nodeUuid }) => {
+  ({ nodeUuid }) =>
+  (state) => {
     const record = selectRecord(state);
     const attribute = Records.getNodeByUuid(nodeUuid)(record);
     let value = attribute?.value;
@@ -161,8 +161,8 @@ const selectChildDefs =
   };
 
 const selectRecordCodeParentItemUuid =
-  (state) =>
-  ({ nodeDef, parentNodeUuid }) => {
+  ({ nodeDef, parentNodeUuid }) =>
+  (state) => {
     const parentCodeDefUuid = NodeDefs.getParentCodeDefUuid(nodeDef);
     if (!parentCodeDefUuid) return null;
 
@@ -205,7 +205,7 @@ const selectCurrentPageEntity = (state) => {
 const selectCurrentPageEntityRelevantChildDefs = (state) => {
   const { parentEntityUuid, entityDef, entityUuid } =
     selectCurrentPageEntity(state);
-  const childDefs = selectChildDefs(state)({ nodeDef: entityDef });
+  const childDefs = selectChildDefs({ nodeDef: entityDef })(state);
   const record = selectRecord(state);
   const parentEntity = Records.getNodeByUuid(entityUuid || parentEntityUuid)(
     record
@@ -235,15 +235,10 @@ export const DataEntrySelectors = {
   useRecordRootNodeUuid: () => useSelector(selectRecordRootNodeUuid),
 
   useRecordSingleNodeUuid: ({ parentNodeUuid, nodeDefUuid }) =>
-    useSelector((state) =>
-      selectRecordSingleNodeUuid(state)({ parentNodeUuid, nodeDefUuid })
-    ),
+    useSelector(selectRecordSingleNodeUuid({ parentNodeUuid, nodeDefUuid })),
 
   useRecordEntityChildDefs: ({ nodeDef }) =>
-    useSelector(
-      (state) => selectChildDefs(state)({ nodeDef }),
-      Objects.isEqual
-    ),
+    useSelector(selectChildDefs({ nodeDef }), Objects.isEqual),
 
   useRecordNodePointerValidation: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector(
@@ -260,24 +255,20 @@ export const DataEntrySelectors = {
     nodeDefUuid,
   }) =>
     useSelector(
-      (state) =>
-        selectRecordNodePointerValidationChildrenCount(state)({
-          parentNodeUuid,
-          nodeDefUuid,
-        }),
+      selectRecordNodePointerValidationChildrenCount({
+        parentNodeUuid,
+        nodeDefUuid,
+      }),
       Objects.isEqual
     ),
 
   useRecordNodePointerVisibility: ({ parentNodeUuid, nodeDefUuid }) =>
-    useSelector((state) =>
-      selectRecordNodePointerVisibility(state)({ parentNodeUuid, nodeDefUuid })
+    useSelector(
+      selectRecordNodePointerVisibility({ parentNodeUuid, nodeDefUuid })
     ),
 
   useRecordAttributeInfo: ({ nodeUuid }) =>
-    useSelector(
-      (state) => selectRecordAttributeInfo(state)({ nodeUuid }),
-      Objects.isEqual
-    ),
+    useSelector(selectRecordAttributeInfo({ nodeUuid }), Objects.isEqual),
 
   useRecordChildNodes: ({ parentEntityUuid, nodeDef }) =>
     useSelector(
@@ -300,26 +291,21 @@ export const DataEntrySelectors = {
     ),
 
   useRecordCodeParentItemUuid: ({ parentNodeUuid, nodeDef }) =>
-    useSelector((state) =>
-      selectRecordCodeParentItemUuid(state)({ parentNodeUuid, nodeDef })
-    ),
+    useSelector(selectRecordCodeParentItemUuid({ parentNodeUuid, nodeDef })),
 
   useRecordHasErrors: () => useSelector(selectRecordHasErrors),
 
   useCurrentPageEntity: () =>
-    useSelector((state) => selectCurrentPageEntity(state), Objects.isEqual),
+    useSelector(selectCurrentPageEntity, Objects.isEqual),
 
   useCurrentPageEntityRelevantChildDefs: () =>
-    useSelector(
-      (state) => selectCurrentPageEntityRelevantChildDefs(state),
-      Objects.isEqual
-    ),
+    useSelector(selectCurrentPageEntityRelevantChildDefs, Objects.isEqual),
 
   useCurrentPageEntityActiveChildIndex: () =>
-    useSelector((state) => selectCurrentPageEntityActiveChildDefIndex(state)),
+    useSelector(selectCurrentPageEntityActiveChildDefIndex),
 
   // page selector
   selectRecordPageSelectorMenuOpen,
   useIsRecordPageSelectorMenuOpen: () =>
-    useSelector((state) => selectRecordPageSelectorMenuOpen(state)),
+    useSelector(selectRecordPageSelectorMenuOpen),
 };
