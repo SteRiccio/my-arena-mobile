@@ -10,6 +10,7 @@ import {
   DataVisualizerCellPropTypes,
   Icon,
   LoadingIcon,
+  Text,
 } from "components";
 import { i18n, useTranslation } from "localization";
 import {
@@ -52,10 +53,10 @@ const RecordOriginTableCellRenderer = ({ item }) => (
 );
 RecordOriginTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
-const RecordOriginListCellRenderer = ({ item }) => {
-  const { t } = useTranslation();
-  return t(`dataEntry:records.origin.${item.origin}`);
-};
+const RecordOriginListCellRenderer = ({ item }) => (
+  <Text textKey={`dataEntry:records.origin.${item.origin}`} />
+);
+
 RecordOriginListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const RecordLoadStatusTableCellRenderer = ({ item }) => (
@@ -63,10 +64,10 @@ const RecordLoadStatusTableCellRenderer = ({ item }) => (
 );
 RecordLoadStatusTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
-const RecordLoadStatusListCellRenderer = ({ item }) => {
-  const { t } = useTranslation();
-  return t(`dataEntry:records.loadStatus.${item.loadStatus}`);
-};
+const RecordLoadStatusListCellRenderer = ({ item }) => (
+  <Text textKey={`dataEntry:records.loadStatus.${item.loadStatus}`} />
+);
+
 RecordLoadStatusListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 export const RecordsDataVisualizer = (props) => {
