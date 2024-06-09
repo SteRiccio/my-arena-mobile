@@ -19,6 +19,8 @@ const PreviousCycleNodeValuePreviewInnerComponent = (props) => {
   return <NodeValuePreview nodeDef={nodeDef} value={previousCycleValue} />;
 };
 
+PreviousCycleNodeValuePreviewInnerComponent.propTypes = NodeValuePreviewPropTypes
+
 export const PreviousCycleNodeValuePreview = (props) => {
   const { nodeDef } = props;
 

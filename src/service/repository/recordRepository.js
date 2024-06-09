@@ -207,6 +207,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
       );
     });
   });
+  return insertedIds;
 };
 
 const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
