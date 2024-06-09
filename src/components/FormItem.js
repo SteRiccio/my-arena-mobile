@@ -14,10 +14,17 @@ export const FormItem = ({
 }) => {
   const { t } = useTranslation();
   const label = `${t(labelKey)}:`;
+  const hasTextContent = typeof children === "string";
+
   return (
     <HView style={[{ alignItems: "baseline" }, style]}>
       <Text variant={labelVariant}>{label}</Text>
       <Text variant={textVariant}>{children}</Text>
+      {hasTextContent ? (
+        <Text variant={textVariant}>{children}</Text>
+      ) : (
+        children
+      )}
     </HView>
   );
 };
