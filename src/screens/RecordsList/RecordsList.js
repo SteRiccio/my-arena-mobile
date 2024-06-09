@@ -266,7 +266,6 @@ export const RecordsList = () => {
                   />
                   <Text textKey={defaultCycleText} />
                 </HView>
-                <SurveyCycleSelector />
               </>
             )}
           </>

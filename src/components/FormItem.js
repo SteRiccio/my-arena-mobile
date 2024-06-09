@@ -19,7 +19,6 @@ export const FormItem = ({
   return (
     <HView style={[{ alignItems: "baseline" }, style]}>
       <Text variant={labelVariant}>{label}</Text>
-      <Text variant={textVariant}>{children}</Text>
       {hasTextContent ? (
         <Text variant={textVariant}>{children}</Text>
       ) : (
