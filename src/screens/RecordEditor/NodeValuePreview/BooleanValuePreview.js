@@ -1,6 +1,9 @@
+import { useCallback } from "react";
+
 import { Text } from "components";
 import { useTranslation } from "localization";
-import { useCallback } from "react";
+
+import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
 
 export const BooleanValuePreview = (props) => {
   const { nodeDef, value } = props;
@@ -21,3 +24,5 @@ export const BooleanValuePreview = (props) => {
 
   return <Text>{valueFormatted}</Text>;
 };
+
+BooleanValuePreview.propTypes = NodeValuePreviewPropTypes;

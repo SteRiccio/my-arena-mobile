@@ -2,8 +2,17 @@ import { NodeDefType, NodeValueFormatter } from "@openforis/arena-core";
 
 import { Text } from "components";
 import { SurveySelectors } from "state";
+
 import { CoordinateValuePreview } from "./CoordinateValuePreview";
 import { BooleanValuePreview } from "./BooleanValuePreview";
+import { FileValuePreview } from "./FileValuePreview";
+import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
+
+const componentByNodeDefType = {
+  [NodeDefType.boolean]: BooleanValuePreview,
+  [NodeDefType.coordinate]: CoordinateValuePreview,
+  [NodeDefType.file]: FileValuePreview,
+};
 
 export const NodeValuePreview = (props) => {
   const { nodeDef, value } = props;
@@ -15,11 +24,9 @@ export const NodeValuePreview = (props) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
-  if (nodeDef.type === NodeDefType.boolean) {
-    return <BooleanValuePreview nodeDef={nodeDef} value={value} />;
-  }
-  if (nodeDef.type === NodeDefType.coordinate) {
-    return <CoordinateValuePreview nodeDef={nodeDef} value={value} />;
+  const component = componentByNodeDefType[nodeDef.type];
+  if (component) {
+    return React.createElement(component, { nodeDef, value });
   }
   const valueFormatted = NodeValueFormatter.format({
     survey,
@@ -30,3 +37,5 @@ export const NodeValuePreview = (props) => {
   });
   return <Text>{valueFormatted}</Text>;
 };
+
+NodeValuePreview.propTypes = NodeValuePreviewPropTypes;
