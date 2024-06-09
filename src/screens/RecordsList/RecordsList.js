@@ -70,11 +70,14 @@ export const RecordsList = () => {
   } = state;
 
   const loadRecords = useCallback(async () => {
+    setState((statePrev) => ({ ...statePrev, loading: true }));
+
     const _records = await RecordService.fetchRecords({
       survey,
       cycle,
       onlyLocal,
     });
+
     setState((statePrev) => ({
       ...statePrev,
       searchValue: "",
@@ -248,10 +251,6 @@ export const RecordsList = () => {
     });
   }, [survey, lang, records, searchValue]);
 
-  if (loading) {
-    return <Loader />;
-  }
-
   return (
     <VView style={styles.container}>
       <VView style={styles.innerContainer}>
@@ -273,33 +272,45 @@ export const RecordsList = () => {
           </>
         </CollapsiblePanel>
 
-        <FormItem
-          labelKey="dataEntry:showOnlyLocalRecords"
-          style={styles.formItem}
-        >
-          <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
-          <IconButton
-            icon="cloud-refresh"
-            loading={syncStatusLoading}
-            onPress={onRemoteSyncPress}
-          />
-        </FormItem>
-        {records.length > minRecordsToShowSearchBar && (
-          <Searchbar value={searchValue} onChange={onSearchValueChange} />
-        )}
-        {records.length === 0 && (
-          <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
-        )}
-        {records.length > 0 && (
-          <RecordsDataVisualizer
-            loadRecords={loadRecords}
-            onDeleteSelectedRecordUuids={onDeleteSelectedRecordUuids}
-            onImportSelectedRecordUuids={onImportSelectedRecordUuids}
-            records={recordsFiltered}
-            showRemoteProps={!onlyLocal}
-            syncStatusFetched={syncStatusFetched}
-            syncStatusLoading={syncStatusLoading}
-          />
+        <CollapsiblePanel headerKey="dataEntry:records.listOptions">
+          <>
+            <FormItem
+              labelKey="dataEntry:showOnlyLocalRecords"
+              style={styles.formItem}
+            >
+              <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
+              <IconButton
+                icon="cloud-refresh"
+                loading={syncStatusLoading}
+                onPress={onRemoteSyncPress}
+              />
+            </FormItem>
+            {cycles.length > 1 && <SurveyCycleSelector />}
+          </>
+        </CollapsiblePanel>
+
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            {records.length > minRecordsToShowSearchBar && (
+              <Searchbar value={searchValue} onChange={onSearchValueChange} />
+            )}
+            {records.length === 0 && (
+              <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
+            )}
+            {records.length > 0 && (
+              <RecordsDataVisualizer
+                loadRecords={loadRecords}
+                onDeleteSelectedRecordUuids={onDeleteSelectedRecordUuids}
+                onImportSelectedRecordUuids={onImportSelectedRecordUuids}
+                records={recordsFiltered}
+                showRemoteProps={!onlyLocal}
+                syncStatusFetched={syncStatusFetched}
+                syncStatusLoading={syncStatusLoading}
+              />
+            )}
+          </>
         )}
       </VView>
       <HView style={styles.bottomActionBar}>
