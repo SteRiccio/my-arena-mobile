@@ -18,18 +18,6 @@ const actionHandlers = {
     recordPageSelectorMenuOpen: false,
     record: action.record,
   }),
-  [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
-    ...state,
-    linkToPreviousCycleRecord: true,
-    previousCycleRecord: action.record,
-    previousCycleRecordPageEntity: {},
-  }),
-  [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_RESET]: ({ state }) => ({
-    ...state,
-    linkToPreviousCycleRecord: false,
-    previousCycleRecord: null,
-    previousCycleRecordPageEntity: {},
-  }),
   [DataEntryActionTypes.PAGE_ENTITY_SET]: ({ state, action }) => ({
     ...state,
     recordCurrentPageEntity: action.payload,

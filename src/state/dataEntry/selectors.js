@@ -41,8 +41,8 @@ const selectRecordSingleNodeUuid =
   };
 
 const selectRecordEntitiesUuidsAndKeyValues =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const record = selectRecord(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
@@ -135,8 +135,8 @@ const selectRecordAttributeInfo =
   };
 
 const selectRecordChildNodes =
-  (state) =>
-  ({ parentEntityUuid, nodeDef }) => {
+  ({ parentEntityUuid, nodeDef }) =>
+  (state) => {
     const record = selectRecord(state);
     const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
     const nodes = Records.getChildren(parentEntity, nodeDef.uuid)(record);
@@ -144,8 +144,8 @@ const selectRecordChildNodes =
   };
 
 const selectChildDefs =
-  (state) =>
-  ({ nodeDef }) => {
+  ({ nodeDef }) =>
+  (state) => {
     const cycle = selectRecordCycle(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const childDefs = SurveyDefs.getChildrenDefs({
@@ -272,21 +272,13 @@ export const DataEntrySelectors = {
 
   useRecordChildNodes: ({ parentEntityUuid, nodeDef }) =>
     useSelector(
-      (state) =>
-        selectRecordChildNodes(state)({
-          parentEntityUuid,
-          nodeDef,
-        }),
+      selectRecordChildNodes({ parentEntityUuid, nodeDef }),
       Objects.isEqual
     ),
 
   useRecordEntitiesUuidsAndKeyValues: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector(
-      (state) =>
-        selectRecordEntitiesUuidsAndKeyValues(state)({
-          parentNodeUuid,
-          nodeDefUuid,
-        }),
+      selectRecordEntitiesUuidsAndKeyValues({ parentNodeUuid, nodeDefUuid }),
       Objects.isEqual
     ),
 
