@@ -5,7 +5,12 @@ import PropTypes from "prop-types";
 
 import { DateFormats, Dates, NodeDefs, Objects } from "@openforis/arena-core";
 
-import { DataVisualizer, Icon, LoadingIcon } from "components";
+import {
+  DataVisualizer,
+  DataVisualizerCellPropTypes,
+  Icon,
+  LoadingIcon,
+} from "components";
 import { i18n, useTranslation } from "localization";
 import {
   RecordLoadStatus,
@@ -45,20 +50,24 @@ const formatDateToDateTimeDisplay = (date) =>
 const RecordOriginTableCellRenderer = ({ item }) => (
   <Icon source={iconByOrigin[item.origin]} />
 );
+RecordOriginTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const RecordOriginListCellRenderer = ({ item }) => {
   const { t } = useTranslation();
   return t(`dataEntry:records.origin.${item.origin}`);
 };
+RecordOriginListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const RecordLoadStatusTableCellRenderer = ({ item }) => (
   <Icon source={iconByLoadStatus[item.loadStatus]} />
 );
+RecordLoadStatusTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const RecordLoadStatusListCellRenderer = ({ item }) => {
   const { t } = useTranslation();
   return t(`dataEntry:records.loadStatus.${item.loadStatus}`);
 };
+RecordLoadStatusListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 export const RecordsDataVisualizer = (props) => {
   const {
@@ -218,6 +227,7 @@ RecordsDataVisualizer.propTypes = {
   onDeleteSelectedRecordUuids: PropTypes.func.isRequired,
   onImportSelectedRecordUuids: PropTypes.func.isRequired,
   records: PropTypes.array.isRequired,
+  showRemoteProps: PropTypes.bool,
   syncStatusFetched: PropTypes.bool,
   syncStatusLoading: PropTypes.bool,
 };

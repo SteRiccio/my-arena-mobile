@@ -57,7 +57,7 @@ const createNewRecord =
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
-    // const cycle = SurveySelectors.selectCurrentSurveyCycle(state);
+    // to always use the selected cycle, use this: const cycle = SurveySelectors.selectCurrentSurveyCycle(state);
     const appInfo = SystemUtils.getRecordAppInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,

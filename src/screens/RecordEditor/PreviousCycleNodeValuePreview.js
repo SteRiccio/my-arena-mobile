@@ -2,6 +2,7 @@ import { CollapsiblePanel } from "components";
 import { DataEntrySelectors, SurveySelectors } from "state";
 
 import { NodeValuePreview } from "./NodeValuePreview";
+import { NodeValuePreviewPropTypes } from "./NodeValuePreview/NodeValuePreviewPropTypes";
 
 const PreviousCycleNodeValuePreviewInnerComponent = (props) => {
   const { nodeDef } = props;
@@ -34,3 +35,5 @@ export const PreviousCycleNodeValuePreview = (props) => {
     </CollapsiblePanel>
   );
 };
+
+PreviousCycleNodeValuePreview.propTypes = NodeValuePreviewPropTypes;
