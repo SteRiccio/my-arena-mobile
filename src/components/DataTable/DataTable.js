@@ -17,6 +17,8 @@ export const DataTable = (props) => {
     onSelectionChange,
     onDeleteSelectedItemIds,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
+    selectedItemsCustomActions,
     showPagination,
   } = props;
 
@@ -35,6 +37,7 @@ export const DataTable = (props) => {
     onItemLongPress: onItemLongPressProp,
     onSelectionChange,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
   });
 
   const {
@@ -56,6 +59,7 @@ export const DataTable = (props) => {
       <ItemSelectedBanner
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
+        customActions={selectedItemsCustomActions}
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
@@ -79,15 +83,17 @@ export const DataTable = (props) => {
               onPress={() => onItemPress(item)}
               onLongPress={() => onItemLongPress(item)}
             >
-              {fields.map(({ key: fieldKey, style, cellRenderer = null }) => (
-                <RNPDataTable.Cell
-                  key={fieldKey}
-                  style={style}
-                  textStyle={{ flex: 1 }}
-                >
-                  {cellRenderer ? cellRenderer({ item }) : item[fieldKey]}
-                </RNPDataTable.Cell>
-              ))}
+              {fields.map(
+                ({ key: fKey, style, cellRenderer: CellRenderer = null }) => (
+                  <RNPDataTable.Cell
+                    key={fKey}
+                    style={style}
+                    textStyle={{ flex: 1 }}
+                  >
+                    {CellRenderer ? <CellRenderer item={item} /> : item[fKey]}
+                  </RNPDataTable.Cell>
+                )
+              )}
               {selectionEnabled && (
                 <RNPDataTable.Cell style={{ maxWidth: 40, minWidth: 40 }}>
                   <Checkbox
@@ -129,10 +135,13 @@ DataTable.propTypes = {
   onSelectionChange: PropTypes.func,
   onDeleteSelectedItemIds: PropTypes.func,
   selectable: PropTypes.bool,
+  selectedItemIds: PropTypes.array,
+  selectedItemsCustomActions: PropTypes.array,
   showPagination: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
   selectable: false,
+  selectedItemsCustomActions: [],
   showPagination: false,
 };
