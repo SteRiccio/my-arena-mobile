@@ -41,6 +41,7 @@ export default {
     fetchError: "Error fetching record in previuos cycle: {{details}}",
     multipleRecordsFound:
       "Multiple records with keys {{keyValues}} found in cycle {{cycle}}",
+    valuePanelHeader: "Previous cycle value",
   },
   recordEditor: "Record editor",
   records: {
@@ -56,6 +57,7 @@ export default {
     },
     importCompleteSuccessfully: "Records import complete successfully!",
     importFailed: "Records import failed: {{details}}",
+    listOptions: "List options",
     loadStatus: {
       title: "Loaded",
       C: "Complete",
