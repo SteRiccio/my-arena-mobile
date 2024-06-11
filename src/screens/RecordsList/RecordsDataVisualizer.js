@@ -10,10 +10,7 @@ import {
   DataVisualizerCellPropTypes,
   Icon,
   LoadingIcon,
-<<<<<<< HEAD
-=======
   Text,
->>>>>>> 8f19e1683762665ab0470f1e7e0c022a07858d85
 } from "components";
 import { i18n, useTranslation } from "localization";
 import {
@@ -56,17 +53,10 @@ const RecordOriginTableCellRenderer = ({ item }) => (
 );
 RecordOriginTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
-<<<<<<< HEAD
-const RecordOriginListCellRenderer = ({ item }) => {
-  const { t } = useTranslation();
-  return t(`dataEntry:records.origin.${item.origin}`);
-};
-=======
 const RecordOriginListCellRenderer = ({ item }) => (
   <Text textKey={`dataEntry:records.origin.${item.origin}`} />
 );
 
->>>>>>> 8f19e1683762665ab0470f1e7e0c022a07858d85
 RecordOriginListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const RecordLoadStatusTableCellRenderer = ({ item }) => (
@@ -74,17 +64,10 @@ const RecordLoadStatusTableCellRenderer = ({ item }) => (
 );
 RecordLoadStatusTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
-<<<<<<< HEAD
-const RecordLoadStatusListCellRenderer = ({ item }) => {
-  const { t } = useTranslation();
-  return t(`dataEntry:records.loadStatus.${item.loadStatus}`);
-};
-=======
 const RecordLoadStatusListCellRenderer = ({ item }) => (
   <Text textKey={`dataEntry:records.loadStatus.${item.loadStatus}`} />
 );
 
->>>>>>> 8f19e1683762665ab0470f1e7e0c022a07858d85
 RecordLoadStatusListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 export const RecordsDataVisualizer = (props) => {
