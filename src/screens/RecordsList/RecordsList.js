@@ -258,15 +258,13 @@ export const RecordsList = () => {
           <>
             <SurveyLanguageSelector />
             {cycles.length > 1 && (
-              <>
-                <HView style={styles.formItem}>
-                  <Text
-                    style={styles.formItemLabel}
-                    textKey="dataEntry:cycleForNewRecords"
-                  />
-                  <Text textKey={defaultCycleText} />
-                </HView>
-              </>
+              <HView style={styles.formItem}>
+                <Text
+                  style={styles.formItemLabel}
+                  textKey="dataEntry:cycleForNewRecords"
+                />
+                <Text textKey={defaultCycleText} />
+              </HView>
             )}
           </>
         </CollapsiblePanel>
