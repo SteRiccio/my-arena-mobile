@@ -24,13 +24,14 @@ const insertColumns = [
   "date_modified_remote",
   "cycle",
   "owner_uuid",
+  "owner_name",
   "load_status",
   "origin",
   ...keyColumnNames,
 ];
 const insertColumnsJoint = insertColumns.join(", ");
 const keyColumnNamesJoint = keyColumnNames.join(", ");
-const summarySelectFieldsJoint = `id, uuid, date_created, date_modified, date_modified_remote, date_synced, cycle, owner_uuid, load_status, origin, ${keyColumnNamesJoint}`;
+const summarySelectFieldsJoint = `id, uuid, date_created, date_modified, date_modified_remote, date_synced, cycle, owner_uuid, owner_name, load_status, origin, ${keyColumnNamesJoint}`;
 
 const extractKeyColumnsValues = ({ survey, record }) => {
   const keyValues = Records.getEntityKeyValues({
@@ -145,8 +146,15 @@ const insertRecord = async ({
   loadStatus = RecordLoadStatus.complete,
 }) => {
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
-  const { uuid, surveyId, dateCreated, dateModified, cycle, ownerUuid } =
-    record;
+  const {
+    uuid,
+    surveyId,
+    dateCreated,
+    dateModified,
+    cycle,
+    ownerUuid,
+    ownerName,
+  } = record;
 
   const { insertId } = await dbClient.executeSql(
     `INSERT INTO record (${insertColumnsJoint})
@@ -160,6 +168,7 @@ const insertRecord = async ({
       null,
       cycle,
       ownerUuid,
+      ownerName,
       loadStatus,
       RecordOrigin.local,
       ...keyColumnsValues,
@@ -176,7 +185,8 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   const insertedIds = [];
   await dbClient.transaction((tx) => {
     recordSummaries.forEach((recordSummary) => {
-      const { dateCreated, dateModified, ownerUuid, uuid } = recordSummary;
+      const { dateCreated, dateModified, ownerUuid, ownerName, uuid } =
+        recordSummary;
       const keyColumnsValues = extractRemoteRecordSummaryKeyColumnsValues({
         survey,
         recordSummary,
@@ -193,6 +203,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
           fixDatetime(dateModified),
           cycle,
           ownerUuid,
+          ownerName,
           loadStatus,
           origin,
           ...keyColumnsValues,
@@ -214,7 +225,7 @@ const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
   survey,
   recordSummary,
 }) => {
-  const { dateModified, ownerUuid, uuid } = recordSummary;
+  const { dateModified, ownerUuid, ownerName, uuid } = recordSummary;
   const keyColumnsSet = keyColumnNames
     .map((keyCol) => `${keyCol} = ?`)
     .join(", ");
@@ -225,12 +236,14 @@ const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
   return dbClient.executeSql(
     `UPDATE record SET 
       owner_uuid = ?,
+      owner_name = ?,
       date_modified_remote = ?, 
       date_synced = ?,
       ${keyColumnsSet} 
     WHERE survey_id = ? AND uuid = ?`,
     [
       ownerUuid,
+      ownerName,
       fixDatetime(dateModified),
       Dates.nowFormattedForStorage(),
       ...keyColumnsValues,

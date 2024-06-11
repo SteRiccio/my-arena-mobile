@@ -32,8 +32,8 @@ const selectRecordCycle = (state) => {
 };
 
 const selectRecordSingleNodeUuid =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const record = selectRecord(state);
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
     const node = Records.getChild(parentNode, nodeDefUuid)(record);
@@ -41,8 +41,8 @@ const selectRecordSingleNodeUuid =
   };
 
 const selectRecordEntitiesUuidsAndKeyValues =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const record = selectRecord(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
@@ -69,8 +69,8 @@ const selectRecordNodePointerValidation =
   };
 
 const selectRecordNodePointerValidationChildrenCount =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const record = selectRecord(state);
     const validationChildrenCount =
       RecordValidations.getValidationChildrenCount({
@@ -81,8 +81,8 @@ const selectRecordNodePointerValidationChildrenCount =
   };
 
 const selectRecordNodePointerVisibility =
-  (state) =>
-  ({ parentNodeUuid, nodeDefUuid }) => {
+  ({ parentNodeUuid, nodeDefUuid }) =>
+  (state) => {
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = selectRecord(state);
 
@@ -313,9 +313,7 @@ export const DataEntrySelectors = {
   useRecordRootNodeUuid: () => useSelector(selectRecordRootNodeUuid),
 
   useRecordSingleNodeUuid: ({ parentNodeUuid, nodeDefUuid }) =>
-    useSelector((state) =>
-      selectRecordSingleNodeUuid(state)({ parentNodeUuid, nodeDefUuid })
-    ),
+    useSelector(selectRecordSingleNodeUuid({ parentNodeUuid, nodeDefUuid })),
 
   useRecordEntityChildDefs: ({ nodeDef }) =>
     useSelector(selectChildDefs({ nodeDef }), Objects.isEqual),
@@ -335,17 +333,16 @@ export const DataEntrySelectors = {
     nodeDefUuid,
   }) =>
     useSelector(
-      (state) =>
-        selectRecordNodePointerValidationChildrenCount(state)({
-          parentNodeUuid,
-          nodeDefUuid,
-        }),
+      selectRecordNodePointerValidationChildrenCount({
+        parentNodeUuid,
+        nodeDefUuid,
+      }),
       Objects.isEqual
     ),
 
   useRecordNodePointerVisibility: ({ parentNodeUuid, nodeDefUuid }) =>
-    useSelector((state) =>
-      selectRecordNodePointerVisibility(state)({ parentNodeUuid, nodeDefUuid })
+    useSelector(
+      selectRecordNodePointerVisibility({ parentNodeUuid, nodeDefUuid })
     ),
 
   useRecordAttributeInfo: ({ nodeUuid }) =>
@@ -359,11 +356,7 @@ export const DataEntrySelectors = {
 
   useRecordEntitiesUuidsAndKeyValues: ({ parentNodeUuid, nodeDefUuid }) =>
     useSelector(
-      (state) =>
-        selectRecordEntitiesUuidsAndKeyValues(state)({
-          parentNodeUuid,
-          nodeDefUuid,
-        }),
+      selectRecordEntitiesUuidsAndKeyValues({ parentNodeUuid, nodeDefUuid }),
       Objects.isEqual
     ),
 
@@ -376,18 +369,15 @@ export const DataEntrySelectors = {
     useSelector(selectCurrentPageEntity, Objects.isEqual),
 
   useCurrentPageEntityRelevantChildDefs: () =>
-    useSelector(
-      (state) => selectCurrentPageEntityRelevantChildDefs(state),
-      Objects.isEqual
-    ),
+    useSelector(selectCurrentPageEntityRelevantChildDefs, Objects.isEqual),
 
   useCurrentPageEntityActiveChildIndex: () =>
-    useSelector((state) => selectCurrentPageEntityActiveChildDefIndex(state)),
+    useSelector(selectCurrentPageEntityActiveChildDefIndex),
 
   // page selector
   selectRecordPageSelectorMenuOpen,
   useIsRecordPageSelectorMenuOpen: () =>
-    useSelector((state) => selectRecordPageSelectorMenuOpen(state)),
+    useSelector(selectRecordPageSelectorMenuOpen),
 
   // record previous cycle
   selectPreviousCycleRecord,

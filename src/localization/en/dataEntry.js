@@ -65,6 +65,7 @@ export default {
       S: "Only summary",
     },
     origin: { title: "Origin", L: "Local", R: "Remote" },
+    owner: "Owner",
   },
   showOnlyLocalRecords: "Show only local records",
   syncStatusHeader: "Status",

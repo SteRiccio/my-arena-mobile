@@ -55,7 +55,6 @@ const start =
         onJobEnd?.(job);
       }
     };
-
     ws.on(WebSocketService.EVENTS.jobUpdate, notifyJobUpdate);
   };
 

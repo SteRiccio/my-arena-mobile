@@ -12,7 +12,6 @@ const getJointTexts = ({ validation, severity, t, customMessageLang }) => {
 
     const validationResults =
       severity === ValidationSeverity.error ? v.errors : v.warnings;
-
     const messages =
       validationResults?.map(({ key, params, messages }) => {
         if (key === customValidationKey) {
@@ -24,6 +23,7 @@ const getJointTexts = ({ validation, severity, t, customMessageLang }) => {
         return t(`validation:${key}`, params);
       }) ?? [];
     result.push(...messages);
+
     stack.push(...Object.values(v.fields ?? {}));
   }
 
