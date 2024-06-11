@@ -10,13 +10,19 @@ export default {
       "Items found at a distance of {{minDistance}}m",
     useSelectedItem: "Use selected item",
   },
+  cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
   options: "Data entry options",
   errorFetchingRecordsSyncStatus:
     "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
-  exportData: "Export data",
+  exportData: {
+    title: "Export data",
+    noRecordsInDeviceToExport: "No records in the device to export",
+    onlyRecordsInRemoteServerCanBeImported:
+      "Only records in remote server can be imported",
+  },
   exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
@@ -27,6 +33,30 @@ export default {
   newRecord: "New record",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
+  records: {
+    confirmImportRecordFromServer: "Import record from server?",
+    dateModifiedRemotely: "Date modified remotely",
+    deleteRecordsConfirm: {
+      title: "Delete records",
+      message: "Delete the selected records?",
+    },
+    importRecord: "Import record",
+    importRecords: {
+      title: "Import records from server",
+    },
+    importCompleteSuccessfully: "Records import complete successfully!",
+    importFailed: "Records import failed: {{details}}",
+    listOptions: "List options",
+    loadStatus: {
+      title: "Loaded",
+      C: "Complete",
+      P: "Partial (without files)",
+      S: "Only summary",
+    },
+    origin: { title: "Origin", L: "Local", R: "Remote" },
+    owner: "Owner",
+  },
+  showOnlyLocalRecords: "Show only local records",
   syncStatusHeader: "Status",
   syncStatus: {
     keysNotSpecified: `Key attributes not specified`,

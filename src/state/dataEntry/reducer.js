@@ -1,7 +1,7 @@
 import { SurveyActionTypes } from "state/survey";
 import { StoreUtils } from "../storeUtils";
 
-import { DataEntryActions } from "./actions";
+import { DataEntryActionTypes } from "./actionTypes";
 
 const initialState = {
   record: null,
@@ -11,31 +11,23 @@ const initialState = {
 
 const actionHandlers = {
   [SurveyActionTypes.CURRENT_SURVEY_SET]: () => ({ ...initialState }),
-  [DataEntryActions.DATA_ENTRY_RESET]: () => ({ ...initialState }),
+  [DataEntryActionTypes.DATA_ENTRY_RESET]: () => ({ ...initialState }),
 
-  [DataEntryActions.RECORD_SET]: ({ state, action }) => ({
+  [DataEntryActionTypes.RECORD_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: false,
     record: action.record,
   }),
-  [DataEntryActions.PAGE_ENTITY_SET]: ({ state, action }) => {
-    const { parentEntityUuid, entityDefUuid, entityUuid } = action;
-
-    return {
-      ...state,
-      recordCurrentPageEntity: {
-        parentEntityUuid,
-        entityDefUuid,
-        entityUuid,
-      },
-      activeChildDefIndex: 0,
-    };
-  },
-  [DataEntryActions.PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({
+  [DataEntryActionTypes.PAGE_ENTITY_SET]: ({ state, action }) => ({
+    ...state,
+    recordCurrentPageEntity: action.payload,
+    activeChildDefIndex: 0,
+  }),
+  [DataEntryActionTypes.PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET]: ({
     state,
     action,
   }) => ({ ...state, activeChildDefIndex: action.index }),
-  [DataEntryActions.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
+  [DataEntryActionTypes.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: action.open,
   }),

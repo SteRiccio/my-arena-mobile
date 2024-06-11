@@ -15,15 +15,37 @@ export const useSelectableList = (props) => {
     onSelectionChange,
     onDeleteSelectedItemIds,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
   } = props;
 
-  const [state, setState] = useState({ ...initialState });
+  const [state, setState] = useState({
+    ...initialState,
+    selectedItemIds: selectedItemIdsProp ?? [],
+  });
 
   const { selectedItemIds, selectionEnabled } = state;
 
   useEffect(() => {
     setState((statePrev) => ({ ...statePrev, ...initialState }));
   }, [items]);
+
+  // update internal selected item ids on prop change
+  useEffect(() => {
+    if (
+      selectedItemIds === selectedItemIdsProp ||
+      (selectedItemIds?.length === 0 && selectedItemIdsProp?.length === 0)
+    ) {
+      return;
+    }
+    const selectedItemIdsNext = selectedItemIdsProp ?? selectedItemIds;
+    const selectionEnabledNext = selectedItemIdsNext?.length > 0;
+
+    setState((statePrev) => ({
+      ...statePrev,
+      selectedItemIds: selectedItemIdsNext,
+      selectionEnabled: selectionEnabledNext,
+    }));
+  }, [selectedItemIds, selectedItemIdsProp]);
 
   const onItemSelect = useCallback(
     (item) => {
@@ -39,15 +61,31 @@ export const useSelectableList = (props) => {
         selectedItemIds: selectedItemIdsNext,
       }));
 
-      onSelectionChange?.(selectedItemIds);
+      onSelectionChange?.(selectedItemIdsNext);
     },
     [selectedItemIds]
   );
 
   const onDeleteSelected = useCallback(() => {
-    onDeleteSelectedItemIds?.(selectedItemIds);
-    setState((statePrev) => ({ ...statePrev, ...initialState }));
-  }, [selectedItemIds, onDeleteSelectedItemIds]);
+    const performDelete = () => {
+      onSelectionChange?.([]);
+      setState((statePrev) => ({ ...statePrev, ...initialState }));
+    };
+    if (onDeleteSelectedItemIds) {
+      onDeleteSelectedItemIds?.(selectedItemIds)
+        .then(performDelete)
+        .catch(() => {
+          // ignore it
+        });
+    } else {
+      performDelete();
+    }
+  }, [
+    initialState,
+    selectedItemIds,
+    onDeleteSelectedItemIds,
+    onSelectionChange,
+  ]);
 
   const onItemPress = useCallback(
     (item) => {

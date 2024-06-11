@@ -7,6 +7,11 @@ import {
 
 const samplingPointDataCategoryName = "sampling_point_data";
 
+const getRootKeyDefs = ({ survey, cycle }) => {
+  const rootDef = Surveys.getNodeDefRoot({ survey });
+  return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef, cycle });
+};
+
 const getChildrenDefs = ({ survey, nodeDef, cycle }) =>
   Surveys.getNodeDefChildrenSorted({
     survey,
@@ -27,11 +32,12 @@ const getEntitySummaryDefs = ({
   onlyKeys = true,
   maxSummaryDefs = 3,
 }) => {
-  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
+  const { cycle } = record;
+  const keyDefs = Surveys.getNodeDefKeys({ survey, cycle, nodeDef: entityDef });
+
   if (onlyKeys) {
     return keyDefs;
   }
-  const { cycle } = record;
   const defsIncludedInSummary =
     Surveys.getNodeDefsIncludedInMultipleEntitySummary({
       survey,
@@ -55,7 +61,10 @@ const getEntitySummaryDefs = ({
     );
     if (entityDefChildrenNotKeys.length > 0) {
       summaryDefs.push(
-        ...entityDefChildrenNotKeys.slice(0, otherDefsToAddCount)
+        ...entityDefChildrenNotKeys.slice(
+          0,
+          Math.min(entityDefChildrenNotKeys.length, otherDefsToAddCount)
+        )
       );
     }
   }
@@ -86,6 +95,7 @@ const isCodeAttributeFromSamplingPointData = ({ survey, nodeDef }) => {
 };
 
 export const SurveyDefs = {
+  getRootKeyDefs,
   getChildrenDefs,
   getEntitySummaryDefs,
   hasSamplingPointDataLocation,

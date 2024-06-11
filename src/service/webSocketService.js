@@ -3,7 +3,7 @@ import { Environment } from "utils";
 
 let io;
 
-if (!Environment.isExpoGo) {
+if (!Environment.isExpoGo || Environment.isAndroid) {
   io = require("socket.io-client")?.io;
 }
 

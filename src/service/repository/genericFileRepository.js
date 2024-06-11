@@ -8,15 +8,17 @@ const makeDirIfNotExists = async (dirUri) => {
     await FileSystem.makeDirectoryAsync(dirUri, { intermediates: true });
   }
 };
+
+const copyFile = async ({ from, to }) => FileSystem.copyAsync({ from, to });
+
 const moveFile = async ({ from, to }) => FileSystem.moveAsync({ from, to });
 
-const deleteFile = async (fileUri) => {
-  await FileSystem.deleteAsync(fileUri);
-};
+const deleteFile = async (fileUri) => FileSystem.deleteAsync(fileUri);
 
 export const GenericFileRepository = {
   getDirUri,
   makeDirIfNotExists,
-  deleteFile,
+  copyFile,
   moveFile,
+  deleteFile,
 };

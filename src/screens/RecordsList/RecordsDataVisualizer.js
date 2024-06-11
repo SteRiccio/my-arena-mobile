@@ -1,28 +1,43 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
 
-import {
-  DateFormats,
-  Dates,
-  NodeDefs,
-  NodeValueFormatter,
-  Objects,
-  Surveys,
-} from "@openforis/arena-core";
+import { DateFormats, Dates, NodeDefs, Objects } from "@openforis/arena-core";
 
-import { DataVisualizer, LoadingIcon } from "components";
-
-import { useTranslation } from "localization";
 import {
-  ConfirmActions,
+  DataVisualizer,
+  DataVisualizerCellPropTypes,
+  Icon,
+  LoadingIcon,
+  Text,
+} from "components";
+import { i18n, useTranslation } from "localization";
+import {
+  RecordLoadStatus,
+  RecordOrigin,
+  ScreenViewMode,
+  SurveyDefs,
+} from "model";
+import {
   DataEntryActions,
   ScreenOptionsSelectors,
   SurveySelectors,
 } from "state";
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
+import { RecordsUtils } from "./RecordsUtils";
+
+const iconByLoadStatus = {
+  [RecordLoadStatus.complete]: "circle-slice-8",
+  [RecordLoadStatus.partial]: "circle-slice-4",
+  [RecordLoadStatus.summary]: "circle-outline",
+};
+
+const iconByOrigin = {
+  [RecordOrigin.local]: "cellphone",
+  [RecordOrigin.remote]: "cloud-outline",
+};
 
 const formatDateToDateTimeDisplay = (date) =>
   typeof date === "string"
@@ -33,67 +48,89 @@ const formatDateToDateTimeDisplay = (date) =>
       })
     : Dates.format(date, DateFormats.datetimeDisplay);
 
+const RecordOriginTableCellRenderer = ({ item }) => (
+  <Icon source={iconByOrigin[item.origin]} />
+);
+RecordOriginTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
+
+const RecordOriginListCellRenderer = ({ item }) => (
+  <Text textKey={`dataEntry:records.origin.${item.origin}`} />
+);
+
+RecordOriginListCellRenderer.propTypes = DataVisualizerCellPropTypes;
+
+const RecordLoadStatusTableCellRenderer = ({ item }) => (
+  <Icon source={iconByLoadStatus[item.loadStatus]} />
+);
+RecordLoadStatusTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
+
+const RecordLoadStatusListCellRenderer = ({ item }) => (
+  <Text textKey={`dataEntry:records.loadStatus.${item.loadStatus}`} />
+);
+
+RecordLoadStatusListCellRenderer.propTypes = DataVisualizerCellPropTypes;
+
 export const RecordsDataVisualizer = (props) => {
-  const { loadRecords, records, syncStatusFetched, syncStatusLoading } = props;
+  const {
+    onDeleteSelectedRecordUuids,
+    onImportSelectedRecordUuids,
+    records,
+    showRemoteProps,
+    syncStatusFetched,
+    syncStatusLoading,
+  } = props;
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { t } = useTranslation();
 
   const survey = SurveySelectors.useCurrentSurvey();
+  const cycle = SurveySelectors.useCurrentSurveyCycle();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
 
-  const rootDefKeys = useMemo(() => {
-    if (!survey) return [];
-    const rootDef = Surveys.getNodeDefRoot({ survey });
-    return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef });
-  }, [survey]);
+  // reset selected record uuids on records change
+  useEffect(() => {
+    setSelectedRecordUuids([]);
+  }, [records]);
 
-  const recordToItem = (record) => {
-    const valuesByKey = rootDefKeys.reduce((acc, keyDef) => {
-      const recordKeyProp = Objects.camelize(NodeDefs.getName(keyDef));
-      const value = record[recordKeyProp];
-      const valueFormatted = NodeValueFormatter.format({
+  const rootDefKeys = useMemo(
+    () => (survey ? SurveyDefs.getRootKeyDefs({ survey, cycle }) : []),
+    [survey, cycle]
+  );
+
+  const recordToItem = useCallback(
+    (recordSummary) => {
+      const valuesByKey = RecordsUtils.getValuesByKeyFormatted({
         survey,
-        nodeDef: keyDef,
-        value,
-        showLabel: true,
         lang,
+        recordSummary,
+        t,
       });
-      acc[recordKeyProp] = Objects.isEmpty(valueFormatted)
-        ? t("common:empty")
-        : valueFormatted;
-      return acc;
-    }, {});
+      return {
+        ...recordSummary,
+        key: recordSummary.uuid,
+        ...valuesByKey,
+        dateCreated: formatDateToDateTimeDisplay(recordSummary.dateCreated),
+        dateModified: formatDateToDateTimeDisplay(recordSummary.dateModified),
+        dateModifiedRemote: formatDateToDateTimeDisplay(
+          recordSummary.dateModifiedRemote
+        ),
+      };
+    },
+    [lang, survey]
+  );
 
-    return {
-      ...record,
-      key: record.uuid,
-      ...valuesByKey,
-      dateCreated: formatDateToDateTimeDisplay(record.dateCreated),
-      dateModified: formatDateToDateTimeDisplay(record.dateModified),
-    };
-  };
+  const recordItems = useMemo(
+    () => records.map(recordToItem),
+    [records, recordToItem]
+  );
 
-  const onItemPress = useCallback((row) => {
+  const onItemPress = useCallback((recordSummary) => {
     dispatch(
-      DataEntryActions.fetchAndEditRecord({ navigation, recordId: row.id })
-    );
-  }, []);
-
-  const onDeleteSelectedItemIds = useCallback((recordUuids) => {
-    dispatch(
-      ConfirmActions.show({
-        titleKey: "Delete records",
-        messageKey: "Delete the selected records?",
-        onConfirm: async () => {
-          await dispatch(DataEntryActions.deleteRecords(recordUuids));
-          await loadRecords();
-        },
-        swipeToConfirm: true,
-      })
+      DataEntryActions.fetchAndEditRecord({ navigation, recordSummary })
     );
   }, []);
 
@@ -108,6 +145,37 @@ export const RecordsDataVisualizer = (props) => {
         header: "common:modifiedOn",
         style: { minWidth: 50 },
       },
+      ...(showRemoteProps
+        ? [
+            {
+              key: "origin",
+              header: "dataEntry:records.origin.title",
+              style: { minWidth: 10 },
+              cellRenderer:
+                screenViewMode === ScreenViewMode.table
+                  ? RecordOriginTableCellRenderer
+                  : RecordOriginListCellRenderer,
+            },
+            ...(screenViewMode === ScreenViewMode.list
+              ? [
+                  {
+                    key: "dateModifiedRemote",
+                    header: "dataEntry:records.dateModifiedRemotely",
+                  },
+                  { key: "ownerName", header: "dataEntry:records.owner" },
+                ]
+              : []),
+            {
+              key: "loadStatus",
+              header: "dataEntry:records.loadStatus.title",
+              style: { minWidth: 10 },
+              cellRenderer:
+                screenViewMode === ScreenViewMode.table
+                  ? RecordLoadStatusTableCellRenderer
+                  : RecordLoadStatusListCellRenderer,
+            },
+          ]
+        : []),
       ...(syncStatusLoading || syncStatusFetched
         ? [
             {
@@ -120,24 +188,48 @@ export const RecordsDataVisualizer = (props) => {
           ]
         : []),
     ],
-    [rootDefKeys, syncStatusLoading, syncStatusFetched]
+    [
+      rootDefKeys,
+      screenViewMode,
+      showRemoteProps,
+      syncStatusLoading,
+      syncStatusFetched,
+    ]
   );
+
+  const onSelectionChange = useCallback((selection) => {
+    setSelectedRecordUuids(selection);
+  }, []);
+
+  const onImportSelectedItems = useCallback(() => {
+    onImportSelectedRecordUuids(selectedRecordUuids);
+  }, [selectedRecordUuids, onImportSelectedRecordUuids]);
 
   return (
     <DataVisualizer
       fields={fields}
       mode={screenViewMode}
-      items={records.map(recordToItem)}
+      items={recordItems}
       onItemPress={onItemPress}
-      onDeleteSelectedItemIds={onDeleteSelectedItemIds}
+      onDeleteSelectedItemIds={onDeleteSelectedRecordUuids}
+      onSelectionChange={onSelectionChange}
       selectable
+      selectedItemIds={selectedRecordUuids}
+      selectedItemsCustomActions={[
+        {
+          label: i18n.t("dataEntry:records.importRecords.title"),
+          onPress: onImportSelectedItems,
+        },
+      ]}
     />
   );
 };
 
 RecordsDataVisualizer.propTypes = {
-  loadRecords: PropTypes.func.isRequired,
+  onDeleteSelectedRecordUuids: PropTypes.func.isRequired,
+  onImportSelectedRecordUuids: PropTypes.func.isRequired,
   records: PropTypes.array.isRequired,
+  showRemoteProps: PropTypes.bool,
   syncStatusFetched: PropTypes.bool,
   syncStatusLoading: PropTypes.bool,
 };

@@ -1,63 +1,100 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { Surveys } from "@openforis/arena-core";
+import { Objects, Surveys } from "@openforis/arena-core";
 
 import {
   Button,
   CollapsiblePanel,
+  FormItem,
   HView,
+  IconButton,
   Loader,
   MenuButton,
+  Searchbar,
+  Switch,
   Text,
   VView,
 } from "components";
-
-import { useIsNetworkConnected, useNavigationFocus } from "hooks";
-import { Cycles, RecordSyncStatus } from "model";
+import { useIsNetworkConnected, useNavigationFocus, useToast } from "hooks";
+import { useTranslation } from "localization";
+import { Cycles, RecordOrigin, RecordSyncStatus } from "model";
 import { RecordService } from "service";
-import { DataEntryActions, MessageActions, SurveySelectors } from "state";
+import {
+  DataEntryActions,
+  MessageActions,
+  SurveySelectors,
+  useConfirm,
+} from "state";
 
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
 import { SurveyCycleSelector } from "./SurveyCycleSelector";
+import { RecordsUtils } from "./RecordsUtils";
 
 import styles from "./styles";
+
+const minRecordsToShowSearchBar = 5;
 
 export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const networkAvailable = useIsNetworkConnected();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
+  const toaster = useToast();
+  const confirm = useConfirm();
+
   const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
   const defaultCycleText = Cycles.labelFunction(defaultCycleKey);
   const cycles = Surveys.getCycleKeys(survey);
 
   const [state, setState] = useState({
+    loading: true,
+    onlyLocal: true,
     records: [],
+    searchValue: "",
     syncStatusLoading: false,
     syncStatusFetched: false,
-    loading: true,
   });
-  const { records, loading, syncStatusLoading, syncStatusFetched } = state;
+  const {
+    loading,
+    onlyLocal,
+    records,
+    searchValue,
+    syncStatusLoading,
+    syncStatusFetched,
+  } = state;
 
   const loadRecords = useCallback(async () => {
-    const _records = await RecordService.fetchRecords({ survey, cycle });
+    setState((statePrev) => ({ ...statePrev, loading: true }));
+
+    const _records = await RecordService.fetchRecords({
+      survey,
+      cycle,
+      onlyLocal,
+    });
+
     setState((statePrev) => ({
       ...statePrev,
+      searchValue: "",
       records: _records,
       syncStatusFetched: false,
       syncStatusLoading: false,
       loading: false,
     }));
-  }, [survey, cycle]);
+  }, [survey, cycle, onlyLocal]);
 
-  // refresh records list on cycle change
+  // refresh records list on cycle and "only local" change
   useEffect(() => {
     loadRecords();
-  }, [cycle]);
+  }, [cycle, loadRecords, onlyLocal]);
+
+  // refresh records list on navigation focus (e.g. going back to records list screen)
+  useNavigationFocus({ onFocus: loadRecords });
 
   const loadRecordsWithSyncStatus = useCallback(async () => {
     setState((statePrev) => ({
@@ -66,9 +103,10 @@ export const RecordsList = () => {
       syncStatusFetched: false,
     }));
     try {
-      const _records = await RecordService.fetchRecordsWithSyncStatus({
+      const _records = await RecordService.syncRecordSummaries({
         survey,
         cycle,
+        onlyLocal,
       });
       setState((statePrev) => ({
         ...statePrev,
@@ -89,10 +127,26 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [survey, cycle]);
+  }, [survey, cycle, onlyLocal]);
 
-  // reload records on navigation focus (e.g. going back to records list screen)
-  useNavigationFocus({ onFocus: loadRecords });
+  const onOnlyLocalChange = useCallback(
+    (onlyLocalUpdated) =>
+      setState((statePrev) => ({ ...statePrev, onlyLocal: onlyLocalUpdated })),
+    []
+  );
+
+  const onSearchValueChange = useCallback(
+    (searchValueUpdated) =>
+      setState((statePrev) => ({
+        ...statePrev,
+        searchValue: searchValueUpdated,
+      })),
+    []
+  );
+
+  const onRemoteSyncPress = useCallback(async () => {
+    await loadRecordsWithSyncStatus();
+  }, [loadRecordsWithSyncStatus]);
 
   const onNewRecordPress = () => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
@@ -100,36 +154,102 @@ export const RecordsList = () => {
   };
 
   const onExportNewOrUpdatedRecordsPress = useCallback(() => {
-    const newRecordsUuids = records
+    const recordUuids = records
       .filter((record) =>
         [RecordSyncStatus.new, RecordSyncStatus.modifiedLocally].includes(
           record.syncStatus
         )
       )
       .map((record) => record.uuid);
+    if (recordUuids.length === 0) {
+      toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
+      return;
+    }
     dispatch(
       DataEntryActions.exportRecords({
         cycle,
-        recordUuids: newRecordsUuids,
-        onJobComplete: () => loadRecordsWithSyncStatus(),
+        recordUuids,
+        onJobComplete: loadRecordsWithSyncStatus,
       })
     );
-  }, [cycle, loadRecords, records]);
+  }, [cycle, loadRecordsWithSyncStatus, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
-    const recordsUuids = records.map((record) => record.uuid);
+    const recordUuids = records
+      .filter((record) => record.origin === RecordOrigin.local)
+      .map((record) => record.uuid);
+
+    if (recordUuids.length === 0) {
+      toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
+      return;
+    }
     dispatch(
       DataEntryActions.exportRecords({
         cycle,
-        recordUuids: recordsUuids,
+        recordUuids,
         onlyLocally: true,
       })
     );
   }, [cycle, records]);
 
-  if (loading) {
-    return <Loader />;
-  }
+  const onDeleteSelectedRecordUuids = useCallback(
+    async (recordUuids) => {
+      if (
+        await confirm({
+          titleKey: "dataEntry:records.deleteRecordsConfirm.title",
+          messageKey: "dataEntry:records.deleteRecordsConfirm.message",
+          swipeToConfirm: true,
+        })
+      ) {
+        await dispatch(DataEntryActions.deleteRecords(recordUuids));
+        await loadRecords();
+      }
+    },
+    [loadRecords]
+  );
+
+  const onImportSelectedRecordUuids = useCallback(
+    (selectedRecordUuids) => {
+      const selectedRecords = records.filter((record) =>
+        selectedRecordUuids.includes(record.uuid)
+      );
+      if (
+        selectedRecords.some((record) => record.origin !== RecordOrigin.remote)
+      ) {
+        toaster.show(
+          "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"
+        );
+        return;
+      }
+      dispatch(
+        DataEntryActions.importRecordsFromServer({
+          recordUuids: selectedRecordUuids,
+          onImportComplete: loadRecords,
+        })
+      );
+    },
+    [dispatch, loadRecords, records, toaster]
+  );
+
+  const recordsFiltered = useMemo(() => {
+    if (Objects.isEmpty(searchValue)) return records;
+
+    return records.filter((recordSummary) => {
+      const valuesByKey = RecordsUtils.getValuesByKeyFormatted({
+        survey,
+        lang,
+        recordSummary,
+        t,
+      });
+      return Object.values(valuesByKey).some((value) =>
+        Objects.isEmpty(value)
+          ? false
+          : String(value)
+              .toLocaleLowerCase()
+              .includes(searchValue.toLocaleLowerCase())
+      );
+    });
+  }, [survey, lang, records, searchValue]);
 
   return (
     <VView style={styles.container}>
@@ -138,30 +258,56 @@ export const RecordsList = () => {
           <>
             <SurveyLanguageSelector />
             {cycles.length > 1 && (
-              <>
-                <HView style={styles.formItem}>
-                  <Text
-                    style={styles.formItemLabel}
-                    textKey="dataEntry:cycleForNewRecords"
-                  />
-                  <Text textKey={defaultCycleText} />
-                </HView>
-                <SurveyCycleSelector />
-              </>
+              <HView style={styles.formItem}>
+                <Text
+                  style={styles.formItemLabel}
+                  textKey="dataEntry:cycleForNewRecords"
+                />
+                <Text textKey={defaultCycleText} />
+              </HView>
             )}
           </>
         </CollapsiblePanel>
 
-        {records.length === 0 && (
-          <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
-        )}
-        {records.length > 0 && (
-          <RecordsDataVisualizer
-            loadRecords={loadRecords}
-            records={records}
-            syncStatusFetched={syncStatusFetched}
-            syncStatusLoading={syncStatusLoading}
-          />
+        <CollapsiblePanel headerKey="dataEntry:records.listOptions">
+          <>
+            <FormItem
+              labelKey="dataEntry:showOnlyLocalRecords"
+              style={styles.formItem}
+            >
+              <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
+              <IconButton
+                icon="cloud-refresh"
+                loading={syncStatusLoading}
+                onPress={onRemoteSyncPress}
+              />
+            </FormItem>
+            {cycles.length > 1 && <SurveyCycleSelector />}
+          </>
+        </CollapsiblePanel>
+
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            {records.length > minRecordsToShowSearchBar && (
+              <Searchbar value={searchValue} onChange={onSearchValueChange} />
+            )}
+            {records.length === 0 && (
+              <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
+            )}
+            {records.length > 0 && (
+              <RecordsDataVisualizer
+                loadRecords={loadRecords}
+                onDeleteSelectedRecordUuids={onDeleteSelectedRecordUuids}
+                onImportSelectedRecordUuids={onImportSelectedRecordUuids}
+                records={recordsFiltered}
+                showRemoteProps={!onlyLocal}
+                syncStatusFetched={syncStatusFetched}
+                syncStatusLoading={syncStatusLoading}
+              />
+            )}
+          </>
         )}
       </VView>
       <HView style={styles.bottomActionBar}>

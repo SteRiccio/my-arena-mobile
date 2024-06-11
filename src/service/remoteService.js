@@ -21,6 +21,9 @@ const getServerUrl = async () =>
 
 const get = async (uri, params) => API.get(await getServerUrl(), uri, params);
 
+const getFile = async (uri, params, callback) =>
+  API.getFile(await getServerUrl(), uri, params, callback);
+
 const post = async (uri, data) => API.post(await getServerUrl(), uri, data);
 
 const postMultipartData = async (uri, data) =>
@@ -32,6 +35,7 @@ export const RemoteService = {
   getServerUrl,
 
   get,
+  getFile,
   post,
   postMultipartData,
   handleError,

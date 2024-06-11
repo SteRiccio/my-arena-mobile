@@ -7,5 +7,5 @@ export const useNavigationFocus = ({ onFocus }) => {
   useEffect(() => {
     const focusHandler = navigation.addListener("focus", onFocus);
     return focusHandler;
-  }, [navigation]);
+  }, [navigation, onFocus]);
 };

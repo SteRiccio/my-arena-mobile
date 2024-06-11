@@ -199,12 +199,9 @@ export const StatusBar = () => {
             </HView>
           )}
           {locationGpsLocked && <Icon source="crosshairs-gps" size={20} />}
-          <Icon
-            source={isNetworkConnected ? "web" : "cloud-off-outline"}
-            size={20}
-          />
+          <Icon source={isNetworkConnected ? "web" : "cloud-off-outline"} />
           <HView>
-            <Icon source="chart-pie" size={20} />
+            <Icon source="chart-pie" />
             <Text variant="titleSmall">
               {t("common:sizeAvailable", {
                 size: freeDiskStorageFormatted,

@@ -3,7 +3,7 @@ export { Checkbox } from "./Checkbox";
 export { CloseIconButton } from "./CloseIconButton";
 export { CollapsiblePanel } from "./CollapsiblePanel";
 export { DataTable } from "./DataTable";
-export { DataVisualizer } from "./DataVisualizer";
+export { DataVisualizer, DataVisualizerCellPropTypes } from "./DataVisualizer";
 export { DatePicker } from "./DatePicker";
 export { Dialog } from "./Dialog";
 export { Divider } from "./Divider";

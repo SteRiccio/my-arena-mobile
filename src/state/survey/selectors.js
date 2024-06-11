@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 
 import { Objects, Surveys } from "@openforis/arena-core";
 
+import { SurveyDefs } from "model";
+
 const getSurveyState = (state) => state.survey;
 
 const selectCurrentSurvey = (state) => getSurveyState(state).currentSurvey;
@@ -21,6 +23,12 @@ const selectIsNodeDefEnumerator = (nodeDef) => (state) => {
   return Surveys.isNodeDefEnumerator({ survey, nodeDef });
 };
 
+const selectIsNodeDefRootKey = (nodeDef) => (state) => {
+  const survey = selectCurrentSurvey(state);
+  const keyDefs = SurveyDefs.getRootKeyDefs({ survey });
+  return keyDefs.some((keyDef) => keyDef === nodeDef);
+};
+
 const selectSurveysLocal = (state) => getSurveyState(state).surveysLocal;
 
 const selectCurrentSurveyPreferredLang = (state) =>
@@ -31,6 +39,8 @@ const selectCurrentSurveyCycle = (state) =>
 
 export const SurveySelectors = {
   selectCurrentSurvey,
+  selectCurrentSurveyCycle,
+  selectCurrentSurveyPreferredLang,
 
   useCurrentSurvey: () => useSelector(selectCurrentSurvey),
   useCurrentSurveySrsIndex: () =>
@@ -41,5 +51,7 @@ export const SurveySelectors = {
   useCurrentSurveyRootDef: () => useSelector(selectCurrentSurveyRootDef),
   useIsNodeDefEnumerator: (nodeDef) =>
     useSelector(selectIsNodeDefEnumerator(nodeDef)),
+  useIsNodeDefRootKey: (nodeDef) =>
+    useSelector(selectIsNodeDefRootKey(nodeDef)),
   useSurveysLocal: () => useSelector(selectSurveysLocal),
 };
