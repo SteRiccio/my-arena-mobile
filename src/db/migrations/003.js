@@ -7,5 +7,6 @@ export const migration_003 = async (client) => {
     tx.executeSql(
       `ALTER TABLE record ADD origin CHAR(1) NOT NULL DEFAULT 'L';`
     );
+    tx.executeSql(`ALTER TABLE record ADD owner_name VARCHAR(255) NULL;`);
   });
 };

@@ -162,6 +162,7 @@ export const RecordsDataVisualizer = (props) => {
                     key: "dateModifiedRemote",
                     header: "dataEntry:records.dateModifiedRemotely",
                   },
+                  { key: "ownerName", header: "dataEntry:records.owner" },
                 ]
               : []),
             {
