@@ -9,6 +9,7 @@ export default StyleSheet.create({
   innerContainer: {
     flex: 1,
     padding: 4,
+    gap: 4,
   },
   bottomActionBar: {
     borderTopWidth: 1,
