@@ -37,6 +37,8 @@ export default {
     foundMessage: "Record in previous cycle found!",
     notFoundMessage:
       "Record in cycle {{cycle}} with keys {{keyValues}} not found",
+    confirmFetchRecordInCycle:
+      "Record in cycle {{cycle}} with keys {{keyValues}} not fully loaded; dowload it from the server?",
     confirmSyncRecordsSummaryAndTryAgain:
       "$t(dataEntry:recordInPreviousCycle.notFoundMessage): fetch the list of records from the server and try again?",
     fetchError: "Error fetching record in previuos cycle: {{details}}",

@@ -1,6 +1,6 @@
 import { Records } from "@openforis/arena-core";
 
-import { Cycles, RecordNodes } from "model";
+import { Cycles, RecordLoadStatus, RecordNodes } from "model";
 import { RecordService } from "service";
 import { ToastActions } from "../toast";
 import { ConfirmActions } from "../confirm";
@@ -8,6 +8,30 @@ import { SurveySelectors } from "../survey";
 
 import { DataEntrySelectors } from "./selectors";
 import { DataEntryActionTypes } from "./actionTypes";
+import { importRecordsFromServer } from "./actionsRecordsImport";
+
+const {
+  PREVIOUS_CYCLE_PAGE_ENTITY_SET,
+  RECORD_PREVIOUS_CYCLE_SET,
+  RECORD_PREVIOUS_CYCLE_RESET,
+} = DataEntryActionTypes;
+
+const _fetchRecordFromPreviousCycleAndLinkItInternal = async ({
+  dispatch,
+  survey,
+  recordId,
+}) => {
+  const record = await RecordService.fetchRecord({ survey, recordId });
+  const { loadStatus } = record;
+  if (loadStatus !== RecordLoadStatus.complete) {
+    return false;
+  }
+  await dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record });
+  dispatch(ToastActions.show("dataEntry:recordInPreviousCycle.foundMessage"));
+  dispatch(updatePreviousCyclePageEntity);
+
+  return true;
+};
 
 const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   dispatch,
@@ -49,18 +73,30 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
     );
   } else if (prevCycleRecordIds.length === 1) {
     const prevCycleRecordId = prevCycleRecordIds[0];
-    const prevCycleRecord = await RecordService.fetchRecord({
-      survey,
-      recordId: prevCycleRecordId,
-    });
-    await dispatch({
-      type: DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_SET,
-      record: prevCycleRecord,
-    });
-
-    dispatch(ToastActions.show("dataEntry:recordInPreviousCycle.foundMessage"));
-
-    dispatch(updatePreviousCyclePageEntity);
+    const doFetch = async () =>
+      _fetchRecordFromPreviousCycleAndLinkItInternal({
+        dispatch,
+        survey,
+        recordId: prevCycleRecordId,
+      });
+    if (!(await doFetch())) {
+      const { uuid: recordUuid } = record;
+      dispatch(
+        ConfirmActions.show({
+          messageKey:
+            "dataEntry:recordInPreviousCycle.confirmFetchRecordInCycle",
+          messageParams: { cycle: prevCycleString, keyValues },
+          onConfirm: () => {
+            dispatch(
+              importRecordsFromServer({
+                recordUuids: [recordUuid],
+                onImportComplete: doFetch,
+              })
+            );
+          },
+        })
+      );
+    }
   } else {
     dispatch(
       ToastActions.show(
@@ -114,7 +150,7 @@ const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
 };
 
 const unlinkFromRecordInPreviousCycle = () => async (dispatch) => {
-  dispatch({ type: DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_RESET });
+  dispatch({ type: RECORD_PREVIOUS_CYCLE_RESET });
 };
 
 const updatePreviousCyclePageEntity = (dispatch, getState) => {
@@ -132,7 +168,7 @@ const updatePreviousCyclePageEntity = (dispatch, getState) => {
     })(state);
 
   dispatch({
-    type: DataEntryActionTypes.PREVIOUS_CYCLE_PAGE_ENTITY_SET,
+    type: PREVIOUS_CYCLE_PAGE_ENTITY_SET,
     payload: {
       previousCycleParentEntityUuid: previousCycleParentEntity?.uuid,
       previousCycleEntityUuid: previousCycleEntity?.uuid,
