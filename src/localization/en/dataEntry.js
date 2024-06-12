@@ -33,6 +33,17 @@ export default {
   newRecord: "New record",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
+  recordInPreviousCycle: {
+    foundMessage: "Record in previous cycle found!",
+    notFoundMessage:
+      "Record in cycle {{cycle}} with keys {{keyValues}} not found",
+    confirmSyncRecordsSummaryAndTryAgain:
+      "$t(dataEntry:recordInPreviousCycle.notFoundMessage): fetch the list of records from the server and try again?",
+    fetchError: "Error fetching record in previuos cycle: {{details}}",
+    multipleRecordsFound:
+      "Multiple records with keys {{keyValues}} found in cycle {{cycle}}",
+    valuePanelHeader: "Previous cycle value",
+  },
   records: {
     confirmImportRecordFromServer: "Import record from server?",
     dateModifiedRemotely: "Date modified remotely",

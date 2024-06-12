@@ -7,6 +7,9 @@ const initialState = {
   record: null,
   recordCurrentPageEntity: null,
   recordPageSelectorMenuOpen: false,
+  linkToPreviousCycleRecord: false,
+  previousCycleRecord: null,
+  previousCycleRecordPageEntity: {},
 };
 
 const actionHandlers = {
@@ -17,6 +20,18 @@ const actionHandlers = {
     ...state,
     recordPageSelectorMenuOpen: false,
     record: action.record,
+  }),
+  [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
+    ...state,
+    linkToPreviousCycleRecord: true,
+    previousCycleRecord: action.record,
+    previousCycleRecordPageEntity: {},
+  }),
+  [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_RESET]: ({ state }) => ({
+    ...state,
+    linkToPreviousCycleRecord: false,
+    previousCycleRecord: null,
+    previousCycleRecordPageEntity: {},
   }),
   [DataEntryActionTypes.PAGE_ENTITY_SET]: ({ state, action }) => ({
     ...state,
@@ -30,6 +45,13 @@ const actionHandlers = {
   [DataEntryActionTypes.PAGE_SELECTOR_MENU_OPEN_SET]: ({ state, action }) => ({
     ...state,
     recordPageSelectorMenuOpen: action.open,
+  }),
+  [DataEntryActionTypes.PREVIOUS_CYCLE_PAGE_ENTITY_SET]: ({
+    state,
+    action,
+  }) => ({
+    ...state,
+    previousCycleRecordPageEntity: action.payload,
   }),
 };
 

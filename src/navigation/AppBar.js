@@ -44,6 +44,10 @@ export const AppBar = (props) => {
     screenKey === screenKeys.recordEditor;
   const recordEditViewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const recordHasErrors = DataEntrySelectors.useRecordHasErrors();
+  const canRecordBeLinkedToPreviousCycle =
+    DataEntrySelectors.useCanRecordBeLinkedToPreviousCycle();
+  const isLinkedToPreviousCycleRecord =
+    DataEntrySelectors.useIsLinkedToPreviousCycleRecord();
 
   const [state, setState] = useState({ menuVisible: false });
 
@@ -98,6 +102,18 @@ export const AppBar = (props) => {
                 icon="alert"
                 onPress={() =>
                   navigation.navigate(screenKeys.recordValidationReport)
+                }
+              />
+            )}
+            {canRecordBeLinkedToPreviousCycle && (
+              <RNPAppbar.Action
+                icon={isLinkedToPreviousCycleRecord ? "link" : "link-off"}
+                onPress={() =>
+                  dispatch(
+                    isLinkedToPreviousCycleRecord
+                      ? DataEntryActions.unlinkFromRecordInPreviousCycle()
+                      : DataEntryActions.linkToRecordInPreviousCycle()
+                  )
                 }
               />
             )}

@@ -25,6 +25,7 @@ export const useSelectableList = (props) => {
 
   const { selectedItemIds, selectionEnabled } = state;
 
+  // reset state on items change
   useEffect(() => {
     setState((statePrev) => ({ ...statePrev, ...initialState }));
   }, [items]);

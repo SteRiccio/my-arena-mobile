@@ -122,9 +122,10 @@ const selectRecordAttributeInfo =
     let value = attribute?.value;
     if (value) {
       const survey = SurveySelectors.selectCurrentSurvey(state);
-      const attributeDef = attribute
-        ? Surveys.getNodeDefByUuid({ survey, uuid: attribute.nodeDefUuid })
-        : null;
+      const attributeDef = Surveys.getNodeDefByUuid({
+        survey,
+        uuid: attribute.nodeDefUuid,
+      });
       value = _cleanupAttributeValue({ value, attributeDef });
     }
     const validation = RecordValidations.getValidationNode({ nodeUuid })(
@@ -187,8 +188,13 @@ const selectCurrentPageEntity = (state) => {
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = selectRecord(state);
 
-  const { parentEntityUuid, entityDefUuid, entityUuid } =
-    getDataEntryState(state).recordCurrentPageEntity || {};
+  const {
+    parentEntityUuid,
+    entityDefUuid,
+    entityUuid,
+    previousCycleParentEntityUuid,
+    previousCycleEntityUuid,
+  } = getDataEntryState(state).recordCurrentPageEntity || {};
 
   if (!parentEntityUuid) {
     return {
@@ -199,7 +205,13 @@ const selectCurrentPageEntity = (state) => {
   }
   const entityDef = Surveys.getNodeDefByUuid({ survey, uuid: entityDefUuid });
 
-  return { parentEntityUuid, entityDef, entityUuid };
+  return {
+    parentEntityUuid,
+    entityDef,
+    entityUuid,
+    previousCycleParentEntityUuid,
+    previousCycleEntityUuid,
+  };
 };
 
 const selectCurrentPageEntityRelevantChildDefs = (state) => {
@@ -221,6 +233,72 @@ const selectCurrentPageEntityActiveChildDefIndex = (state) =>
 // record page
 const selectRecordPageSelectorMenuOpen = (state) =>
   getDataEntryState(state).recordPageSelectorMenuOpen;
+
+// record previous cycle
+const selectCanRecordBeLinkedToPreviousCycleRecord = (state) => {
+  const record = selectRecord(state);
+  return record?.cycle > "0";
+};
+const selectPreviousCycleRecord = (state) =>
+  getDataEntryState(state).previousCycleRecord;
+
+const selectIsLinkedToPreviousCycleRecord = (state) =>
+  getDataEntryState(state).linkToPreviousCycleRecord;
+
+const selectPreviousCycleRecordPageEntity = (state) => {
+  const { entityDef } = selectCurrentPageEntity(state);
+  if (NodeDefs.isRoot(entityDef)) {
+    const previousCycleRecord = selectPreviousCycleRecord(state);
+    return !previousCycleRecord
+      ? {}
+      : {
+          previousCycleParentEntityUuid: null,
+          previousCycleEntityUuid: Records.getRoot(previousCycleRecord).uuid,
+        };
+  } else {
+    return getDataEntryState(state).previousCycleRecordPageEntity;
+  }
+};
+
+const selectPreviousCycleRecordAttributeValue =
+  ({ nodeDef, parentNodeUuid }) =>
+  (state) => {
+    if (!parentNodeUuid) {
+      return null;
+    }
+    const record = selectPreviousCycleRecord(state);
+    const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
+    const attributes = Records.getChildren(parentNode, nodeDef.uuid)(record);
+    const attribute = attributes[0];
+    let value = attribute?.value;
+    if (value) {
+      const survey = SurveySelectors.selectCurrentSurvey(state);
+      const attributeDef = Surveys.getNodeDefByUuid({
+        survey,
+        uuid: attribute.nodeDefUuid,
+      });
+      value = _cleanupAttributeValue({ value, attributeDef });
+    }
+    return value;
+  };
+
+const selectPreviousCycleEntityWithSameKeys =
+  ({ entityUuid }) =>
+  (state) => {
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = selectRecord(state);
+    const previousCycleRecord = selectPreviousCycleRecord(state);
+
+    if (!record || !previousCycleRecord) return null;
+
+    return Records.findEntityWithSameKeysInAnotherRecord({
+      survey,
+      cycle: record.cycle,
+      entityUuid,
+      record,
+      recordOther: previousCycleRecord,
+    });
+  };
 
 export const DataEntrySelectors = {
   selectRecord,
@@ -300,4 +378,26 @@ export const DataEntrySelectors = {
   selectRecordPageSelectorMenuOpen,
   useIsRecordPageSelectorMenuOpen: () =>
     useSelector(selectRecordPageSelectorMenuOpen),
+
+  // record previous cycle
+  selectPreviousCycleRecord,
+  useSelectPreviousCycleRecord: () => useSelector(selectPreviousCycleRecord),
+  usePreviousCycleRecordPageEntity: () =>
+    useSelector(selectPreviousCycleRecordPageEntity, Objects.isEqual),
+
+  selectCanRecordBeLinkedToPreviousCycleRecord,
+  useCanRecordBeLinkedToPreviousCycle: () =>
+    useSelector(selectCanRecordBeLinkedToPreviousCycleRecord),
+
+  selectIsLinkedToPreviousCycleRecord,
+  useIsLinkedToPreviousCycleRecord: () =>
+    useSelector(selectIsLinkedToPreviousCycleRecord),
+
+  selectPreviousCycleEntityWithSameKeys,
+
+  selectPreviousCycleRecordAttributeValue,
+  usePreviousCycleRecordAttributeValue: ({ nodeDef, parentNodeUuid }) =>
+    useSelector(
+      selectPreviousCycleRecordAttributeValue({ nodeDef, parentNodeUuid })
+    ),
 };
