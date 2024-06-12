@@ -110,6 +110,7 @@ export default {
     keepXAndY: "Keep X and Y",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
+    srs: "$t(common:srs)",
     startGPS: "Start GPS",
     stopGPS: "Stop GPS",
     useCurrentLocation: "Use current location",

@@ -1,3 +1,4 @@
+import React from "react";
 import { NodeDefType, NodeValueFormatter } from "@openforis/arena-core";
 
 import { Text } from "components";

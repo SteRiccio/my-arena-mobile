@@ -1,6 +1,6 @@
 import { Records } from "@openforis/arena-core";
 
-import { Cycles, RecordLoadStatus, RecordNodes } from "model";
+import { Cycles, RecordLoadStatus, RecordNodes, RecordOrigin } from "model";
 import { RecordService } from "service";
 import { ToastActions } from "../toast";
 import { ConfirmActions } from "../confirm";
@@ -22,8 +22,11 @@ const _fetchRecordFromPreviousCycleAndLinkItInternal = async ({
   recordId,
 }) => {
   const record = await RecordService.fetchRecord({ survey, recordId });
-  const { loadStatus } = record;
-  if (loadStatus !== RecordLoadStatus.complete) {
+  const { loadStatus, origin } = record;
+  if (
+    origin === RecordOrigin.remote &&
+    loadStatus !== RecordLoadStatus.complete
+  ) {
     return false;
   }
   await dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record });
