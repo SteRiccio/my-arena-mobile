@@ -27,20 +27,6 @@ export default class SQLiteClient {
     const result = await this.privateDb.runAsync(sql, args);
     const { lastInsertRowId: insertId, changes: rowsAffected } = result;
     return { insertId, rowsAffected };
-    // return await this.privateDb.execAsync(sql)
-    // return new Promise((resolve, reject) => {
-    //   this.privateDb.transaction(
-    //     (tx) =>
-    //       tx.executeSql(
-    //         sql,
-    //         args,
-    //         (_, { rows, insertId, rowsAffected }) =>
-    //           resolve({ rows, insertId, rowsAffected }),
-    //         (_, err) => reject(err)
-    //       ),
-    //     reject
-    //   );
-    // });
   }
 
   async transaction(callback) {
@@ -67,6 +53,7 @@ export default class SQLiteClient {
       // MIGRATIONS
       const dbUserVersionRow = await this.one("PRAGMA user_version");
       const prevDbVersion = dbUserVersionRow.user_version;
+      console.log(`==== current DB version: ${prevDbVersion}`);
       const nextDbVersion = this.migrations.length;
       if (prevDbVersion > nextDbVersion) {
         throw new DowngradeError();
