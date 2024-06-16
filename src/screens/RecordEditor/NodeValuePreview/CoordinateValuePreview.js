@@ -16,14 +16,12 @@ export const CoordinateValuePreview = (props) => {
   return (
     <VView>
       {fields.map((fieldKey) => (
-        <FormItem labelKey={`dataEntry:coordinate.${fieldKey}`}>
+        <FormItem key={fieldKey} labelKey={`dataEntry:coordinate.${fieldKey}`}>
           <Text>{value[fieldKey]}</Text>
         </FormItem>
       ))}
     </VView>
   );
-
-  return <Text>{JSON.stringify(value)}</Text>;
 };
 
 CoordinateValuePreview.propTypes = NodeValuePreviewPropTypes;

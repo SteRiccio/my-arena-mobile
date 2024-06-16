@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -11,9 +11,7 @@ import {
   useToast,
 } from "hooks";
 
-import { SurveySelectors } from "state/survey";
 import { ConfirmActions } from "state/confirm";
-import { RecordFileService } from "service/recordFileService";
 import { Files, ImageUtils } from "utils";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
@@ -32,9 +30,6 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
 
   const { request: requestMediaLibraryPermission } =
     useRequestMediaLibraryPermission();
-
-  const survey = SurveySelectors.useCurrentSurvey();
-  const surveyId = survey.id;
 
   const { fileType = NodeDefFileType.other, maxSize: maxSizeMB = 10 } =
     nodeDef.props;
