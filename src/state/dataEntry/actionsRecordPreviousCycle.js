@@ -12,6 +12,7 @@ import { importRecordsFromServer } from "./actionsRecordsImport";
 
 const {
   PREVIOUS_CYCLE_PAGE_ENTITY_SET,
+  RECORD_PREVIOUS_CYCLE_LOAD,
   RECORD_PREVIOUS_CYCLE_SET,
   RECORD_PREVIOUS_CYCLE_RESET,
 } = DataEntryActionTypes;
@@ -21,19 +22,20 @@ const _fetchRecordFromPreviousCycleAndLinkItInternal = async ({
   survey,
   recordId,
 }) => {
+  dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: true });
+
   const record = await RecordService.fetchRecord({ survey, recordId });
   const { loadStatus, origin } = record;
-  if (
-    origin === RecordOrigin.remote &&
-    loadStatus !== RecordLoadStatus.complete
-  ) {
-    return false;
-  }
-  await dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record });
-  dispatch(ToastActions.show("dataEntry:recordInPreviousCycle.foundMessage"));
-  dispatch(updatePreviousCyclePageEntity);
+  const loaded =
+    origin !== RecordOrigin.remote || loadStatus === RecordLoadStatus.complete;
 
-  return true;
+  if (loaded) {
+    await dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record });
+    dispatch(ToastActions.show("dataEntry:recordInPreviousCycle.foundMessage"));
+    dispatch(updatePreviousCyclePageEntity);
+  }
+  dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: false });
+  return loaded;
 };
 
 const _fetchRecordFromPreviousCycleAndLinkIt = async ({
@@ -42,6 +44,8 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   record,
   lang,
 }) => {
+  dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: true });
+
   const rootEntity = Records.getRoot(record);
   const { cycle } = record;
   const prevCycle = Cycles.getPrevCycleKey(cycle);
@@ -111,6 +115,8 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
       )
     );
   }
+  dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: false });
+
   return { keyValues: keyValuesString, prevCycle, prevCycleRecordIds };
 };
 

@@ -242,6 +242,9 @@ const selectCanRecordBeLinkedToPreviousCycleRecord = (state) => {
 const selectPreviousCycleRecord = (state) =>
   getDataEntryState(state).previousCycleRecord;
 
+const selectPreviousCycleRecordLoading = (state) =>
+  getDataEntryState(state).previousCycleRecordLoading;
+
 const selectIsLinkedToPreviousCycleRecord = (state) =>
   getDataEntryState(state).linkToPreviousCycleRecord;
 
@@ -380,12 +383,12 @@ export const DataEntrySelectors = {
     useSelector(selectRecordPageSelectorMenuOpen),
 
   // record previous cycle
-  selectPreviousCycleRecord,
-  useSelectPreviousCycleRecord: () => useSelector(selectPreviousCycleRecord),
+  usePreviousCycleRecordLoading: () =>
+    useSelector(selectPreviousCycleRecordLoading),
+
   usePreviousCycleRecordPageEntity: () =>
     useSelector(selectPreviousCycleRecordPageEntity, Objects.isEqual),
 
-  selectCanRecordBeLinkedToPreviousCycleRecord,
   useCanRecordBeLinkedToPreviousCycle: () =>
     useSelector(selectCanRecordBeLinkedToPreviousCycleRecord),
 

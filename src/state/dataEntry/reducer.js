@@ -8,6 +8,7 @@ const initialState = {
   recordCurrentPageEntity: null,
   recordPageSelectorMenuOpen: false,
   linkToPreviousCycleRecord: false,
+  previousCycleRecordLoading: false,
   previousCycleRecord: null,
   previousCycleRecordPageEntity: {},
 };
@@ -20,6 +21,10 @@ const actionHandlers = {
     ...state,
     recordPageSelectorMenuOpen: false,
     record: action.record,
+  }),
+  [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_LOAD]: ({ state, action }) => ({
+    ...state,
+    previousCycleRecordLoading: action.loading,
   }),
   [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_SET]: ({ state, action }) => ({
     ...state,

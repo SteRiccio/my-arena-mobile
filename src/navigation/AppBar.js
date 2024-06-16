@@ -48,6 +48,8 @@ export const AppBar = (props) => {
     DataEntrySelectors.useCanRecordBeLinkedToPreviousCycle();
   const isLinkedToPreviousCycleRecord =
     DataEntrySelectors.useIsLinkedToPreviousCycleRecord();
+  const isLoadingPreviousCycleRecord =
+    DataEntrySelectors.usePreviousCycleRecordLoading();
 
   const [state, setState] = useState({ menuVisible: false });
 
@@ -108,6 +110,7 @@ export const AppBar = (props) => {
             {canRecordBeLinkedToPreviousCycle && (
               <RNPAppbar.Action
                 icon={isLinkedToPreviousCycleRecord ? "link" : "link-off"}
+                loading={isLoadingPreviousCycleRecord}
                 onPress={() =>
                   dispatch(
                     isLinkedToPreviousCycleRecord
