@@ -8,6 +8,8 @@ const getSurveyState = (state) => state.survey;
 
 const selectCurrentSurvey = (state) => getSurveyState(state).currentSurvey;
 
+const selectCurrentSurveyId = (state) => selectCurrentSurvey(state)?.id;
+
 const selectCurrentSurveySrsIndex = (state) => {
   const survey = selectCurrentSurvey(state);
   return Surveys.getSRSIndex(survey);
@@ -43,6 +45,7 @@ export const SurveySelectors = {
   selectCurrentSurveyPreferredLang,
 
   useCurrentSurvey: () => useSelector(selectCurrentSurvey),
+  useCurrentSurveyId: () => useSelector(selectCurrentSurveyId),
   useCurrentSurveySrsIndex: () =>
     useSelector(selectCurrentSurveySrsIndex, Objects.isEqual),
   useCurrentSurveyPreferredLang: () =>

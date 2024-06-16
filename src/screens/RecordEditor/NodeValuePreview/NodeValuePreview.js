@@ -1,5 +1,9 @@
 import React from "react";
-import { NodeDefType, NodeValueFormatter } from "@openforis/arena-core";
+import {
+  NodeDefType,
+  NodeValueFormatter,
+  Objects,
+} from "@openforis/arena-core";
 
 import { Text } from "components";
 import { SurveySelectors } from "state";
@@ -20,6 +24,10 @@ export const NodeValuePreview = (props) => {
 
   if (__DEV__) {
     console.log("rendering NodeValuePreview");
+  }
+
+  if (Objects.isEmpty(value)) {
+    return <Text>---</Text>;
   }
 
   const survey = SurveySelectors.useCurrentSurvey();

@@ -17,7 +17,7 @@ import { RecordFileService } from "service/recordFileService";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
 import { Files } from "utils";
-import { ImageUtils } from "./imageUtils";
+import { ImageUtils } from "../../../../../utils/ImageUtils";
 
 const mediaTypesByFileType = {
   [NodeDefFileType.image]: ImagePicker.MediaTypeOptions.Images,

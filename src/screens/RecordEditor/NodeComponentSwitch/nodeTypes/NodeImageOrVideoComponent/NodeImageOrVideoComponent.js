@@ -1,11 +1,14 @@
 import { TouchableHighlight } from "react-native";
 import PropTypes from "prop-types";
 
+import { NodeDefFileType } from "@openforis/arena-core";
+
 import {
   Button,
   HView,
   IconButton,
   Image,
+  ImagePreviewDialog,
   Loader,
   Text,
   VView,
@@ -14,8 +17,6 @@ import {
 import { useNodeFileComponent } from "./useNodeFileComponent";
 
 import styles from "./styles";
-import { NodeDefFileType } from "@openforis/arena-core";
-import { ImagePreviewDialog } from "./ImagePreviewDialog";
 
 const fileChooseTextKeySuffixByFileType = {
   [NodeDefFileType.audio]: "Audio",
