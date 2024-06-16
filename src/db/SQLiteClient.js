@@ -55,24 +55,29 @@ export default class SQLiteClient {
       const prevDbVersion = dbUserVersionRow.user_version;
       console.log(`==== current DB version: ${prevDbVersion}`);
       const nextDbVersion = this.migrations.length;
+      console.log(`==== next DB version: ${nextDbVersion}`);
       if (prevDbVersion > nextDbVersion) {
         throw new DowngradeError();
       }
-      console.log("==== DB migrations start ====");
-      for (let i = prevDbVersion; i < nextDbVersion; i += 1) {
-        const migration = this.migrations[i];
-        await migration(this);
-      }
-      console.log("==== DB migrations complete ====");
+      const dbMigrationsNecessary = prevDbVersion !== nextDbVersion;
+      if (dbMigrationsNecessary) {
+        console.log("==== DB migrations start ====");
+        for (let i = prevDbVersion; i < nextDbVersion; i += 1) {
+          const migration = this.migrations[i];
+          await migration(this);
+        }
+        console.log("==== DB migrations complete ====");
 
-      const dbMigrationsRun = prevDbVersion !== nextDbVersion;
-      if (dbMigrationsRun) {
         await this.executeSql(`PRAGMA user_version = ${nextDbVersion}`);
       }
 
       this.privateConnected = true;
       console.log("=== DB connection complete ===");
-      return { dbMigrationsRun, prevDbVersion, nextDbVersion };
+      return {
+        dbMigrationsRun: dbMigrationsNecessary,
+        prevDbVersion,
+        nextDbVersion,
+      };
     } catch (err) {
       console.log(err);
       if (err instanceof DowngradeError) {
