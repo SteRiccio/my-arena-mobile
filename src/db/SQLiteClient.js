@@ -24,35 +24,35 @@ export default class SQLiteClient {
   }
 
   async executeSql(sql, args) {
-    return new Promise((resolve, reject) => {
-      this.privateDb.transaction(
-        (tx) =>
-          tx.executeSql(
-            sql,
-            args,
-            (_, { rows, insertId, rowsAffected }) =>
-              resolve({ rows, insertId, rowsAffected }),
-            (_, err) => reject(err)
-          ),
-        reject
-      );
-    });
+    const result = await this.privateDb.runAsync(sql, args);
+    const { lastInsertRowId: insertId, changes: rowsAffected } = result;
+    return { insertId, rowsAffected };
+    // return await this.privateDb.execAsync(sql)
+    // return new Promise((resolve, reject) => {
+    //   this.privateDb.transaction(
+    //     (tx) =>
+    //       tx.executeSql(
+    //         sql,
+    //         args,
+    //         (_, { rows, insertId, rowsAffected }) =>
+    //           resolve({ rows, insertId, rowsAffected }),
+    //         (_, err) => reject(err)
+    //       ),
+    //     reject
+    //   );
+    // });
   }
 
   async transaction(callback) {
-    return new Promise((resolve, reject) => {
-      this.privateDb.transaction(callback, reject, resolve);
-    });
+    return this.privateDb.withTransactionAsync(callback);
   }
 
   async one(sql, args) {
-    const { rows } = await this.executeSql(sql, args);
-    return rows.length === 1 ? rows.item(0) : null;
+    return this.privateDb.getFirstAsync(sql, args);
   }
 
   async many(sql, args) {
-    const { rows } = await this.executeSql(sql, args);
-    return rows._array;
+    return this.privateDb.getAllAsync(sql, args);
   }
 
   async connect() {
@@ -62,11 +62,11 @@ export default class SQLiteClient {
     try {
       console.log("=== DB connection start ===");
 
-      this.privateDb = SQLite.openDatabase(this.name);
+      this.privateDb = await SQLite.openDatabaseAsync(this.name);
 
       // MIGRATIONS
-      const { rows } = await this.executeSql("PRAGMA user_version");
-      const prevDbVersion = rows.item(0).user_version;
+      const dbUserVersionRow = await this.one("PRAGMA user_version");
+      const prevDbVersion = dbUserVersionRow.user_version;
       const nextDbVersion = this.migrations.length;
       if (prevDbVersion > nextDbVersion) {
         throw new DowngradeError();

@@ -183,15 +183,15 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   const loadStatus = RecordLoadStatus.summary;
   const origin = RecordOrigin.remote;
   const insertedIds = [];
-  await dbClient.transaction((tx) => {
-    recordSummaries.forEach((recordSummary) => {
+  await dbClient.transaction(async () => {
+    for await (const recordSummary of recordSummaries) {
       const { dateCreated, dateModified, ownerUuid, ownerName, uuid } =
         recordSummary;
       const keyColumnsValues = extractRemoteRecordSummaryKeyColumnsValues({
         survey,
         recordSummary,
       });
-      tx.executeSql(
+      const { insertId } = await dbClient.executeSql(
         `INSERT INTO record (${insertColumnsJoint})
         VALUES (${getPlaceholders(insertColumns.length)})`,
         [
@@ -207,16 +207,10 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
           loadStatus,
           origin,
           ...keyColumnsValues,
-        ],
-        (t, results) => {
-          const { insertId } = results;
-          insertedIds.push(insertId);
-        },
-        (_, error) => {
-          throw error;
-        }
+        ]
       );
-    });
+      insertedIds.push(insertId);
+    }
   });
   return insertedIds;
 };
