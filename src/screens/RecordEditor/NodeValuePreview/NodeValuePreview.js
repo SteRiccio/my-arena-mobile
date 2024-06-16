@@ -26,12 +26,12 @@ export const NodeValuePreview = (props) => {
     console.log("rendering NodeValuePreview");
   }
 
+  const survey = SurveySelectors.useCurrentSurvey();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+
   if (Objects.isEmpty(value)) {
     return <Text>---</Text>;
   }
-
-  const survey = SurveySelectors.useCurrentSurvey();
-  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const component = componentByNodeDefType[nodeDef.type];
   if (component) {
