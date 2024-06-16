@@ -3,13 +3,12 @@ import { TouchableHighlight } from "react-native";
 
 import { NodeDefFileType } from "@openforis/arena-core";
 
-import { IconButton, Image, VView } from "components";
+import { IconButton, Image, ImagePreviewDialog, VView } from "components";
 import { RecordFileService } from "service";
 import { SurveySelectors } from "state";
 import { Files } from "utils";
 
 import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
-import { ImagePreviewDialog } from "../../../components/ImagePreviewDialog";
 
 import styles from "./imageOrVideoValuePreviewStyles";
 
