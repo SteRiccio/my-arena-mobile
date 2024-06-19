@@ -24,17 +24,17 @@ const _objToArray = (obj) => {
 
 export const SelectableListWithFilter = (props) => {
   const {
-    editable,
+    editable = true,
     filterItems,
-    itemKeyExtractor,
-    itemLabelExtractor,
-    itemDescriptionExtractor,
-    items,
-    itemsCountToShowFilter,
-    maxItemsToShow,
-    multiple,
+    itemKeyExtractor = (item) => item?.key,
+    itemLabelExtractor = (item) => item?.label,
+    itemDescriptionExtractor = (item) => item?.description,
+    items = [],
+    itemsCountToShowFilter = 10,
+    maxItemsToShow = 1000,
+    multiple = false,
     onSelectedItemsChange,
-    selectedItems,
+    selectedItems = [],
   } = props;
 
   const inputValueRef = useRef(null);
@@ -214,16 +214,4 @@ SelectableListWithFilter.propTypes = {
   multiple: PropTypes.bool,
   onSelectedItemsChange: PropTypes.func.isRequired,
   selectedItems: PropTypes.array,
-};
-
-SelectableListWithFilter.defaultProps = {
-  editable: true,
-  itemKeyExtractor: (item) => item?.key,
-  itemLabelExtractor: (item) => item?.label,
-  itemDescriptionExtractor: (item) => item?.description,
-  items: [],
-  itemsCountToShowFilter: 10,
-  maxItemsToShow: 1000,
-  multiple: false,
-  selectedItems: [],
 };

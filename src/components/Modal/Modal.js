@@ -9,7 +9,13 @@ import { VView } from "../VView";
 import styles from "./styles";
 
 export const Modal = (props) => {
-  const { children, onDismiss, showCloseButton, titleKey, titleParams } = props;
+  const {
+    children,
+    onDismiss,
+    showCloseButton = true,
+    titleKey,
+    titleParams,
+  } = props;
   return (
     <Portal>
       <RNPModal visible onDismiss={onDismiss}>
@@ -38,8 +44,4 @@ Modal.propTypes = {
   showCloseButton: PropTypes.bool,
   titleKey: PropTypes.string,
   titleParams: PropTypes.object,
-};
-
-Modal.defaultProps = {
-  showCloseButton: true,
 };

@@ -23,8 +23,8 @@ export default class SQLiteClient {
     return this.privateDb;
   }
 
-  async executeSql(sql, args) {
-    const result = await this.privateDb.runAsync(sql, args);
+  async executeSql(sql, params) {
+    const result = await this.privateDb.runAsync(sql, params);
     const { lastInsertRowId: insertId, changes: rowsAffected } = result;
     return { insertId, rowsAffected };
   }
@@ -33,12 +33,12 @@ export default class SQLiteClient {
     return this.privateDb.withTransactionAsync(callback);
   }
 
-  async one(sql, args) {
-    return this.privateDb.getFirstAsync(sql, args);
+  async one(sql, params) {
+    return this.privateDb.getFirstAsync(sql, params);
   }
 
-  async many(sql, args) {
-    return this.privateDb.getAllAsync(sql, args);
+  async many(sql, params) {
+    return this.privateDb.getAllAsync(sql, params);
   }
 
   async connect() {

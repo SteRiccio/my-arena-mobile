@@ -34,7 +34,7 @@ const SettingsFormItem = (props) => {
     labelParams,
     descriptionKey,
     descriptionParams,
-    direction,
+    direction = "vertical",
     children,
   } = props;
 
@@ -58,10 +58,6 @@ const SettingsFormItem = (props) => {
       {children}
     </View>
   );
-};
-
-SettingsFormItem.defaultProps = {
-  direction: "vertical",
 };
 
 SettingsFormItem.propTypes = {
