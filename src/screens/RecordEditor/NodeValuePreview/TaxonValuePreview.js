@@ -1,10 +1,18 @@
+import React from "react";
 import PropTypes from "prop-types";
 
-import { Text } from "components/Text";
 import { NodeDefs } from "@openforis/arena-core";
 
-export const TaxonPreview = (props) => {
-  const { nodeDef, taxon } = props;
+import { Text } from "components";
+import { useTaxonByNodeValue } from "./useTaxonByNodeValue";
+
+export const TaxonValuePreview = (props) => {
+  const { nodeDef, value } = props;
+
+  const taxon = useTaxonByNodeValue({ value });
+
+  if (!taxon) return null;
+
   const { code, scientificName } = taxon.props;
   const {
     scientificName: scientificNameUnlisted,
@@ -38,7 +46,7 @@ ${vernacularName} (${vernacularNameLangCode})`;
   );
 };
 
-TaxonPreview.propTypes = {
+TaxonValuePreview.propTypes = {
   nodeDef: PropTypes.object.isRequired,
   taxon: PropTypes.object.isRequired,
 };

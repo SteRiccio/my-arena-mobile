@@ -8,15 +8,18 @@ import {
 import { Text } from "components";
 import { SurveySelectors } from "state";
 
+import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
+
 import { CoordinateValuePreview } from "./CoordinateValuePreview";
 import { BooleanValuePreview } from "./BooleanValuePreview";
 import { FileValuePreview } from "./FileValuePreview";
-import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
+import { TaxonValuePreview } from "./TaxonValuePreview";
 
 const componentByNodeDefType = {
   [NodeDefType.boolean]: BooleanValuePreview,
   [NodeDefType.coordinate]: CoordinateValuePreview,
   [NodeDefType.file]: FileValuePreview,
+  [NodeDefType.taxon]: TaxonValuePreview,
 };
 
 export const NodeValuePreview = (props) => {
