@@ -1,9 +1,9 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
 import { Text } from "components";
+import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
 import { useTaxonByNodeValue } from "./useTaxonByNodeValue";
 
 export const TaxonValuePreview = (props) => {
@@ -46,7 +46,4 @@ ${vernacularName} (${vernacularNameLangCode})`;
   );
 };
 
-TaxonValuePreview.propTypes = {
-  nodeDef: PropTypes.object.isRequired,
-  taxon: PropTypes.object.isRequired,
-};
+TaxonValuePreview.propTypes = NodeValuePreviewPropTypes;
