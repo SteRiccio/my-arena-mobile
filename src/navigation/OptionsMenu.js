@@ -57,6 +57,14 @@ export const OptionsMenu = (props) => {
         }}
         title={t("settings:title")}
       />
+      <Menu.Item
+        leadingIcon="information-outline"
+        onPress={() => {
+          toggleMenu();
+          navigation.navigate(screenKeys.about);
+        }}
+        title={t("common:about")}
+      />
       {Environment.isAndroid && (
         <Menu.Item
           leadingIcon="exit-to-app"

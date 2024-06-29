@@ -1,4 +1,5 @@
 export default {
+  about: "About",
   appTitle: "Arena Mobile Experiments",
   cancel: "Cancel",
   clear: "Clear",
