@@ -20,6 +20,6 @@ export const useConfirm = () => {
           reject(error);
         }
       }),
-    []
+    [dispatch]
   );
 };

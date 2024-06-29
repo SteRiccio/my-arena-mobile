@@ -12,9 +12,8 @@ import {
   LoadingIcon,
   VView,
 } from "components";
-import { ImageUtils } from "./imageUtils";
-import { Files } from "utils";
-import { useImageFile } from "hooks/useImageFile";
+import { useImageFile } from "hooks";
+import { Files, ImageUtils } from "utils";
 
 const styles = StyleSheet.create({
   dialog: { display: "flex", height: "90%", padding: 5 },

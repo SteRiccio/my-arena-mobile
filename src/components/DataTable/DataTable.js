@@ -57,9 +57,9 @@ export const DataTable = (props) => {
   return (
     <VView style={{ flex: 1 }}>
       <ItemSelectedBanner
+        customActions={selectedItemsCustomActions}
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
-        customActions={selectedItemsCustomActions}
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
