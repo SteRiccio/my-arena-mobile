@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
@@ -11,13 +11,10 @@ import {
   useToast,
 } from "hooks";
 
-import { SurveySelectors } from "state/survey";
 import { ConfirmActions } from "state/confirm";
-import { RecordFileService } from "service/recordFileService";
+import { Files, ImageUtils } from "utils";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
-import { Files } from "utils";
-import { ImageUtils } from "./imageUtils";
 
 const mediaTypesByFileType = {
   [NodeDefFileType.image]: ImagePicker.MediaTypeOptions.Images,
@@ -34,9 +31,6 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   const { request: requestMediaLibraryPermission } =
     useRequestMediaLibraryPermission();
 
-  const survey = SurveySelectors.useCurrentSurvey();
-  const surveyId = survey.id;
-
   const { fileType = NodeDefFileType.other, maxSize: maxSizeMB = 10 } =
     nodeDef.props;
   const maxSize = maxSizeMB * Math.pow(1024, 2); // nodeDef maxSize is in MB
@@ -47,21 +41,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
-
-  const { fileName, fileUuid } = value || {};
-
-  const [pickedFileUri, setPickedFileUri] = useState(null);
   const [resizing, setResizing] = useState(false);
-  const [imagePreviewOpen, setImagePreviewOpen] = useState(false);
-
-  useEffect(() => {
-    const fileUri = fileUuid
-      ? RecordFileService.getRecordFileUri({ surveyId, fileUuid })
-      : null;
-    if (fileUri !== pickedFileUri) {
-      setPickedFileUri(fileUri);
-    }
-  }, [pickedFileUri, fileUuid]);
 
   const onFileSelected = useCallback(
     async (result) => {
@@ -102,7 +82,6 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
         }
         setResizing(false);
       }
-      setPickedFileUri(fileUri);
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
       await updateNodeValue(valueUpdated, fileUri);
     },
@@ -123,11 +102,6 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
     onFileSelected(result);
   }, [onFileSelected, requestMediaLibraryPermission, mediaTypes]);
 
-  const onFileOpenPress = useCallback(async () => {
-    const mimeType = Files.getMimeTypeFromName(fileName);
-    await Files.shareFile({ url: pickedFileUri, mimeType });
-  }, [fileName, pickedFileUri]);
-
   const onOpenCameraPress = useCallback(async () => {
     if (!(await requestCameraPermission())) return;
 
@@ -146,24 +120,11 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
     );
   }, [updateNodeValue]);
 
-  const onImagePreviewPress = useCallback(() => {
-    setImagePreviewOpen(true);
-  }, []);
-
-  const closeImagePreview = useCallback(() => {
-    setImagePreviewOpen(false);
-  }, []);
-
   return {
-    closeImagePreview,
-    fileName,
-    imagePreviewOpen,
+    nodeValue: value,
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
-    onFileOpenPress,
-    onImagePreviewPress,
-    pickedFileUri,
     resizing,
   };
 };

@@ -5,12 +5,12 @@ import { useAssets } from "expo-asset";
 
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { LoginInfo } from "appComponents/LoginInfo";
+import { VersionNumberInfo } from "appComponents/VersionNumberInfo";
 import { Button, ScrollView, Text, VView } from "components";
 import { SurveySelectors } from "state";
 
 import { screenKeys } from "../screenKeys";
 import { SelectedSurveyFieldset } from "./SelectedSurveyFieldet";
-import { VersionNumberInfo } from "./VersionNumberInfo";
 
 import styles from "./styles";
 

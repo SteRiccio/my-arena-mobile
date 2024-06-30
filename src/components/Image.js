@@ -17,5 +17,5 @@ export const Image = (props) => {
 Image.propTypes = {
   defaultExtension: PropTypes.string,
   source: PropTypes.object.isRequired,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

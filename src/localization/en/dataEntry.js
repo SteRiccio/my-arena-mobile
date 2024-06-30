@@ -33,6 +33,19 @@ export default {
   newRecord: "New record",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
+  recordInPreviousCycle: {
+    foundMessage: "Record in previous cycle found!",
+    notFoundMessage:
+      "Record in cycle {{cycle}} with keys {{keyValues}} not found",
+    confirmFetchRecordInCycle:
+      "Record in cycle {{cycle}} with keys {{keyValues}} not fully loaded; dowload it from the server?",
+    confirmSyncRecordsSummaryAndTryAgain:
+      "$t(dataEntry:recordInPreviousCycle.notFoundMessage): fetch the list of records from the server and try again?",
+    fetchError: "Error fetching record in previuos cycle: {{details}}",
+    multipleRecordsFound:
+      "Multiple records with keys {{keyValues}} found in cycle {{cycle}}",
+    valuePanelHeader: "Previous cycle value",
+  },
   records: {
     confirmImportRecordFromServer: "Import record from server?",
     dateModifiedRemotely: "Date modified remotely",
@@ -97,6 +110,7 @@ export default {
     keepXAndY: "Keep X and Y",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
+    srs: "$t(common:srs)",
     startGPS: "Start GPS",
     stopGPS: "Stop GPS",
     useCurrentLocation: "Use current location",

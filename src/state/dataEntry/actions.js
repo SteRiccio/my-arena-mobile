@@ -25,6 +25,7 @@ import { RemoteConnectionSelectors } from "../remoteConnection";
 import { DataEntryActionTypes } from "./actionTypes";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
+import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
 import { importRecordsFromServer } from "./actionsRecordsImport";
 
 const {
@@ -34,6 +35,12 @@ const {
   PAGE_SELECTOR_MENU_OPEN_SET,
   RECORD_SET,
 } = DataEntryActionTypes;
+
+const {
+  linkToRecordInPreviousCycle,
+  unlinkFromRecordInPreviousCycle,
+  updatePreviousCyclePageEntity,
+} = DataEntryActionsRecordPreviousCycle;
 
 const removeNodesFlags = (nodes) => {
   Object.values(nodes).forEach((node) => {
@@ -249,7 +256,15 @@ const updateAttribute =
       survey,
       record: recordUpdated,
     });
+
     await dispatch({ type: RECORD_SET, record: recordUpdated });
+
+    if (
+      DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state) &&
+      NodeDefs.isKey(nodeDef)
+    ) {
+      dispatch(unlinkFromRecordInPreviousCycle());
+    }
   };
 
 const addNewAttribute =
@@ -313,6 +328,10 @@ const selectCurrentPageEntity =
 
     dispatch({ type: PAGE_ENTITY_SET, payload });
 
+    if (DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state)) {
+      dispatch(updatePreviousCyclePageEntity);
+    }
+
     dispatch(closeRecordPageMenu);
   };
 
@@ -354,12 +373,6 @@ const navigateToRecordsList =
   };
 
 export const DataEntryActions = {
-  RECORD_SET,
-  PAGE_ENTITY_SET,
-  PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
-  PAGE_SELECTOR_MENU_OPEN_SET,
-  DATA_ENTRY_RESET,
-
   createNewRecord,
   addNewEntity,
   addNewAttribute,
@@ -373,6 +386,9 @@ export const DataEntryActions = {
 
   navigateToRecordsList,
   exportRecords,
+
+  linkToRecordInPreviousCycle,
+  unlinkFromRecordInPreviousCycle,
 
   importRecordsFromServer,
 };

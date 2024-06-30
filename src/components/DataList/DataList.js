@@ -18,6 +18,7 @@ export const DataList = (props) => {
     onDeleteSelectedItemIds,
     onSelectionChange,
     selectable,
+    selectedItemsCustomActions,
   } = props;
 
   const styles = useStyles();
@@ -77,6 +78,7 @@ export const DataList = (props) => {
   return (
     <VView>
       <ItemSelectedBanner
+        customActions={selectedItemsCustomActions}
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
       />
@@ -97,4 +99,5 @@ DataList.propTypes = {
   onDeleteSelectedItemIds: PropTypes.func,
   onSelectionChange: PropTypes.func,
   selectable: PropTypes.bool,
+  selectedItemsCustomActions: PropTypes.array,
 };

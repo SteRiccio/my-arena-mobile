@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 
-import { NodeDefs, NodeValues } from "@openforis/arena-core";
+import { NodeDefs } from "@openforis/arena-core";
 
 import { Button, Text, VView, View } from "components";
+import { RecordEditViewMode } from "model";
 import { Taxa } from "model/Taxa";
 import { SurveyOptionsSelectors, SurveySelectors } from "state";
 
@@ -11,9 +12,9 @@ import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState"
 import { useItemsFilter } from "../useItemsFilter";
 import { useTaxa } from "./useTaxa";
 import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
-import { TaxonPreview } from "./TaxonPreview";
-import { RecordEditViewMode } from "model/RecordEditViewMode";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
+import { TaxonValuePreview } from "../../../NodeValuePreview/TaxonValuePreview";
+import { useTaxonByNodeValue } from "../../../NodeValuePreview/useTaxonByNodeValue";
 
 export const NodeTaxonComponent = (props) => {
   const { nodeDef, nodeUuid, parentNodeUuid } = props;
@@ -47,19 +48,7 @@ export const NodeTaxonComponent = (props) => {
       [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
   });
 
-  const selectedTaxon = useMemo(() => {
-    if (!value) return null;
-    const {
-      scientificName, // unlisted scientific name
-      vernacularNameUuid,
-    } = value;
-    const taxon = taxa.find(
-      (taxon) =>
-        taxon.uuid === NodeValues.getValueTaxonUuid(value) &&
-        taxon.vernacularNameUuid === vernacularNameUuid
-    );
-    return scientificName ? { ...taxon, scientificName } : taxon;
-  }, [taxa, value]);
+  const selectedTaxon = useTaxonByNodeValue({ value });
 
   const selectedTaxonContainerHeight = selectedTaxon?.vernacularName ? 60 : 30;
 
@@ -67,7 +56,7 @@ export const NodeTaxonComponent = (props) => {
     <VView>
       <View style={{ height: selectedTaxonContainerHeight }}>
         {selectedTaxon ? (
-          <TaxonPreview nodeDef={nodeDef} taxon={selectedTaxon} />
+          <TaxonValuePreview nodeDef={nodeDef} value={value} />
         ) : (
           <Text textKey="dataEntry:taxon.taxonNotSelected" />
         )}

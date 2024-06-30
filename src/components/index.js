@@ -14,6 +14,7 @@ export { FormItem } from "./FormItem";
 export { HView } from "./HView";
 export { Icon } from "./Icon";
 export { Image } from "./Image";
+export { ImagePreviewDialog } from "./ImagePreviewDialog";
 export { IconButton } from "./IconButton";
 export { Link } from "./Link";
 export { LocationWatchingMonitor } from "./LocationWatchingMonitor";

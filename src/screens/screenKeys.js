@@ -1,4 +1,5 @@
 export const screenKeys = {
+  about: "about",
   home: "home",
   recordsList: "recordsList",
   recordEditor: "recordEditor",
