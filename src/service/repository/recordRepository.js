@@ -3,6 +3,7 @@ import {
   Dates,
   NodeDefs,
   Objects,
+  RecordFixer,
   Records,
   Surveys,
 } from "@openforis/arena-core";
@@ -338,9 +339,12 @@ const fixDatetime = (dateStr) => {
 const rowToRecord =
   ({ survey }) =>
   (row) => {
-    const { cycle } = row;
+    const sideEffect = true;
+    const hasToBeFixed = true;
+    const { cycle, content } = row;
     const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
-    const result = row.content
+    const hasContent = !!content;
+    const result = hasContent
       ? JSON.parse(row.content)
       : Objects.camelize(row, { skip: ["content"] });
 
@@ -351,17 +355,24 @@ const rowToRecord =
     result.dateCreated = fixDatetime(result.dateCreated);
     result.dateModifiedRemote = fixDatetime(result.dateModifiedRemote);
 
-    if (!result._nodesIndex) {
-      // re-create nodes index
-      Records.addNodes(Records.getNodes(result), { sideEffect: true })(result);
+    if (hasContent) {
+      if (!result._nodesIndex) {
+        // re-create nodes index
+        Records.addNodes(Records.getNodes(result), { sideEffect })(result);
+      }
+      // fix node dates format
+      if (hasToBeFixed) {
+        Records.getNodesArray(result).forEach((node) => {
+          node.dateCreated = fixDatetime(node.dateCreated);
+          node.dateModified = fixDatetime(node.dateModified);
+        });
+        RecordFixer.insertMissingSingleNodes({
+          survey,
+          record: result,
+          sideEffect,
+        });
+      }
     }
-
-    // fix node dates format
-    Records.getNodesArray(result).forEach((node) => {
-      node.dateCreated = fixDatetime(node.dateCreated);
-      node.dateModified = fixDatetime(node.dateModified);
-    });
-
     // camelize key attribute columns
     keyColumnNames.forEach((keyCol, index) => {
       const keyValue = JSON.parse(row[keyCol]);
