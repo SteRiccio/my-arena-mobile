@@ -30,10 +30,8 @@ export const RecordEditor = () => {
   const navigation = useNavigation();
 
   const onBack = useCallback(() => {
-    console.log("===onback");
-
     dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
-    return true;
+    return true; // the event will not be bubbled up & no other back action will execute
   }, [navigation]);
 
   useBackHandler(onBack);
