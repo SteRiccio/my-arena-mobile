@@ -1,6 +1,7 @@
 export default {
-  confirmGoToListOfRecordsAndTerminateRecordEditing:
-    "Go to list of records and terminate record editing?",
+  confirmGoToListOfRecords: `Go to list of records?
+
+(all changes already saved)`,
   checkSyncStatus: "Check sync status",
   closestSamplingPoint: {
     findClosestSamplingPoint: "Find closest sampling point",

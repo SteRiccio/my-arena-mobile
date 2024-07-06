@@ -362,8 +362,7 @@ const navigateToRecordsList =
     dispatch(
       ConfirmActions.show({
         confirmButtonTextKey: "dataEntry:goToListOfRecords",
-        messageKey:
-          "dataEntry:confirmGoToListOfRecordsAndTerminateRecordEditing",
+        messageKey: "dataEntry:confirmGoToListOfRecords",
         onConfirm: () => {
           dispatch({ type: DATA_ENTRY_RESET });
           navigation.navigate(screenKeys.recordsList);

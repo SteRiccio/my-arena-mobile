@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 import MenuDrawer from "react-native-side-drawer";
 
-import { RecordEditViewMode } from "model";
 import { HView, VView, View } from "components";
+import { RecordEditViewMode } from "model";
+import { useBackHandler } from "hooks";
 import {
+  DataEntryActions,
   DataEntrySelectors,
   DeviceInfoSelectors,
   SettingsSelectors,
@@ -19,9 +23,20 @@ import { StatusBar } from "./StatusBar";
 import styles from "./styles.js";
 
 export const RecordEditor = () => {
+  const dispatch = useDispatch();
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const { showStatusBar } = SettingsSelectors.useSettings();
+  const navigation = useNavigation();
+
+  const onBack = useCallback(() => {
+    console.log("===onback");
+
+    dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
+    return true;
+  }, [navigation]);
+
+  useBackHandler(onBack);
 
   const isPhone = DeviceInfoSelectors.useIsPhone();
 
