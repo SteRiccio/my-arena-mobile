@@ -73,9 +73,9 @@ export const useSelectableList = (props) => {
       setState((statePrev) => ({ ...statePrev, ...initialState }));
     };
     if (onDeleteSelectedItemIds) {
-      onDeleteSelectedItemIds?.(selectedItemIds)
-        .then(performDelete)
-        .catch(() => {
+      onDeleteSelectedItemIds(selectedItemIds)
+        ?.then(performDelete)
+        ?.catch(() => {
           // ignore it
         });
     } else {

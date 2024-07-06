@@ -13,7 +13,7 @@ import {
 import { SurveyService } from "service";
 import { useNavigationFocus } from "hooks";
 import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
-import { ConfirmActions, SurveyActions, ScreenOptionsSelectors } from "state";
+import { SurveyActions, ScreenOptionsSelectors, useConfirm } from "state";
 import { screenKeys } from "../screenKeys";
 
 import styles from "./styles";
@@ -23,6 +23,7 @@ export const SurveysListLocal = () => {
   const dispatch = useDispatch();
   const [state, setState] = useState({ surveys: [], loading: true });
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const confirm = useConfirm();
   const { loading, surveys } = state;
 
   const dataFields = useMemo(
@@ -54,18 +55,17 @@ export const SurveysListLocal = () => {
   const { onSearchValueChange, searchValue, surveysFiltered } =
     useSurveysSearch({ surveys });
 
-  const onDeleteSelectedItemIds = useCallback((surveyIds) => {
-    dispatch(
-      ConfirmActions.show({
+  const onDeleteSelectedItemIds = useCallback(async (surveyIds) => {
+    if (
+      await confirm({
         titleKey: "surveys:confirmDeleteSurvey.title",
         messageKey: "surveys:confirmDeleteSurvey.message",
-        onConfirm: async () => {
-          await dispatch(SurveyActions.deleteSurveys(surveyIds));
-          await loadSurveys();
-        },
         swipeToConfirm: true,
       })
-    );
+    ) {
+      await dispatch(SurveyActions.deleteSurveys(surveyIds));
+      await loadSurveys();
+    }
   }, []);
 
   const onItemPress = useCallback(

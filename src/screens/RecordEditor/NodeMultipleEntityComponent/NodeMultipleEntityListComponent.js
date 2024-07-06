@@ -7,11 +7,11 @@ import { Button, DataTable, Text, VView } from "components";
 import { SurveyDefs } from "model/utils/SurveyDefs";
 import { RecordNodes } from "model/utils/RecordNodes";
 import {
-  ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
   DeviceInfoSelectors,
   SurveySelectors,
+  useConfirm,
 } from "state";
 import { useTranslation } from "localization";
 
@@ -28,6 +28,7 @@ export const NodeMultipleEntityListComponent = (props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const confirm = useConfirm();
 
   if (__DEV__) {
     console.log(
@@ -72,15 +73,10 @@ export const NodeMultipleEntityListComponent = (props) => {
     [parentEntityUuid, entityDefUuid]
   );
 
-  const onDeleteSelectedNodeUuids = useCallback((nodeUuids) => {
-    dispatch(
-      ConfirmActions.show({
-        messageKey: "Delete the selected items?",
-        onConfirm: () => {
-          dispatch(DataEntryActions.deleteNodes(nodeUuids));
-        },
-      })
-    );
+  const onDeleteSelectedNodeUuids = useCallback(async (nodeUuids) => {
+    if (await confirm({ messageKey: "Delete the selected items?" })) {
+      dispatch(DataEntryActions.deleteNodes(nodeUuids));
+    }
   }, []);
 
   const entityToRow = useCallback(
