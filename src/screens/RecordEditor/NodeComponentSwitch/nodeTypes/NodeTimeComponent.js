@@ -24,7 +24,7 @@ export const NodeTimeComponent = (props) => {
 
   const dateValue = Objects.isEmpty(value)
     ? null
-    : Dates.parse(value, DateFormats.timeStorage);
+    : Dates.parse(value, DateFormats.timeStorage, false);
 
   return (
     <TimePicker editable={editable} onChange={onChange} value={dateValue} />
