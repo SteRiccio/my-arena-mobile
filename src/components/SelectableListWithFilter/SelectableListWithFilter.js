@@ -56,7 +56,6 @@ export const SelectableListWithFilter = (props) => {
           .slice(0, maxItemsToShow);
       }
     }
-
     if (filterItems) {
       return filterItems({ items, filterInputValue });
     }
@@ -78,18 +77,17 @@ export const SelectableListWithFilter = (props) => {
 
   const updateItemsFiltered = useCallback(() => {
     const itemsFilteredNext = calculateItemsFiltered();
-    if (!Objects.isEqual(itemsFiltered, itemsFilteredNext)) {
-      setState((statePrev) => ({
-        ...statePrev,
-        loading: false,
-        itemsFiltered: itemsFilteredNext,
-      }));
-    } else if (debounceFiltering) {
-      setState((statePrev) => ({
-        ...statePrev,
-        loading: false,
-      }));
-    }
+    setState((statePrev) => {
+      const { itemsFiltered } = statePrev;
+      if (!Objects.isEqual(itemsFiltered, itemsFilteredNext)) {
+        return {
+          ...statePrev,
+          loading: false,
+          itemsFiltered: itemsFilteredNext,
+        };
+      }
+      return debounceFiltering ? { ...statePrev, loading: false } : statePrev;
+    });
   }, [calculateItemsFiltered, debounceFiltering]);
 
   const updateItemsFilteredDebouced = useMemo(
@@ -101,17 +99,24 @@ export const SelectableListWithFilter = (props) => {
     (text) => {
       inputValueRef.current = text;
       if (debounceFiltering) {
-        setState((statePrev) => ({
-          ...statePrev,
-          loading: true,
-          itemsFiltered: [],
-        }));
+        if (!loading) {
+          setState((statePrev) => ({
+            ...statePrev,
+            loading: true,
+            itemsFiltered: [],
+          }));
+        }
         updateItemsFilteredDebouced();
       } else {
         updateItemsFiltered();
       }
     },
-    [debounceFiltering, updateItemsFiltered]
+    [
+      debounceFiltering,
+      loading,
+      updateItemsFiltered,
+      updateItemsFilteredDebouced,
+    ]
   );
 
   const _onSelectedItemsChange = useCallback(
