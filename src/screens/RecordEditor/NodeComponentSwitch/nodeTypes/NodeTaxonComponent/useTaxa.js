@@ -1,5 +1,11 @@
 import { useMemo } from "react";
 
+const calculateVernacularNamesCount = (taxon) =>
+  Object.values(taxon.vernacularNames).reduce(
+    (acc, vernacularNamesArray) => acc + vernacularNamesArray.length,
+    0
+  );
+
 export const useTaxa = ({ survey, taxonomyUuid }) => {
   const taxa = useMemo(() => {
     const allTaxa = Object.values(survey.refData?.taxonIndex || {});
@@ -7,7 +13,11 @@ export const useTaxa = ({ survey, taxonomyUuid }) => {
       if (taxon.taxonomyUuid !== taxonomyUuid) {
         return acc;
       }
-      acc.push(taxon);
+      const taxonItem = {
+        ...taxon,
+        vernacularNamesCount: calculateVernacularNamesCount(taxon),
+      };
+      acc.push(taxonItem);
       const vernacularNamesByLang = taxon.vernacularNames;
       const vernacularNamesArray = Object.values(vernacularNamesByLang);
       if (vernacularNamesArray.length > 0) {
@@ -16,7 +26,7 @@ export const useTaxa = ({ survey, taxonomyUuid }) => {
             const { name: vernacularName, lang: vernacularNameLangCode } =
               vernacularNameObj.props;
             acc.push({
-              ...taxon,
+              ...taxonItem,
               vernacularName,
               vernacularNameLangCode,
               vernacularNameUuid: vernacularNameObj.uuid,
