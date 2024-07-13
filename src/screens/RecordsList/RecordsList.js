@@ -19,7 +19,12 @@ import {
 } from "components";
 import { useIsNetworkConnected, useNavigationFocus, useToast } from "hooks";
 import { useTranslation } from "localization";
-import { Cycles, RecordOrigin, RecordSyncStatus } from "model";
+import {
+  Cycles,
+  RecordOrigin,
+  RecordSyncStatus,
+  RecordUpdateConflictResolutionStrategy as ConflictResolutionStrategy,
+} from "model";
 import { RecordService } from "service";
 import {
   DataEntryActions,
@@ -153,25 +158,73 @@ export const RecordsList = () => {
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };
 
-  const onExportNewOrUpdatedRecordsPress = useCallback(() => {
-    const recordUuids = records
-      .filter((record) =>
-        [RecordSyncStatus.new, RecordSyncStatus.modifiedLocally].includes(
-          record.syncStatus
-        )
-      )
-      .map((record) => record.uuid);
-    if (recordUuids.length === 0) {
+  const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
+    const getRecordsByStatus = (status) =>
+      records.filter((r) => r.syncStatus === status);
+    const newRecords = getRecordsByStatus(RecordSyncStatus.new);
+    const newRecordsCount = newRecords.length;
+
+    const updatedRecords = getRecordsByStatus(RecordSyncStatus.modifiedLocally);
+    const updatedRecordsCount = updatedRecords.length;
+
+    const conflictingRecords = getRecordsByStatus(
+      RecordSyncStatus.conflictingKeys
+    );
+    const conflictingRecordsCount = conflictingRecords.length;
+    if (newRecordsCount + updatedRecordsCount + conflictingRecordsCount === 0) {
       toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
       return;
     }
-    dispatch(
-      DataEntryActions.exportRecords({
-        cycle,
-        recordUuids,
-        onJobComplete: loadRecordsWithSyncStatus,
-      })
-    );
+    const confirmSingleChoiceOptions =
+      conflictingRecordsCount > 0
+        ? [
+            {
+              value: ConflictResolutionStrategy.overwriteIfUpdated,
+              label: "dataEntry:exportData.onlyNewOrUpdatedRecords",
+            },
+            {
+              value: ConflictResolutionStrategy.merge,
+              label: "dataEntry:exportData.mergeConflictingRecords",
+            },
+          ]
+        : [];
+    const confirmResult = await confirm({
+      titleKey: "dataEntry:exportData.confirm.title",
+      messageKey: "dataEntry:exportData.confirm.message",
+      messageParams: {
+        newRecordsCount,
+        updatedRecordsCount,
+        conflictingRecordsCount,
+      },
+      confirmButtonTextKey: "dataEntry:exportData.title",
+      singleChoiceOptions: confirmSingleChoiceOptions,
+      defaultSingleChoiceValue: confirmSingleChoiceOptions[0]?.value,
+    });
+    if (confirmResult) {
+      const recordsToExport = [...newRecords, ...updatedRecords];
+      let conflictResolutionStrategy =
+        ConflictResolutionStrategy.overwriteIfUpdated;
+      if (
+        confirmResult.selectedSingleChoiceValue ===
+        ConflictResolutionStrategy.merge
+      ) {
+        recordsToExport.push(...conflictingRecords);
+        conflictResolutionStrategy = ConflictResolutionStrategy.merge;
+      }
+      const recordUuids = recordsToExport.map((r) => r.uuid);
+      if (recordUuids.length === 0) {
+        toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
+        return;
+      }
+      dispatch(
+        DataEntryActions.exportRecords({
+          cycle,
+          recordUuids,
+          conflictResolutionStrategy,
+          onJobComplete: loadRecordsWithSyncStatus,
+        })
+      );
+    }
   }, [cycle, loadRecordsWithSyncStatus, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
@@ -184,11 +237,7 @@ export const RecordsList = () => {
       return;
     }
     dispatch(
-      DataEntryActions.exportRecords({
-        cycle,
-        recordUuids,
-        onlyLocally: true,
-      })
+      DataEntryActions.exportRecords({ cycle, recordUuids, onlyLocally: true })
     );
   }, [cycle, records]);
 

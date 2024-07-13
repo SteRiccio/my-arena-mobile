@@ -118,6 +118,7 @@ export const RecordsDataVisualizer = (props) => {
         dateModifiedRemote: formatDateToDateTimeDisplay(
           recordSummary.dateModifiedRemote
         ),
+        dateSynced: formatDateToDateTimeDisplay(recordSummary.dateSynced),
       };
     },
     [lang, survey]
@@ -184,6 +185,15 @@ export const RecordsDataVisualizer = (props) => {
               cellRenderer: syncStatusLoading
                 ? LoadingIcon
                 : RecordSyncStatusIcon,
+            },
+          ]
+        : []),
+      ...(syncStatusFetched && screenViewMode === ScreenViewMode.list
+        ? [
+            {
+              key: "dateSynced",
+              header: "dataEntry:syncedOn",
+              style: { minWidth: 50 },
             },
           ]
         : []),

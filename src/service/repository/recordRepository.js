@@ -80,7 +80,7 @@ const fetchRecord = async ({ survey, recordId }) => {
 
 const fetchRecords = async ({ survey, cycle = null, onlyLocal = true }) => {
   const { id: surveyId } = survey;
-  const whereConditions = ["survey_id = ?"];
+  const whereConditions = ["merged_into_record_uuid IS NULL", "survey_id = ?"];
   const queryParams = [surveyId];
 
   if (!Objects.isEmpty(cycle)) {
@@ -184,15 +184,15 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   const loadStatus = RecordLoadStatus.summary;
   const origin = RecordOrigin.remote;
   const insertedIds = [];
-  await dbClient.transaction((tx) => {
-    recordSummaries.forEach((recordSummary) => {
+  await dbClient.transaction(async (tx) => {
+    for await (const recordSummary of recordSummaries) {
       const { dateCreated, dateModified, ownerUuid, ownerName, uuid } =
         recordSummary;
       const keyColumnsValues = extractRemoteRecordSummaryKeyColumnsValues({
         survey,
         recordSummary,
       });
-      tx.executeSql(
+      await tx.executeSql(
         `INSERT INTO record (${insertColumnsJoint})
         VALUES (${getPlaceholders(insertColumns.length)})`,
         [
@@ -217,7 +217,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
           throw error;
         }
       );
-    });
+    }
   });
   return insertedIds;
 };
@@ -307,6 +307,21 @@ const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
   return dbClient.executeSql(sql, [Dates.nowFormattedForStorage(), surveyId]);
 };
 
+const updateRecordsMergedInto = async ({ surveyId, mergedRecordsMap }) => {
+  for await (const [uuid, mergedIntoRecordUuid] of Object.entries(
+    mergedRecordsMap
+  ))
+    await dbClient.transaction(async (tx) => {
+      await tx.executeSql(
+        `UPDATE record 
+         SET merged_into_record_uuid = ? 
+         WHERE survey_id =? 
+           AND uuid = ?`,
+        [mergedIntoRecordUuid, surveyId, uuid]
+      );
+    });
+};
+
 const fixRecordCycle = async ({ survey, recordId }) => {
   const record = await fetchRecord({ survey, recordId });
   const { cycle = Surveys.getDefaultCycleKey(survey) } = record;
@@ -354,6 +369,7 @@ const rowToRecord =
     result.dateModified = fixDatetime(result.dateModified);
     result.dateCreated = fixDatetime(result.dateCreated);
     result.dateModifiedRemote = fixDatetime(result.dateModifiedRemote);
+    result.dateSynced = fixDatetime(result.dateSynced);
 
     if (hasContent) {
       if (!result._nodesIndex) {
@@ -402,6 +418,7 @@ export const RecordRepository = {
   updateRecordWithContentFetchedRemotely,
   updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely,
   updateRecordsDateSync,
+  updateRecordsMergedInto,
   fixRecordCycle,
   deleteRecords,
 };
