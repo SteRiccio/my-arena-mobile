@@ -18,6 +18,9 @@ const arrowUpRed = require("../../../../../../assets/arrow_up_red.png");
 const circleGreen = require("../../../../../../assets/circle_green.png");
 
 const arrowToTargetVisibleDistanceThreshold = 30;
+const Symbols = {
+  degree: "\u00b0",
+};
 
 const { height, width } = Dimensions.get("window");
 
@@ -44,11 +47,15 @@ const calculateAngleBetweenPoints = (point1, point2) => {
   return radsToDegrees(angleRads);
 };
 
-const formatNumber = (num, decimals = 2) =>
-  Objects.isEmpty(num) ? "-" : num.toFixed(decimals);
+const formatNumber = (num, decimals = 2, unit = "") =>
+  Objects.isEmpty(num) ? "-" : num.toFixed(decimals) + unit;
 
 export const LocationNavigator = (props) => {
   const { targetPoint, onDismiss, onUseCurrentLocation } = props;
+
+  if (__DEV__) {
+    console.log(`rendering LocationNavigator`);
+  }
 
   const theme = useTheme();
 
@@ -69,6 +76,9 @@ export const LocationNavigator = (props) => {
 
   const locationCallback = useCallback(
     ({ location, locationAccuracy, pointLatLong }) => {
+      if (__DEV__) {
+        console.log(`LocationNavigator location callback`, location);
+      }
       if (!location) return;
       const angleToTargetNew = calculateAngleBetweenPoints(
         pointLatLong,
@@ -209,24 +219,25 @@ export const LocationNavigator = (props) => {
 
           <HView style={{ justifyContent: "space-between" }}>
             <FormItem labelKey="dataEntry:coordinate.accuracy">
-              {formatNumber(accuracy)}m
+              {formatNumber(accuracy, undefined, "m")}
             </FormItem>
             <FormItem labelKey="dataEntry:coordinate.distance">
-              {formatNumber(distance)}m
+              {formatNumber(distance, undefined, "m")}
             </FormItem>
           </HView>
           <HView style={{ justifyContent: "space-between" }}>
             <FormItem labelKey="dataEntry:coordinate.heading">
-              {formatNumber(heading, 0)}&deg;
+              {formatNumber(heading, 0, Symbols.degree)}
             </FormItem>
             <FormItem labelKey="dataEntry:coordinate.angleToTargetLocation">
-              {formatNumber(angleToTarget, 0)}
-              &deg;
+              {formatNumber(angleToTarget, 0, Symbols.degree)}
             </FormItem>
           </HView>
           <FormItem labelKey="dataEntry:coordinate.currentLocation">
-            {formatNumber(currentLocationX, 5)},
-            {formatNumber(currentLocationY, 5)}
+            {`${formatNumber(currentLocationX, 5)}, ${formatNumber(
+              currentLocationY,
+              5
+            )}`}
           </FormItem>
         </VView>
         <HView style={styles.bottomBar}>
