@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { Arrays } from "@openforis/arena-core";
+
 import { ConfirmActions } from "./reducer";
 
 const defaultLocalState = {
@@ -34,6 +36,20 @@ export const useConfirmDialog = () => {
     dispatch(ConfirmActions.cancel());
   }, [dispatch]);
 
+  const onMultipleChoiceOptionChange = useCallback((value) => {
+    setState((statePrev) => {
+      const prevSelection = statePrev.selectedMultipleChoiceValues ?? [];
+      const nextChecked = !prevSelection.includes(value);
+      const nextSelection = nextChecked
+        ? Arrays.addItem(value)(prevSelection)
+        : Arrays.removeItem(value)(prevSelection);
+      return {
+        ...statePrev,
+        selectedMultipleChoiceValues: nextSelection,
+      };
+    });
+  }, []);
+
   const onSingleChoiceOptionChange = useCallback((value) => {
     setState((statePrev) => ({
       ...statePrev,
@@ -53,6 +69,7 @@ export const useConfirmDialog = () => {
     confirm,
     cancel,
 
+    onMultipleChoiceOptionChange,
     onSingleChoiceOptionChange,
     selectedSingleChoiceValue,
     setSwipeConfirmed,

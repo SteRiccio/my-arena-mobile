@@ -52,24 +52,14 @@ export const AppConfirmDialog = () => {
           />
           {multipleChoiceOptions?.length > 0 && (
             <VView transparent>
-              {multipleChoiceOptions.map((option) => {
-                const checked = selectedMultipleChoiceValues?.includes?.(
-                  option.value
-                );
-                return (
-                  <Checkbox
-                    key={option.value}
-                    checked={checked}
-                    label={t(option.label)}
-                    onPress={() =>
-                      onMultipleChoiceOptionChange({
-                        value: option.value,
-                        checked: !checked,
-                      })
-                    }
-                  />
-                );
-              })}
+              {multipleChoiceOptions.map((option) => (
+                <Checkbox
+                  key={option.value}
+                  checked={selectedMultipleChoiceValues?.includes(option.value)}
+                  label={t(option.label)}
+                  onPress={() => onMultipleChoiceOptionChange(option.value)}
+                />
+              ))}
             </VView>
           )}
           {singleChoiceOptions?.length > 0 && (
