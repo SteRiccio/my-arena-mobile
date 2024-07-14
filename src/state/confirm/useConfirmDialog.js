@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ConfirmActions } from "./reducer";
 
 const defaultLocalState = {
+  selectedMultipleChoiceValues: [],
   selectedSingleChoiceValue: null,
   swipeConfirmed: false,
 };
@@ -20,6 +21,7 @@ export const useConfirmDialog = () => {
   useEffect(() => {
     setState({
       ...defaultLocalState,
+      selectedMultipleChoiceValues: confirmState.defaultMultipleChoiceValues,
       selectedSingleChoiceValue: confirmState.defaultSingleChoiceValue,
     });
   }, [confirmState]);

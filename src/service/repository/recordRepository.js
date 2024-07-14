@@ -257,7 +257,8 @@ const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
 const updateRecordKeysAndContent = async ({
   survey,
   record,
-  remote = false,
+  updateOrigin = false,
+  origin = RecordOrigin.local,
 }) => {
   const keyColumnsSet = keyColumnNames
     .map((keyCol) => `${keyCol} = ?`)
@@ -269,7 +270,7 @@ const updateRecordKeysAndContent = async ({
       content = ?, 
       ${dateModifiedColumn} = ?, 
       load_status = ?, 
-      origin = ?,
+      ${updateOrigin ? "origin = ?" : ""},
       date_synced = ?,
       ${keyColumnsSet} 
     WHERE survey_id = ? AND uuid = ?`,
@@ -277,7 +278,7 @@ const updateRecordKeysAndContent = async ({
       JSON.stringify(record),
       record.dateModified || Date.now(),
       RecordLoadStatus.complete,
-      remote ? RecordOrigin.remote : RecordOrigin.local,
+      ...(updateOrigin ? [origin] : []),
       Dates.nowFormattedForStorage(),
       ...keyColumnsValues,
       survey.id,
@@ -297,7 +298,12 @@ const updateRecord = async ({ survey, record }) => {
 };
 
 const updateRecordWithContentFetchedRemotely = async ({ survey, record }) =>
-  updateRecordKeysAndContent({ survey, record, remote: true });
+  updateRecordKeysAndContent({
+    survey,
+    record,
+    updateOrigin: true,
+    origin: RecordOrigin.remote,
+  });
 
 const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
   const sql = `UPDATE record 

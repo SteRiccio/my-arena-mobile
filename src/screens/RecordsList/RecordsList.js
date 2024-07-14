@@ -171,6 +171,7 @@ export const RecordsList = () => {
       RecordSyncStatus.conflictingKeys
     );
     const conflictingRecordsCount = conflictingRecords.length;
+
     if (newRecordsCount + updatedRecordsCount + conflictingRecordsCount === 0) {
       toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
       return;

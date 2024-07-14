@@ -4,7 +4,14 @@ import SwipeButton from "rn-swipe-button";
 
 import { useConfirmDialog } from "state/confirm/useConfirmDialog";
 
-import { Button, RadioButton, RadioButtonGroup, Text, VView } from "components";
+import {
+  Button,
+  Checkbox,
+  RadioButton,
+  RadioButtonGroup,
+  Text,
+  VView,
+} from "components";
 import { useTranslation } from "localization";
 
 export const AppConfirmDialog = () => {
@@ -18,7 +25,10 @@ export const AppConfirmDialog = () => {
     confirmButtonTextKey,
     messageKey,
     messageParams,
+    onMultipleChoiceOptionChange,
     onSingleChoiceOptionChange,
+    multipleChoiceOptions,
+    selectedMultipleChoiceValues,
     selectedSingleChoiceValue,
     setSwipeConfirmed,
     singleChoiceOptions,
@@ -40,6 +50,28 @@ export const AppConfirmDialog = () => {
             textKey={messageKey}
             textParams={messageParams}
           />
+          {multipleChoiceOptions?.length > 0 && (
+            <VView transparent>
+              {multipleChoiceOptions.map((option) => {
+                const checked = selectedMultipleChoiceValues?.includes?.(
+                  option.value
+                );
+                return (
+                  <Checkbox
+                    key={option.value}
+                    checked={checked}
+                    label={t(option.label)}
+                    onPress={() =>
+                      onMultipleChoiceOptionChange({
+                        value: option.value,
+                        checked: !checked,
+                      })
+                    }
+                  />
+                );
+              })}
+            </VView>
+          )}
           {singleChoiceOptions?.length > 0 && (
             <RadioButtonGroup
               onValueChange={onSingleChoiceOptionChange}
