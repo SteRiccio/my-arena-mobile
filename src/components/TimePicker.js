@@ -10,6 +10,9 @@ import { TextInput } from "./TextInput";
 export const TimePicker = (props) => {
   const { value, onChange: onChangeProp } = props;
 
+  const valueFormattedForStorage = Dates.format(value, DateFormats.timeStorage);
+  const dateTimePickerValue = value ?? new Date();
+
   const [show, setShow] = useState(false);
 
   const onChange = (_event, selectedDate) => {
@@ -28,7 +31,7 @@ export const TimePicker = (props) => {
         nonEditableStyleVisible={false}
         onPressIn={showTimePicker}
         style={{ width: 100 }}
-        value={Dates.format(value, DateFormats.timeStorage)}
+        value={valueFormattedForStorage}
       />
       <IconButton icon="clock" onPress={showTimePicker} />
       {show && (
@@ -36,7 +39,7 @@ export const TimePicker = (props) => {
           is24Hour
           mode="time"
           onChange={onChange}
-          value={value || new Date()}
+          value={dateTimePickerValue}
         />
       )}
     </HView>
