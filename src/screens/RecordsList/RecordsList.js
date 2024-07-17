@@ -158,7 +158,7 @@ export const RecordsList = () => {
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };
 
-  const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
+  const confirmExportRecords = useCallback(async ({ records }) => {
     const getRecordsByStatus = (status) =>
       records.filter((r) => r.syncStatus === status);
     const newRecords = getRecordsByStatus(RecordSyncStatus.new);
@@ -174,7 +174,7 @@ export const RecordsList = () => {
 
     if (newRecordsCount + updatedRecordsCount + conflictingRecordsCount === 0) {
       toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
-      return;
+      return { confirmResult: false };
     }
     const confirmSingleChoiceOptions =
       conflictingRecordsCount > 0
@@ -201,8 +201,15 @@ export const RecordsList = () => {
       singleChoiceOptions: confirmSingleChoiceOptions,
       defaultSingleChoiceValue: confirmSingleChoiceOptions[0]?.value,
     });
+    return { newRecords, updatedRecords, conflictingRecords, confirmResult };
+  }, []);
+
+  const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
+    const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
+      await confirmExportRecords({ records });
     if (confirmResult) {
       const recordsToExport = [...newRecords, ...updatedRecords];
+
       let conflictResolutionStrategy =
         ConflictResolutionStrategy.overwriteIfUpdated;
       if (
@@ -291,12 +298,11 @@ export const RecordsList = () => {
         recordSummary,
         t,
       });
-      return Object.values(valuesByKey).some((value) =>
-        Objects.isEmpty(value)
-          ? false
-          : String(value)
-              .toLocaleLowerCase()
-              .includes(searchValue.toLocaleLowerCase())
+      const searchValueLowerCase = searchValue.toLocaleLowerCase();
+      return Object.values(valuesByKey).some(
+        (value) =>
+          !Objects.isEmpty(value) &&
+          String(value).toLocaleLowerCase().includes(searchValueLowerCase)
       );
     });
   }, [survey, lang, records, searchValue]);
@@ -373,6 +379,7 @@ export const RecordsList = () => {
             items={[
               {
                 key: "checkSyncStatus",
+                keepMenuOpenOnPress: true,
                 label: "dataEntry:checkSyncStatus",
                 disabled: !networkAvailable,
                 onPress: loadRecordsWithSyncStatus,
