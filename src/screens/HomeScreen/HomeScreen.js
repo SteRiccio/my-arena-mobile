@@ -17,7 +17,7 @@ import styles from "./styles";
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
-  const [logo] = useAssets(require("../../../assets/icon.png"));
+  const [logo] = useAssets(require("../../../assets/icon_transparent.png"));
 
   const surveySelected = !!survey;
 
