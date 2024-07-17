@@ -264,7 +264,9 @@ const updateRecordKeysAndContent = async ({
     .map((keyCol) => `${keyCol} = ?`)
     .join(", ");
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
-  const dateModifiedColumn = remote ? "date_modified_remote" : "date_modified";
+  const dateModifiedColumn =
+    origin === RecordOrigin.remote ? "date_modified_remote" : "date_modified";
+
   return dbClient.executeSql(
     `UPDATE record SET 
       content = ?, 

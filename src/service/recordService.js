@@ -33,16 +33,12 @@ const {
 } = RecordRemoteService;
 
 const fetchRecordsSummariesRemote = async ({ surveyRemoteId, cycle }) => {
-  try {
-    const { data } = await RemoteService.get(
-      `api/survey/${surveyRemoteId}/records/summary`,
-      { cycle }
-    );
-    const { list } = data;
-    return list;
-  } catch (error) {
-    return RemoteService.handleError({ error });
-  }
+  const { data } = await RemoteService.get(
+    `api/survey/${surveyRemoteId}/records/summary`,
+    { cycle }
+  );
+  const { list } = data;
+  return list;
 };
 
 const toDate = (dateStr) => (dateStr ? new Date(dateStr) : null);

@@ -18,10 +18,7 @@ const fetchWithTimeout = async (url, opts = {}, timeout = 120000) => {
   const signal = controller.signal;
   const abortTimeoutId = setTimeout(() => controller.abort(), timeout);
 
-  const result = await fetch(url, {
-    ...options,
-    signal,
-  });
+  const result = await fetch(url, { ...options, signal });
 
   clearTimeout(abortTimeoutId);
 
@@ -49,6 +46,8 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
   const response = await _sendGet(serverUrl, uri, params, options);
 
   const data = await response.json();
+
+  if (!data.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
   return { data };
 };
