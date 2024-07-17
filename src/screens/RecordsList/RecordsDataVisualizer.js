@@ -17,6 +17,7 @@ import {
   RecordLoadStatus,
   RecordOrigin,
   ScreenViewMode,
+  SortDirection,
   SurveyDefs,
 } from "model";
 import {
@@ -24,6 +25,7 @@ import {
   ScreenOptionsSelectors,
   SurveySelectors,
 } from "state";
+import { ArrayUtils } from "utils";
 
 import { RecordSyncStatusIcon } from "./RecordSyncStatusIcon";
 import { RecordsUtils } from "./RecordsUtils";
@@ -90,6 +92,7 @@ export const RecordsDataVisualizer = (props) => {
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
+  const [sort, setSort] = useState({ dateModified: SortDirection.desc });
 
   // reset selected record uuids on records change
   useEffect(() => {
@@ -124,10 +127,13 @@ export const RecordsDataVisualizer = (props) => {
     [lang, survey]
   );
 
-  const recordItems = useMemo(
-    () => records.map(recordToItem),
-    [records, recordToItem]
-  );
+  const recordItems = useMemo(() => {
+    const items = records.map(recordToItem);
+    if (!Objects.isEmpty(sort)) {
+      ArrayUtils.sortByProps(sort)(items);
+    }
+    return items;
+  }, [records, recordToItem, sort]);
 
   const onItemPress = useCallback((recordSummary) => {
     dispatch(
@@ -140,10 +146,12 @@ export const RecordsDataVisualizer = (props) => {
       ...rootDefKeys.map((keyDef) => ({
         key: Objects.camelize(NodeDefs.getName(keyDef)),
         header: NodeDefs.getLabelOrName(keyDef, lang),
+        sortable: true,
       })),
       {
         key: "dateModified",
         header: "common:modifiedOn",
+        sortable: true,
         style: { minWidth: 50 },
       },
       ...(showRemoteProps
@@ -215,6 +223,10 @@ export const RecordsDataVisualizer = (props) => {
     onImportSelectedRecordUuids(selectedRecordUuids);
   }, [selectedRecordUuids, onImportSelectedRecordUuids]);
 
+  const onSortChange = useCallback((sortNext) => {
+    setSort(sortNext);
+  }, []);
+
   return (
     <DataVisualizer
       fields={fields}
@@ -223,6 +235,7 @@ export const RecordsDataVisualizer = (props) => {
       onItemPress={onItemPress}
       onDeleteSelectedItemIds={onDeleteSelectedRecordUuids}
       onSelectionChange={onSelectionChange}
+      onSortChange={onSortChange}
       selectable
       selectedItemIds={selectedRecordUuids}
       selectedItemsCustomActions={[
@@ -231,6 +244,7 @@ export const RecordsDataVisualizer = (props) => {
           onPress: onImportSelectedItems,
         },
       ]}
+      sort={sort}
     />
   );
 };

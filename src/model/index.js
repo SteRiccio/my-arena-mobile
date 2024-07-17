@@ -9,6 +9,7 @@ export { RecordSyncStatus } from "./RecordSyncStatus";
 export { RecordUpdateConflictResolutionStrategy } from "./RecordUpdateConflictResolutionStrategy";
 export { ScreenOrientation } from "./ScreenOrientation";
 export { ScreenViewMode } from "./ScreenViewMode";
+export { SortDirection } from "./Sort";
 export { Taxa } from "./Taxa";
 export { Themes, ThemesSettings } from "./Themes";
 export { UpdateStatus } from "./UpdateStatus";
