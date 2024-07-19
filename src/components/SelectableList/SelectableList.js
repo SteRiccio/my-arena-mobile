@@ -32,14 +32,14 @@ ListItemIcon.propTypes = {
 
 export const SelectableList = (props) => {
   const {
-    editable,
+    editable = true,
     itemKeyExtractor,
-    itemLabelExtractor,
-    itemDescriptionExtractor,
+    itemLabelExtractor = () => null,
+    itemDescriptionExtractor = () => null,
     items,
-    multiple,
+    multiple = false,
     onChange,
-    selectedItems,
+    selectedItems = [],
     style,
   } = props;
 
@@ -113,12 +113,4 @@ SelectableList.propTypes = {
   onChange: PropTypes.func,
   selectedItems: PropTypes.array,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-};
-
-SelectableList.defaultProps = {
-  editable: true,
-  itemLabelExtractor: () => null,
-  itemDescriptionExtractor: () => null,
-  multiple: false,
-  selectedItems: [],
 };

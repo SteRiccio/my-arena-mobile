@@ -8,9 +8,9 @@ import { Text } from "./Text";
 export const FormItem = ({
   children,
   labelKey,
-  labelVariant,
+  labelVariant = "labelLarge",
   style,
-  textVariant,
+  textVariant = "bodyLarge",
 }) => {
   const { t } = useTranslation();
   const label = `${t(labelKey)}:`;
@@ -34,9 +34,4 @@ FormItem.propTypes = {
   labelVariant: PropTypes.string,
   style: PropTypes.object,
   textVariant: PropTypes.string,
-};
-
-FormItem.defaultProps = {
-  labelVariant: "labelLarge",
-  textVariant: "bodyLarge",
 };

@@ -3,8 +3,8 @@ import { Animated } from "react-native";
 
 export const Fade = (props) => {
   const {
-    duration,
-    visible: visibleProp,
+    duration = 500,
+    visible: visibleProp = true,
     style,
     children,
     ...otherProps
@@ -50,9 +50,4 @@ export const Fade = (props) => {
       {childrenVisible ? children : null}
     </Animated.View>
   );
-};
-
-Fade.defaultProps = {
-  duration: 500,
-  visible: true,
 };

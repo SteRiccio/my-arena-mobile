@@ -5,7 +5,13 @@ import { useTranslation } from "localization";
 import { Button } from "../Button";
 
 export const Dialog = (props) => {
-  const { children, closeButtonTextKey, onClose, style, title } = props;
+  const {
+    children,
+    closeButtonTextKey = "common:close",
+    onClose,
+    style,
+    title,
+  } = props;
 
   const { t } = useTranslation();
   return (
@@ -27,8 +33,4 @@ Dialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   style: PropTypes.object,
   title: PropTypes.string.isRequired,
-};
-
-Dialog.defaultProps = {
-  closeButtonTextKey: "common:close",
 };

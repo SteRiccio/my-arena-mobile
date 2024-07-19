@@ -6,9 +6,9 @@ import PropTypes from "prop-types";
 export const View = (props) => {
   const {
     children,
-    fullWidth,
-    style: styleProp,
-    transparent,
+    fullWidth = false,
+    style: styleProp = {},
+    transparent = false,
     ...otherProps
   } = props;
 
@@ -32,10 +32,4 @@ View.propTypes = {
   fullWidth: PropTypes.bool,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   transparent: PropTypes.bool,
-};
-
-View.defaultProps = {
-  fullWidth: false,
-  style: {},
-  transparent: false,
 };

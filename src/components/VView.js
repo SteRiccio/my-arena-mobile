@@ -3,7 +3,7 @@ import React from "react";
 import { View } from "./View";
 
 export const VView = (props) => {
-  const { children, style, ...otherProps } = props;
+  const { children, style = {}, ...otherProps } = props;
 
   return (
     <View
@@ -13,8 +13,4 @@ export const VView = (props) => {
       {children}
     </View>
   );
-};
-
-VView.defaultProps = {
-  style: {},
 };

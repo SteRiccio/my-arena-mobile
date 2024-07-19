@@ -3,7 +3,7 @@ import React from "react";
 import { View } from "./View";
 
 export const HView = (props) => {
-  const { children, style: styleProp, ...otherProps } = props;
+  const { children, style: styleProp = {}, ...otherProps } = props;
 
   const style = [
     {
@@ -19,9 +19,4 @@ export const HView = (props) => {
       {children}
     </View>
   );
-};
-
-HView.defaultProps = {
-  fullWidth: false,
-  style: {},
 };

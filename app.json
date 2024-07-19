@@ -14,7 +14,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -42,6 +44,9 @@
       "eas": {
         "projectId": "012cdbda-2ceb-4767-923c-f7be51666f1d"
       }
-    }
+    },
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }

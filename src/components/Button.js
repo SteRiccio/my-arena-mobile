@@ -8,6 +8,7 @@ export const Button = (props) => {
   const {
     children,
     loading,
+    mode = "contained",
     onPress: onPressProp,
     textKey,
     textParams,
@@ -27,7 +28,7 @@ export const Button = (props) => {
   );
 
   return (
-    <RNButton loading={loading} onPress={onPress} {...otherProps}>
+    <RNButton loading={loading} mode={mode} onPress={onPress} {...otherProps}>
       {text}
       {children}
     </RNButton>
@@ -47,8 +48,4 @@ Button.propTypes = {
   onPress: PropTypes.func,
   textKey: PropTypes.string,
   textParams: PropTypes.object,
-};
-
-Button.defaultProps = {
-  mode: "contained",
 };

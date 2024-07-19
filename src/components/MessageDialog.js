@@ -15,10 +15,10 @@ export const MessageDialog = (props) => {
     contentParams,
     details,
     detailsParams,
-    doneButtonLabel,
+    doneButtonLabel = "common:done",
     onDismiss,
     onDone,
-    title,
+    title = "common:info",
   } = props;
 
   const { t } = useTranslation();
@@ -60,9 +60,4 @@ MessageDialog.propTypes = {
   onDismiss: PropTypes.func,
   onDone: PropTypes.func,
   title: PropTypes.string,
-};
-
-MessageDialog.defaultProps = {
-  doneButtonLabel: "common:done",
-  title: "common:info",
 };

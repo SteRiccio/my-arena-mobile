@@ -9,16 +9,16 @@ import { NodeEditDialogInternal } from "../NodeEditDialogInternal";
 
 export const NodeCodeEditDialog = (props) => {
   const {
-    editable,
+    editable = true,
     itemLabelFunction,
-    items,
+    items = [],
     nodeDef,
     onDismiss,
     onItemAdd,
     onItemRemove,
     onSingleValueChange: onSingleValueChangeProp,
     parentNodeUuid,
-    selectedItems,
+    selectedItems = [],
   } = props;
 
   const multiple = NodeDefs.isMultiple(nodeDef);
@@ -64,10 +64,4 @@ NodeCodeEditDialog.propTypes = {
   onSingleValueChange: PropTypes.func.isRequired,
   parentNodeUuid: PropTypes.string,
   selectedItems: PropTypes.array,
-};
-
-NodeCodeEditDialog.defaultProps = {
-  editable: true,
-  items: [],
-  selectedItems: [],
 };
