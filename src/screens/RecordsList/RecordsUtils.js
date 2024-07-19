@@ -15,12 +15,11 @@ const getValuesByKeyFormatted = ({ survey, lang, recordSummary, t = null }) => {
       lang,
     });
     if (Objects.isEmpty(valueFormatted)) {
-      if (t) {
-        valueFormatted = Objects.isEmpty(value)
-          ? t("common:empty")
-          : String(value);
+      if (Objects.isEmpty(value)) {
+        valueFormatted = t ? t("common:empty") : null;
+      } else {
+        valueFormatted = String(value);
       }
-      valueFormatted = Objects.isEmpty(value) ? null : String(value);
     }
     acc[recordKeyProp] = valueFormatted;
     return acc;

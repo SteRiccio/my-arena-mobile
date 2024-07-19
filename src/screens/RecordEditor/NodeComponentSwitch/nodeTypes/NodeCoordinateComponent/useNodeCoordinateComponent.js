@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import {
   NodeDefs,
@@ -58,7 +58,6 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
 export const useNodeCoordinateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  const dispatch = useDispatch();
   const confirm = useConfirm();
   const survey = SurveySelectors.useCurrentSurvey();
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();

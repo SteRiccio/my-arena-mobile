@@ -118,15 +118,17 @@ export const NodeTaxonAutocomplete = (props) => {
     let _unlistedTaxon = null;
     let _unknownTaxon = null;
 
-    taxa.forEach((taxon) => {
-      if (!_unlistedTaxon && taxon.props.code === Taxa.unlistedCode) {
+    taxa.some((taxon) => {
+      const taxonCode = taxon.props.code;
+      if (!_unlistedTaxon && taxonCode === Taxa.unlistedCode) {
         _unlistedTaxon = taxon;
-      } else if (!_unknownTaxon && taxon.props.code === Taxa.unknownCode) {
+      } else if (!_unknownTaxon && taxonCode === Taxa.unknownCode) {
         _unknownTaxon = taxon;
       }
+      return !!_unlistedTaxon && !!_unknownTaxon;
     });
     return { unknownTaxon: _unknownTaxon, unlistedTaxon: _unlistedTaxon };
-  });
+  }, [taxa]);
 
   const onSelectedItemsChange = useCallback(
     (selection, inputValue) => {
