@@ -71,8 +71,8 @@ export const SurveysListRemote = () => {
     if (errorKey) {
       dispatch(
         ConfirmActions.show({
-          titleKey: "Error",
-          confirmButtonTextKey: "Login",
+          titleKey: "error",
+          confirmButtonTextKey: "loginInfo:login",
           messageKey: "surveys:loadSurveysErrorMessage",
           onConfirm: () =>
             navigation.navigate(screenKeys.settingsRemoteConnection),

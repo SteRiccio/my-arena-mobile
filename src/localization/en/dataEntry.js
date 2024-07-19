@@ -11,6 +11,12 @@ export default {
       "Items found at a distance of {{minDistance}}m",
     useSelectedItem: "Use selected item",
   },
+  confirmDeleteSelectedItems: {
+    message: "Delete the selected items?",
+  },
+  confirmDeleteValue: {
+    message: "Delete this value?",
+  },
   cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
   options: "Data entry options",
@@ -36,6 +42,7 @@ export default {
   exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
+  noEntitiesDefined: "No entities defined",
   goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",
   gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
