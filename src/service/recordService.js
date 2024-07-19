@@ -1,10 +1,10 @@
-import { Dates, NodeDefs, Objects } from "@openforis/arena-core";
+import { Dates, Objects } from "@openforis/arena-core";
 
 import {
   RecordLoadStatus,
   RecordOrigin,
+  RecordSummaries,
   RecordSyncStatus,
-  SurveyDefs,
 } from "model";
 import { ArrayUtils } from "utils";
 
@@ -21,6 +21,7 @@ const {
   updateRecord,
   updateRecordWithContentFetchedRemotely,
   updateRecordsDateSync,
+  updateRecordsMergedInto,
   deleteRecords,
   fixRecordCycle,
 } = RecordRepository;
@@ -32,54 +33,66 @@ const {
 } = RecordRemoteService;
 
 const fetchRecordsSummariesRemote = async ({ surveyRemoteId, cycle }) => {
-  try {
-    const { data } = await RemoteService.get(
-      `api/survey/${surveyRemoteId}/records/summary`,
-      { cycle }
-    );
-    const { list } = data;
-    return list;
-  } catch (error) {
-    return RemoteService.handleError({ error });
-  }
+  const { data } = await RemoteService.get(
+    `api/survey/${surveyRemoteId}/records/summary`,
+    { cycle }
+  );
+  const { list } = data;
+  return list;
 };
 
 const toDate = (dateStr) => (dateStr ? new Date(dateStr) : null);
+
+const determineLocalRecordSyncStatus = ({
+  survey,
+  recordSummaryLocal,
+  recordSummaryRemote,
+}) => {
+  const keyValues = RecordSummaries.getKeyValues({
+    survey,
+    recordSummary: recordSummaryLocal,
+  });
+  const keysSpecified = keyValues.every((keyValue) => !!keyValue);
+  if (!keysSpecified) {
+    return RecordSyncStatus.keysNotSpecified;
+  }
+  if (!recordSummaryRemote) {
+    return RecordSyncStatus.new;
+  }
+  if (recordSummaryRemote.step > 1) {
+    return RecordSyncStatus.notInEntryStepAnymore;
+  }
+  if (recordSummaryRemote.uuid !== recordSummaryLocal.uuid) {
+    return RecordSyncStatus.conflictingKeys;
+  }
+  const dateModifiedLocal = toDate(recordSummaryLocal.dateModified);
+  const dateModifiedRemote = Dates.parseISO(recordSummaryRemote.dateModified);
+
+  if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
+    return RecordSyncStatus.modifiedLocally;
+  }
+  if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
+    return RecordSyncStatus.modifiedRemotely;
+  }
+  return RecordSyncStatus.notModified;
+};
 
 const determineRecordSyncStatus = ({
   survey,
   recordSummaryLocal,
   recordSummaryRemote,
 }) => {
-  const { cycle } = recordSummaryLocal;
-  const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
-  const keysSpecified = keyDefs.every(
-    (keyDef) => !!recordSummaryLocal[Objects.camelize(NodeDefs.getName(keyDef))]
-  );
-
-  const dateModifiedLocal = toDate(recordSummaryLocal.dateModified);
-  const dateSynced = toDate(recordSummaryLocal.dateSynced);
-  const dateModifiedRemote = recordSummaryRemote
-    ? Dates.parseISO(recordSummaryRemote.dateModified)
-    : null;
-
   if (recordSummaryLocal.origin === RecordOrigin.local) {
-    if (!keysSpecified) {
-      return RecordSyncStatus.keysNotSpecified;
-    }
-    if (!recordSummaryRemote) {
-      return RecordSyncStatus.new;
-    }
-    if (recordSummaryRemote.step > 1) {
-      return RecordSyncStatus.notInEntryStepAnymore;
-    }
-    if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
-      return RecordSyncStatus.modifiedLocally;
-    } else if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
-      return RecordSyncStatus.modifiedRemotely;
-    }
-    return RecordSyncStatus.notModified;
+    return determineLocalRecordSyncStatus({
+      survey,
+      recordSummaryLocal,
+      recordSummaryRemote,
+    });
   } else if (recordSummaryLocal.loadStatus !== RecordLoadStatus.summary) {
+    const dateSynced = toDate(recordSummaryLocal.dateSynced);
+    const dateModifiedRemote = Dates.parseISO(
+      recordSummaryRemote?.dateModified
+    );
     if (Dates.isBefore(dateSynced, dateModifiedRemote)) {
       return RecordSyncStatus.notUpToDate;
     }
@@ -153,9 +166,20 @@ const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
   });
 
   return recordsSummariesLocalReloaded.map((recordSummaryLocal) => {
-    const recordSummaryRemote = recordsSummariesRemote.find(
-      (summary) => summary.uuid === recordSummaryLocal.uuid
-    );
+    const localKeyValues = RecordSummaries.getKeyValuesFormatted({
+      survey,
+      recordSummary: recordSummaryLocal,
+    });
+    const recordSummaryRemote = recordsSummariesRemote.find((summary) => {
+      const remoteKeyValues = RecordSummaries.getKeyValuesFormatted({
+        survey,
+        recordSummary: summary,
+      });
+      return (
+        summary.uuid === recordSummaryLocal.uuid ||
+        Objects.isEqual(remoteKeyValues, localKeyValues)
+      );
+    });
     const syncStatus = determineRecordSyncStatus({
       survey,
       recordSummaryLocal,
@@ -198,6 +222,7 @@ export const RecordService = {
   updateRecord,
   updateRecordWithContentFetchedRemotely,
   updateRecordsDateSync,
+  updateRecordsMergedInto,
   deleteRecords,
   fixRecordCycle,
   // remote server

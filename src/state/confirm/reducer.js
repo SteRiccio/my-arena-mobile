@@ -8,10 +8,13 @@ const initialState = {
 const confirm = createAsyncThunk(
   "confirm/show",
   async (params, { getState }) => {
-    const { selectedSingleChoiceValue } = params;
+    const { selectedMultipleChoiceValues, selectedSingleChoiceValue } = params;
     const state = getState();
     const { onConfirm } = state.confirm;
-    await onConfirm?.({ selectedSingleChoiceValue });
+    await onConfirm?.({
+      selectedMultipleChoiceValues,
+      selectedSingleChoiceValue,
+    });
   }
 );
 
@@ -50,9 +53,11 @@ export const ConfirmActions = {
     confirmButtonTextKey = "common:confirm",
     messageKey,
     messageParams = {},
+    multipleChoiceOptions = [],
     onConfirm,
     onCancel = undefined,
     singleChoiceOptions = [],
+    defaultMultipleChoiceValues = [],
     defaultSingleChoiceValue = null,
     swipeToConfirm = false,
     swipeToConfirmTitleKey = "common:swipeToConfirm",
@@ -63,15 +68,17 @@ export const ConfirmActions = {
       confirmButtonTextKey,
       messageKey,
       messageParams,
+      multipleChoiceOptions,
       onConfirm,
       onCancel,
       singleChoiceOptions,
+      defaultMultipleChoiceValues,
       defaultSingleChoiceValue,
       swipeToConfirm,
       swipeToConfirmTitleKey,
     }),
-  confirm: ({ selectedSingleChoiceValue }) =>
-    confirm({ selectedSingleChoiceValue }),
+  confirm: ({ selectedMultipleChoiceValues, selectedSingleChoiceValue }) =>
+    confirm({ selectedMultipleChoiceValues, selectedSingleChoiceValue }),
   cancel,
 };
 export { ConfirmReducer };

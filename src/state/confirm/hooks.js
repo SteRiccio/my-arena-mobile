@@ -12,7 +12,8 @@ export const useConfirm = () => {
           dispatch(
             ConfirmActions.show({
               ...params,
-              onConfirm: () => resolve(true),
+              onConfirm: ({ selectedSingleChoiceValue }) =>
+                resolve({ selectedSingleChoiceValue }),
               onCancel: () => resolve(false),
             })
           );

@@ -2,11 +2,13 @@ import { DataTable as RNPDataTable } from "react-native-paper";
 import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
+import { SortDirection } from "model";
+
 import { Checkbox } from "../Checkbox";
 import { ScrollView } from "../ScrollView";
 import { VView } from "../VView";
-import { usePagination } from "./usePagination";
 import { ItemSelectedBanner, useSelectableList } from "../SelectableList";
+import { usePagination } from "./usePagination";
 
 export const DataTable = (props) => {
   const {
@@ -15,11 +17,13 @@ export const DataTable = (props) => {
     onItemPress: onItemPressProp,
     onItemLongPress: onItemLongPressProp,
     onSelectionChange,
+    onSortChange = null,
     onDeleteSelectedItemIds,
-    selectable,
+    selectable = false,
     selectedItemIds: selectedItemIdsProp,
-    selectedItemsCustomActions,
-    showPagination,
+    selectedItemsCustomActions = [],
+    showPagination = false,
+    sort = null,
   } = props;
 
   const { t } = useTranslation();
@@ -54,6 +58,17 @@ export const DataTable = (props) => {
 
   const visibleRows = showPagination ? visibleItems : items;
 
+  const onHeaderPress = (fieldKey) => {
+    const fieldSortPrev = sort?.[fieldKey];
+    const fieldSortNext = SortDirection.getNextSortDirection(fieldSortPrev);
+    const sortNext = {};
+    // allow only one sort field at a time
+    if (fieldSortNext) {
+      sortNext[fieldKey] = fieldSortNext;
+    }
+    onSortChange(sortNext);
+  };
+
   return (
     <VView style={{ flex: 1 }}>
       <ItemSelectedBanner
@@ -66,6 +81,10 @@ export const DataTable = (props) => {
           {fields.map((field) => (
             <RNPDataTable.Title
               key={field.key}
+              onPress={() =>
+                field.sortable ? onHeaderPress(field.key) : undefined
+              }
+              sortDirection={sort?.[field.key]}
               style={[{ flex: 1 }, field.style]}
               textStyle={{ fontWeight: "bold", fontSize: 15 }}
             >
@@ -133,15 +152,11 @@ DataTable.propTypes = {
   onItemPress: PropTypes.func,
   onItemLongPress: PropTypes.func,
   onSelectionChange: PropTypes.func,
+  onSortChange: PropTypes.func,
   onDeleteSelectedItemIds: PropTypes.func,
   selectable: PropTypes.bool,
   selectedItemIds: PropTypes.array,
   selectedItemsCustomActions: PropTypes.array,
   showPagination: PropTypes.bool,
-};
-
-DataTable.defaultProps = {
-  selectable: false,
-  selectedItemsCustomActions: [],
-  showPagination: false,
+  sort: PropTypes.object,
 };

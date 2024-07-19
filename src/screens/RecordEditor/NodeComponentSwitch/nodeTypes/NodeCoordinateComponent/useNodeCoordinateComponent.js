@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import {
   NodeDefs,
@@ -13,7 +13,7 @@ import {
 
 import { useLocationWatch } from "hooks";
 import { RecordNodes } from "model/utils/RecordNodes";
-import { ConfirmActions, DataEntrySelectors, SurveySelectors } from "state";
+import { DataEntrySelectors, SurveySelectors, useConfirm } from "state";
 import { NumberUtils } from "utils";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 
@@ -58,7 +58,7 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
 export const useNodeCoordinateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
-  const dispatch = useDispatch();
+  const confirm = useConfirm();
   const survey = SurveySelectors.useCurrentSurvey();
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
   const srss = useMemo(() => Surveys.getSRSs(survey), [survey]);
@@ -194,7 +194,7 @@ export const useNodeCoordinateComponent = (props) => {
   );
 
   const onChangeSrs = useCallback(
-    (val) => {
+    async (val) => {
       // workaround related to onChange callback passed to Dropdown:
       // get uiValue from state otherwise it will use an old value of it
       const uiVal = getUiValueFromState();
@@ -202,17 +202,17 @@ export const useNodeCoordinateComponent = (props) => {
 
       if (val === srs) return;
 
-      if (!Objects.isEmpty(x) && !Objects.isEmpty(y)) {
-        dispatch(
-          ConfirmActions.show({
-            messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
-            messageParams: { srsFrom: srs, srsTo: val },
-            confirmButtonTextKey: "dataEntry:coordinate.convert",
-            cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
-            onConfirm: () => performCoordinateConversion(uiVal, val),
-            onCancel: () => updateNodeValue({ ...uiVal, srs: val }),
-          })
-        );
+      if (
+        !Objects.isEmpty(x) &&
+        !Objects.isEmpty(y) &&
+        (await confirm({
+          messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
+          messageParams: { srsFrom: srs, srsTo: val },
+          confirmButtonTextKey: "dataEntry:coordinate.convert",
+          cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
+        }))
+      ) {
+        performCoordinateConversion(uiVal, val);
       } else {
         updateNodeValue({ ...uiVal, srs: val });
       }
@@ -221,7 +221,13 @@ export const useNodeCoordinateComponent = (props) => {
   );
 
   const onStartGpsPress = useCallback(async () => {
-    await startLocationWatch();
+    if (
+      await confirm({
+        messageKey: "dataEntry:coordinate.overwriteConfirmMessage",
+      })
+    ) {
+      await startLocationWatch();
+    }
   }, [startLocationWatch]);
 
   const onStopGpsPress = useCallback(() => {

@@ -24,7 +24,12 @@ const downloadExportedRecordsFile = async ({ survey, fileName }) => {
   return fileUri;
 };
 
-const uploadRecords = async ({ survey, cycle, fileUri }) => {
+const uploadRecords = async ({
+  survey,
+  cycle,
+  fileUri,
+  conflictResolutionStrategy,
+}) => {
   const surveyRemoteId = survey.remoteId;
   const params = {
     file: {
@@ -33,7 +38,7 @@ const uploadRecords = async ({ survey, cycle, fileUri }) => {
       type: Files.MIME_TYPES.zip,
     },
     cycle,
-    conflictResolutionStrategy: "overwriteIfUpdated",
+    conflictResolutionStrategy,
   };
   const { data } = await RemoteService.postMultipartData(
     `api/mobile/survey/${surveyRemoteId}`,

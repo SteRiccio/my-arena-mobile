@@ -80,7 +80,7 @@ const fetchRecord = async ({ survey, recordId }) => {
 
 const fetchRecords = async ({ survey, cycle = null, onlyLocal = true }) => {
   const { id: surveyId } = survey;
-  const whereConditions = ["survey_id = ?"];
+  const whereConditions = ["merged_into_record_uuid IS NULL", "survey_id = ?"];
   const queryParams = [surveyId];
 
   if (!Objects.isEmpty(cycle)) {
@@ -184,15 +184,15 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   const loadStatus = RecordLoadStatus.summary;
   const origin = RecordOrigin.remote;
   const insertedIds = [];
-  await dbClient.transaction((tx) => {
-    recordSummaries.forEach((recordSummary) => {
+  await dbClient.transaction(async (tx) => {
+    for await (const recordSummary of recordSummaries) {
       const { dateCreated, dateModified, ownerUuid, ownerName, uuid } =
         recordSummary;
       const keyColumnsValues = extractRemoteRecordSummaryKeyColumnsValues({
         survey,
         recordSummary,
       });
-      tx.executeSql(
+      await tx.executeSql(
         `INSERT INTO record (${insertColumnsJoint})
         VALUES (${getPlaceholders(insertColumns.length)})`,
         [
@@ -217,7 +217,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
           throw error;
         }
       );
-    });
+    }
   });
   return insertedIds;
 };
@@ -257,19 +257,22 @@ const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
 const updateRecordKeysAndContent = async ({
   survey,
   record,
-  remote = false,
+  updateOrigin = false,
+  origin = RecordOrigin.local,
 }) => {
   const keyColumnsSet = keyColumnNames
     .map((keyCol) => `${keyCol} = ?`)
     .join(", ");
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
-  const dateModifiedColumn = remote ? "date_modified_remote" : "date_modified";
+  const dateModifiedColumn =
+    origin === RecordOrigin.remote ? "date_modified_remote" : "date_modified";
+
   return dbClient.executeSql(
     `UPDATE record SET 
       content = ?, 
       ${dateModifiedColumn} = ?, 
       load_status = ?, 
-      origin = ?,
+      ${updateOrigin ? "origin = ?," : ""}
       date_synced = ?,
       ${keyColumnsSet} 
     WHERE survey_id = ? AND uuid = ?`,
@@ -277,7 +280,7 @@ const updateRecordKeysAndContent = async ({
       JSON.stringify(record),
       record.dateModified || Date.now(),
       RecordLoadStatus.complete,
-      remote ? RecordOrigin.remote : RecordOrigin.local,
+      ...(updateOrigin ? [origin] : []),
       Dates.nowFormattedForStorage(),
       ...keyColumnsValues,
       survey.id,
@@ -297,7 +300,12 @@ const updateRecord = async ({ survey, record }) => {
 };
 
 const updateRecordWithContentFetchedRemotely = async ({ survey, record }) =>
-  updateRecordKeysAndContent({ survey, record, remote: true });
+  updateRecordKeysAndContent({
+    survey,
+    record,
+    updateOrigin: true,
+    origin: RecordOrigin.remote,
+  });
 
 const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
   const sql = `UPDATE record 
@@ -305,6 +313,21 @@ const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
   WHERE survey_id = ? 
     AND uuid IN (${DbUtils.quoteValues(recordUuids)})`;
   return dbClient.executeSql(sql, [Dates.nowFormattedForStorage(), surveyId]);
+};
+
+const updateRecordsMergedInto = async ({ surveyId, mergedRecordsMap }) => {
+  for await (const [uuid, mergedIntoRecordUuid] of Object.entries(
+    mergedRecordsMap
+  ))
+    await dbClient.transaction(async (tx) => {
+      await tx.executeSql(
+        `UPDATE record 
+         SET merged_into_record_uuid = ? 
+         WHERE survey_id =? 
+           AND uuid = ?`,
+        [mergedIntoRecordUuid, surveyId, uuid]
+      );
+    });
 };
 
 const fixRecordCycle = async ({ survey, recordId }) => {
@@ -354,6 +377,7 @@ const rowToRecord =
     result.dateModified = fixDatetime(result.dateModified);
     result.dateCreated = fixDatetime(result.dateCreated);
     result.dateModifiedRemote = fixDatetime(result.dateModifiedRemote);
+    result.dateSynced = fixDatetime(result.dateSynced);
 
     if (hasContent) {
       if (!result._nodesIndex) {
@@ -402,6 +426,7 @@ export const RecordRepository = {
   updateRecordWithContentFetchedRemotely,
   updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely,
   updateRecordsDateSync,
+  updateRecordsMergedInto,
   fixRecordCycle,
   deleteRecords,
 };
