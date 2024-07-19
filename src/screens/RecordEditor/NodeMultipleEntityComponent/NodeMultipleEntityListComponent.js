@@ -74,7 +74,11 @@ export const NodeMultipleEntityListComponent = (props) => {
   );
 
   const onDeleteSelectedNodeUuids = useCallback(async (nodeUuids) => {
-    if (await confirm({ messageKey: "Delete the selected items?" })) {
+    if (
+      await confirm({
+        messageKey: "dataEntry:confirmDeleteSelectedItems.message",
+      })
+    ) {
       dispatch(DataEntryActions.deleteNodes(nodeUuids));
     }
   }, []);
@@ -100,7 +104,7 @@ export const NodeMultipleEntityListComponent = (props) => {
   return (
     <VView style={styles.container}>
       {rows.length === 0 && (
-        <Text textKey="No entities defined" variant="titleMedium" />
+        <Text textKey="dataEntry:noEntitiesDefined" variant="titleMedium" />
       )}
       {rows.length > 0 && (
         <DataTable

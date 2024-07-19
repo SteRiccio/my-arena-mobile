@@ -61,7 +61,7 @@ export const MultipleAttributeComponentWrapper = (props) => {
     if (!Nodes.isValueBlank(node)) {
       dispatch(
         ConfirmActions.show({
-          messageKey: "Delete this value?",
+          messageKey: "dataEntry:confirmDeleteValue.message",
           onConfirm: performDelete,
         })
       );

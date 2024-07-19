@@ -49,7 +49,7 @@ export const useMagnetometerHeading = () => {
       .catch(() => {
         setState((statePrev) => ({
           ...statePrev,
-          magnetometerAvailable: available,
+          magnetometerAvailable: false,
         }));
       });
 

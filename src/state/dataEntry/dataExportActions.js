@@ -1,4 +1,4 @@
-import { JobStatus, Surveys } from "@openforis/arena-core";
+import { JobStatus, Objects, Surveys } from "@openforis/arena-core";
 
 import { AuthService, RecordService } from "service";
 import { RecordsExportFileGenerationJob } from "service/recordsExportFileGenerationJob";
@@ -29,7 +29,7 @@ const handleError = (error) => (dispatch) =>
   );
 
 const startUploadDataToRemoteServer =
-  ({ outputFileUri, onJobComplete = null }) =>
+  ({ outputFileUri, conflictResolutionStrategy, onJobComplete = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
@@ -40,6 +40,7 @@ const startUploadDataToRemoteServer =
         survey,
         cycle,
         fileUri: outputFileUri,
+        conflictResolutionStrategy,
       });
 
       dispatch(
@@ -55,24 +56,37 @@ const startUploadDataToRemoteServer =
   };
 
 const onExportConfirmed =
-  ({ selectedSingleChoiceValue, outputFileUri, onJobComplete }) =>
+  ({
+    selectedSingleChoiceValue,
+    conflictResolutionStrategy,
+    outputFileUri,
+    onJobComplete,
+  }) =>
   async (dispatch) => {
     try {
-      if (selectedSingleChoiceValue === exportType.remote) {
-        dispatch(
-          startUploadDataToRemoteServer({ outputFileUri, onJobComplete })
-        );
-      } else if (selectedSingleChoiceValue === exportType.local) {
-        const res = await Files.moveFileToDownloadFolder(outputFileUri);
-        if (!res) {
-          throw new Error("Permission denied");
+      switch (selectedSingleChoiceValue) {
+        case exportType.remote:
+          dispatch(
+            startUploadDataToRemoteServer({
+              outputFileUri,
+              conflictResolutionStrategy,
+              onJobComplete,
+            })
+          );
+          break;
+        case exportType.local: {
+          const res = await Files.moveFileToDownloadFolder(outputFileUri);
+          if (!res) {
+            throw new Error("Permission denied");
+          }
+          break;
         }
-      } else {
-        await Files.shareFile({
-          url: outputFileUri,
-          mimeType: Files.MIME_TYPES.zip,
-          dialogTitle: t("dataEntry:dataExport.shareExportedFile"),
-        });
+        default:
+          await Files.shareFile({
+            url: outputFileUri,
+            mimeType: Files.MIME_TYPES.zip,
+            dialogTitle: t("dataEntry:dataExport.shareExportedFile"),
+          });
       }
     } catch (error) {
       dispatch(handleError(error));
@@ -100,6 +114,7 @@ const _onExportFileGenerationError = ({ errors, dispatch }) => {
 const _onExportFileGenerationSucceeded = async ({
   result,
   onlyLocally,
+  conflictResolutionStrategy,
   onJobComplete,
   dispatch,
 }) => {
@@ -122,6 +137,7 @@ const _onExportFileGenerationSucceeded = async ({
         dispatch(
           onExportConfirmed({
             selectedSingleChoiceValue,
+            conflictResolutionStrategy,
             outputFileUri,
             onJobComplete,
           })
@@ -141,18 +157,29 @@ export const exportRecords =
   ({
     cycle,
     recordUuids,
+    conflictResolutionStrategy = "overwriteIfUpdated",
     onlyLocally = false,
     onJobComplete: onJobCompleteParam = null,
   }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
+    const surveyId = survey.id;
 
     const onJobComplete = async (jobComplete) => {
+      const { result } = jobComplete;
+      const { mergedRecordsMap } = result;
+
       await RecordService.updateRecordsDateSync({
-        surveyId: survey.id,
+        surveyId,
         recordUuids,
       });
+      if (!Objects.isEmpty(mergedRecordsMap)) {
+        await RecordService.updateRecordsMergedInto({
+          surveyId,
+          mergedRecordsMap,
+        });
+      }
       await onJobCompleteParam?.(jobComplete);
     };
 
@@ -175,6 +202,7 @@ export const exportRecords =
         await _onExportFileGenerationSucceeded({
           result,
           onlyLocally,
+          conflictResolutionStrategy,
           onJobComplete,
           dispatch,
         });

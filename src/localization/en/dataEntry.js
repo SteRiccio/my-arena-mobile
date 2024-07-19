@@ -11,6 +11,12 @@ export default {
       "Items found at a distance of {{minDistance}}m",
     useSelectedItem: "Use selected item",
   },
+  confirmDeleteSelectedItems: {
+    message: "Delete the selected items?",
+  },
+  confirmDeleteValue: {
+    message: "Delete this value?",
+  },
   cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
   options: "Data entry options",
@@ -20,13 +26,23 @@ export default {
     "Error generating records export file: {{details}}",
   exportData: {
     title: "Export data",
+    confirm: {
+      title: "Confirm export data",
+      message: `Records to export:
+- {{newRecordsCount}} new records;
+- {{updatedRecordsCount}} updated records
+- {{conflictingRecordsCount}} conflicting records`,
+    },
     noRecordsInDeviceToExport: "No records in the device to export",
+    onlyNewOrUpdatedRecords: "Export only new or updated records",
+    mergeConflictingRecords: "Merge conflicting records (same keys)",
     onlyRecordsInRemoteServerCanBeImported:
       "Only records in remote server can be imported",
   },
   exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
+  noEntitiesDefined: "No entities defined",
   goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",
   gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
@@ -71,9 +87,11 @@ export default {
     owner: "Owner",
   },
   showOnlyLocalRecords: "Show only local records",
+  syncedOn: "Synced on",
   syncStatusHeader: "Status",
   syncStatus: {
-    keysNotSpecified: `Key attributes not specified`,
+    conflictingKeys: "Record with same key(s) already exists",
+    keysNotSpecified: `Key(s) not specified`,
     new: "New (not uploaded yet)",
     notModified: "Not modified (no changes to upload)",
     modifiedLocally: "Modified locally",
@@ -111,6 +129,7 @@ export default {
     keepXAndY: "Keep X and Y",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
+    overwriteConfirmMessage: "Overwrite existing value?",
     srs: "$t(common:srs)",
     startGPS: "Start GPS",
     stopGPS: "Stop GPS",
