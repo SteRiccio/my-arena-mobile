@@ -1,5 +1,6 @@
 import React from "react";
 import { IconButton as RNPIconButton } from "react-native-paper";
+import PropTypes from "prop-types";
 
 export const IconButton = (props) => {
   const {
@@ -20,4 +21,12 @@ export const IconButton = (props) => {
       {...otherProps}
     />
   );
+};
+
+IconButton.propTypes = {
+  disabled: PropTypes.bool,
+  icon: PropTypes.string,
+  iconColor: PropTypes.string,
+  mode: PropTypes.string,
+  size: PropTypes.number,
 };

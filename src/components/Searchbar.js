@@ -1,5 +1,6 @@
 import React from "react";
 import { Searchbar as RNPSearchbar } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
@@ -19,4 +20,10 @@ export const Searchbar = (props) => {
       value={value}
     />
   );
+};
+
+Searchbar.propTypes = {
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string,
 };
