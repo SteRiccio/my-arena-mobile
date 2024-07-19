@@ -17,13 +17,13 @@ export const DataTable = (props) => {
     onItemPress: onItemPressProp,
     onItemLongPress: onItemLongPressProp,
     onSelectionChange,
-    onSortChange,
+    onSortChange = null,
     onDeleteSelectedItemIds,
-    selectable,
+    selectable = false,
     selectedItemIds: selectedItemIdsProp,
-    selectedItemsCustomActions,
-    showPagination,
-    sort,
+    selectedItemsCustomActions = [],
+    showPagination = false,
+    sort = null,
   } = props;
 
   const { t } = useTranslation();
@@ -152,15 +152,11 @@ DataTable.propTypes = {
   onItemPress: PropTypes.func,
   onItemLongPress: PropTypes.func,
   onSelectionChange: PropTypes.func,
+  onSortChange: PropTypes.func,
   onDeleteSelectedItemIds: PropTypes.func,
   selectable: PropTypes.bool,
   selectedItemIds: PropTypes.array,
   selectedItemsCustomActions: PropTypes.array,
   showPagination: PropTypes.bool,
-};
-
-DataTable.defaultProps = {
-  selectable: false,
-  selectedItemsCustomActions: [],
-  showPagination: false,
+  sort: PropTypes.object,
 };

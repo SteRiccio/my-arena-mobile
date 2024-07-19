@@ -48,12 +48,6 @@ const determineRecordSyncStatus = ({
   recordSummaryLocal,
   recordSummaryRemote,
 }) => {
-  const keyValues = RecordSummaries.getKeyValues({
-    survey,
-    recordSummary: recordSummaryLocal,
-  });
-  const keysSpecified = keyValues.every((keyValue) => !!keyValue);
-
   const dateModifiedLocal = toDate(recordSummaryLocal.dateModified);
   const dateSynced = toDate(recordSummaryLocal.dateSynced);
   const dateModifiedRemote = recordSummaryRemote
@@ -61,6 +55,11 @@ const determineRecordSyncStatus = ({
     : null;
 
   if (recordSummaryLocal.origin === RecordOrigin.local) {
+    const keyValues = RecordSummaries.getKeyValues({
+      survey,
+      recordSummary: recordSummaryLocal,
+    });
+    const keysSpecified = keyValues.every((keyValue) => !!keyValue);
     if (!keysSpecified) {
       return RecordSyncStatus.keysNotSpecified;
     }
