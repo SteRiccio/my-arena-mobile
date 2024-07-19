@@ -43,43 +43,56 @@ const fetchRecordsSummariesRemote = async ({ surveyRemoteId, cycle }) => {
 
 const toDate = (dateStr) => (dateStr ? new Date(dateStr) : null);
 
+const determineLocalRecordSyncStatus = ({
+  survey,
+  recordSummaryLocal,
+  recordSummaryRemote,
+}) => {
+  const keyValues = RecordSummaries.getKeyValues({
+    survey,
+    recordSummary: recordSummaryLocal,
+  });
+  const keysSpecified = keyValues.every((keyValue) => !!keyValue);
+  if (!keysSpecified) {
+    return RecordSyncStatus.keysNotSpecified;
+  }
+  if (!recordSummaryRemote) {
+    return RecordSyncStatus.new;
+  }
+  if (recordSummaryRemote.step > 1) {
+    return RecordSyncStatus.notInEntryStepAnymore;
+  }
+  if (recordSummaryRemote.uuid !== recordSummaryLocal.uuid) {
+    return RecordSyncStatus.conflictingKeys;
+  }
+  const dateModifiedLocal = toDate(recordSummaryLocal.dateModified);
+  const dateModifiedRemote = Dates.parseISO(recordSummaryRemote.dateModified);
+
+  if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
+    return RecordSyncStatus.modifiedLocally;
+  }
+  if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
+    return RecordSyncStatus.modifiedRemotely;
+  }
+  return RecordSyncStatus.notModified;
+};
+
 const determineRecordSyncStatus = ({
   survey,
   recordSummaryLocal,
   recordSummaryRemote,
 }) => {
-  const dateModifiedLocal = toDate(recordSummaryLocal.dateModified);
-  const dateSynced = toDate(recordSummaryLocal.dateSynced);
-  const dateModifiedRemote = recordSummaryRemote
-    ? Dates.parseISO(recordSummaryRemote.dateModified)
-    : null;
-
   if (recordSummaryLocal.origin === RecordOrigin.local) {
-    const keyValues = RecordSummaries.getKeyValues({
+    return determineLocalRecordSyncStatus({
       survey,
-      recordSummary: recordSummaryLocal,
+      recordSummaryLocal,
+      recordSummaryRemote,
     });
-    const keysSpecified = keyValues.every((keyValue) => !!keyValue);
-    if (!keysSpecified) {
-      return RecordSyncStatus.keysNotSpecified;
-    }
-    if (!recordSummaryRemote) {
-      return RecordSyncStatus.new;
-    }
-    if (recordSummaryRemote.step > 1) {
-      return RecordSyncStatus.notInEntryStepAnymore;
-    }
-    if (recordSummaryRemote.uuid !== recordSummaryLocal.uuid) {
-      return RecordSyncStatus.conflictingKeys;
-    }
-    if (Dates.isAfter(dateModifiedLocal, dateModifiedRemote)) {
-      return RecordSyncStatus.modifiedLocally;
-    }
-    if (Dates.isBefore(dateModifiedLocal, dateModifiedRemote)) {
-      return RecordSyncStatus.modifiedRemotely;
-    }
-    return RecordSyncStatus.notModified;
   } else if (recordSummaryLocal.loadStatus !== RecordLoadStatus.summary) {
+    const dateSynced = toDate(recordSummaryLocal.dateSynced);
+    const dateModifiedRemote = Dates.parseISO(
+      recordSummaryRemote?.dateModified
+    );
     if (Dates.isBefore(dateSynced, dateModifiedRemote)) {
       return RecordSyncStatus.notUpToDate;
     }
