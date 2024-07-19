@@ -272,7 +272,7 @@ const updateRecordKeysAndContent = async ({
       content = ?, 
       ${dateModifiedColumn} = ?, 
       load_status = ?, 
-      ${updateOrigin ? "origin = ?" : ""},
+      ${updateOrigin ? "origin = ?," : ""}
       date_synced = ?,
       ${keyColumnsSet} 
     WHERE survey_id = ? AND uuid = ?`,

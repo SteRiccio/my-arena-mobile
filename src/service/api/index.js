@@ -47,8 +47,6 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
 
   const data = await response.json();
 
-  if (!data.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
   return { data };
 };
 
