@@ -239,8 +239,12 @@ const selectCanRecordBeLinkedToPreviousCycleRecord = (state) => {
   const record = selectRecord(state);
   return record?.cycle > "0";
 };
+
 const selectPreviousCycleRecord = (state) =>
   getDataEntryState(state).previousCycleRecord;
+
+const selectPreviousCycleKey = (state) =>
+  selectPreviousCycleRecord(state)?.cycle;
 
 const selectPreviousCycleRecordLoading = (state) =>
   getDataEntryState(state).previousCycleRecordLoading;
@@ -385,6 +389,8 @@ export const DataEntrySelectors = {
   // record previous cycle
   usePreviousCycleRecordLoading: () =>
     useSelector(selectPreviousCycleRecordLoading),
+
+  usePreviousCycleKey: () => useSelector(selectPreviousCycleKey),
 
   usePreviousCycleRecordPageEntity: () =>
     useSelector(selectPreviousCycleRecordPageEntity, Objects.isEqual),

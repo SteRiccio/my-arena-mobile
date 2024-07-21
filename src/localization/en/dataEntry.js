@@ -51,6 +51,10 @@ export default {
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
   recordInPreviousCycle: {
+    confirmShowValuesPreviousCycle: {
+      title: "Show values from previous cycle",
+      message: "Select previous cycle:",
+    },
     foundMessage: "Record in previous cycle found!",
     notFoundMessage:
       "Record in cycle {{cycle}} with keys {{keyValues}} not found",
@@ -61,7 +65,8 @@ export default {
     fetchError: "Error fetching record in previuos cycle: {{details}}",
     multipleRecordsFound:
       "Multiple records with keys {{keyValues}} found in cycle {{cycle}}",
-    valuePanelHeader: "Previous cycle value",
+
+    valuePanelHeader: "Value in cycle {{prevCycle}}",
   },
   records: {
     confirmImportRecordFromServer: "Import record from server?",

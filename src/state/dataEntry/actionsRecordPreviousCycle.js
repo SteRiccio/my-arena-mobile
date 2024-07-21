@@ -1,4 +1,4 @@
-import { Records } from "@openforis/arena-core";
+import { Records, Surveys } from "@openforis/arena-core";
 
 import { Cycles, RecordLoadStatus, RecordNodes, RecordOrigin } from "model";
 import { RecordService } from "service";
@@ -42,13 +42,13 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   dispatch,
   survey,
   record,
+  prevCycle,
   lang,
 }) => {
   dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: true });
 
   const rootEntity = Records.getRoot(record);
   const { cycle } = record;
-  const prevCycle = Cycles.getPrevCycleKey(cycle);
   const prevCycleString = Cycles.labelFunction(prevCycle);
   const keyValues = Records.getEntityKeyValues({
     survey,
@@ -117,7 +117,7 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   }
   dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: false });
 
-  return { keyValues: keyValuesString, prevCycle, prevCycleRecordIds };
+  return { keyValues: keyValuesString, prevCycleRecordIds };
 };
 
 const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
@@ -125,33 +125,58 @@ const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
-    const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
-    const fetchRecordFromPreviousCycleInternal = async () =>
-      _fetchRecordFromPreviousCycleAndLinkIt({
-        dispatch,
-        survey,
-        record,
-        lang,
-      });
-    const { keyValues, prevCycle, prevCycleRecordIds } =
-      await fetchRecordFromPreviousCycleInternal();
-    if (prevCycleRecordIds.length === 0) {
-      // record in previous cycle not found: ask to to sync records list and try again
-      dispatch(
-        ConfirmActions.show({
-          messageKey:
-            "dataEntry:recordInPreviousCycle.confirmSyncRecordsSummaryAndTryAgain",
-          messageParams: { cycle: Cycles.labelFunction(prevCycle), keyValues },
-          onConfirm: async () => {
-            await RecordService.syncRecordSummaries({
+    const { cycle: cycleKey } = record;
+    const prevCycleKeys = Cycles.getPrevCycleKeys({ survey, cycleKey });
+    const confirmKeysPrefix =
+      "dataEntry:recordInPreviousCycle.confirmShowValuesPreviousCycle.";
+    dispatch(
+      ConfirmActions.show({
+        titleKey: `${confirmKeysPrefix}title`,
+        messageKey: `${confirmKeysPrefix}message`,
+        singleChoiceOptions: prevCycleKeys.map((cycleKey) => ({
+          value: cycleKey,
+          label: Cycles.labelFunction(cycleKey),
+        })),
+        defaultSingleChoiceValue: Cycles.getPrevCycleKey(cycleKey),
+        onConfirm: async ({ selectedSingleChoiceValue: selectedCycleKey }) => {
+          const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
+          const fetchRecordFromPreviousCycleInternal = async () =>
+            _fetchRecordFromPreviousCycleAndLinkIt({
+              dispatch,
               survey,
-              cycle: prevCycle,
+              record,
+              prevCycle: selectedCycleKey,
+              lang,
             });
+
+          dispatch(ConfirmActions.dismiss());
+
+          const { keyValues, prevCycleRecordIds } =
             await fetchRecordFromPreviousCycleInternal();
-          },
-        })
-      );
-    }
+
+          if (prevCycleRecordIds.length === 0) {
+            // record in previous cycle not found: ask to to sync records list and try again
+            dispatch(
+              ConfirmActions.show({
+                messageKey:
+                  "dataEntry:recordInPreviousCycle.confirmSyncRecordsSummaryAndTryAgain",
+                messageParams: {
+                  cycle: Cycles.labelFunction(prevCycle),
+                  keyValues,
+                },
+                onConfirm: async () => {
+                  await RecordService.syncRecordSummaries({
+                    survey,
+                    cycle: prevCycle,
+                  });
+                  await fetchRecordFromPreviousCycleInternal();
+                },
+              })
+            );
+          }
+        },
+      })
+    );
   } catch (error) {
     const details = `${error.toString()} - ${error.stack}`;
     ToastActions.show("dataEntry:recordInPreviousCycleFetchError", { details });
