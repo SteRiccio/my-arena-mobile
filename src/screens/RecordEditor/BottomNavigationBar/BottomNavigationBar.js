@@ -88,7 +88,7 @@ export const BottomNavigationBar = () => {
 
   const onNewPress = useCallback(() => {
     dispatch(DataEntryActions.addNewEntity);
-  });
+  }, []);
 
   const activeChildIsLastChild = activeChildIndex + 1 === childDefs.length;
 
