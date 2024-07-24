@@ -101,6 +101,8 @@ export const NodeMultipleEntityListComponent = (props) => {
 
   const rows = entities.map(entityToRow);
 
+  const canAddNew = !NodeDefs.isEnumerate(entityDef)
+
   return (
     <VView style={styles.container}>
       {rows.length === 0 && (
@@ -120,9 +122,11 @@ export const NodeMultipleEntityListComponent = (props) => {
           selectable
         />
       )}
-      <Button icon="plus" onPress={onNewPress}>
-        {t("common:newItemWithParam", { item: nodeDefLabel })}
-      </Button>
+      {canAddNew && (
+        <Button icon="plus" onPress={onNewPress}>
+          {t("common:newItemWithParam", { item: nodeDefLabel })}
+        </Button>
+      )}
     </VView>
   );
 };
