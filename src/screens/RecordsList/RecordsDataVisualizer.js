@@ -141,8 +141,9 @@ export const RecordsDataVisualizer = (props) => {
     );
   }, []);
 
-  const fields = useMemo(
-    () => [
+  const fields = useMemo(() => {
+    const result = [];
+    result.push(
       ...rootDefKeys.map((keyDef) => ({
         key: Objects.camelize(NodeDefs.getName(keyDef)),
         header: NodeDefs.getLabelOrName(keyDef, lang),
@@ -153,67 +154,59 @@ export const RecordsDataVisualizer = (props) => {
         header: "common:modifiedOn",
         sortable: true,
         style: { minWidth: 50 },
-      },
-      ...(showRemoteProps
-        ? [
-            {
-              key: "origin",
-              header: "dataEntry:records.origin.title",
-              style: { minWidth: 10 },
-              cellRenderer:
-                screenViewMode === ScreenViewMode.table
-                  ? RecordOriginTableCellRenderer
-                  : RecordOriginListCellRenderer,
-            },
-            ...(screenViewMode === ScreenViewMode.list
-              ? [
-                  {
-                    key: "dateModifiedRemote",
-                    header: "dataEntry:records.dateModifiedRemotely",
-                  },
-                  { key: "ownerName", header: "dataEntry:records.owner" },
-                ]
-              : []),
-            {
-              key: "loadStatus",
-              header: "dataEntry:records.loadStatus.title",
-              style: { minWidth: 10 },
-              cellRenderer:
-                screenViewMode === ScreenViewMode.table
-                  ? RecordLoadStatusTableCellRenderer
-                  : RecordLoadStatusListCellRenderer,
-            },
-          ]
-        : []),
-      ...(syncStatusLoading || syncStatusFetched
-        ? [
-            {
-              key: "syncStatus",
-              header: "dataEntry:syncStatusHeader",
-              cellRenderer: syncStatusLoading
-                ? LoadingIcon
-                : RecordSyncStatusIcon,
-            },
-          ]
-        : []),
-      ...(syncStatusFetched && screenViewMode === ScreenViewMode.list
-        ? [
-            {
-              key: "dateSynced",
-              header: "dataEntry:syncedOn",
-              style: { minWidth: 50 },
-            },
-          ]
-        : []),
-    ],
-    [
-      rootDefKeys,
-      screenViewMode,
-      showRemoteProps,
-      syncStatusLoading,
-      syncStatusFetched,
-    ]
-  );
+      }
+    );
+    if (showRemoteProps) {
+      result.push({
+        key: "origin",
+        header: "dataEntry:records.origin.title",
+        style: { minWidth: 10 },
+        cellRenderer:
+          screenViewMode === ScreenViewMode.table
+            ? RecordOriginTableCellRenderer
+            : RecordOriginListCellRenderer,
+      });
+      if (screenViewMode === ScreenViewMode.list) {
+        result.push(
+          {
+            key: "dateModifiedRemote",
+            header: "dataEntry:records.dateModifiedRemotely",
+          },
+          { key: "ownerName", header: "dataEntry:records.owner" }
+        );
+      }
+      result.push({
+        key: "loadStatus",
+        header: "dataEntry:records.loadStatus.title",
+        style: { minWidth: 10 },
+        cellRenderer:
+          screenViewMode === ScreenViewMode.table
+            ? RecordLoadStatusTableCellRenderer
+            : RecordLoadStatusListCellRenderer,
+      });
+    }
+    if (syncStatusLoading || syncStatusFetched) {
+      result.push({
+        key: "syncStatus",
+        header: "dataEntry:syncStatusHeader",
+        cellRenderer: syncStatusLoading ? LoadingIcon : RecordSyncStatusIcon,
+      });
+    }
+    if (syncStatusFetched && screenViewMode === ScreenViewMode.list) {
+      result.push({
+        key: "dateSynced",
+        header: "dataEntry:syncedOn",
+        style: { minWidth: 50 },
+      });
+    }
+    return result;
+  }, [
+    rootDefKeys,
+    screenViewMode,
+    showRemoteProps,
+    syncStatusLoading,
+    syncStatusFetched,
+  ]);
 
   const onSelectionChange = useCallback((selection) => {
     setSelectedRecordUuids(selection);

@@ -219,9 +219,10 @@ const selectCurrentPageEntityRelevantChildDefs = (state) => {
     selectCurrentPageEntity(state);
   const childDefs = selectChildDefs({ nodeDef: entityDef })(state);
   const record = selectRecord(state);
-  const parentEntity = Records.getNodeByUuid(entityUuid || parentEntityUuid)(
-    record
-  );
+  const actualEntityUuid = entityUuid ?? parentEntityUuid;
+  if (!actualEntityUuid) return [];
+  const parentEntity = Records.getNodeByUuid(actualEntityUuid)(record);
+  if (!parentEntity) return [];
   return childDefs.filter((childDef) =>
     Nodes.isChildApplicable(parentEntity, childDef.uuid)
   );

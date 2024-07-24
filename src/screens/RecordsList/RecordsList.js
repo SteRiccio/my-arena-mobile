@@ -333,6 +333,7 @@ export const RecordsList = () => {
             >
               <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
               <IconButton
+                disabled={!networkAvailable}
                 icon="cloud-refresh"
                 loading={syncStatusLoading}
                 onPress={onRemoteSyncPress}
