@@ -3,6 +3,7 @@ import { DataEntrySelectors, SurveySelectors } from "state";
 
 import { NodeValuePreview } from "./NodeValuePreview";
 import { NodeValuePreviewPropTypes } from "./NodeValuePreview/NodeValuePreviewPropTypes";
+import { Cycles } from "model/Cycles";
 
 const PreviousCycleNodeValuePreviewInnerComponent = (props) => {
   const { nodeDef } = props;
@@ -29,11 +30,18 @@ export const PreviousCycleNodeValuePreview = (props) => {
     console.log("rendering PreviousCycleNodeValuePreview");
   }
 
-  if (SurveySelectors.useIsNodeDefRootKey(nodeDef)) {
+  const isRootDef = SurveySelectors.useIsNodeDefRootKey(nodeDef);
+  const prevCycle = DataEntrySelectors.usePreviousCycleKey();
+
+  if (isRootDef) {
     return null;
   }
+
   return (
-    <CollapsiblePanel headerKey="dataEntry:recordInPreviousCycle.valuePanelHeader">
+    <CollapsiblePanel
+      headerKey="dataEntry:recordInPreviousCycle.valuePanelHeader"
+      headerParams={{ prevCycle: Cycles.labelFunction(prevCycle) }}
+    >
       <PreviousCycleNodeValuePreviewInnerComponent nodeDef={nodeDef} />
     </CollapsiblePanel>
   );

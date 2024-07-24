@@ -67,16 +67,19 @@ const getPlaceholders = (count) =>
     .map(() => "?")
     .join(", ");
 
-const fetchRecord = async ({ survey, recordId }) => {
+const fetchRecord = async ({ survey, recordId, includeContent = true }) => {
   const { id: surveyId } = survey;
   const row = await dbClient.one(
-    `SELECT ${summarySelectFieldsJoint}, content
+    `SELECT ${summarySelectFieldsJoint}${includeContent ? ", content" : ""}
     FROM record
     WHERE survey_id = ? AND id = ?`,
     [surveyId, recordId]
   );
   return rowToRecord({ survey })(row);
 };
+
+const fetchRecordSummary = async ({ survey, recordId }) =>
+  fetchRecord({ survey, recordId, includeContent: false });
 
 const fetchRecords = async ({ survey, cycle = null, onlyLocal = true }) => {
   const { id: surveyId } = survey;
@@ -366,7 +369,7 @@ const rowToRecord =
     const hasToBeFixed = true;
     const { cycle, content } = row;
     const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
-    const hasContent = !!content;
+    const hasContent = !Objects.isEmpty(content) && content !== "{}";
     const result = hasContent
       ? JSON.parse(row.content)
       : Objects.camelize(row, { skip: ["content"] });
@@ -417,6 +420,7 @@ const rowToRecord =
 
 export const RecordRepository = {
   fetchRecord,
+  fetchRecordSummary,
   fetchRecords,
   findRecordIdsByKeys,
   fetchRecordsWithEmptyCycle,

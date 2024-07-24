@@ -71,7 +71,7 @@ export const AppConfirmDialog = () => {
                 {singleChoiceOptions.map((option) => (
                   <RadioButton
                     key={option.value}
-                    label={t(option.label)}
+                    label={t(option.label, option.labelParams)}
                     value={option.value}
                   />
                 ))}
