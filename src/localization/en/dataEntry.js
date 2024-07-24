@@ -54,6 +54,7 @@ export default {
     confirmShowValuesPreviousCycle: {
       title: "Show values from previous cycle",
       message: "Select previous cycle:",
+      cycleItem: "Cycle {{cycleLabel}}",
     },
     foundMessage: "Record in previous cycle found!",
     notFoundMessage:

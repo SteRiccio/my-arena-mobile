@@ -14,6 +14,7 @@ import { RemoteService } from "./remoteService";
 
 const {
   fetchRecord,
+  fetchRecordSummary,
   fetchRecords,
   fetchRecordsWithEmptyCycle,
   insertRecord,
@@ -214,6 +215,7 @@ const findRecordIdsByKeys = async ({
 
 export const RecordService = {
   fetchRecord,
+  fetchRecordSummary,
   fetchRecords,
   syncRecordSummaries,
   fetchRecordsWithEmptyCycle,

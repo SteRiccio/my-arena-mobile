@@ -1,9 +1,9 @@
-import { Records, Surveys } from "@openforis/arena-core";
+import { Objects, Records } from "@openforis/arena-core";
 
 import { Cycles, RecordLoadStatus, RecordNodes, RecordOrigin } from "model";
 import { RecordService } from "service";
 import { ToastActions } from "../toast";
-import { ConfirmActions } from "../confirm";
+import { ConfirmUtils } from "../confirm";
 import { SurveySelectors } from "../survey";
 
 import { DataEntrySelectors } from "./selectors";
@@ -24,12 +24,16 @@ const _fetchRecordFromPreviousCycleAndLinkItInternal = async ({
 }) => {
   dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: true });
 
-  const record = await RecordService.fetchRecord({ survey, recordId });
-  const { loadStatus, origin } = record;
+  const recordSummary = await RecordService.fetchRecordSummary({
+    survey,
+    recordId,
+  });
+  const { loadStatus, origin } = recordSummary;
   const loaded =
     origin !== RecordOrigin.remote || loadStatus === RecordLoadStatus.complete;
 
   if (loaded) {
+    const record = await RecordService.fetchRecord({ survey, recordId });
     await dispatch({ type: RECORD_PREVIOUS_CYCLE_SET, record });
     dispatch(ToastActions.show("dataEntry:recordInPreviousCycle.foundMessage"));
     dispatch(updatePreviousCyclePageEntity);
@@ -88,21 +92,21 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
       });
     if (!(await doFetch())) {
       const { uuid: recordUuid } = record;
-      dispatch(
-        ConfirmActions.show({
+      if (
+        await ConfirmUtils.confirm({
+          dispatch,
           messageKey:
             "dataEntry:recordInPreviousCycle.confirmFetchRecordInCycle",
-          messageParams: { cycle: prevCycleString, keyValues },
-          onConfirm: () => {
-            dispatch(
-              importRecordsFromServer({
-                recordUuids: [recordUuid],
-                onImportComplete: doFetch,
-              })
-            );
-          },
+          messageParams: { cycle: prevCycleString, keyValues: keyValuesString },
         })
-      );
+      ) {
+        dispatch(
+          importRecordsFromServer({
+            recordUuids: [recordUuid],
+            onImportComplete: doFetch,
+          })
+        );
+      }
     }
   } else {
     dispatch(
@@ -120,63 +124,75 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   return { keyValues: keyValuesString, prevCycleRecordIds };
 };
 
+const _askPreviousCycleKey = async ({ dispatch, getState }) => {
+  const state = getState();
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const record = DataEntrySelectors.selectRecord(state);
+  const { cycle: cycleKey } = record;
+  const prevCycleKeys = Cycles.getPrevCycleKeys({ survey, cycleKey });
+
+  if (prevCycleKeys.length <= 1) return prevCycleKeys[0];
+
+  const confirmKeysPrefix =
+    "dataEntry:recordInPreviousCycle.confirmShowValuesPreviousCycle.";
+  const confirmResult = await ConfirmUtils.confirm({
+    dispatch,
+    titleKey: `${confirmKeysPrefix}title`,
+    messageKey: `${confirmKeysPrefix}message`,
+    singleChoiceOptions: prevCycleKeys.map((cycleKey) => ({
+      value: cycleKey,
+      label: `${confirmKeysPrefix}cycleItem`,
+      labelParams: { cycleLabel: Cycles.labelFunction(cycleKey) },
+    })),
+    defaultSingleChoiceValue: Cycles.getPrevCycleKey(cycleKey),
+  });
+  if (confirmResult) {
+    const { selectedSingleChoiceValue: selectedCycleKey } = confirmResult;
+    return selectedCycleKey;
+  }
+  return undefined;
+};
+
 const linkToRecordInPreviousCycle = () => async (dispatch, getState) => {
   try {
     const state = getState();
+    const selectedCycleKey = await _askPreviousCycleKey({ dispatch, getState });
+    if (Objects.isEmpty(selectedCycleKey)) return null;
+
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
-    const { cycle: cycleKey } = record;
-    const prevCycleKeys = Cycles.getPrevCycleKeys({ survey, cycleKey });
-    const confirmKeysPrefix =
-      "dataEntry:recordInPreviousCycle.confirmShowValuesPreviousCycle.";
-    dispatch(
-      ConfirmActions.show({
-        titleKey: `${confirmKeysPrefix}title`,
-        messageKey: `${confirmKeysPrefix}message`,
-        singleChoiceOptions: prevCycleKeys.map((cycleKey) => ({
-          value: cycleKey,
-          label: Cycles.labelFunction(cycleKey),
-        })),
-        defaultSingleChoiceValue: Cycles.getPrevCycleKey(cycleKey),
-        onConfirm: async ({ selectedSingleChoiceValue: selectedCycleKey }) => {
-          const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
-          const fetchRecordFromPreviousCycleInternal = async () =>
-            _fetchRecordFromPreviousCycleAndLinkIt({
-              dispatch,
-              survey,
-              record,
-              prevCycle: selectedCycleKey,
-              lang,
-            });
 
-          dispatch(ConfirmActions.dismiss());
+    const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
+    const fetchRecordFromPreviousCycleInternal = async () =>
+      _fetchRecordFromPreviousCycleAndLinkIt({
+        dispatch,
+        survey,
+        record,
+        prevCycle: selectedCycleKey,
+        lang,
+      });
+    const { keyValues, prevCycleRecordIds } =
+      await fetchRecordFromPreviousCycleInternal();
 
-          const { keyValues, prevCycleRecordIds } =
-            await fetchRecordFromPreviousCycleInternal();
-
-          if (prevCycleRecordIds.length === 0) {
-            // record in previous cycle not found: ask to to sync records list and try again
-            dispatch(
-              ConfirmActions.show({
-                messageKey:
-                  "dataEntry:recordInPreviousCycle.confirmSyncRecordsSummaryAndTryAgain",
-                messageParams: {
-                  cycle: Cycles.labelFunction(prevCycle),
-                  keyValues,
-                },
-                onConfirm: async () => {
-                  await RecordService.syncRecordSummaries({
-                    survey,
-                    cycle: prevCycle,
-                  });
-                  await fetchRecordFromPreviousCycleInternal();
-                },
-              })
-            );
-          }
+    if (
+      prevCycleRecordIds.length === 0 &&
+      (await ConfirmUtils.confirm({
+        dispatch,
+        messageKey:
+          "dataEntry:recordInPreviousCycle.confirmSyncRecordsSummaryAndTryAgain",
+        messageParams: {
+          cycle: Cycles.labelFunction(selectedCycleKey),
+          keyValues,
         },
-      })
-    );
+      }))
+    ) {
+      // record in previous cycle not found: try to update records list and fetch it again
+      await RecordService.syncRecordSummaries({
+        survey,
+        cycle: selectedCycleKey,
+      });
+      await fetchRecordFromPreviousCycleInternal();
+    }
   } catch (error) {
     const details = `${error.toString()} - ${error.stack}`;
     ToastActions.show("dataEntry:recordInPreviousCycleFetchError", { details });
