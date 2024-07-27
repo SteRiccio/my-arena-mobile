@@ -7,12 +7,12 @@ import { useTranslation } from "localization";
 export const Dropdown = (props) => {
   const {
     disabled,
-    itemKeyExtractor,
-    itemLabelExtractor,
+    itemKeyExtractor = (item) => item.value,
+    itemLabelExtractor = (item) => item.label,
+    label: labelProp = "common:selectAnItem",
     items,
-    label: labelProp,
     onChange,
-    showLabel,
+    showLabel = true,
     value,
   } = props;
 
@@ -56,11 +56,4 @@ export const Dropdown = (props) => {
       visible={open}
     />
   );
-};
-
-Dropdown.defaultProps = {
-  itemKeyExtractor: (item) => item.value,
-  itemLabelExtractor: (item) => item.label,
-  label: "common:selectAnItem",
-  showLabel: true,
 };

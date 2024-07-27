@@ -10,7 +10,7 @@ import { HView } from "components/HView";
 import styles from "./styles";
 
 const OpenDropdownButton = (props) => {
-  const { onPress, textKey, textParams } = props;
+  const { onPress, textKey = "dataEntry:code.selectItem", textParams } = props;
 
   return (
     <Button
@@ -31,17 +31,13 @@ OpenDropdownButton.propTypes = {
   textParams: PropTypes.object,
 };
 
-OpenDropdownButton.defaultProps = {
-  textKey: "dataEntry:code.selectItem",
-};
-
 export const NodeCodePreview = (props) => {
   const {
     itemLabelFunction,
     nodeDef,
     openEditDialog,
     openFindClosestSamplingPointDialog,
-    selectedItems,
+    selectedItems = [],
   } = props;
 
   const survey = SurveySelectors.useCurrentSurvey();
@@ -97,8 +93,4 @@ NodeCodePreview.propTypes = {
   openEditDialog: PropTypes.func.isRequired,
   openFindClosestSamplingPointDialog: PropTypes.func.isRequired,
   selectedItems: PropTypes.array,
-};
-
-NodeCodePreview.defaultProps = {
-  selectedItems: [],
 };
