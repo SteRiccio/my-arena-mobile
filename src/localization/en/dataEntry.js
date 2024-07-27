@@ -37,7 +37,7 @@ export default {
     onlyNewOrUpdatedRecords: "Export only new or updated records",
     mergeConflictingRecords: "Merge conflicting records (same keys)",
     onlyRecordsInRemoteServerCanBeImported:
-      "Only records in remote server can be imported",
+      "Only records already in remote server can be imported or records that have been updated remotely",
   },
   exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
@@ -60,7 +60,7 @@ export default {
     notFoundMessage:
       "Record in cycle {{cycle}} with keys {{keyValues}} not found",
     confirmFetchRecordInCycle:
-      "Record in cycle {{cycle}} with keys {{keyValues}} not fully loaded; dowload it from the server?",
+      "Record in cycle {{cycle}} with keys {{keyValues}} not fully loaded; download it from the server?",
     confirmSyncRecordsSummaryAndTryAgain:
       "$t(dataEntry:recordInPreviousCycle.notFoundMessage): fetch the list of records from the server and try again?",
     fetchError: "Error fetching record in previuos cycle: {{details}}",

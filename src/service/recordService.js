@@ -191,26 +191,26 @@ const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
   });
 };
 
-const findRecordIdsByKeys = async ({
+const findRecordSummariesByKeys = async ({
   survey,
   cycle,
   keyValues,
   keyValuesFormatted,
 }) => {
-  let recordIds = await RecordRepository.findRecordIdsByKeys({
+  let recordSummaries = await RecordRepository.findRecordSummariesByKeys({
     survey,
     cycle,
     keyValues,
   });
-  if (recordIds.length === 0) {
+  if (recordSummaries.length === 0) {
     // try to fetch records using formatted keys
-    recordIds = await RecordRepository.findRecordIdsByKeys({
+    recordSummaries = await RecordRepository.findRecordSummariesByKeys({
       survey,
       cycle,
       keyValues: keyValuesFormatted,
     });
   }
-  return recordIds;
+  return recordSummaries;
 };
 
 export const RecordService = {
@@ -219,7 +219,7 @@ export const RecordService = {
   fetchRecords,
   syncRecordSummaries,
   fetchRecordsWithEmptyCycle,
-  findRecordIdsByKeys,
+  findRecordSummariesByKeys,
   insertRecord,
   updateRecord,
   updateRecordWithContentFetchedRemotely,
