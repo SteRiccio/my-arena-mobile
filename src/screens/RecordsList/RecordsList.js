@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { Objects, Surveys } from "@openforis/arena-core";
+import { Dates, Objects, Surveys } from "@openforis/arena-core";
 
 import {
   Button,
@@ -270,8 +270,17 @@ export const RecordsList = () => {
       const selectedRecords = records.filter((record) =>
         selectedRecordUuids.includes(record.uuid)
       );
+      const selectedLocalRecords = selectedRecords.filter(
+        (record) => record.origin === RecordOrigin.local
+      );
       if (
-        selectedRecords.some((record) => record.origin !== RecordOrigin.remote)
+        selectedLocalRecords.length > 0 &&
+        selectedLocalRecords.some((record) => {
+          const { dateModified, dateModifiedRemote, dateSynced } = record;
+          return (
+            !dateSynced || !Dates.isAfter(dateModifiedRemote, dateModified)
+          );
+        })
       ) {
         toaster.show(
           "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"

@@ -67,14 +67,15 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   });
   const keyValuesString = keyValuesFormatted.join(", ");
 
-  const prevCycleRecordIds = await RecordService.findRecordIdsByKeys({
-    survey,
-    cycle: prevCycle,
-    keyValues,
-    keyValuesFormatted,
-  });
+  const prevCycleRecordSummaries =
+    await RecordService.findRecordSummariesByKeys({
+      survey,
+      cycle: prevCycle,
+      keyValues,
+      keyValuesFormatted,
+    });
 
-  if (prevCycleRecordIds.length === 0) {
+  if (prevCycleRecordSummaries.length === 0) {
     dispatch(unlinkFromRecordInPreviousCycle());
     dispatch(
       ToastActions.show("dataEntry:recordInPreviousCycle.notFoundMessage", {
@@ -82,8 +83,11 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
         keyValues: keyValuesString,
       })
     );
-  } else if (prevCycleRecordIds.length === 1) {
-    const prevCycleRecordId = prevCycleRecordIds[0];
+  } else if (prevCycleRecordSummaries.length === 1) {
+    const prevCycleRecordSummary = prevCycleRecordSummaries[0];
+    const { id: prevCycleRecordId, uuid: prevCycleRecordUuid } =
+      prevCycleRecordSummary;
+
     const doFetch = async () =>
       _fetchRecordFromPreviousCycleAndLinkItInternal({
         dispatch,
@@ -91,7 +95,6 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
         recordId: prevCycleRecordId,
       });
     if (!(await doFetch())) {
-      const { uuid: recordUuid } = record;
       if (
         await ConfirmUtils.confirm({
           dispatch,
@@ -102,7 +105,7 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
       ) {
         dispatch(
           importRecordsFromServer({
-            recordUuids: [recordUuid],
+            recordUuids: [prevCycleRecordUuid],
             onImportComplete: doFetch,
           })
         );
@@ -121,7 +124,10 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
   }
   dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: false });
 
-  return { keyValues: keyValuesString, prevCycleRecordIds };
+  return {
+    keyValues: keyValuesString,
+    prevCycleRecordIds: prevCycleRecordSummaries,
+  };
 };
 
 const _askPreviousCycleKey = async ({ dispatch, getState }) => {
