@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { act, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
@@ -237,6 +237,23 @@ export const RecordsDataVisualizer = (props) => {
     setSort(sortNext);
   }, []);
 
+  const customActions = useMemo(() => {
+    const actions = [];
+    // if (isPrevCycle) {
+    //   actions.push({
+    //     key: "cloneSelectedItems",
+    //     label: i18n.t("dataEntry:records.cloneRecords.title"),
+    //     onPress: onCloneSelectedItems,
+    //   });
+    // }
+    actions.push({
+      key: "importSelectedItems",
+      label: i18n.t("dataEntry:records.importRecords.title"),
+      onPress: onImportSelectedItems,
+    });
+    return actions;
+  }, [i18n, isPrevCycle, onCloneSelectedItems, onImportSelectedItems]);
+
   return (
     <DataVisualizer
       fields={fields}
@@ -248,22 +265,7 @@ export const RecordsDataVisualizer = (props) => {
       onSortChange={onSortChange}
       selectable
       selectedItemIds={selectedRecordUuids}
-      selectedItemsCustomActions={[
-        ...(isPrevCycle
-          ? [
-              {
-                key: "cloneSelectedItems",
-                label: i18n.t("dataEntry:records.cloneRecords.title"),
-                onPress: onCloneSelectedItems,
-              },
-            ]
-          : []),
-        {
-          key: "importSelectedItems",
-          label: i18n.t("dataEntry:records.importRecords.title"),
-          onPress: onImportSelectedItems,
-        },
-      ]}
+      selectedItemsCustomActions={customActions}
       sort={sort}
     />
   );

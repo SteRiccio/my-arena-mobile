@@ -284,9 +284,8 @@ export const RecordsList = () => {
           "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"
         );
         return false;
-      } else {
-        return true;
       }
+      return true;
     },
     [toaster]
   );
@@ -324,9 +323,8 @@ export const RecordsList = () => {
           "dataEntry:records.cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
         );
         return false;
-      } else {
-        return true;
       }
+      return true;
     },
     [toaster]
   );
