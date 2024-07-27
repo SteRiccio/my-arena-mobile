@@ -27,6 +27,7 @@ import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
 import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
 import { importRecordsFromServer } from "./actionsRecordsImport";
+import { cloneRecordsIntoDefaultCycle } from "./actionsRecordsClone";
 
 const {
   DATA_ENTRY_RESET,
@@ -390,4 +391,5 @@ export const DataEntryActions = {
   unlinkFromRecordInPreviousCycle,
 
   importRecordsFromServer,
+  cloneRecordsIntoDefaultCycle,
 };

@@ -24,6 +24,7 @@ import {
   RecordOrigin,
   RecordSyncStatus,
   RecordUpdateConflictResolutionStrategy as ConflictResolutionStrategy,
+  RecordLoadStatus,
 } from "model";
 import { RecordService } from "service";
 import {
@@ -265,11 +266,8 @@ export const RecordsList = () => {
     [loadRecords]
   );
 
-  const onImportSelectedRecordUuids = useCallback(
-    (selectedRecordUuids) => {
-      const selectedRecords = records.filter((record) =>
-        selectedRecordUuids.includes(record.uuid)
-      );
+  const checkRecordsCanBeImported = useCallback(
+    (selectedRecords) => {
       const selectedLocalRecords = selectedRecords.filter(
         (record) => record.origin === RecordOrigin.local
       );
@@ -285,12 +283,65 @@ export const RecordsList = () => {
         toaster.show(
           "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"
         );
+        return false;
+      } else {
+        return true;
+      }
+    },
+    [toaster]
+  );
+
+  const onImportSelectedRecordUuids = useCallback(
+    (selectedRecordUuids) => {
+      const selectedRecords = records.filter((record) =>
+        selectedRecordUuids.includes(record.uuid)
+      );
+      if (!checkRecordsCanBeImported(selectedRecords)) {
         return;
       }
       dispatch(
         DataEntryActions.importRecordsFromServer({
           recordUuids: selectedRecordUuids,
           onImportComplete: loadRecords,
+        })
+      );
+    },
+    [checkRecordsCanBeImported, dispatch, loadRecords, records]
+  );
+
+  const checkRecordsCanBeCloned = useCallback(
+    (selectedRecords) => {
+      const selectedRemoteRecords = selectedRecords.filter(
+        (record) => record.origin === RecordOrigin.remote
+      );
+      if (
+        selectedRemoteRecords.length > 0 &&
+        selectedRemoteRecords.some(
+          (record) => record.loadStatus !== RecordLoadStatus.complete
+        )
+      ) {
+        toaster.show(
+          "dataEntry:records.cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
+        );
+        return false;
+      } else {
+        return true;
+      }
+    },
+    [toaster]
+  );
+
+  const onCloneSelectedRecordUuids = useCallback(
+    (selectedRecordUuids) => {
+      const selectedRecords = records.filter((record) =>
+        selectedRecordUuids.includes(record.uuid)
+      );
+      if (!checkRecordsCanBeCloned(selectedRecords)) {
+        return;
+      }
+      dispatch(
+        DataEntryActions.cloneRecordsIntoDefaultCycle({
+          recordSummaries: selectedRecords,
         })
       );
     },
@@ -365,6 +416,7 @@ export const RecordsList = () => {
             {records.length > 0 && (
               <RecordsDataVisualizer
                 loadRecords={loadRecords}
+                onCloneSelectedRecordUuids={onCloneSelectedRecordUuids}
                 onDeleteSelectedRecordUuids={onDeleteSelectedRecordUuids}
                 onImportSelectedRecordUuids={onImportSelectedRecordUuids}
                 records={recordsFiltered}

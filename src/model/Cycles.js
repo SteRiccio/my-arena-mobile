@@ -11,10 +11,14 @@ const getPrevCycleKeys = ({ survey, cycleKey }) => {
   return cycleKeys.slice(0, index);
 };
 
+const isPreviousCycle = ({ defaultCycleKey, cycleKey }) =>
+  getPrevCycleKey(defaultCycleKey) === cycleKey;
+
 const labelFunction = (cycleKey) => String(Number(cycleKey) + 1);
 
 export const Cycles = {
   getPrevCycleKey,
   getPrevCycleKeys,
+  isPreviousCycle,
   labelFunction,
 };

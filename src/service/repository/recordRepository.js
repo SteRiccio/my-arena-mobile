@@ -123,7 +123,7 @@ const findRecordSummariesByKeys = async ({ survey, cycle, keyValues }) => {
   }, []);
 
   const rows = await dbClient.many(
-    `SELECT id
+    `SELECT ${summarySelectFieldsJoint}
     FROM record
     WHERE survey_id = ? AND cycle = ? AND ${keyColumnsConditions}`,
     [surveyId, cycle, ...keyColumnsParams]

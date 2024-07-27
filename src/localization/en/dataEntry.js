@@ -70,6 +70,12 @@ export default {
     valuePanelHeader: "Value in cycle {{prevCycle}}",
   },
   records: {
+    cloneRecords: {
+      title: "Clone records",
+      onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned:
+        "Only records imported in device or modified locally can be cloned into next cycle",
+      completeSuccessfully: "Records clone complete successfully!",
+    },
     confirmImportRecordFromServer: "Import record from server?",
     dateModifiedRemotely: "Date modified remotely",
     deleteRecordsConfirm: {
@@ -78,7 +84,7 @@ export default {
     },
     importRecord: "Import record",
     importRecords: {
-      title: "Import records from server",
+      title: "Import from server",
     },
     importCompleteSuccessfully: "Records import complete successfully!",
     importFailed: "Records import failed: {{details}}",

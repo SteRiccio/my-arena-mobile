@@ -3,7 +3,13 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
 
-import { DateFormats, Dates, NodeDefs, Objects } from "@openforis/arena-core";
+import {
+  DateFormats,
+  Dates,
+  NodeDefs,
+  Objects,
+  Surveys,
+} from "@openforis/arena-core";
 
 import {
   DataVisualizer,
@@ -14,6 +20,7 @@ import {
 } from "components";
 import { i18n, useTranslation } from "localization";
 import {
+  Cycles,
   RecordLoadStatus,
   RecordOrigin,
   ScreenViewMode,
@@ -74,6 +81,7 @@ RecordLoadStatusListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 export const RecordsDataVisualizer = (props) => {
   const {
+    onCloneSelectedRecordUuids,
     onDeleteSelectedRecordUuids,
     onImportSelectedRecordUuids,
     records,
@@ -89,6 +97,11 @@ export const RecordsDataVisualizer = (props) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
+  const isPrevCycle = Cycles.isPreviousCycle({
+    defaultCycleKey,
+    cycleKey: cycle,
+  });
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
@@ -216,6 +229,10 @@ export const RecordsDataVisualizer = (props) => {
     onImportSelectedRecordUuids(selectedRecordUuids);
   }, [selectedRecordUuids, onImportSelectedRecordUuids]);
 
+  const onCloneSelectedItems = useCallback(() => {
+    onCloneSelectedRecordUuids(selectedRecordUuids);
+  }, [selectedRecordUuids, onCloneSelectedRecordUuids]);
+
   const onSortChange = useCallback((sortNext) => {
     setSort(sortNext);
   }, []);
@@ -232,7 +249,17 @@ export const RecordsDataVisualizer = (props) => {
       selectable
       selectedItemIds={selectedRecordUuids}
       selectedItemsCustomActions={[
+        ...(isPrevCycle
+          ? [
+              {
+                key: "cloneSelectedItems",
+                label: i18n.t("dataEntry:records.cloneRecords.title"),
+                onPress: onCloneSelectedItems,
+              },
+            ]
+          : []),
         {
+          key: "importSelectedItems",
           label: i18n.t("dataEntry:records.importRecords.title"),
           onPress: onImportSelectedItems,
         },
@@ -243,6 +270,7 @@ export const RecordsDataVisualizer = (props) => {
 };
 
 RecordsDataVisualizer.propTypes = {
+  onCloneSelectedRecordUuids: PropTypes.func.isRequired,
   onDeleteSelectedRecordUuids: PropTypes.func.isRequired,
   onImportSelectedRecordUuids: PropTypes.func.isRequired,
   records: PropTypes.array.isRequired,
