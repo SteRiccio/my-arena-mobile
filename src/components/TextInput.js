@@ -7,19 +7,19 @@ import { useTranslation } from "localization";
 export const TextInput = (props) => {
   const {
     autoCapitalize,
-    disabled,
-    editable,
-    error,
+    disabled = false,
+    editable = false,
+    error = false,
     keyboardType,
     label: labelKey,
-    nonEditableStyleVisible,
-    multiline,
+    nonEditableStyleVisible = true,
+    multiline = false,
     numberOfLines,
     placeholder: placeholderKey,
     onChange,
     onPressIn,
     secureTextEntry,
-    style: styleProp,
+    style: styleProp = {},
     value,
     ...otherProps
   } = props;
@@ -75,13 +75,4 @@ TextInput.propTypes = {
   secureTextEntry: PropTypes.bool,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   value: PropTypes.string,
-};
-
-TextInput.defaultProps = {
-  disabled: false,
-  editable: true,
-  error: false,
-  multiline: false,
-  nonEditableStyleVisible: true,
-  style: {},
 };

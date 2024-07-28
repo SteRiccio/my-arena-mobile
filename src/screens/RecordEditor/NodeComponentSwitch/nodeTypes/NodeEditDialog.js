@@ -8,7 +8,13 @@ import { Button, Modal } from "components";
 import { NodeDefFormItem } from "screens/RecordEditor/NodeDefFormItem";
 
 export const NodeEditDialog = (props) => {
-  const { doneButtonLabel, nodeDef, onDismiss, onDone, parentNodeUuid } = props;
+  const {
+    doneButtonLabel = "common:close",
+    nodeDef,
+    onDismiss,
+    onDone,
+    parentNodeUuid,
+  } = props;
 
   const { t } = useTranslation();
 
@@ -26,8 +32,4 @@ NodeEditDialog.propTypes = {
   onDismiss: PropTypes.func.isRequired,
   onDone: PropTypes.func,
   parentNodeUuid: PropTypes.string,
-};
-
-NodeEditDialog.defaultProps = {
-  doneButtonLabel: "common:close",
 };

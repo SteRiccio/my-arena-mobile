@@ -7,14 +7,14 @@ import { SurveySelectors } from "state/survey";
 
 export const NodeCodeAutocomplete = (props) => {
   const {
-    editable,
+    editable = true,
     itemLabelFunction,
-    items,
-    multiple,
+    items = [],
+    multiple = false,
     onItemAdd,
     onItemRemove,
     onSingleValueChange,
-    selectedItems,
+    selectedItems = [],
   } = props;
 
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -65,11 +65,4 @@ NodeCodeAutocomplete.propTypes = {
   onItemRemove: PropTypes.func.isRequired,
   onSingleValueChange: PropTypes.func.isRequired,
   selectedItems: PropTypes.array,
-};
-
-NodeCodeAutocomplete.defaultProps = {
-  editable: true,
-  items: [],
-  multiple: false,
-  selectedItems: [],
 };
