@@ -1,9 +1,15 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { View } from "./View";
 
 export const HView = (props) => {
-  const { children, style: styleProp, ...otherProps } = props;
+  const {
+    children,
+    fullWidth = false,
+    style: styleProp = {},
+    ...otherProps
+  } = props;
 
   const style = [
     {
@@ -15,13 +21,14 @@ export const HView = (props) => {
   ];
 
   return (
-    <View style={style} {...otherProps}>
+    <View fullWidth={fullWidth} style={style} {...otherProps}>
       {children}
     </View>
   );
 };
 
-HView.defaultProps = {
-  fullWidth: false,
-  style: {},
+HView.propTypes = {
+  children: PropTypes.node,
+  fullWidth: PropTypes.bool,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

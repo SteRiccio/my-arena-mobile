@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { useTranslation } from "localization";
 
 export const ItemSelectedBanner = (props) => {
-  const { onDeleteSelected, selectedItemIds, customActions } = props;
+  const { onDeleteSelected, selectedItemIds, customActions = [] } = props;
 
   const { t } = useTranslation();
 
@@ -26,8 +26,4 @@ ItemSelectedBanner.propTypes = {
   customActions: PropTypes.array,
   onDeleteSelected: PropTypes.func.isRequired,
   selectedItemIds: PropTypes.array.isRequired,
-};
-
-ItemSelectedBanner.defaultProps = {
-  customActions: [],
 };
