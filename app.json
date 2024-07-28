@@ -21,12 +21,13 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 63
+      "versionCode": 64
     },
     "ios": {
-      "buildNumber": "63",
+      "buildNumber": "64",
       "bundleIdentifier": "org.stericcio.myarenamobile",
       "infoPlist": {
+        "LSMinimumSystemVersion": "13.0",
         "NSCameraUsageDescription": "Camera is used only when collecting images in file attributes (if defined in your survey).",
         "NSLocationWhenInUseUsageDescription": "Location is used only when collecting coordinates in coordinate attributes (if defined in your survey).",
         "NSMicrophoneUsageDescription": "Microfone is used only when recording audio or video in file attributes (if defined in your survey).",
