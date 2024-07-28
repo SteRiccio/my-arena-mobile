@@ -298,7 +298,12 @@ const updateRecord = async ({ survey, record }) => {
     path: ["info", "modifiedWith"],
     value: SystemUtils.getRecordAppInfo(),
   });
-  await updateRecordKeysAndContent({ survey, record: recordUpdated });
+  await updateRecordKeysAndContent({
+    survey,
+    record: recordUpdated,
+    updateOrigin: true,
+    origin: RecordOrigin.local,
+  });
   return recordUpdated;
 };
 
