@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { View } from "./View";
 
@@ -24,4 +25,10 @@ export const HView = (props) => {
       {children}
     </View>
   );
+};
+
+HView.propTypes = {
+  children: PropTypes.node,
+  fullWidth: PropTypes.bool,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
