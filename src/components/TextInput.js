@@ -8,7 +8,7 @@ export const TextInput = (props) => {
   const {
     autoCapitalize,
     disabled = false,
-    editable = false,
+    editable = true,
     error = false,
     keyboardType,
     label: labelKey,
