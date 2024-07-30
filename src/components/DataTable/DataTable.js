@@ -9,6 +9,7 @@ import { ScrollView } from "../ScrollView";
 import { VView } from "../VView";
 import { ItemSelectedBanner, useSelectableList } from "../SelectableList";
 import { usePagination } from "./usePagination";
+import { Objects } from "@openforis/arena-core";
 
 export const DataTable = (props) => {
   const {
@@ -109,7 +110,11 @@ export const DataTable = (props) => {
                     style={style}
                     textStyle={{ flex: 1 }}
                   >
-                    {CellRenderer ? <CellRenderer item={item} /> : item[fKey]}
+                    {CellRenderer ? (
+                      <CellRenderer item={item} />
+                    ) : (
+                      String(item[fKey] ?? "")
+                    )}
                   </RNPDataTable.Cell>
                 )
               )}
