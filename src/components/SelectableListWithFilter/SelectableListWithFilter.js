@@ -7,6 +7,7 @@ import { Arrays, Objects } from "@openforis/arena-core";
 
 import { IconButton } from "../IconButton";
 import { LoadingIcon } from "../LoadingIcon";
+import { ScrollView } from "../ScrollView";
 import { Searchbar } from "../Searchbar";
 import { Text } from "../Text";
 import { VView } from "../VView";
@@ -137,7 +138,7 @@ export const SelectableListWithFilter = (props) => {
     (item) => {
       _onSelectedItemsChange(Arrays.removeItem(item)(selectedItems));
     },
-    [_onSelectedItemsChange]
+    [_onSelectedItemsChange, selectedItems]
   );
 
   useEffect(() => {
@@ -152,17 +153,21 @@ export const SelectableListWithFilter = (props) => {
     <VView style={styles.container}>
       {filterVisible && (
         <>
-          <View style={styles.selectedItemsContainer}>
-            {selectedItems.map((item) => (
-              <Chip
-                key={itemKeyExtractor(item)}
-                onClose={() => onItemRemove(item)}
-              >
-                {itemLabelExtractor(item)}
-              </Chip>
-            ))}
-          </View>
-
+          <ScrollView
+            persistentScrollbar
+            style={styles.selectedItemsContainerWrapper}
+          >
+            <View style={styles.selectedItemsContainer}>
+              {selectedItems.map((item) => (
+                <Chip
+                  key={itemKeyExtractor(item)}
+                  onClose={() => onItemRemove(item)}
+                >
+                  {itemLabelExtractor(item)}
+                </Chip>
+              ))}
+            </View>
+          </ScrollView>
           {(multiple || selectedItems.length === 0) && (
             <Text
               variant="titleMedium"
