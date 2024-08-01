@@ -37,7 +37,7 @@ export default {
     onlyNewOrUpdatedRecords: "Export only new or updated records",
     mergeConflictingRecords: "Merge conflicting records (same keys)",
     onlyRecordsInRemoteServerCanBeImported:
-      "Only records already in remote server can be imported or records that have been updated remotely",
+      "Only records already in remote server or records that have been updated remotely can be imported",
   },
   exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
@@ -71,16 +71,23 @@ export default {
   },
   records: {
     cloneRecords: {
-      title: "Clone records",
+      title: "Clone",
+      confirm: {
+        message:
+          "Clone the selected {{recordsCount}} records into cycle {{cycle}}?",
+      },
       onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned:
         "Only records imported in device or modified locally can be cloned into next cycle",
-      completeSuccessfully: "Records clone complete successfully!",
+      completeSuccessfully: "Records cloned successfully into cycle {{cycle}}!",
     },
     confirmImportRecordFromServer: "Import record from server?",
     dateModifiedRemotely: "Date modified remotely",
     deleteRecordsConfirm: {
       title: "Delete records",
       message: "Delete the selected records?",
+    },
+    exportRecords: {
+      title: "Export",
     },
     importRecord: "Import record",
     importRecords: {

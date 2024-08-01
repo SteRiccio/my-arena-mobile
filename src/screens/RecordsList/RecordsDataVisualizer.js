@@ -18,7 +18,7 @@ import {
   LoadingIcon,
   Text,
 } from "components";
-import { i18n, useTranslation } from "localization";
+import { useTranslation } from "localization";
 import {
   Cycles,
   RecordLoadStatus,
@@ -83,6 +83,7 @@ export const RecordsDataVisualizer = (props) => {
   const {
     onCloneSelectedRecordUuids,
     onDeleteSelectedRecordUuids,
+    onExportSelectedRecordUuids,
     onImportSelectedRecordUuids,
     records,
     showRemoteProps,
@@ -233,26 +234,46 @@ export const RecordsDataVisualizer = (props) => {
     onCloneSelectedRecordUuids(selectedRecordUuids);
   }, [selectedRecordUuids, onCloneSelectedRecordUuids]);
 
+  const onExportSelectedItems = useCallback(() => {
+    onExportSelectedRecordUuids(selectedRecordUuids);
+  }, [selectedRecordUuids, onExportSelectedRecordUuids]);
+
   const onSortChange = useCallback((sortNext) => {
     setSort(sortNext);
   }, []);
 
   const customActions = useMemo(() => {
     const actions = [];
-    // if (isPrevCycle) {
-    //   actions.push({
-    //     key: "cloneSelectedItems",
-    //     label: i18n.t("dataEntry:records.cloneRecords.title"),
-    //     onPress: onCloneSelectedItems,
-    //   });
-    // }
+    if (isPrevCycle) {
+      actions.push({
+        key: "cloneSelectedItems",
+        icon: "content-copy",
+        labelKey: "dataEntry:records.cloneRecords.title",
+        onPress: onCloneSelectedItems,
+      });
+    }
     actions.push({
       key: "importSelectedItems",
-      label: i18n.t("dataEntry:records.importRecords.title"),
+      icon: "import",
+      labelKey: "dataEntry:records.importRecords.title",
       onPress: onImportSelectedItems,
     });
+    if (syncStatusFetched) {
+      actions.push({
+        key: "exportSelectedItems",
+        icon: "download-outline",
+        labelKey: "dataEntry:records.exportRecords.title",
+        onPress: onExportSelectedItems,
+      });
+    }
     return actions;
-  }, [i18n, isPrevCycle, onCloneSelectedItems, onImportSelectedItems]);
+  }, [
+    isPrevCycle,
+    onCloneSelectedItems,
+    onExportSelectedItems,
+    onImportSelectedItems,
+    syncStatusFetched,
+  ]);
 
   return (
     <DataVisualizer
