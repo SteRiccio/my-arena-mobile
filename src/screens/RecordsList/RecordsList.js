@@ -402,7 +402,7 @@ export const RecordsList = () => {
             )}
             <FlexWrapView>
               {cycles.length > 1 && (
-                <SurveyCycleSelector style={{ width: 300 }} />
+                <SurveyCycleSelector style={styles.cyclesSelector} />
               )}
               <FormItem
                 labelKey="dataEntry:showOnlyLocalRecords"
