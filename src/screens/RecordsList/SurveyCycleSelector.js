@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { Surveys } from "@openforis/arena-core";
 
@@ -11,6 +12,7 @@ import styles from "./styles";
 
 export const SurveyCycleSelector = (props) => {
   const { style } = props;
+
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
@@ -46,4 +48,8 @@ export const SurveyCycleSelector = (props) => {
       )}
     </HView>
   );
+};
+
+SurveyCycleSelector.propTypes = {
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
