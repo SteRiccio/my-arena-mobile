@@ -1,3 +1,5 @@
+import "./wdyr";
+
 import React from "react";
 import { KeyboardAvoidingView } from "react-native";
 import { Provider } from "react-redux";

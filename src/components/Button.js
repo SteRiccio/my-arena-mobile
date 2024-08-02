@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import { Button as RNButton } from "react-native-paper";
 
@@ -18,7 +18,7 @@ export const Button = (props) => {
   } = props;
 
   const { t } = useTranslation();
-  const text = t(textKey, textParams);
+  const text = useMemo(() => t(textKey, textParams), [textKey, textParams, t]);
 
   const { actualLoading, onPress } = useButtonOnPress({
     avoidMultiplePress,

@@ -1,5 +1,12 @@
 {
-  "presets": ["babel-preset-expo"],
+  "presets": [
+    [
+      "babel-preset-expo",
+      {
+        "jsxImportSource": "@welldone-software/why-did-you-render"
+      }
+    ]
+  ],
   "plugins": [
     [
       "module-resolver",

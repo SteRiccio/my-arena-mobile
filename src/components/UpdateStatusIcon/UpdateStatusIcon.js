@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 
 import { UpdateStatus } from "model";
@@ -16,7 +16,10 @@ const iconByUpdateStatus = {
 };
 
 export const UpdateStatusIcon = ({ loading, updateStatus, onPress }) => {
-  const icon = loading ? "loading" : iconByUpdateStatus[updateStatus];
+  const icon = useMemo(
+    () => (loading ? "loading" : iconByUpdateStatus[updateStatus]),
+    [loading, updateStatus]
+  );
 
   return (
     <IconButton

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +25,7 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const [loading, setLoading] = useState(false);
 
-  const onPress = () => {
+  const onPress = useCallback(() => {
     switch (updateStatus) {
       case UpdateStatus.error:
         toaster.show("surveys:updateStatus.error");
@@ -43,14 +43,16 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
             surveyName: Surveys.getName(survey),
             surveyRemoteId: survey.remoteId,
             navigation,
-            confirmMessageKey: 'surveys:updateSurveyWithNewVersionConfirmMessage',
+            confirmMessageKey:
+              "surveys:updateSurveyWithNewVersionConfirmMessage",
             onConfirm: () => setLoading(true),
             onComplete: () => setLoading(false),
           })
         );
         break;
     }
-  };
+  }, [survey, toaster, updateStatus]);
+
   return (
     <UpdateStatusIcon
       loading={loading}
@@ -109,6 +111,11 @@ export const SelectedSurveyFieldset = () => {
     }
   }, [networkAvailable, survey, user]);
 
+  const onGoToDataEntryPress = useCallback(
+    () => navigation.navigate(screenKeys.recordsList),
+    [navigation]
+  );
+
   if (!survey) return null;
 
   return (
@@ -125,7 +132,7 @@ export const SelectedSurveyFieldset = () => {
         <Button
           style={styles.goToDataEntryButton}
           textKey="dataEntry:goToDataEntry"
-          onPress={() => navigation.navigate(screenKeys.recordsList)}
+          onPress={onGoToDataEntryPress}
         />
       </VView>
     </FieldSet>
