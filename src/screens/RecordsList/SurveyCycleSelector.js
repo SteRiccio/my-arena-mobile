@@ -4,12 +4,13 @@ import { useDispatch } from "react-redux";
 import { Surveys } from "@openforis/arena-core";
 
 import { Cycles } from "model";
-import { Dropdown, HView, Text } from "components";
+import { Dropdown, HView, SegmentedButtons, Text } from "components";
 import { SurveyActions, SurveySelectors } from "state";
 
 import styles from "./styles";
 
-export const SurveyCycleSelector = () => {
+export const SurveyCycleSelector = (props) => {
+  const { style } = props;
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
@@ -33,18 +34,19 @@ export const SurveyCycleSelector = () => {
   }, []);
 
   return (
-    <HView style={styles.formItem}>
-      <Text style={styles.formItemLabel} textKey="dataEntry:cycle" />
+    <HView style={[styles.formItem, style]}>
+      <Text textKey="dataEntry:cycle" />
       {singleCycle ? (
         <Text textKey={cycleLabelFn(selectedValue)} />
-      ) : (
-        <Dropdown
-          disabled={singleCycle}
-          items={items}
+      ) : items.length <= 3 ? (
+        <SegmentedButtons
+          buttons={items}
           onChange={onChange}
-          showLabel={false}
+          style={{ width: items.length * 30 }}
           value={selectedValue}
         />
+      ) : (
+        <Dropdown items={items} onChange={onChange} value={selectedValue} />
       )}
     </HView>
   );

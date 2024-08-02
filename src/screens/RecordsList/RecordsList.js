@@ -7,9 +7,9 @@ import { Dates, Objects, Surveys } from "@openforis/arena-core";
 import {
   Button,
   CollapsiblePanel,
+  FlexWrapView,
   FormItem,
   HView,
-  IconButton,
   Loader,
   MenuButton,
   Searchbar,
@@ -400,24 +400,25 @@ export const RecordsList = () => {
                 <Text textKey={defaultCycleText} />
               </HView>
             )}
-          </>
-        </CollapsiblePanel>
-
-        <CollapsiblePanel headerKey="dataEntry:records.listOptions">
-          <>
-            <FormItem
-              labelKey="dataEntry:showOnlyLocalRecords"
-              style={styles.formItem}
-            >
-              <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
-              <IconButton
+            <FlexWrapView>
+              {cycles.length > 1 && (
+                <SurveyCycleSelector style={{ width: 300 }} />
+              )}
+              <FormItem
+                labelKey="dataEntry:showOnlyLocalRecords"
+                style={styles.formItem}
+              >
+                <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
+              </FormItem>
+              <Button
                 disabled={!networkAvailable}
                 icon="cloud-refresh"
                 loading={syncStatusLoading}
+                mode="text"
                 onPress={onRemoteSyncPress}
+                textKey="dataEntry:checkSyncStatus"
               />
-            </FormItem>
-            {cycles.length > 1 && <SurveyCycleSelector />}
+            </FlexWrapView>
           </>
         </CollapsiblePanel>
 

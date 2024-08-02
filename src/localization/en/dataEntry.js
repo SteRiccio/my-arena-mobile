@@ -19,7 +19,7 @@ export default {
   },
   cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
-  options: "Data entry options",
+  options: "Options",
   errorFetchingRecordsSyncStatus:
     "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:
@@ -95,7 +95,6 @@ export default {
     },
     importCompleteSuccessfully: "Records import complete successfully!",
     importFailed: "Records import failed: {{details}}",
-    listOptions: "List options",
     loadStatus: {
       title: "Loaded",
       C: "Complete",

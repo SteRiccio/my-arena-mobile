@@ -10,6 +10,7 @@ export { Divider } from "./Divider";
 export { Dropdown } from "./Dropdown";
 export { Fade } from "./Fade";
 export { FieldSet } from "./FieldSet";
+export { FlexWrapView } from "./FlexWrapView";
 export { FormItem } from "./FormItem";
 export { HView } from "./HView";
 export { Icon } from "./Icon";
