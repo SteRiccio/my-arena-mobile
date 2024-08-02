@@ -55,6 +55,7 @@ export const screens = {
 
   [screenKeys.recordValidationReport]: {
     ...screenDefaults,
+    hasToggleScreenView: true,
     title: "dataEntry:validationReport.title",
     component: RecordValidationReport,
   },

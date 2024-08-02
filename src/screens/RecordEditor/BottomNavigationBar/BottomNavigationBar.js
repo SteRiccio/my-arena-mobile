@@ -36,23 +36,19 @@ export const BottomNavigationBar = () => {
     );
   }
 
-  const prevEntityPointer = useMemo(
-    () =>
+  const [prevEntityPointer, nextEntityPointer] = useMemo(
+    () => [
       RecordPageNavigator.getPrevEntityPointer({
         survey,
         record,
         currentEntityPointer,
       }),
-    [survey, record, currentEntityPointer]
-  );
-
-  const nextEntityPointer = useMemo(
-    () =>
       RecordPageNavigator.getNextEntityPointer({
         survey,
         record,
         currentEntityPointer,
       }),
+    ],
     [survey, record, currentEntityPointer]
   );
 

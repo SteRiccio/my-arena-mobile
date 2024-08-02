@@ -59,10 +59,15 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
 
   const selectedItems = useMemo(
     () =>
-      items.filter((item) =>
-        nodes.some((node) => NodeValues.getItemUuid(node) === item.uuid)
-      ),
-    [items, nodes]
+      nodes.reduce((acc, node) => {
+        const item = Surveys.getCategoryItemByUuid({
+          survey,
+          itemUuid: NodeValues.getItemUuid(node),
+        });
+        if (item) acc.push(item);
+        return acc;
+      }, []),
+    [survey, nodes]
   );
 
   const selectedItemUuid =
@@ -137,13 +142,17 @@ export const useNodeCodeComponentLocalState = ({ parentNodeUuid, nodeDef }) => {
     [nodes]
   );
 
-  const openEditDialog = () => setEditDialogOpen(true);
-  const closeEditDialog = () => setEditDialogOpen(false);
+  const openEditDialog = useCallback(() => setEditDialogOpen(true), []);
+  const closeEditDialog = useCallback(() => setEditDialogOpen(false), []);
 
-  const openFindClosestSamplingPointDialog = () =>
-    setFindClosestSamplingPointDialogOpen(true);
-  const closeFindClosestSamplingPointDialog = () =>
-    setFindClosestSamplingPointDialogOpen(false);
+  const openFindClosestSamplingPointDialog = useCallback(
+    () => setFindClosestSamplingPointDialogOpen(true),
+    []
+  );
+  const closeFindClosestSamplingPointDialog = useCallback(
+    () => setFindClosestSamplingPointDialogOpen(false),
+    []
+  );
 
   return {
     closeEditDialog,

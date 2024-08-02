@@ -1,28 +1,23 @@
-import { useCallback } from "react";
-import { TouchableOpacity } from "react-native";
-import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { Text } from "components";
-import { DataEntryActions } from "state";
+
+import styles from "./EntityButtonStyles";
 
 export const EntityButton = ({ treeNode, isCurrentEntity }) => {
-  const { label, entityPointer } = treeNode;
-
-  const dispatch = useDispatch();
-
-  const onPress = useCallback(() => {
-    dispatch(DataEntryActions.selectCurrentPageEntity(entityPointer));
-  }, [entityPointer]);
+  const { label } = treeNode;
 
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Text
-        style={{
-          fontSize: isCurrentEntity ? 24 : 20,
-          fontWeight: isCurrentEntity ? "bold" : "normal",
-        }}
-        textKey={label}
-      />
-    </TouchableOpacity>
+    <Text
+      style={
+        isCurrentEntity ? styles.entityButtonCurrentEntity : styles.entityButton
+      }
+      textKey={label}
+    />
   );
+};
+
+EntityButton.propTypes = {
+  treeNode: PropTypes.object.isRequired,
+  isCurrentEntity: PropTypes.bool,
 };

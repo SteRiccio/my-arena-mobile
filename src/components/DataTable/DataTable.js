@@ -109,7 +109,11 @@ export const DataTable = (props) => {
                     style={style}
                     textStyle={{ flex: 1 }}
                   >
-                    {CellRenderer ? <CellRenderer item={item} /> : item[fKey]}
+                    {CellRenderer ? (
+                      <CellRenderer item={item} />
+                    ) : (
+                      String(item[fKey] ?? "")
+                    )}
                   </RNPDataTable.Cell>
                 )
               )}

@@ -2,18 +2,17 @@ import { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
-import {
-  CollapsiblePanel,
-  Dialog,
-  FormItem,
-  HView,
-  Image,
-  IconButton,
-  LoadingIcon,
-  VView,
-} from "components";
 import { useImageFile } from "hooks";
 import { Files, ImageUtils } from "utils";
+
+import { CollapsiblePanel } from "./CollapsiblePanel";
+import { Dialog } from "./Dialog";
+import { FormItem } from "./FormItem";
+import { HView } from "./HView";
+import { Image } from "./Image";
+import { IconButton } from "./IconButton";
+import { LoadingIcon } from "./LoadingIcon";
+import { VView } from "./VView";
 
 const styles = StyleSheet.create({
   dialog: { display: "flex", height: "90%", padding: 5 },

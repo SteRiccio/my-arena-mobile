@@ -7,9 +7,9 @@ import { Dates, Objects, Surveys } from "@openforis/arena-core";
 import {
   Button,
   CollapsiblePanel,
+  FlexWrapView,
   FormItem,
   HView,
-  IconButton,
   Loader,
   MenuButton,
   Searchbar,
@@ -42,6 +42,8 @@ import { RecordsUtils } from "./RecordsUtils";
 import styles from "./styles";
 
 const minRecordsToShowSearchBar = 5;
+const noRecordsToExportTextKey =
+  "dataEntry:exportData.noRecordsInDeviceToExport";
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -174,7 +176,7 @@ export const RecordsList = () => {
     const conflictingRecordsCount = conflictingRecords.length;
 
     if (newRecordsCount + updatedRecordsCount + conflictingRecordsCount === 0) {
-      toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
+      toaster.show(noRecordsToExportTextKey);
       return { confirmResult: false };
     }
     const confirmSingleChoiceOptions =
@@ -205,36 +207,43 @@ export const RecordsList = () => {
     return { newRecords, updatedRecords, conflictingRecords, confirmResult };
   }, []);
 
-  const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
-    const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
-      await confirmExportRecords({ records });
-    if (confirmResult) {
-      const recordsToExport = [...newRecords, ...updatedRecords];
+  const exportSelectedRecords = useCallback(
+    async (selectedRecords) => {
+      const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
+        await confirmExportRecords({ records: selectedRecords });
+      if (confirmResult) {
+        const recordsToExport = [...newRecords, ...updatedRecords];
 
-      let conflictResolutionStrategy =
-        ConflictResolutionStrategy.overwriteIfUpdated;
-      if (
-        confirmResult.selectedSingleChoiceValue ===
-        ConflictResolutionStrategy.merge
-      ) {
-        recordsToExport.push(...conflictingRecords);
-        conflictResolutionStrategy = ConflictResolutionStrategy.merge;
+        let conflictResolutionStrategy =
+          ConflictResolutionStrategy.overwriteIfUpdated;
+        if (
+          confirmResult.selectedSingleChoiceValue ===
+          ConflictResolutionStrategy.merge
+        ) {
+          recordsToExport.push(...conflictingRecords);
+          conflictResolutionStrategy = ConflictResolutionStrategy.merge;
+        }
+        const recordUuids = recordsToExport.map((r) => r.uuid);
+        if (recordUuids.length === 0) {
+          toaster.show(noRecordsToExportTextKey);
+          return;
+        }
+        dispatch(
+          DataEntryActions.exportRecords({
+            cycle,
+            recordUuids,
+            conflictResolutionStrategy,
+            onJobComplete: loadRecordsWithSyncStatus,
+          })
+        );
       }
-      const recordUuids = recordsToExport.map((r) => r.uuid);
-      if (recordUuids.length === 0) {
-        toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
-        return;
-      }
-      dispatch(
-        DataEntryActions.exportRecords({
-          cycle,
-          recordUuids,
-          conflictResolutionStrategy,
-          onJobComplete: loadRecordsWithSyncStatus,
-        })
-      );
-    }
-  }, [cycle, loadRecordsWithSyncStatus, records]);
+    },
+    [confirmExportRecords, cycle, loadRecordsWithSyncStatus]
+  );
+
+  const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
+    await exportSelectedRecords(records);
+  }, [cycle, exportSelectedRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
     const recordUuids = records
@@ -242,13 +251,23 @@ export const RecordsList = () => {
       .map((record) => record.uuid);
 
     if (recordUuids.length === 0) {
-      toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
+      toaster.show(noRecordsToExportTextKey);
       return;
     }
     dispatch(
       DataEntryActions.exportRecords({ cycle, recordUuids, onlyLocally: true })
     );
   }, [cycle, records]);
+
+  const onExportSelectedRecordUuids = useCallback(
+    async (recordUuids) => {
+      const selectedRecords = records.filter((record) =>
+        recordUuids.includes(record.uuid)
+      );
+      await exportSelectedRecords(selectedRecords);
+    },
+    [cycle, exportSelectedRecords, records]
+  );
 
   const onDeleteSelectedRecordUuids = useCallback(
     async (recordUuids) => {
@@ -263,7 +282,7 @@ export const RecordsList = () => {
         await loadRecords();
       }
     },
-    [loadRecords]
+    [confirm, dispatch, loadRecords]
   );
 
   const checkRecordsCanBeImported = useCallback(
@@ -340,10 +359,11 @@ export const RecordsList = () => {
       dispatch(
         DataEntryActions.cloneRecordsIntoDefaultCycle({
           recordSummaries: selectedRecords,
+          callback: loadRecords,
         })
       );
     },
-    [dispatch, loadRecords, records, toaster]
+    [checkRecordsCanBeCloned, dispatch, loadRecords, records]
   );
 
   const recordsFiltered = useMemo(() => {
@@ -380,24 +400,25 @@ export const RecordsList = () => {
                 <Text textKey={defaultCycleText} />
               </HView>
             )}
-          </>
-        </CollapsiblePanel>
-
-        <CollapsiblePanel headerKey="dataEntry:records.listOptions">
-          <>
-            <FormItem
-              labelKey="dataEntry:showOnlyLocalRecords"
-              style={styles.formItem}
-            >
-              <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
-              <IconButton
+            <FlexWrapView>
+              {cycles.length > 1 && (
+                <SurveyCycleSelector style={styles.cyclesSelector} />
+              )}
+              <FormItem
+                labelKey="dataEntry:showOnlyLocalRecords"
+                style={styles.formItem}
+              >
+                <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
+              </FormItem>
+              <Button
                 disabled={!networkAvailable}
                 icon="cloud-refresh"
                 loading={syncStatusLoading}
+                mode="text"
                 onPress={onRemoteSyncPress}
+                textKey="dataEntry:checkSyncStatus"
               />
-            </FormItem>
-            {cycles.length > 1 && <SurveyCycleSelector />}
+            </FlexWrapView>
           </>
         </CollapsiblePanel>
 
@@ -416,6 +437,7 @@ export const RecordsList = () => {
                 loadRecords={loadRecords}
                 onCloneSelectedRecordUuids={onCloneSelectedRecordUuids}
                 onDeleteSelectedRecordUuids={onDeleteSelectedRecordUuids}
+                onExportSelectedRecordUuids={onExportSelectedRecordUuids}
                 onImportSelectedRecordUuids={onImportSelectedRecordUuids}
                 records={recordsFiltered}
                 showRemoteProps={!onlyLocal}
@@ -427,12 +449,14 @@ export const RecordsList = () => {
         )}
       </VView>
       <HView style={styles.bottomActionBar}>
-        <Button
-          icon="plus"
-          onPress={onNewRecordPress}
-          style={styles.newRecordButton}
-          textKey="dataEntry:newRecord"
-        />
+        {defaultCycleKey === cycle && (
+          <Button
+            icon="plus"
+            onPress={onNewRecordPress}
+            style={styles.newRecordButton}
+            textKey="dataEntry:newRecord"
+          />
+        )}
         {records.length > 0 && (
           <MenuButton
             icon="download"

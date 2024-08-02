@@ -23,25 +23,41 @@ const getNodeName = ({ survey, record, nodeUuid }) => {
   return null;
 };
 
-const getRootEntityKeysFormatted = ({ survey, record, lang }) => {
+const getEntityKeysFormatted = ({
+  survey,
+  record,
+  entity,
+  lang,
+  emptyValue = "",
+}) => {
   const { cycle } = record;
-  const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
-  const rootEntity = Records.getRoot(record);
+  const entityDef = Surveys.getNodeDefByUuid({
+    survey,
+    uuid: entity.nodeDefUuid,
+  });
+  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef, cycle });
   return keyDefs.map((keyDef) => {
-    const keyNode = Records.getChild(rootEntity, keyDef.uuid)(record);
-    return keyNode
-      ? NodeValueFormatter.format({
-          survey,
-          cycle,
-          nodeDef: keyDef,
-          node: keyNode,
-          value: keyNode.value,
-          showLabel: true,
-          lang,
-        })
-      : "";
+    const keyNode = Records.getChild(entity, keyDef.uuid)(record);
+    if (!keyNode) return emptyValue;
+    return NodeValueFormatter.format({
+      survey,
+      cycle,
+      nodeDef: keyDef,
+      node: keyNode,
+      value: keyNode.value,
+      showLabel: true,
+      lang,
+    });
   });
 };
+
+const getRootEntityKeysFormatted = ({ survey, record, lang }) =>
+  getEntityKeysFormatted({
+    survey,
+    record,
+    entity: Records.getRoot(record),
+    lang,
+  });
 
 const getEntitySummaryValuesByNameFormatted = ({
   survey,
@@ -171,6 +187,7 @@ const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
 
 export const RecordNodes = {
   getNodeName,
+  getEntityKeysFormatted,
   getRootEntityKeysFormatted,
   getEntitySummaryValuesByNameFormatted,
   getApplicableChildrenEntityDefs,

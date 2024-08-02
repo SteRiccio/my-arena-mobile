@@ -6,28 +6,23 @@ import { View } from "./View";
 const baseStyle = {
   display: "flex",
   flexDirection: "row",
-  gap: 4,
+  flexWrap: "wrap",
+  alignItems: "center",
 };
 
-export const HView = (props) => {
-  const {
-    children,
-    fullWidth = false,
-    style: styleProp = {},
-    ...otherProps
-  } = props;
+export const FlexWrapView = (props) => {
+  const { children, style: styleProp = {}, ...otherProps } = props;
 
   const style = [baseStyle, styleProp];
 
   return (
-    <View fullWidth={fullWidth} style={style} {...otherProps}>
+    <View style={style} {...otherProps}>
       {children}
     </View>
   );
 };
 
-HView.propTypes = {
+FlexWrapView.propTypes = {
   children: PropTypes.node,
-  fullWidth: PropTypes.bool,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

@@ -1,25 +1,39 @@
+import { useMemo } from "react";
 import { Banner } from "react-native-paper";
 import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
+
+const customActionToAction = ({ t, customAction }) => {
+  const {
+    labelKey,
+    labelParams,
+    mode = "outlined",
+    onPress,
+    ...otherProps
+  } = customAction;
+  return { label: t(labelKey, labelParams), mode, onPress, ...otherProps };
+};
 
 export const ItemSelectedBanner = (props) => {
   const { onDeleteSelected, selectedItemIds, customActions = [] } = props;
 
   const { t } = useTranslation();
 
-  return (
-    <Banner
-      actions={[
+  const actions = useMemo(
+    () =>
+      [
         ...customActions,
         {
-          label: t("common:deleteSelectedTitle"),
+          icon: "trash-can-outline",
+          labelKey: "common:delete",
           onPress: onDeleteSelected,
         },
-      ]}
-      visible={selectedItemIds.length > 0}
-    />
+      ].map((customAction) => customActionToAction({ t, customAction })),
+    [customActions]
   );
+
+  return <Banner actions={actions} visible={selectedItemIds.length > 0} />;
 };
 
 ItemSelectedBanner.propTypes = {

@@ -1,21 +1,42 @@
-import { RecordService } from "service/recordService";
+import { Surveys } from "@openforis/arena-core";
 
+import { Cycles } from "model";
+import { RecordService } from "service";
+import { ConfirmUtils } from "state/confirm";
 import { SurveySelectors } from "state/survey";
 import { ToastActions } from "state/toast";
 
+const textKeyPrefix = "dataEntry:records.cloneRecords.";
+
 export const cloneRecordsIntoDefaultCycle =
-  ({ recordSummaries }) =>
+  ({ recordSummaries, callback = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
-    await RecordService.cloneRecordsIntoDefaultCycle({
-      survey,
-      recordSummaries,
-    });
-    dispatch(
-      ToastActions.show("dataEntry:records.cloneRecords.completeSuccessfully", {
-        cycle: prevCycleString,
-        keyValues: keyValuesString,
+    const cycle = Surveys.getDefaultCycleKey(survey);
+    const cycleLabel = Cycles.labelFunction(cycle);
+
+    if (
+      await ConfirmUtils.confirm({
+        dispatch,
+        confirmButtonTextKey: `${textKeyPrefix}title`,
+        messageKey: `${textKeyPrefix}confirm.message`,
+        messageParams: {
+          cycle: cycleLabel,
+          recordsCount: recordSummaries.length,
+        },
+        titleKey: `${textKeyPrefix}title`,
       })
-    );
+    ) {
+      await RecordService.cloneRecordsIntoDefaultCycle({
+        survey,
+        recordSummaries,
+      });
+      dispatch(
+        ToastActions.show(`${textKeyPrefix}completeSuccessfully`, {
+          cycle: cycleLabel,
+        })
+      );
+      callback?.();
+    }
   };

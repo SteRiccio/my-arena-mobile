@@ -9,7 +9,7 @@ export const NodeTimeComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
   if (__DEV__) {
-    console.log(`rendering NodeTextComponent for ${nodeDef.props.name}`);
+    console.log(`rendering NodeTimeComponent for ${nodeDef.props.name}`);
   }
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
