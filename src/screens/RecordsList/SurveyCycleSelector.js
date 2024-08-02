@@ -18,8 +18,6 @@ export const SurveyCycleSelector = (props) => {
   const cycles = survey?.props?.cycles || {};
   const singleCycle = Object.entries(cycles).length === 1;
 
-  const cycleLabelFn = (cycleKey) => String(Number(cycleKey) + 1);
-
   const items = Object.entries(cycles).map(([cycleKey, cycle]) => ({
     value: cycleKey,
     label: Cycles.labelFunction(cycleKey),
@@ -36,9 +34,7 @@ export const SurveyCycleSelector = (props) => {
   return (
     <HView style={[styles.formItem, style]}>
       <Text textKey="dataEntry:cycle" />
-      {singleCycle ? (
-        <Text textKey={cycleLabelFn(selectedValue)} />
-      ) : items.length <= 3 ? (
+      {items.length <= 3 ? (
         <SegmentedButtons
           buttons={items}
           onChange={onChange}

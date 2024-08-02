@@ -2,8 +2,9 @@ import { Surveys } from "@openforis/arena-core";
 
 import { Cycles } from "model";
 import { RecordService } from "service";
-import { SurveySelectors, ToastActions } from "state";
 import { ConfirmUtils } from "state/confirm";
+import { SurveySelectors } from "state/survey";
+import { ToastActions } from "state/toast";
 
 const textKeyPrefix = "dataEntry:records.cloneRecords.";
 

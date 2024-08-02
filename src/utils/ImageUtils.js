@@ -1,7 +1,7 @@
 import { Image } from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
 
-import { Files } from "utils";
+import { Files } from "./Files";
 
 const _resizeToFitMaxSize = async ({
   fileUri,

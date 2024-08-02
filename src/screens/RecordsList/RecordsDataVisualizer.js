@@ -295,6 +295,7 @@ export const RecordsDataVisualizer = (props) => {
 RecordsDataVisualizer.propTypes = {
   onCloneSelectedRecordUuids: PropTypes.func.isRequired,
   onDeleteSelectedRecordUuids: PropTypes.func.isRequired,
+  onExportSelectedRecordUuids: PropTypes.func.isRequired,
   onImportSelectedRecordUuids: PropTypes.func.isRequired,
   records: PropTypes.array.isRequired,
   showRemoteProps: PropTypes.bool,

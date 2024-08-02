@@ -9,7 +9,6 @@ import { ScrollView } from "../ScrollView";
 import { VView } from "../VView";
 import { ItemSelectedBanner, useSelectableList } from "../SelectableList";
 import { usePagination } from "./usePagination";
-import { Objects } from "@openforis/arena-core";
 
 export const DataTable = (props) => {
   const {

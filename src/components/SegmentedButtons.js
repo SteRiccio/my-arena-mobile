@@ -1,4 +1,5 @@
 import { SegmentedButtons as RNPSegmentedButtons } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
@@ -19,4 +20,17 @@ export const SegmentedButtons = (props) => {
       value={value}
     />
   );
+};
+
+SegmentedButtons.propTypes = {
+  buttons: PropTypes.arrayOf(
+    PropTypes.shape({
+      icon: PropTypes.string,
+      label: PropTypes.string,
+      value: PropTypes.string.isRequired,
+    })
+  ),
+  onChange: PropTypes.func.isRequired,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  value: PropTypes.any,
 };
