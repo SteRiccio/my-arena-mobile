@@ -6,6 +6,10 @@ export default StyleSheet.create({
     gap: 20,
     flex: 1,
   },
+  selectedItemContainerWrapper: {
+    width: "100%",
+    maxHeight: 40,
+  },
   selectedItemsContainerWrapper: {
     maxHeight: "20%",
     width: "100%",

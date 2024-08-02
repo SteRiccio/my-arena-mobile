@@ -45,7 +45,7 @@ export const NodeCodeAutocomplete = (props) => {
   );
 
   const itemDescriptionExtractor = useCallback(
-    () => (item) => item?.props?.descriptions?.[lang],
+    (item) => item?.props?.descriptions?.[lang],
     [lang]
   );
 

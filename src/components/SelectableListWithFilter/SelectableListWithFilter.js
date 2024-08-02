@@ -153,21 +153,27 @@ export const SelectableListWithFilter = (props) => {
     <VView style={styles.container}>
       {filterVisible && (
         <>
-          <ScrollView
-            persistentScrollbar
-            style={styles.selectedItemsContainerWrapper}
-          >
-            <View style={styles.selectedItemsContainer}>
-              {selectedItems.map((item) => (
-                <Chip
-                  key={itemKeyExtractor(item)}
-                  onClose={() => onItemRemove(item)}
-                >
-                  {itemLabelExtractor(item)}
-                </Chip>
-              ))}
-            </View>
-          </ScrollView>
+          {selectedItems.length > 0 && (
+            <ScrollView
+              persistentScrollbar
+              style={
+                multiple
+                  ? styles.selectedItemsContainerWrapper
+                  : styles.selectedItemContainerWrapper
+              }
+            >
+              <View style={styles.selectedItemsContainer}>
+                {selectedItems.map((item) => (
+                  <Chip
+                    key={itemKeyExtractor(item)}
+                    onClose={() => onItemRemove(item)}
+                  >
+                    {itemLabelExtractor(item)}
+                  </Chip>
+                ))}
+              </View>
+            </ScrollView>
+          )}
           {(multiple || selectedItems.length === 0) && (
             <Text
               variant="titleMedium"
