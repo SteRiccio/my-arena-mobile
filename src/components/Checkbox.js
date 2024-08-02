@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Checkbox as RNPCheckbox } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import PropTypes from "prop-types";
@@ -13,12 +13,6 @@ const styles = StyleSheet.create({
 export const Checkbox = (props) => {
   const { checked, disabled, label, onPress, style: styleProp } = props;
 
-  const style = useMemo(
-    () =>
-      styleProp ? StyleSheet.compose([styles.base, styleProp]) : styles.base,
-    [styleProp]
-  );
-
   return (
     <RNPCheckbox.Item
       disabled={disabled}
@@ -26,7 +20,7 @@ export const Checkbox = (props) => {
       mode="android"
       onPress={onPress}
       status={checked ? "checked" : "unchecked"}
-      style={style}
+      style={[styles.base, styleProp]}
     />
   );
 };
