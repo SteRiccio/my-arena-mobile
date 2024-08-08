@@ -105,6 +105,7 @@ export const RecordsDataVisualizer = (props) => {
   });
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const viewAsList = screenViewMode === ScreenViewMode.list;
   const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
   const [sort, setSort] = useState({ dateModified: SortDirection.desc });
 
@@ -175,12 +176,11 @@ export const RecordsDataVisualizer = (props) => {
         key: "origin",
         header: "dataEntry:records.origin.title",
         style: { minWidth: 10 },
-        cellRenderer:
-          screenViewMode === ScreenViewMode.table
-            ? RecordOriginTableCellRenderer
-            : RecordOriginListCellRenderer,
+        cellRenderer: viewAsList
+          ? RecordOriginListCellRenderer
+          : RecordOriginTableCellRenderer,
       });
-      if (screenViewMode === ScreenViewMode.list) {
+      if (viewAsList) {
         result.push(
           {
             key: "dateModifiedRemote",
@@ -193,20 +193,24 @@ export const RecordsDataVisualizer = (props) => {
         key: "loadStatus",
         header: "dataEntry:records.loadStatus.title",
         style: { minWidth: 10 },
-        cellRenderer:
-          screenViewMode === ScreenViewMode.table
-            ? RecordLoadStatusTableCellRenderer
-            : RecordLoadStatusListCellRenderer,
+        cellRenderer: viewAsList
+          ? RecordLoadStatusListCellRenderer
+          : RecordLoadStatusTableCellRenderer,
       });
     }
     if (syncStatusLoading || syncStatusFetched) {
       result.push({
         key: "syncStatus",
         header: "dataEntry:syncStatusHeader",
-        cellRenderer: syncStatusLoading ? LoadingIcon : RecordSyncStatusIcon,
+        cellRenderer: ({ item }) =>
+          syncStatusLoading ? (
+            <LoadingIcon />
+          ) : (
+            <RecordSyncStatusIcon item={item} showLabel={viewAsList} />
+          ),
       });
     }
-    if (syncStatusFetched && screenViewMode === ScreenViewMode.list) {
+    if (syncStatusFetched && viewAsList) {
       result.push({
         key: "dateSynced",
         header: "dataEntry:syncedOn",
