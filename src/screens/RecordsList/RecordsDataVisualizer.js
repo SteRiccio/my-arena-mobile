@@ -167,6 +167,7 @@ export const RecordsDataVisualizer = (props) => {
       {
         key: "dateModified",
         header: "common:modifiedOn",
+        optional: true,
         sortable: true,
         style: { minWidth: 50 },
       }
