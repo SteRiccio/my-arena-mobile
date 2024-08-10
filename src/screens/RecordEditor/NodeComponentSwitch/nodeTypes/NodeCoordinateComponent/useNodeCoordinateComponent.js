@@ -222,13 +222,15 @@ export const useNodeCoordinateComponent = (props) => {
 
   const onStartGpsPress = useCallback(async () => {
     if (
-      await confirm({
+      Objects.isEmpty(uiValue?.x) ||
+      Objects.isEmpty(uiValue?.y) ||
+      (await confirm({
         messageKey: "dataEntry:coordinate.overwriteConfirmMessage",
-      })
+      }))
     ) {
       await startLocationWatch();
     }
-  }, [startLocationWatch]);
+  }, [startLocationWatch, uiValue]);
 
   const onStopGpsPress = useCallback(() => {
     stopLocationWatch();
