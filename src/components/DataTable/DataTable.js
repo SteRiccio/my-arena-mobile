@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 import { SortDirection } from "model";
+import { DeviceInfoSelectors } from "state/deviceInfo";
 
 import { Checkbox } from "../Checkbox";
 import { ScrollView } from "../ScrollView";
@@ -56,6 +57,14 @@ export const DataTable = (props) => {
     onPageChange,
   } = usePagination({ items: items });
 
+  const isTablet = DeviceInfoSelectors.useIsTablet();
+  const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+
+  const visibleFields = fields.filter(
+    ({ optional = false }) =>
+      !optional || fields.length <= 3 || isTablet || isLandscape
+  );
+
   const visibleRows = showPagination ? visibleItems : items;
 
   const onHeaderPress = (fieldKey) => {
@@ -78,7 +87,7 @@ export const DataTable = (props) => {
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
-          {fields.map((field) => (
+          {visibleFields.map((field) => (
             <RNPDataTable.Title
               key={field.key}
               onPress={() =>
@@ -102,7 +111,7 @@ export const DataTable = (props) => {
               onPress={() => onItemPress(item)}
               onLongPress={() => onItemLongPress(item)}
             >
-              {fields.map(
+              {visibleFields.map(
                 ({ key: fKey, style, cellRenderer: CellRenderer = null }) => (
                   <RNPDataTable.Cell
                     key={fKey}
