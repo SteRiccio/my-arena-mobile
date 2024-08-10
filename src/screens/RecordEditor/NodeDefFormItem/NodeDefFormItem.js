@@ -36,6 +36,7 @@ export const NodeDefFormItem = (props) => {
   });
   const isLinkedToPreviousCycleRecord =
     DataEntrySelectors.useIsLinkedToPreviousCycleRecord();
+  const recordEditLocked = DataEntrySelectors.useRecordEditLocked();
 
   const formItemComponent = (
     <VView

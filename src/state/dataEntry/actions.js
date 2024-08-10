@@ -34,6 +34,7 @@ const {
   PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
   PAGE_ENTITY_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
+  RECORD_EDIT_LOCKED,
   RECORD_SET,
 } = DataEntryActionTypes;
 
@@ -357,6 +358,13 @@ const closeRecordPageMenu = (dispatch, getState) => {
   }
 };
 
+const toggleRecordEditLock = (dispatch, getState) => {
+  Keyboard.dismiss();
+  const state = getState();
+  const locked = DataEntrySelectors.selectRecordEditLocked(state);
+  dispatch({ type: RECORD_EDIT_LOCKED, locked: !locked });
+};
+
 const navigateToRecordsList =
   ({ navigation }) =>
   (dispatch) => {
@@ -383,6 +391,7 @@ export const DataEntryActions = {
   selectCurrentPageEntity,
   selectCurrentPageEntityActiveChildIndex,
   toggleRecordPageMenuOpen,
+  toggleRecordEditLock,
 
   navigateToRecordsList,
   exportRecords,

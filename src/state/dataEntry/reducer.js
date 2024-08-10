@@ -5,6 +5,7 @@ import { DataEntryActionTypes } from "./actionTypes";
 
 const initialState = {
   record: null,
+  recordEditLocked: false,
   recordCurrentPageEntity: null,
   recordPageSelectorMenuOpen: false,
   linkToPreviousCycleRecord: false,
@@ -21,6 +22,10 @@ const actionHandlers = {
     ...state,
     recordPageSelectorMenuOpen: false,
     record: action.record,
+  }),
+  [DataEntryActionTypes.RECORD_EDIT_LOCKED]: ({ state, action }) => ({
+    ...state,
+    recordEditLocked: action.locked,
   }),
   [DataEntryActionTypes.RECORD_PREVIOUS_CYCLE_LOAD]: ({ state, action }) => ({
     ...state,

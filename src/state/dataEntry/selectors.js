@@ -21,6 +21,9 @@ const selectRecord = (state) => getDataEntryState(state).record;
 
 const selectIsEditingRecord = (state) => !!selectRecord(state);
 
+const selectRecordEditLocked = (state) =>
+  !!getDataEntryState(state).recordEditLocked;
+
 const selectRecordRootNodeUuid = (state) => {
   const record = selectRecord(state);
   return Records.getRoot(record)?.uuid;
@@ -311,8 +314,11 @@ const selectPreviousCycleEntityWithSameKeys =
 export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageEntity,
+  selectRecordEditLocked,
 
   useRecord: () => useSelector(selectRecord),
+
+  useRecordEditLocked: () => useSelector(selectRecordEditLocked),
 
   useIsEditingRecord: () => useSelector(selectIsEditingRecord),
 
