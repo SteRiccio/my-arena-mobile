@@ -9,7 +9,7 @@ import {
 } from "@openforis/arena-core";
 import { SurveyDefs } from "./SurveyDefs";
 
-const EMPTY_VALUE = "---EMPTY---";
+const EMPTY_VALUE = "---";
 
 const getNodeName = ({ survey, record, nodeUuid }) => {
   const node = Records.getNodeByUuid(nodeUuid)(record);
