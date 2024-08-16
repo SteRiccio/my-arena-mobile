@@ -16,27 +16,34 @@ const customActionToAction = ({ t, customAction }) => {
 };
 
 export const ItemSelectedBanner = (props) => {
-  const { onDeleteSelected, selectedItemIds, customActions = [] } = props;
+  const {
+    canDelete,
+    onDeleteSelected,
+    selectedItemIds,
+    customActions = [],
+  } = props;
 
   const { t } = useTranslation();
 
-  const actions = useMemo(
-    () =>
-      [
-        ...customActions,
-        {
-          icon: "trash-can-outline",
-          labelKey: "common:delete",
-          onPress: onDeleteSelected,
-        },
-      ].map((customAction) => customActionToAction({ t, customAction })),
-    [customActions]
-  );
+  const actions = useMemo(() => {
+    const result = [...customActions];
+    if (canDelete) {
+      result.push({
+        icon: "trash-can-outline",
+        labelKey: "common:delete",
+        onPress: onDeleteSelected,
+      });
+    }
+    return result.map((customAction) =>
+      customActionToAction({ t, customAction })
+    );
+  }, [canDelete, customActions]);
 
   return <Banner actions={actions} visible={selectedItemIds.length > 0} />;
 };
 
 ItemSelectedBanner.propTypes = {
+  canDelete: PropTypes.bool,
   customActions: PropTypes.array,
   onDeleteSelected: PropTypes.func.isRequired,
   selectedItemIds: PropTypes.array.isRequired,

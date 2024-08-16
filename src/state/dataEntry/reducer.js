@@ -20,8 +20,9 @@ const actionHandlers = {
 
   [DataEntryActionTypes.RECORD_SET]: ({ state, action }) => ({
     ...state,
-    recordPageSelectorMenuOpen: false,
     record: action.record,
+    recordEditLocked: true,
+    recordPageSelectorMenuOpen: false,
   }),
   [DataEntryActionTypes.RECORD_EDIT_LOCKED]: ({ state, action }) => ({
     ...state,

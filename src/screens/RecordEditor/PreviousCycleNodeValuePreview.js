@@ -1,9 +1,9 @@
 import { CollapsiblePanel } from "components";
+import { Cycles } from "model";
 import { DataEntrySelectors, SurveySelectors } from "state";
 
 import { NodeValuePreview } from "./NodeValuePreview";
 import { NodeValuePreviewPropTypes } from "./NodeValuePreview/NodeValuePreviewPropTypes";
-import { Cycles } from "model/Cycles";
 
 const PreviousCycleNodeValuePreviewInnerComponent = (props) => {
   const { nodeDef } = props;

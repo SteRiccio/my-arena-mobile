@@ -24,6 +24,14 @@ const selectIsEditingRecord = (state) => !!selectRecord(state);
 const selectRecordEditLocked = (state) =>
   !!getDataEntryState(state).recordEditLocked;
 
+const selectCanEditRecord = (state) => {
+  const editLocked = selectRecordEditLocked(state);
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const defaultCycle = Surveys.getDefaultCycleKey(survey);
+  const record = selectRecord(state);
+  return !editLocked && String(defaultCycle) === String(record?.cycle);
+};
+
 const selectRecordRootNodeUuid = (state) => {
   const record = selectRecord(state);
   return Records.getRoot(record)?.uuid;
@@ -145,6 +153,15 @@ const selectRecordChildNodes =
     const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
     const nodes = Records.getChildren(parentEntity, nodeDef.uuid)(record);
     return { nodes };
+  };
+
+const selectRecordAttributeValues =
+  ({ parentEntityUuid, nodeDef }) =>
+  (state) => {
+    const { nodes } = selectRecordChildNodes({ parentEntityUuid, nodeDef })(
+      state
+    );
+    return nodes.map((node) => node.value);
   };
 
 const selectChildDefs =
@@ -320,6 +337,8 @@ export const DataEntrySelectors = {
 
   useRecordEditLocked: () => useSelector(selectRecordEditLocked),
 
+  useCanEditRecord: () => useSelector(selectCanEditRecord),
+
   useIsEditingRecord: () => useSelector(selectIsEditingRecord),
 
   useRecordCycle: () => useSelector(selectRecordCycle),
@@ -365,6 +384,12 @@ export const DataEntrySelectors = {
   useRecordChildNodes: ({ parentEntityUuid, nodeDef }) =>
     useSelector(
       selectRecordChildNodes({ parentEntityUuid, nodeDef }),
+      Objects.isEqual
+    ),
+
+  useRecordAttributeValues: ({ parentEntityUuid, nodeDef }) =>
+    useSelector(
+      selectRecordAttributeValues({ parentEntityUuid, nodeDef }),
       Objects.isEqual
     ),
 

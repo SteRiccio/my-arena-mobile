@@ -186,4 +186,9 @@ export default {
     gettingCurrentLocation: "Getting current location",
     usingCurrentLocation: "Using current location",
   },
+  unlock: {
+    label: "Unlock",
+    confirmMessage: "Record edit is locked; unlock it?",
+    confirmTitle: "Edit is locked",
+  },
 };

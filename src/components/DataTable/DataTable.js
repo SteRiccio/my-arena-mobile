@@ -13,6 +13,7 @@ import { usePagination } from "./usePagination";
 
 export const DataTable = (props) => {
   const {
+    canDelete = false,
     fields,
     items,
     onItemPress: onItemPressProp,
@@ -81,6 +82,7 @@ export const DataTable = (props) => {
   return (
     <VView style={{ flex: 1 }}>
       <ItemSelectedBanner
+        canDelete={canDelete}
         customActions={selectedItemsCustomActions}
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
