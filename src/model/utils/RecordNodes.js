@@ -1,15 +1,32 @@
 import {
   NodeDefs,
+  NodeDefType,
   NodeValueFormatter,
   Nodes,
+  Numbers,
   Objects,
   RecordExpressionEvaluator,
   Records,
   Surveys,
 } from "@openforis/arena-core";
+import { valuePropsCoordinate } from "@openforis/arena-core/dist/node/nodeValueProps";
 import { SurveyDefs } from "./SurveyDefs";
 
 const EMPTY_VALUE = "---";
+
+const coordinateAttributeMandatoryFields = [
+  valuePropsCoordinate[valuePropsCoordinate.x],
+  valuePropsCoordinate[valuePropsCoordinate.y],
+  valuePropsCoordinate[valuePropsCoordinate.srs],
+];
+
+const coordinateAttributeNumericFields = [
+  valuePropsCoordinate[valuePropsCoordinate.x],
+  valuePropsCoordinate[valuePropsCoordinate.y],
+  valuePropsCoordinate[valuePropsCoordinate.accuracy],
+  valuePropsCoordinate[valuePropsCoordinate.altitude],
+  valuePropsCoordinate[valuePropsCoordinate.altitudeAccuracy],
+];
 
 const getNodeName = ({ survey, record, nodeUuid }) => {
   const node = Records.getNodeByUuid(nodeUuid)(record);
@@ -185,6 +202,28 @@ const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
   return null;
 };
 
+const cleanupAttributeValue = ({ value, attributeDef }) => {
+  if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
+    const additionalFields =
+      NodeDefs.getCoordinateAdditionalFields(attributeDef);
+    const fieldsToRemove = Object.keys(value).filter(
+      (field) =>
+        !coordinateAttributeMandatoryFields.includes(field) &&
+        !additionalFields.includes(field)
+    );
+    fieldsToRemove.forEach((field) => {
+      delete value[field];
+    });
+    coordinateAttributeNumericFields.forEach((field) => {
+      const fieldValue = value[field];
+      if (!Objects.isNil(fieldValue) && typeof fieldValue === "string") {
+        value[field] = Numbers.toNumber(fieldValue);
+      }
+    });
+  }
+  return value;
+};
+
 export const RecordNodes = {
   getNodeName,
   getEntityKeysFormatted,
@@ -193,4 +232,5 @@ export const RecordNodes = {
   getApplicableChildrenEntityDefs,
   getSiblingNode,
   getCoordinateDistanceTarget,
+  cleanupAttributeValue,
 };
