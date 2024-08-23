@@ -131,7 +131,7 @@ export const AppBar = (props) => {
             <Spacer />
             <RNPAppbar.Action
               icon={
-                recordEditLocked ? "lock-open-variant-outline" : "lock-outline"
+                recordEditLocked ? "lock-outline" : "lock-open-variant-outline"
               }
               onPress={toggleRecordLock}
             />
