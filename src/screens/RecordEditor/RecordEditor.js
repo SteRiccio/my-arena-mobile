@@ -23,6 +23,9 @@ import { StatusBar } from "./StatusBar";
 import styles from "./styles.js";
 
 export const RecordEditor = () => {
+  if (__DEV__) {
+    console.log(`rendering RecordEditor`);
+  }
   const dispatch = useDispatch();
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();

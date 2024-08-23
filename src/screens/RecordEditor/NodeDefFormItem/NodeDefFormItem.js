@@ -17,7 +17,7 @@ import { NodeDefFormItemHeader } from "./NodeDefFormItemHeader";
 import { CurrentRecordNodeValuePreview } from "../CurrentRecordNodeValuePreview";
 import { PreviousCycleNodeValuePreview } from "../PreviousCycleNodeValuePreview";
 
-import { useStyles } from "./styles.js";
+import { useStyles } from "./styles";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid, onFocus } = props;
@@ -59,16 +59,16 @@ export const NodeDefFormItem = (props) => {
         {isLinkedToPreviousCycleRecord && (
           <PreviousCycleNodeValuePreview nodeDef={nodeDef} />
         )}
-        {!canEditRecord ? (
-          <CurrentRecordNodeValuePreview
-            nodeDef={nodeDef}
-            parentNodeUuid={parentNodeUuid}
-          />
-        ) : (
+        {canEditRecord ? (
           <NodeComponentSwitch
             nodeDef={nodeDef}
             parentNodeUuid={parentNodeUuid}
             onFocus={onFocus}
+          />
+        ) : (
+          <CurrentRecordNodeValuePreview
+            nodeDef={nodeDef}
+            parentNodeUuid={parentNodeUuid}
           />
         )}
       </VView>

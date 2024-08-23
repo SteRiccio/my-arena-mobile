@@ -22,6 +22,9 @@ import { AppInitializer } from "./src/AppInitializer";
 const store = configureStore({ reducer: rootReducer });
 
 const AppInnerContainer = () => {
+  if (__DEV__) {
+    console.log(`rendering AppInnerContainer`);
+  }
   const theme = useEffectiveTheme();
 
   const onError = (error, stackTrace) => {
@@ -60,6 +63,9 @@ const AppInnerContainer = () => {
 };
 
 const App = () => {
+  if (__DEV__) {
+    console.log(`rendering App`);
+  }
   return (
     <Provider store={store}>
       <AppInnerContainer />

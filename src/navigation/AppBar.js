@@ -23,6 +23,9 @@ import { OptionsMenu } from "./OptionsMenu";
 import styles from "./styles";
 
 export const AppBar = (props) => {
+  if (__DEV__) {
+    console.log(`rendering AppBar`);
+  }
   const { back, navigation, options } = props;
 
   const { t } = useTranslation();
