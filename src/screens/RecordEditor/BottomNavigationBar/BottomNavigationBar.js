@@ -29,6 +29,7 @@ export const BottomNavigationBar = () => {
   const { entityDef, entityUuid, parentEntityUuid } = currentEntityPointer;
 
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
+  const canEditRecord = DataEntrySelectors.useCanEditRecord();
 
   if (__DEV__) {
     console.log(
@@ -115,6 +116,7 @@ export const BottomNavigationBar = () => {
     !activeChildIsLastChild;
 
   const newButtonVisible =
+    canEditRecord &&
     pageButtonsVisible &&
     prevEntityPointer &&
     !!entityUuid &&

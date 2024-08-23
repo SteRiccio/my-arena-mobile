@@ -138,15 +138,6 @@ const selectRecordChildNodes =
     return { nodes };
   };
 
-const selectRecordAttributeValues =
-  ({ parentEntityUuid, nodeDef }) =>
-  (state) => {
-    const { nodes } = selectRecordChildNodes({ parentEntityUuid, nodeDef })(
-      state
-    );
-    return nodes.map((node) => node.value);
-  };
-
 const selectChildDefs =
   ({ nodeDef }) =>
   (state) => {
@@ -367,12 +358,6 @@ export const DataEntrySelectors = {
   useRecordChildNodes: ({ parentEntityUuid, nodeDef }) =>
     useSelector(
       selectRecordChildNodes({ parentEntityUuid, nodeDef }),
-      Objects.isEqual
-    ),
-
-  useRecordAttributeValues: ({ parentEntityUuid, nodeDef }) =>
-    useSelector(
-      selectRecordAttributeValues({ parentEntityUuid, nodeDef }),
       Objects.isEqual
     ),
 

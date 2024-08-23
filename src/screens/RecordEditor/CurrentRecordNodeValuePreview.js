@@ -21,7 +21,7 @@ export const CurrentRecordNodeValuePreview = (props) => {
   const confirm = useConfirm();
   const recordEditLocked = DataEntrySelectors.useRecordEditLocked();
 
-  const values = DataEntrySelectors.useRecordAttributeValues({
+  const { nodes } = DataEntrySelectors.useRecordChildNodes({
     parentEntityUuid: parentNodeUuid,
     nodeDef,
   });
@@ -42,8 +42,12 @@ export const CurrentRecordNodeValuePreview = (props) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <FlexWrapView>
-        {values.map((value) => (
-          <NodeValuePreview nodeDef={nodeDef} value={value} />
+        {nodes.map((node) => (
+          <NodeValuePreview
+            key={node.uuid}
+            nodeDef={nodeDef}
+            value={node.value}
+          />
         ))}
       </FlexWrapView>
     </TouchableOpacity>
