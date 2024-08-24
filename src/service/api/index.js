@@ -25,7 +25,7 @@ const fetchWithTimeout = async (url, opts = {}, timeout = 120000) => {
   return result;
 };
 
-const getUrlWithParams = ({ serverUrl, uri, params }) => {
+const getUrlWithParams = ({ serverUrl, uri, params = {} }) => {
   const requestParams = Object.entries(params).reduce((acc, [key, value]) => {
     acc.append(key, value);
     return acc;

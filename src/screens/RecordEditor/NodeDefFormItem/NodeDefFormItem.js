@@ -14,9 +14,10 @@ import { RecordEditViewMode } from "model";
 
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
 import { NodeDefFormItemHeader } from "./NodeDefFormItemHeader";
+import { CurrentRecordNodeValuePreview } from "../CurrentRecordNodeValuePreview";
 import { PreviousCycleNodeValuePreview } from "../PreviousCycleNodeValuePreview";
 
-import { useStyles } from "./styles.js";
+import { useStyles } from "./styles";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid, onFocus } = props;
@@ -36,6 +37,7 @@ export const NodeDefFormItem = (props) => {
   });
   const isLinkedToPreviousCycleRecord =
     DataEntrySelectors.useIsLinkedToPreviousCycleRecord();
+  const canEditRecord = DataEntrySelectors.useCanEditRecord();
 
   const formItemComponent = (
     <VView
@@ -57,11 +59,18 @@ export const NodeDefFormItem = (props) => {
         {isLinkedToPreviousCycleRecord && (
           <PreviousCycleNodeValuePreview nodeDef={nodeDef} />
         )}
-        <NodeComponentSwitch
-          nodeDef={nodeDef}
-          parentNodeUuid={parentNodeUuid}
-          onFocus={onFocus}
-        />
+        {canEditRecord ? (
+          <NodeComponentSwitch
+            nodeDef={nodeDef}
+            parentNodeUuid={parentNodeUuid}
+            onFocus={onFocus}
+          />
+        ) : (
+          <CurrentRecordNodeValuePreview
+            nodeDef={nodeDef}
+            parentNodeUuid={parentNodeUuid}
+          />
+        )}
       </VView>
     </VView>
   );

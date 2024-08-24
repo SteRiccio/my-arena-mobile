@@ -8,14 +8,19 @@ import { screenKeys } from "screens/screenKeys";
 
 const Stack = createNativeStackNavigator();
 
+const screenOptions = {
+  header: (props) => React.createElement(AppBar, props),
+};
+
 export const AppStack = () => {
+  if (__DEV__) {
+    console.log(`rendering AppStack`);
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName={screenKeys.home}
-        screenOptions={{
-          header: (props) => <AppBar {...props} />,
-        }}
+        screenOptions={screenOptions}
       >
         {Object.entries(screens).map(([key, screen]) => {
           const { component, ...options } = screen;

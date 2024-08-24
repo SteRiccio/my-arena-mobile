@@ -20,6 +20,17 @@ const selectRecord = (state) => getDataEntryState(state).record;
 
 const selectIsEditingRecord = (state) => !!selectRecord(state);
 
+const selectRecordEditLocked = (state) =>
+  !!getDataEntryState(state).recordEditLocked;
+
+const selectCanEditRecord = (state) => {
+  const editLocked = selectRecordEditLocked(state);
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const defaultCycle = Surveys.getDefaultCycleKey(survey);
+  const record = selectRecord(state);
+  return !editLocked && String(defaultCycle) === String(record?.cycle);
+};
+
 const selectRecordRootNodeUuid = (state) => {
   const record = selectRecord(state);
   return Records.getRoot(record)?.uuid;
@@ -294,8 +305,13 @@ const selectPreviousCycleEntityWithSameKeys =
 export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageEntity,
+  selectRecordEditLocked,
 
   useRecord: () => useSelector(selectRecord),
+
+  useRecordEditLocked: () => useSelector(selectRecordEditLocked),
+
+  useCanEditRecord: () => useSelector(selectCanEditRecord),
 
   useIsEditingRecord: () => useSelector(selectIsEditingRecord),
 

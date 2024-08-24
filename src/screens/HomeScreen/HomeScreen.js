@@ -5,7 +5,7 @@ import { useAssets } from "expo-asset";
 
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { LoginInfo } from "appComponents/LoginInfo";
-import { VersionNumberInfo } from "appComponents/VersionNumberInfo";
+import { VersionNumberInfoButton } from "appComponents/VersionNumberInfoButton";
 import { Button, ScrollView, Text, VView } from "components";
 import { SurveySelectors } from "state";
 
@@ -31,7 +31,7 @@ export const HomeScreen = () => {
           textKey="common:appTitle"
         />
 
-        <VersionNumberInfo />
+        <VersionNumberInfoButton />
 
         <LoginInfo />
 

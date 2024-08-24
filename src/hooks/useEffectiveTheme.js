@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useColorScheme } from "react-native";
 import { MD3DarkTheme, DefaultTheme } from "react-native-paper";
 
@@ -15,15 +16,20 @@ export const useEffectiveTheme = () => {
   if (themeSetting === ThemesSettings.auto) {
     themeSetting = colorScheme === "dark" ? Themes.dark : Themes.light;
   }
-  const theme = themeSetting === Themes.dark ? MD3DarkTheme : DefaultTheme;
-  const { fonts } = theme;
-  const fontsResized = Object.entries(fonts).reduce((acc, [fontKey, font]) => {
-    const fontResized = {
-      ...font,
-      fontSize: Math.floor(font.fontSize ?? defaultFontSize * fontScale),
-    };
-    acc[fontKey] = fontResized;
-    return acc;
-  }, {});
-  return { ...theme, fonts: fontsResized };
+  return useMemo(() => {
+    const theme = themeSetting === Themes.dark ? MD3DarkTheme : DefaultTheme;
+    const { fonts } = theme;
+    const fontsResized = Object.entries(fonts).reduce(
+      (acc, [fontKey, font]) => {
+        const fontResized = {
+          ...font,
+          fontSize: Math.floor(font.fontSize ?? defaultFontSize * fontScale),
+        };
+        acc[fontKey] = fontResized;
+        return acc;
+      },
+      {}
+    );
+    return { ...theme, fonts: fontsResized };
+  }, [fontScale, themeSetting]);
 };

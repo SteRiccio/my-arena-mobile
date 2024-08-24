@@ -15,6 +15,9 @@ import styles from "./styles";
 const Separator = () => <Icon source="greater-than" />;
 
 export const Breadcrumbs = () => {
+  if (__DEV__) {
+    console.log(`rendering Breadcrumbs`);
+  }
   const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
 
@@ -26,14 +29,8 @@ export const Breadcrumbs = () => {
   const actualEntityUuid = entityUuid || parentEntityUuid;
 
   const itemLabelFunction = useCallback(
-    ({
-      nodeDef,
-      survey = null,
-      record = null,
-      entity = null,
-      parentEntity = null,
-    }) => {
-      let label = NodeDefs.getLabelOrName(nodeDef, lang);
+    ({ nodeDef, record = null, entity = null, parentEntity = null }) => {
+      const nodeDefLabel = NodeDefs.getLabelOrName(nodeDef, lang);
 
       if (
         NodeDefs.isRoot(nodeDef) ||
@@ -46,17 +43,17 @@ export const Breadcrumbs = () => {
             entity,
             lang,
           });
-        return label + `[${Object.values(keyValuesByName)}]`;
+        return nodeDefLabel + `[${Object.values(keyValuesByName)}]`;
       }
-      return label;
+      return nodeDefLabel;
     },
-    [lang]
+    [lang, survey]
   );
 
   useEffect(() => {
     // scroll to the end (right)
     scrollViewRef?.current?.scrollToEnd({ animated: true });
-  }, [currentPageEntity]);
+  }, [actualEntityUuid]);
 
   const items = useMemo(() => {
     if (!actualEntityUuid) return [];
@@ -83,7 +80,6 @@ export const Breadcrumbs = () => {
       });
       const itemName = itemLabelFunction({
         nodeDef: currentEntityDef,
-        survey,
         record,
         parentEntity,
         entity: currentEntity,
@@ -99,7 +95,7 @@ export const Breadcrumbs = () => {
       currentEntity = parentEntity;
     }
     return _items;
-  }, [record, entityDef, actualEntityUuid, itemLabelFunction]);
+  }, [survey, record, entityDef, actualEntityUuid, itemLabelFunction]);
 
   const onItemPress = ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
     dispatch(

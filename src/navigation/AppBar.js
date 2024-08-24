@@ -23,6 +23,9 @@ import { OptionsMenu } from "./OptionsMenu";
 import styles from "./styles";
 
 export const AppBar = (props) => {
+  if (__DEV__) {
+    console.log(`rendering AppBar`);
+  }
   const { back, navigation, options } = props;
 
   const { t } = useTranslation();
@@ -42,6 +45,8 @@ export const AppBar = (props) => {
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
+  const recordEditLocked =
+    DataEntrySelectors.useRecordEditLocked() && editingRecord;
   const recordEditViewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const recordHasErrors = DataEntrySelectors.useRecordHasErrors();
   const canRecordBeLinkedToPreviousCycle =
@@ -60,10 +65,25 @@ export const AppBar = (props) => {
       ? survey.props.name
       : t(titleOption);
 
+  const onToggleDrawerPress = useCallback(
+    () => dispatch(DataEntryActions.toggleRecordPageMenuOpen),
+    []
+  );
+
   const toggleMenu = useCallback(
     () =>
       setState((statePrev) => ({ ...statePrev, menuVisible: !menuVisible })),
     [menuVisible]
+  );
+
+  const onToggleScreenViewModePress = useCallback(
+    () => dispatch(ScreenOptionsActions.toggleScreenViewMode({ screenKey })),
+    [screenKey]
+  );
+
+  const toggleRecordLock = useCallback(
+    () => dispatch(DataEntryActions.toggleRecordEditLock),
+    []
   );
 
   const toggleRecordEditViewMode = useCallback(() => {
@@ -76,14 +96,24 @@ export const AppBar = (props) => {
     );
   }, [recordEditViewMode]);
 
+  const onValidationIconPress = useCallback(
+    () => navigation.navigate(screenKeys.recordValidationReport),
+    [navigation]
+  );
+
+  const onLinkToPreviousCyclePress = useCallback(() => {
+    dispatch(
+      isLinkedToPreviousCycleRecord
+        ? DataEntryActions.unlinkFromRecordInPreviousCycle()
+        : DataEntryActions.linkToRecordInPreviousCycle()
+    );
+  }, [isLinkedToPreviousCycleRecord]);
+
   return (
     <RNPAppbar.Header elevated mode={editingRecord ? "medium" : "small"}>
       <HView style={styles.topBarContainer} fullWidth transparent>
         {editingRecord && (
-          <RNPAppbar.Action
-            icon="menu"
-            onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
-          />
+          <RNPAppbar.Action icon="menu" onPress={onToggleDrawerPress} />
         )}
 
         {hasBack && back && (
@@ -99,25 +129,20 @@ export const AppBar = (props) => {
         {editingRecord && (
           <>
             <Spacer />
+            <RNPAppbar.Action
+              icon={
+                recordEditLocked ? "lock-outline" : "lock-open-variant-outline"
+              }
+              onPress={toggleRecordLock}
+            />
             {recordHasErrors && (
-              <RNPAppbar.Action
-                icon="alert"
-                onPress={() =>
-                  navigation.navigate(screenKeys.recordValidationReport)
-                }
-              />
+              <RNPAppbar.Action icon="alert" onPress={onValidationIconPress} />
             )}
             {canRecordBeLinkedToPreviousCycle && (
               <RNPAppbar.Action
                 icon={isLinkedToPreviousCycleRecord ? "link" : "link-off"}
                 loading={isLoadingPreviousCycleRecord}
-                onPress={() =>
-                  dispatch(
-                    isLinkedToPreviousCycleRecord
-                      ? DataEntryActions.unlinkFromRecordInPreviousCycle()
-                      : DataEntryActions.linkToRecordInPreviousCycle()
-                  )
-                }
+                onPress={onLinkToPreviousCyclePress}
               />
             )}
             <RNPAppbar.Action
@@ -136,9 +161,7 @@ export const AppBar = (props) => {
             icon={
               screenViewMode === ScreenViewMode.list ? "table" : "view-list"
             }
-            onPress={() =>
-              dispatch(ScreenOptionsActions.toggleScreenViewMode({ screenKey }))
-            }
+            onPress={onToggleScreenViewModePress}
           />
         )}
 

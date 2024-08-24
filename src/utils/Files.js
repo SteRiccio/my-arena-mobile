@@ -117,9 +117,11 @@ const getMimeTypeFromUri = (uri) => {
 
 const getMimeTypeFromName = (fileName) => mime.getType(fileName);
 
+const readAsString = async (fileUri) => FileSystem.readAsStringAsync(fileUri);
+
 const readJsonFromFile = async ({ fileUri }) => {
   if (await exists(fileUri)) {
-    const content = await FileSystem.readAsStringAsync(fileUri);
+    const content = await readAsString(fileUri);
     return JSON.parse(content);
   }
   return null;
@@ -220,6 +222,7 @@ export const Files = {
   getNameFromUri,
   getExtension,
   getSize,
+  readAsString,
   readJsonFromFile,
   listDirectory,
   isSharingAvailable,

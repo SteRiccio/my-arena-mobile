@@ -8,6 +8,7 @@ const baseStyle = {
   flexDirection: "row",
   flexWrap: "wrap",
   alignItems: "center",
+  columnGap: 10,
 };
 
 export const FlexWrapView = (props) => {
