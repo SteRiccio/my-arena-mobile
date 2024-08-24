@@ -18,7 +18,7 @@ export const NodeDefFormItemHeader = (props) => {
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const labelOrName = NodeDefs.getLabelOrName(nodeDef, lang);
-  const description = nodeDef.props?.descriptions?.[lang];
+  const description = NodeDefs.getDescription(nodeDef, lang);
 
   return (
     <>
