@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking } from "react-native";
 
-import { VersionNumberInfo } from "appComponents/VersionNumberInfo";
+import { VersionNumberInfoButton } from "appComponents/VersionNumberInfoButton";
 import { Button, FormItem, ScrollView, Text, VView } from "components";
 import { useTranslation } from "localization";
 
@@ -31,7 +31,7 @@ export const AboutScreen = () => {
           </VView>
         </FormItem>
         <FormItem labelKey="about:version">
-          <VersionNumberInfo />
+          <VersionNumberInfoButton />
         </FormItem>
       </VView>
     </ScrollView>
