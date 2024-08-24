@@ -21,8 +21,8 @@ export const Dialog = (props) => {
         <RNPDialog.Title>{t(title)}</RNPDialog.Title>
         <RNPDialog.Content>{children}</RNPDialog.Content>
         <RNPDialog.Actions>
-          {actions.map((action) => (
-            <Button onPress={action.onPress} textKey={action.textKey} />
+          {actions.map(({ onPress, textKey }) => (
+            <Button key={textKey} onPress={onPress} textKey={textKey} />
           ))}
           <Button onPress={onClose} textKey={closeButtonTextKey} />
         </RNPDialog.Actions>

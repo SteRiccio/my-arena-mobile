@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { TouchableOpacity } from "react-native";
 
 import { FlexWrapView } from "components";
@@ -5,8 +7,6 @@ import { DataEntryActions, DataEntrySelectors, useConfirm } from "state";
 
 import { NodeValuePreview } from "./NodeValuePreview";
 import { NodeValuePreviewPropTypes } from "./NodeValuePreview/NodeValuePreviewPropTypes";
-import { useCallback } from "react";
-import { useDispatch } from "react-redux";
 
 export const CurrentRecordNodeValuePreview = (props) => {
   const { nodeDef, parentNodeUuid } = props;

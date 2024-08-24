@@ -60,4 +60,5 @@ export const ChangelogViewDialog = (props) => {
 
 ChangelogViewDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
 };
