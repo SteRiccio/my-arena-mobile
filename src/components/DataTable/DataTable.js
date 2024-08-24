@@ -13,7 +13,7 @@ import { usePagination } from "./usePagination";
 
 export const DataTable = (props) => {
   const {
-    canDelete = false,
+    canDelete = true,
     fields,
     items,
     onItemPress: onItemPressProp,
@@ -162,6 +162,7 @@ export const DataTable = (props) => {
 };
 
 DataTable.propTypes = {
+  canDelete: PropTypes.bool,
   fields: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   onItemPress: PropTypes.func,
