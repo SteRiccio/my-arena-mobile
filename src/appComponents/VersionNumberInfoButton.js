@@ -67,7 +67,6 @@ export const VersionNumberInfoButton = () => {
   );
 
   const onUpdateStatusIconPress = useCallback(() => {
-    toggleChangelogViewDialogOpen();
     switch (updateStatus) {
       case UpdateStatus.error:
         toaster.show("app:updateStatus.error", { error: updateStatusError });
