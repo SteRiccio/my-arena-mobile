@@ -45,6 +45,8 @@ export const AppBar = (props) => {
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
+  const recordEditLockAvailable =
+    DataEntrySelectors.useRecordEditLockAvailable() && editingRecord;
   const recordEditLocked =
     DataEntrySelectors.useRecordEditLocked() && editingRecord;
   const recordEditViewMode = SurveyOptionsSelectors.useRecordEditViewMode();
@@ -129,12 +131,16 @@ export const AppBar = (props) => {
         {editingRecord && (
           <>
             <Spacer />
-            <RNPAppbar.Action
-              icon={
-                recordEditLocked ? "lock-outline" : "lock-open-variant-outline"
-              }
-              onPress={toggleRecordLock}
-            />
+            {recordEditLockAvailable && (
+              <RNPAppbar.Action
+                icon={
+                  recordEditLocked
+                    ? "lock-outline"
+                    : "lock-open-variant-outline"
+                }
+                onPress={toggleRecordLock}
+              />
+            )}
             {recordHasErrors && (
               <RNPAppbar.Action icon="alert" onPress={onValidationIconPress} />
             )}
