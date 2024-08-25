@@ -2,10 +2,11 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { DateFormats, Dates } from "@openforis/arena-core";
+import { DateFormats, Dates, Surveys } from "@openforis/arena-core";
 
 import { DataVisualizer, Loader, Searchbar, Text, VView } from "components";
 import { useNavigationFocus } from "hooks";
+import { ScreenViewMode } from "model/ScreenViewMode";
 import { SurveyService } from "service";
 import {
   ConfirmActions,
@@ -31,6 +32,7 @@ export const SurveysListRemote = () => {
   const dispatch = useDispatch();
   const surveysLocal = SurveySelectors.useSurveysLocal();
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const viewAsList = screenViewMode === ScreenViewMode.list;
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
 
   const dataFields = useMemo(() => {
@@ -44,20 +46,54 @@ export const SurveysListRemote = () => {
         header: "common:label",
       },
     ];
-    if (isLandscape) {
-      fields.push({
-        key: "datePublished",
-        header: "surveys:publishedOn",
-        cellRenderer: ({ item }) =>
-          Dates.convertDate({
-            dateStr: item.datePublished,
-            formatFrom: DateFormats.datetimeStorage,
-            formatTo: DateFormats.datetimeDisplay,
-          }),
-      });
+    if (isLandscape || viewAsList) {
+      fields.push(
+        {
+          key: "description",
+          header: "surveys:description",
+          cellRenderer: ({ item }) => {
+            const defaultLanguage = Surveys.getDefaultLanguage(item);
+            const description = item.props?.descriptions?.[defaultLanguage];
+            return description ? <Text>{description}</Text> : null;
+          },
+        },
+        {
+          key: "datePublished",
+          header: "surveys:publishedOn",
+          cellRenderer: ({ item }) => (
+            <Text>
+              {Dates.convertDate({
+                dateStr: item.datePublished,
+                formatFrom: DateFormats.datetimeStorage,
+                formatTo: DateFormats.datetimeDisplay,
+              })}
+            </Text>
+          ),
+        },
+        {
+          key: "loadStatus",
+          header: "surveys:loadStatus.label",
+          cellRenderer: ({ item }) => {
+            const localSurvey = surveysLocal.find(
+              (surveyLocal) => surveyLocal.uuid === item.uuid
+            );
+            let messageKey = null;
+            if (!localSurvey) {
+              messageKey = "surveys:loadStatus.notInDevice";
+            } else if (
+              Dates.isAfter(item.datePublished, localSurvey.datePublished)
+            ) {
+              messageKey = "surveys:loadStatus.updated";
+            } else {
+              messageKey = "surveys:loadStatus.upToDate";
+            }
+            return <Text textKey={messageKey} />;
+          },
+        }
+      );
     }
     return fields;
-  }, [isLandscape]);
+  }, [isLandscape, surveysLocal, viewAsList]);
 
   const [state, setState] = useState(INITIAL_STATE);
   const { surveys, loading, errorKey } = state;

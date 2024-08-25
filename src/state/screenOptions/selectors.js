@@ -14,8 +14,6 @@ const useScreenViewMode = (screenKey) =>
 
 export const ScreenOptionsSelectors = {
   selectScreenViewMode,
-
   useScreenViewMode,
-
   useCurrentScreenViewMode: () => useScreenViewMode(useScreenKey()),
 };

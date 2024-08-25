@@ -43,5 +43,6 @@ export { TimePicker } from "./TimePicker";
 export { Tooltip } from "./Tooltip";
 export { UpdateStatusIcon } from "./UpdateStatusIcon";
 export { View } from "./View";
+export { ViewMoreText } from "./ViewMoreText";
 export { VView } from "./VView";
 export { WarningIconButton } from "./WarningIconButton";

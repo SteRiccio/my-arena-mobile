@@ -5,12 +5,19 @@ export default {
     message_other: "Delete the selected surveys?",
   },
   currentSurvey: "Current survey",
+  description: 'Description',
   errorFetchingSurveys: "Error fetching surveys from remote server",
   errorFetchingSurveysWithDetails:
     "$t(surveys:errorFetchingSurveys): {{details}}",
   importSurvey: "Import survey",
   importSurveyConfirmMessage: 'Import the survey "{{surveyName}}"?',
   importSurveyFromCloud: "Import survey from cloud",
+  loadStatus: {
+    label: "Load status",
+    notInDevice: "not in device",
+    updated: "updated",
+    upToDate: "up to date",
+  },
   loadSurveysErrorMessage:
     "Error fetching surveys from remote server.\n\nUser not logged in or session expired.\n\nLogin to the server?",
   manageSurveys: "Manage surveys",
