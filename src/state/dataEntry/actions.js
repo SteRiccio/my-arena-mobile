@@ -78,7 +78,7 @@ const createNewRecord =
 
     record = await RecordService.insertRecord({ survey, record });
 
-    dispatch(editRecord({ navigation, record }));
+    dispatch(editRecord({ navigation, record, locked: false }));
   };
 
 const addNewEntity = async (dispatch, getState) => {
@@ -146,9 +146,14 @@ const deleteRecords = (recordUuids) => async (dispatch, getState) => {
 };
 
 const editRecord =
-  ({ navigation, record }) =>
+  ({ navigation, record, locked = true }) =>
   (dispatch) => {
-    dispatch({ type: RECORD_SET, record });
+    dispatch({
+      type: RECORD_SET,
+      record,
+      recordEditLockAvailable: locked,
+      recordEditLocked: locked,
+    });
     navigation.navigate(screenKeys.recordEditor);
   };
 

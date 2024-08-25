@@ -23,6 +23,9 @@ const selectIsEditingRecord = (state) => !!selectRecord(state);
 const selectRecordEditLocked = (state) =>
   !!getDataEntryState(state).recordEditLocked;
 
+const selectRecordEditLockAvailable = (state) =>
+  !!getDataEntryState(state).recordEditLockAvailable;
+
 const selectCanEditRecord = (state) => {
   const editLocked = selectRecordEditLocked(state);
   const survey = SurveySelectors.selectCurrentSurvey(state);
@@ -308,6 +311,8 @@ export const DataEntrySelectors = {
   selectRecordEditLocked,
 
   useRecord: () => useSelector(selectRecord),
+
+  useRecordEditLockAvailable: () => useSelector(selectRecordEditLockAvailable),
 
   useRecordEditLocked: () => useSelector(selectRecordEditLocked),
 
