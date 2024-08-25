@@ -1,4 +1,5 @@
 export default {
+  changelog: "Change Log",
   confirmExit: {
     title: "Exit",
     message: `Exit from the app?
