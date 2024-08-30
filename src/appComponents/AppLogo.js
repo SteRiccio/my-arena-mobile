@@ -39,7 +39,7 @@ export const AppLogo = (props) => {
   return image;
 };
 
-AppLogo.propType = {
+AppLogo.propTypes = {
   animated: PropTypes.bool,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
