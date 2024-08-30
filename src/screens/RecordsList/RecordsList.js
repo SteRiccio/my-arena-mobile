@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import * as DocumentPicker from "expo-document-picker";
 
 import { Dates, Objects, Surveys } from "@openforis/arena-core";
 
@@ -155,6 +156,24 @@ export const RecordsList = () => {
   const onRemoteSyncPress = useCallback(async () => {
     await loadRecordsWithSyncStatus();
   }, [loadRecordsWithSyncStatus]);
+
+  const onImportRecordsFromFilePress = useCallback(async () => {
+    const fileResult = await DocumentPicker.getDocumentAsync();
+    const { assets, canceled } = fileResult;
+    if (canceled) return;
+
+    const asset = assets?.[0];
+    if (!asset) return;
+
+    const { uri } = asset;
+
+    dispatch(
+      DataEntryActions.importRecordsFromFile({
+        fileUri: uri,
+        onImportComplete: loadRecords,
+      })
+    );
+  }, []);
 
   const onNewRecordPress = () => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
@@ -414,9 +433,15 @@ export const RecordsList = () => {
                 disabled={!networkAvailable}
                 icon="cloud-refresh"
                 loading={syncStatusLoading}
-                mode="text"
+                mode="outlined"
                 onPress={onRemoteSyncPress}
                 textKey="dataEntry:checkSyncStatus"
+              />
+              <Button
+                icon="file-import-outline"
+                mode="text"
+                onPress={onImportRecordsFromFilePress}
+                textKey="dataEntry:import"
               />
             </FlexWrapView>
           </>

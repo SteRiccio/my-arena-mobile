@@ -12,25 +12,12 @@ const handleImportErrors = ({ dispatch, error = null, errors = null }) => {
   dispatch(ToastActions.show("dataEntry:records.importFailed", { details }));
 };
 
-const _onExportFromServerJobComplete = async ({
-  dispatch,
-  state,
-  job,
-  onImportComplete,
-}) => {
-  try {
-    const { outputFileName: fileName } = job.result;
-
+export const importRecordsFromFile =
+  ({ fileUri, onImportComplete }) =>
+  async (dispatch, getState) => {
+    const state = getState();
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
-
-    dispatch(JobMonitorActions.close());
-
-    const fileUri =
-      await RecordService.downloadExportedRecordsFileFromRemoteServer({
-        survey,
-        fileName,
-      });
 
     const importJob = new RecordsAndFilesImportJob({
       survey,
@@ -50,6 +37,28 @@ const _onExportFromServerJobComplete = async ({
     } else {
       handleImportErrors({ dispatch, errors });
     }
+  };
+
+const _onExportFromServerJobComplete = async ({
+  dispatch,
+  state,
+  job,
+  onImportComplete,
+}) => {
+  try {
+    const { outputFileName: fileName } = job.result;
+
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+
+    dispatch(JobMonitorActions.close());
+
+    const fileUri =
+      await RecordService.downloadExportedRecordsFileFromRemoteServer({
+        survey,
+        fileName,
+      });
+
+    dispatch(importRecordsFromFile({ fileUri, onImportComplete }));
   } catch (error) {
     handleImportErrors({ dispatch, error });
   }

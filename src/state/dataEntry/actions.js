@@ -26,7 +26,10 @@ import { DataEntryActionTypes } from "./actionTypes";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
 import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
-import { importRecordsFromServer } from "./actionsRecordsImport";
+import {
+  importRecordsFromFile,
+  importRecordsFromServer,
+} from "./actionsRecordsImport";
 import { cloneRecordsIntoDefaultCycle } from "./actionsRecordsClone";
 
 const {
@@ -404,6 +407,7 @@ export const DataEntryActions = {
   linkToRecordInPreviousCycle,
   unlinkFromRecordInPreviousCycle,
 
+  importRecordsFromFile,
   importRecordsFromServer,
   cloneRecordsIntoDefaultCycle,
 };
