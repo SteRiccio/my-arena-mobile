@@ -2751,9 +2751,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openforis/arena-core@npm:^0.0.199":
-  version: 0.0.199
-  resolution: "@openforis/arena-core@npm:0.0.199::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40openforis%2Farena-core%2F0.0.199%2F964e32e518f871be134c00efed48ffc58a6dc029"
+"@openforis/arena-core@npm:^0.0.203":
+  version: 0.0.203
+  resolution: "@openforis/arena-core@npm:0.0.203::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40openforis%2Farena-core%2F0.0.203%2Fbfa7cb39eda558cba1d03f21f07b654f987c19ee"
   dependencies:
     "@jsep-plugin/regex": "npm:^1.0.3"
     bignumber.js: "npm:^9.1.2"
@@ -2765,7 +2765,7 @@ __metadata:
     moment: "npm:^2.30.1"
     proj4: "npm:^2.11.0"
     uuid: "npm:^10.0.0"
-  checksum: 10c0/ce38d22418f7c71b915992fdd48e66eeb1cf5f133d7288d83ea9098c3c2f4c51a0383f2b307cc8638ec9a19d44eb40c3267454df9dd7a560d08b4ab38e34c404
+  checksum: 10c0/763dcd9448d61b0fd0970c01bdbd541bdbcb7db6ec8d4c180d16ce9cb692a5f2cd6b06fc044c680fbd62fd14d13a70321e98eac58f6eb30bf8ed96517cd55564
   languageName: node
   linkType: hard
 
@@ -4231,7 +4231,7 @@ __metadata:
     "@babel/core": "npm:^7.24.7"
     "@expo/webpack-config": "npm:~19.0.1"
     "@miblanchard/react-native-slider": "npm:^2.6.0"
-    "@openforis/arena-core": "npm:^0.0.199"
+    "@openforis/arena-core": "npm:^0.0.203"
     "@react-native-async-storage/async-storage": "npm:1.21.0"
     "@react-native-clipboard/clipboard": "npm:^1.14.1"
     "@react-native-community/datetimepicker": "npm:7.7.0"

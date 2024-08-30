@@ -1,10 +1,12 @@
 export default {
+  changelog: "Change Log",
   confirmExit: {
     title: "Exit",
     message: `Exit from the app?
 All changes are already saved.`,
   },
   currentVersion: "Current version",
+  pleaseWaitMessage: "Please wait...",
   update: "Update",
   updateAvailable: "Update available",
   updateStatus: {

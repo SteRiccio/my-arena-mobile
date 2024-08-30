@@ -96,6 +96,7 @@ export const VersionNumberInfoButton = () => {
         <ChangelogViewDialog
           onClose={toggleChangelogViewDialogOpen}
           onUpdate={onUpdateConfirm}
+          title="app:updateAvailable"
         />
       )}
     </HView>

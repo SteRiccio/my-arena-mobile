@@ -1,4 +1,3 @@
-import ViewMoreText from "react-native-view-more-text";
 import PropTypes from "prop-types";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
@@ -7,6 +6,7 @@ import { SurveySelectors } from "state/survey";
 
 import { Text } from "components/Text";
 import { View } from "components/View";
+import { ViewMoreText } from "components/ViewMoreText";
 
 import { NodeValidationIcon } from "../NodeValidationIcon";
 import { useStyles } from "./styles";
