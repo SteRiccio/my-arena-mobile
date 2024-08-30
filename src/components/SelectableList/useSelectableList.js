@@ -28,7 +28,8 @@ export const useSelectableList = (props) => {
   // reset state on items change
   useEffect(() => {
     setState((statePrev) => ({ ...statePrev, ...initialState }));
-  }, [items]);
+    onSelectionChange?.([]);
+  }, [items, onSelectionChange, selectable]);
 
   // update internal selected item ids on prop change
   useEffect(() => {
@@ -96,7 +97,7 @@ export const useSelectableList = (props) => {
         onItemPressProp?.(item);
       }
     },
-    [onItemPressProp, onItemSelect]
+    [onItemPressProp, onItemSelect, selectionEnabled]
   );
 
   const onItemLongPress = useCallback(
@@ -107,7 +108,7 @@ export const useSelectableList = (props) => {
         onItemLongPressProp?.(item);
       }
     },
-    [onItemLongPressProp, onItemSelect]
+    [onItemLongPressProp, onItemSelect, selectable]
   );
 
   return {
