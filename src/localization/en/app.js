@@ -6,6 +6,7 @@ export default {
 All changes are already saved.`,
   },
   currentVersion: "Current version",
+  pleaseWaitMessage: "Please wait...",
   update: "Update",
   updateAvailable: "Update available",
   updateStatus: {
