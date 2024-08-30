@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Animated, Image } from "react-native";
 import { useAssets } from "expo-asset";
+import PropTypes from "prop-types";
 
 import { HeartbeatAnimation } from "components/HeartbeatAnimation";
 
@@ -36,4 +37,9 @@ export const AppLogo = (props) => {
     );
   }
   return image;
+};
+
+AppLogo.propType = {
+  animated: PropTypes.bool,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

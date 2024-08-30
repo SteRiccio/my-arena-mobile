@@ -21,7 +21,7 @@ const changelogUri = "CHANGELOG.md";
 export const ChangelogViewDialog = (props) => {
   const {
     onClose,
-    onUpdate,
+    onUpdate = null,
     showCurrentVersionNumber = true,
     title = "app:changelog",
   } = props;
@@ -85,7 +85,7 @@ export const ChangelogViewDialog = (props) => {
 
 ChangelogViewDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
-  onUpdate: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func,
   showCurrentVersionNumber: PropTypes.bool,
   title: PropTypes.string,
 };
