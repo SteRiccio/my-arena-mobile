@@ -27,6 +27,39 @@ const INITIAL_STATE = {
   errorKey: null,
 };
 
+const DescriptionCellRenderer = ({ item }) => {
+  const defaultLanguage = Surveys.getDefaultLanguage(item);
+  const description = item.props?.descriptions?.[defaultLanguage];
+  return description ? <Text>{description}</Text> : null;
+};
+
+const DatePublishedCellRenderer = ({ item }) => (
+  <Text>
+    {Dates.convertDate({
+      dateStr: item.datePublished,
+      formatFrom: DateFormats.datetimeStorage,
+      formatTo: DateFormats.datetimeDisplay,
+    })}
+  </Text>
+);
+
+const _renderStatusCell =
+  (surveysLocal) =>
+  ({ item }) => {
+    const localSurvey = surveysLocal.find(
+      (surveyLocal) => surveyLocal.uuid === item.uuid
+    );
+    let messageKey = null;
+    if (!localSurvey) {
+      messageKey = "surveys:loadStatus.notInDevice";
+    } else if (Dates.isAfter(item.datePublished, localSurvey.datePublished)) {
+      messageKey = "surveys:loadStatus.updated";
+    } else {
+      messageKey = "surveys:loadStatus.upToDate";
+    }
+    return <Text textKey={messageKey} />;
+  };
+
 export const SurveysListRemote = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -34,6 +67,10 @@ export const SurveysListRemote = () => {
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const viewAsList = screenViewMode === ScreenViewMode.list;
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+  const statusCellRenderer = useCallback(
+    ({ item }) => _renderStatusCell(surveysLocal)({ item }),
+    [surveysLocal]
+  );
 
   const dataFields = useMemo(() => {
     const fields = [
@@ -51,44 +88,17 @@ export const SurveysListRemote = () => {
         {
           key: "description",
           header: "surveys:description",
-          cellRenderer: ({ item }) => {
-            const defaultLanguage = Surveys.getDefaultLanguage(item);
-            const description = item.props?.descriptions?.[defaultLanguage];
-            return description ? <Text>{description}</Text> : null;
-          },
+          cellRenderer: DescriptionCellRenderer,
         },
         {
           key: "datePublished",
           header: "surveys:publishedOn",
-          cellRenderer: ({ item }) => (
-            <Text>
-              {Dates.convertDate({
-                dateStr: item.datePublished,
-                formatFrom: DateFormats.datetimeStorage,
-                formatTo: DateFormats.datetimeDisplay,
-              })}
-            </Text>
-          ),
+          cellRenderer: DatePublishedCellRenderer,
         },
         {
           key: "loadStatus",
           header: "surveys:loadStatus.label",
-          cellRenderer: ({ item }) => {
-            const localSurvey = surveysLocal.find(
-              (surveyLocal) => surveyLocal.uuid === item.uuid
-            );
-            let messageKey = null;
-            if (!localSurvey) {
-              messageKey = "surveys:loadStatus.notInDevice";
-            } else if (
-              Dates.isAfter(item.datePublished, localSurvey.datePublished)
-            ) {
-              messageKey = "surveys:loadStatus.updated";
-            } else {
-              messageKey = "surveys:loadStatus.upToDate";
-            }
-            return <Text textKey={messageKey} />;
-          },
+          cellRenderer: statusCellRenderer,
         }
       );
     }
