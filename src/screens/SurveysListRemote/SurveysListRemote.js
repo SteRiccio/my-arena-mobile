@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { DateFormats, Dates, Surveys } from "@openforis/arena-core";
 
-import { DataVisualizer, Loader, Searchbar, Text, VView } from "components";
+import { DataVisualizer, DataVisualizerCellPropTypes, Loader, Searchbar, Text, VView } from "components";
 import { useNavigationFocus } from "hooks";
 import { ScreenViewMode } from "model/ScreenViewMode";
 import { SurveyService } from "service";
@@ -33,6 +33,8 @@ const DescriptionCellRenderer = ({ item }) => {
   return description ? <Text>{description}</Text> : null;
 };
 
+DescriptionCellRenderer.propTypes = DataVisualizerCellPropTypes
+
 const DatePublishedCellRenderer = ({ item }) => (
   <Text>
     {Dates.convertDate({
@@ -42,6 +44,8 @@ const DatePublishedCellRenderer = ({ item }) => (
     })}
   </Text>
 );
+
+DatePublishedCellRenderer.propTypes = DataVisualizerCellPropTypes
 
 const _renderStatusCell =
   (surveysLocal) =>
