@@ -3,6 +3,7 @@ import { JobStatus } from "@openforis/arena-core";
 import { RecordService } from "service/recordService";
 import { RecordsAndFilesImportJob } from "service/recordsAndFilesImportJob";
 import { JobMonitorActions } from "../jobMonitor/actions";
+import { MessageActions } from "../message";
 import { RemoteConnectionSelectors } from "../remoteConnection/selectors";
 import { SurveySelectors } from "../survey/selectors";
 import { ToastActions } from "../toast";
@@ -13,7 +14,7 @@ const handleImportErrors = ({ dispatch, error = null, errors = null }) => {
 };
 
 export const importRecordsFromFile =
-  ({ fileUri, onImportComplete }) =>
+  ({ fileUri, overwriteExistingRecords, onImportComplete }) =>
   async (dispatch, getState) => {
     const state = getState();
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
@@ -23,15 +24,20 @@ export const importRecordsFromFile =
       survey,
       user,
       fileUri,
+      overwriteExistingRecords,
     });
 
     await importJob.start();
 
-    const { status, errors } = importJob.summary;
+    const { status, errors, result } = importJob.summary;
 
     if (status === JobStatus.succeeded) {
+      const { insertedRecords, updatedRecords } = result;
       dispatch(
-        ToastActions.show("dataEntry:records.importCompleteSuccessfully")
+        MessageActions.setMessage({
+          content: "dataEntry:records.importCompleteSuccessfully",
+          contentParams: { insertedRecords, updatedRecords },
+        })
       );
       await onImportComplete();
     } else {

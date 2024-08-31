@@ -7,10 +7,10 @@ import { RecordsImportJob } from "./recordsImportJob";
 import { FilesImportJob } from "./filesImportJob";
 
 export class RecordsAndFilesImportJob extends JobMobile {
-  constructor({ survey, user, fileUri }) {
-    super({ survey, user, fileUri }, [
-      new RecordsImportJob({ survey, user, fileUri }),
-      new FilesImportJob({ survey, user, fileUri }),
+  constructor({ survey, user, fileUri, overwriteExistingRecords = true }) {
+    super({ survey, user, fileUri, overwriteExistingRecords }, [
+      new RecordsImportJob({ survey, user, fileUri, overwriteExistingRecords }),
+      new FilesImportJob({ survey, user, fileUri, overwriteExistingRecords }),
     ]);
   }
 
@@ -23,6 +23,11 @@ export class RecordsAndFilesImportJob extends JobMobile {
     await unzip(fileUri, unzippedFolderUri, "UTF-8");
 
     this.context.unzippedFolderUri = unzippedFolderUri;
+  }
+
+  async prepareResult() {
+    const recordsImportJob = this.jobs[0];
+    return recordsImportJob.summary.result;
   }
 
   async onEnd() {

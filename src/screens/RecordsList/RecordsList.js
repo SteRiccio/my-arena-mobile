@@ -158,22 +158,36 @@ export const RecordsList = () => {
   }, [loadRecordsWithSyncStatus]);
 
   const onImportRecordsFromFilePress = useCallback(async () => {
-    const fileResult = await DocumentPicker.getDocumentAsync();
-    const { assets, canceled } = fileResult;
-    if (canceled) return;
+    const messagePrefix = "dataEntry:records.importRecordsFromFile.";
+    const confirmResult = await confirm({
+      titleKey: `${messagePrefix}title`,
+      messageKey: `${messagePrefix}confirmMessage`,
+      confirmButtonTextKey: `${messagePrefix}selectFile`,
+      multipleChoiceOptions: [
+        {
+          value: "overwriteExistingRecords",
+          label: `${messagePrefix}overwriteExistingRecords`,
+        },
+      ],
+    });
+    if (confirmResult) {
+      const fileResult = await DocumentPicker.getDocumentAsync();
+      const { assets, canceled } = fileResult;
+      if (canceled) return;
 
-    const asset = assets?.[0];
-    if (!asset) return;
+      const asset = assets?.[0];
+      if (!asset) return;
 
-    const { uri } = asset;
+      const { uri } = asset;
 
-    dispatch(
-      DataEntryActions.importRecordsFromFile({
-        fileUri: uri,
-        onImportComplete: loadRecords,
-      })
-    );
-  }, []);
+      dispatch(
+        DataEntryActions.importRecordsFromFile({
+          fileUri: uri,
+          onImportComplete: loadRecords,
+        })
+      );
+    }
+  }, [loadRecords]);
 
   const onNewRecordPress = () => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
@@ -441,7 +455,7 @@ export const RecordsList = () => {
                 icon="file-import-outline"
                 mode="text"
                 onPress={onImportRecordsFromFilePress}
-                textKey="dataEntry:import"
+                textKey="dataEntry:records.importRecordsFromFile.title"
               />
             </FlexWrapView>
           </>

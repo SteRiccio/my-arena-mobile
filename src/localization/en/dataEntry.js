@@ -93,7 +93,15 @@ export default {
     importRecords: {
       title: "Import from server",
     },
-    importCompleteSuccessfully: "Records import complete successfully!",
+    importRecordsFromFile: {
+      title: "Import from file",
+      confirmMessage: "Import records from a file?",
+      overwriteExistingRecords: "Overwrite existing records",
+      selectFile: "Select file",
+    },
+    importCompleteSuccessfully: `Records import complete successfully!
+- {{insertedRecords}} records inserted
+- {{updatedRecords}} records updated`,
     importFailed: "Records import failed: {{details}}",
     loadStatus: {
       title: "Loaded",

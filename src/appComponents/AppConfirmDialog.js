@@ -55,7 +55,10 @@ export const AppConfirmDialog = () => {
               {multipleChoiceOptions.map((option) => (
                 <Checkbox
                   key={option.value}
-                  checked={selectedMultipleChoiceValues?.includes(option.value)}
+                  checked={
+                    selectedMultipleChoiceValues?.includes(option.value) ??
+                    false
+                  }
                   label={t(option.label)}
                   onPress={() => onMultipleChoiceOptionChange(option.value)}
                 />

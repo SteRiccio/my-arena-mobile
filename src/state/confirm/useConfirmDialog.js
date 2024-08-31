@@ -18,7 +18,11 @@ export const useConfirmDialog = () => {
 
   const [state, setState] = useState(defaultLocalState);
 
-  const { selectedSingleChoiceValue, swipeConfirmed } = state;
+  const {
+    selectedMultipleChoiceValues,
+    selectedSingleChoiceValue,
+    swipeConfirmed,
+  } = state;
 
   useEffect(() => {
     setState({
@@ -71,6 +75,7 @@ export const useConfirmDialog = () => {
 
     onMultipleChoiceOptionChange,
     onSingleChoiceOptionChange,
+    selectedMultipleChoiceValues,
     selectedSingleChoiceValue,
     setSwipeConfirmed,
     swipeConfirmed,
