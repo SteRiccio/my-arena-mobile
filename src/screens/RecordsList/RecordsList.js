@@ -46,6 +46,10 @@ const minRecordsToShowSearchBar = 5;
 const noRecordsToExportTextKey =
   "dataEntry:exportData.noRecordsInDeviceToExport";
 
+const dataImportOptions = {
+  overwriteExistingRecords: "overwriteExistingRecords",
+};
+
 export const RecordsList = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -165,12 +169,16 @@ export const RecordsList = () => {
       confirmButtonTextKey: `${messagePrefix}selectFile`,
       multipleChoiceOptions: [
         {
-          value: "overwriteExistingRecords",
+          value: dataImportOptions.overwriteExistingRecords,
           label: `${messagePrefix}overwriteExistingRecords`,
         },
       ],
     });
     if (confirmResult) {
+      const { selectedMultipleChoiceValues } = confirmResult;
+      const overwriteExistingRecords = selectedMultipleChoiceValues.includes(
+        dataImportOptions.overwriteExistingRecords
+      );
       const fileResult = await DocumentPicker.getDocumentAsync();
       const { assets, canceled } = fileResult;
       if (canceled) return;
@@ -183,6 +191,7 @@ export const RecordsList = () => {
       dispatch(
         DataEntryActions.importRecordsFromFile({
           fileUri: uri,
+          overwriteExistingRecords,
           onImportComplete: loadRecords,
         })
       );

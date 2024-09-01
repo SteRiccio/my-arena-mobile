@@ -9,12 +9,12 @@ export class RecordsImportJob extends JobMobile {
     const { survey, unzippedFolderUri, overwriteExistingRecords } =
       this.context;
 
-    const recordsSummaryJsonUri = Files.path(
+    const fileRecordsSummaryJsonUri = Files.path(
       unzippedFolderUri,
       RecordsExportFile.recordsSummaryJsonPath
     );
     const fileRecordsSummary = await Files.readJsonFromFile({
-      fileUri: recordsSummaryJsonUri,
+      fileUri: fileRecordsSummaryJsonUri,
     });
 
     this.summary.total = fileRecordsSummary.length;
@@ -40,11 +40,7 @@ export class RecordsImportJob extends JobMobile {
 
       const existingRecordSummary = recordsSummaryByUuid[recordUuid];
       if (!existingRecordSummary) {
-        await RecordService.insertRecord({
-          survey,
-          record,
-          loadStatus: RecordLoadStatus.complete,
-        });
+        await RecordService.insertRecord({ survey, record });
         this.insertedRecords++;
       } else if (overwriteExistingRecords) {
         await RecordService.updateRecordWithContentFetchedRemotely({

@@ -14,7 +14,7 @@ const handleImportErrors = ({ dispatch, error = null, errors = null }) => {
 };
 
 export const importRecordsFromFile =
-  ({ fileUri, overwriteExistingRecords, onImportComplete }) =>
+  ({ fileUri, onImportComplete, overwriteExistingRecords = true }) =>
   async (dispatch, getState) => {
     const state = getState();
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
@@ -95,6 +95,6 @@ export const importRecordsFromServer =
         onImportComplete,
       });
     } catch (error) {
-      handleImportErrors({ dispatch, error, errors });
+      handleImportErrors({ dispatch, error });
     }
   };

@@ -26,8 +26,8 @@ export class RecordsAndFilesImportJob extends JobMobile {
   }
 
   async prepareResult() {
-    const recordsImportJob = this.jobs[0];
-    return recordsImportJob.summary.result;
+    const recordsImportJob = this.jobs?.[0];
+    return recordsImportJob?.summary?.result ?? {};
   }
 
   async onEnd() {

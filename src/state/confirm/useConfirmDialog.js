@@ -27,14 +27,20 @@ export const useConfirmDialog = () => {
   useEffect(() => {
     setState({
       ...defaultLocalState,
-      selectedMultipleChoiceValues: confirmState.defaultMultipleChoiceValues,
+      selectedMultipleChoiceValues:
+        confirmState.defaultMultipleChoiceValues ?? [],
       selectedSingleChoiceValue: confirmState.defaultSingleChoiceValue,
     });
   }, [confirmState]);
 
   const confirm = useCallback(() => {
-    dispatch(ConfirmActions.confirm({ selectedSingleChoiceValue }));
-  }, [dispatch, selectedSingleChoiceValue]);
+    dispatch(
+      ConfirmActions.confirm({
+        selectedMultipleChoiceValues,
+        selectedSingleChoiceValue,
+      })
+    );
+  }, [dispatch, selectedMultipleChoiceValues, selectedSingleChoiceValue]);
 
   const cancel = useCallback(() => {
     dispatch(ConfirmActions.cancel());
