@@ -32,11 +32,11 @@ export const importRecordsFromFile =
     const { status, errors, result } = importJob.summary;
 
     if (status === JobStatus.succeeded) {
-      const { insertedRecords, updatedRecords } = result;
+      const { processedRecords, insertedRecords, updatedRecords } = result;
       dispatch(
         MessageActions.setMessage({
           content: "dataEntry:records.importCompleteSuccessfully",
-          contentParams: { insertedRecords, updatedRecords },
+          contentParams: { processedRecords, insertedRecords, updatedRecords },
         })
       );
       await onImportComplete();

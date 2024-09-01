@@ -23,7 +23,6 @@ export class RecordsImportJob extends JobMobile {
 
     const recordsSummary = await RecordService.fetchRecords({
       survey,
-      cycle,
       onlyLocal: false,
     });
     const recordsSummaryByUuid = ArrayUtils.indexByUuid(recordsSummary);

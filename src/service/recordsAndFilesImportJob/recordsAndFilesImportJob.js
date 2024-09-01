@@ -10,7 +10,7 @@ export class RecordsAndFilesImportJob extends JobMobile {
   constructor({ survey, user, fileUri, overwriteExistingRecords = true }) {
     super({ survey, user, fileUri, overwriteExistingRecords }, [
       new RecordsImportJob({ survey, user, fileUri, overwriteExistingRecords }),
-      new FilesImportJob({ survey, user, fileUri, overwriteExistingRecords }),
+      new FilesImportJob({ survey, user, fileUri }),
     ]);
   }
 
@@ -27,7 +27,9 @@ export class RecordsAndFilesImportJob extends JobMobile {
 
   async prepareResult() {
     const recordsImportJob = this.jobs?.[0];
-    return recordsImportJob?.summary?.result ?? {};
+    const recordsImportJobSummary = recordsImportJob?.summary ?? {};
+    const { result = {}, processed } = recordsImportJobSummary;
+    return { ...result, processedRecords: processed };
   }
 
   async onEnd() {

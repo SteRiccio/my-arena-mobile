@@ -166,6 +166,7 @@ export const RecordsList = () => {
     const confirmResult = await confirm({
       titleKey: `${messagePrefix}title`,
       messageKey: `${messagePrefix}confirmMessage`,
+      confirmButtonStyle: { width: 120 },
       confirmButtonTextKey: `${messagePrefix}selectFile`,
       multipleChoiceOptions: [
         {

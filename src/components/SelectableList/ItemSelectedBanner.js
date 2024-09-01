@@ -37,7 +37,7 @@ export const ItemSelectedBanner = (props) => {
     return result.map((customAction) =>
       customActionToAction({ t, customAction })
     );
-  }, [canDelete, customActions]);
+  }, [canDelete, customActions, onDeleteSelected]);
 
   return <Banner actions={actions} visible={selectedItemIds.length > 0} />;
 };
