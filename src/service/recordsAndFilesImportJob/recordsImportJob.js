@@ -37,6 +37,11 @@ export class RecordsImportJob extends JobMobile {
       if (!record)
         throw new Error(`missing file in archive for record ${recordUuid}`);
 
+      if (record.surveyUuid && record.surveyUuid !== survey.uuid)
+        throw new Error(
+          `this record cannot be imported in the current survey; it has been created with another one;`
+        );
+
       const existingRecordSummary = recordsSummaryByUuid[recordUuid];
       if (!existingRecordSummary) {
         await RecordService.insertRecord({ survey, record });

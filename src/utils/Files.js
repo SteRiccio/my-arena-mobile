@@ -107,7 +107,7 @@ const getExtension = (uri) => {
   const indexOfDot = uri.lastIndexOf(".");
   return indexOfDot < 0 || indexOfDot === uri.length
     ? ""
-    : uri.substring(indexOfDot + 1);
+    : uri.substring(indexOfDot + 1).toLocaleLowerCase();
 };
 
 const getMimeTypeFromUri = (uri) => {

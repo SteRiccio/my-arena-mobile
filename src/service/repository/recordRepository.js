@@ -149,16 +149,10 @@ const insertRecord = async ({
   record,
   loadStatus = RecordLoadStatus.complete,
 }) => {
+  const { id: surveyId } = survey;
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
-  const {
-    uuid,
-    surveyId,
-    dateCreated,
-    dateModified,
-    cycle,
-    ownerUuid,
-    ownerName,
-  } = record;
+  const { uuid, dateCreated, dateModified, cycle, ownerUuid, ownerName } =
+    record;
 
   const { insertId } = await dbClient.executeSql(
     `INSERT INTO record (${insertColumnsJoint})

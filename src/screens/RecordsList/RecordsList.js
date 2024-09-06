@@ -34,6 +34,7 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
+import { Files } from "utils/Files";
 
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
@@ -162,12 +163,27 @@ export const RecordsList = () => {
   }, [loadRecordsWithSyncStatus]);
 
   const onImportRecordsFromFilePress = useCallback(async () => {
+    const fileResult = await DocumentPicker.getDocumentAsync();
+    const { assets, canceled } = fileResult;
+    if (canceled) return;
+
+    const asset = assets?.[0];
+    if (!asset) return;
+
+    const { name: fileName, uri } = asset;
+
     const messagePrefix = "dataEntry:records.importRecordsFromFile.";
+
+    if (Files.getExtension(fileName) !== "zip") {
+      toaster.show(`${messagePrefix}invalidFileType`);
+      return;
+    }
+
     const confirmResult = await confirm({
       titleKey: `${messagePrefix}title`,
       messageKey: `${messagePrefix}confirmMessage`,
-      confirmButtonStyle: { width: 120 },
-      confirmButtonTextKey: `${messagePrefix}selectFile`,
+      messageParams: { fileName },
+      confirmButtonTextKey: `${messagePrefix}title`,
       multipleChoiceOptions: [
         {
           value: dataImportOptions.overwriteExistingRecords,
@@ -180,14 +196,6 @@ export const RecordsList = () => {
       const overwriteExistingRecords = selectedMultipleChoiceValues.includes(
         dataImportOptions.overwriteExistingRecords
       );
-      const fileResult = await DocumentPicker.getDocumentAsync();
-      const { assets, canceled } = fileResult;
-      if (canceled) return;
-
-      const asset = assets?.[0];
-      if (!asset) return;
-
-      const { uri } = asset;
 
       dispatch(
         DataEntryActions.importRecordsFromFile({

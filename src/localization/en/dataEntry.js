@@ -95,7 +95,9 @@ export default {
     },
     importRecordsFromFile: {
       title: "Import",
-      confirmMessage: "Import records from a file?",
+      confirmMessage: `Import records from selected file
+{{fileName}}?`,
+      invalidFileType: "Invalid file type (expected .zip)",
       overwriteExistingRecords: "Overwrite existing records",
       selectFile: "Select file",
     },
