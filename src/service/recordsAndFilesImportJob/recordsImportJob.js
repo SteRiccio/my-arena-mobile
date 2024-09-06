@@ -1,4 +1,4 @@
-import { JobMobile, RecordLoadStatus } from "model";
+import { JobMobile } from "model";
 import { ArrayUtils, Files } from "utils";
 
 import { RecordsExportFile } from "../recordsExportFile";
