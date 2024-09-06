@@ -20,8 +20,10 @@ export const AppConfirmDialog = () => {
   const {
     isOpen,
     cancel,
+    cancelButtonStyle,
     cancelButtonTextKey,
     confirm,
+    confirmButtonStyle,
     confirmButtonTextKey,
     messageKey,
     messageParams,
@@ -45,17 +47,16 @@ export const AppConfirmDialog = () => {
       <Dialog visible={isOpen} onDismiss={cancel}>
         <Dialog.Title>{t(titleKey)}</Dialog.Title>
         <Dialog.Content>
-          <Text
-            variant="bodyMedium"
-            textKey={messageKey}
-            textParams={messageParams}
-          />
+          <Text textKey={messageKey} textParams={messageParams} />
           {multipleChoiceOptions?.length > 0 && (
             <VView transparent>
               {multipleChoiceOptions.map((option) => (
                 <Checkbox
                   key={option.value}
-                  checked={selectedMultipleChoiceValues?.includes(option.value)}
+                  checked={
+                    selectedMultipleChoiceValues?.includes(option.value) ??
+                    false
+                  }
                   label={t(option.label)}
                   onPress={() => onMultipleChoiceOptionChange(option.value)}
                 />
@@ -99,12 +100,14 @@ export const AppConfirmDialog = () => {
           <Button
             mode="outlined"
             onPress={cancel}
+            style={cancelButtonStyle}
             textKey={cancelButtonTextKey}
           />
           <Button
             disabled={swipeToConfirm && !swipeConfirmed}
             onPress={confirm}
             textKey={confirmButtonTextKey}
+            style={confirmButtonStyle}
           />
         </Dialog.Actions>
       </Dialog>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import * as DocumentPicker from "expo-document-picker";
 
 import { Dates, Objects, Surveys } from "@openforis/arena-core";
 
@@ -33,6 +34,7 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
+import { Files } from "utils/Files";
 
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
@@ -44,6 +46,10 @@ import styles from "./styles";
 const minRecordsToShowSearchBar = 5;
 const noRecordsToExportTextKey =
   "dataEntry:exportData.noRecordsInDeviceToExport";
+
+const dataImportOptions = {
+  overwriteExistingRecords: "overwriteExistingRecords",
+};
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -155,6 +161,51 @@ export const RecordsList = () => {
   const onRemoteSyncPress = useCallback(async () => {
     await loadRecordsWithSyncStatus();
   }, [loadRecordsWithSyncStatus]);
+
+  const onImportRecordsFromFilePress = useCallback(async () => {
+    const fileResult = await DocumentPicker.getDocumentAsync();
+    const { assets, canceled } = fileResult;
+    if (canceled) return;
+
+    const asset = assets?.[0];
+    if (!asset) return;
+
+    const { name: fileName, uri } = asset;
+
+    const messagePrefix = "dataEntry:records.importRecordsFromFile.";
+
+    if (Files.getExtension(fileName) !== "zip") {
+      toaster.show(`${messagePrefix}invalidFileType`);
+      return;
+    }
+
+    const confirmResult = await confirm({
+      titleKey: `${messagePrefix}title`,
+      messageKey: `${messagePrefix}confirmMessage`,
+      messageParams: { fileName },
+      confirmButtonTextKey: `${messagePrefix}title`,
+      multipleChoiceOptions: [
+        {
+          value: dataImportOptions.overwriteExistingRecords,
+          label: `${messagePrefix}overwriteExistingRecords`,
+        },
+      ],
+    });
+    if (confirmResult) {
+      const { selectedMultipleChoiceValues } = confirmResult;
+      const overwriteExistingRecords = selectedMultipleChoiceValues.includes(
+        dataImportOptions.overwriteExistingRecords
+      );
+
+      dispatch(
+        DataEntryActions.importRecordsFromFile({
+          fileUri: uri,
+          overwriteExistingRecords,
+          onImportComplete: loadRecords,
+        })
+      );
+    }
+  }, [loadRecords]);
 
   const onNewRecordPress = () => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
@@ -414,9 +465,15 @@ export const RecordsList = () => {
                 disabled={!networkAvailable}
                 icon="cloud-refresh"
                 loading={syncStatusLoading}
-                mode="text"
+                mode="outlined"
                 onPress={onRemoteSyncPress}
                 textKey="dataEntry:checkSyncStatus"
+              />
+              <Button
+                icon="file-import-outline"
+                mode="text"
+                onPress={onImportRecordsFromFilePress}
+                textKey="dataEntry:records.importRecordsFromFile.title"
               />
             </FlexWrapView>
           </>

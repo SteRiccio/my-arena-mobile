@@ -50,7 +50,9 @@ const { show, dismiss } = actions;
 export const ConfirmActions = {
   show: ({
     titleKey = "common:confirm",
+    cancelButtonStyle = undefined,
     cancelButtonTextKey = "common:cancel",
+    confirmButtonStyle = undefined,
     confirmButtonTextKey = "common:confirm",
     messageKey,
     messageParams = {},
@@ -65,7 +67,9 @@ export const ConfirmActions = {
   }) =>
     show({
       titleKey,
+      cancelButtonStyle,
       cancelButtonTextKey,
+      confirmButtonStyle,
       confirmButtonTextKey,
       messageKey,
       messageParams,

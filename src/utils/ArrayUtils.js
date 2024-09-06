@@ -57,8 +57,15 @@ const sortByProps = (sortObj) => (array) => {
   });
 };
 
+const indexByUuid = (array) =>
+  array.reduce((acc, item) => {
+    acc[item.uuid] = item;
+    return acc;
+  }, {});
+
 export const ArrayUtils = {
   findByUuid,
   sortByProp,
   sortByProps,
+  indexByUuid,
 };
