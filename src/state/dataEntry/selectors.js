@@ -116,7 +116,10 @@ const selectRecordAttributeInfo =
   (state) => {
     const record = selectRecord(state);
     const attribute = Records.getNodeByUuid(nodeUuid)(record);
-    let value = attribute?.value;
+    if (!attribute) {
+      return { applicable: false, value: null, validation: null };
+    }
+    let value = attribute.value;
     if (value) {
       const survey = SurveySelectors.selectCurrentSurvey(state);
       const attributeDef = Surveys.getNodeDefByUuid({

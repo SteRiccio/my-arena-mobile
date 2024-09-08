@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-import { NodeDefFileType } from "@openforis/arena-core";
+import { NodeDefFileType, NodeDefs } from "@openforis/arena-core";
 
 import { Button, HView, IconButton, Loader, VView, View } from "components";
 import { ImageOrVideoValuePreview } from "screens/RecordEditor/NodeValuePreview/ImageOrVideoValuePreview";
@@ -45,9 +45,10 @@ export const NodeImageOrVideoComponent = (props) => {
       </View>
 
       <VView style={styles.buttonsContainer}>
-        {nodeValue ? (
+        {nodeValue && NodeDefs.isSingle(nodeDef) && (
           <IconButton icon="trash-can-outline" onPress={onDeletePress} />
-        ) : (
+        )}
+        {!nodeValue && (
           <>
             {[NodeDefFileType.image, NodeDefFileType.video].includes(
               fileType

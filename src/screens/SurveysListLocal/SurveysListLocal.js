@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
@@ -18,6 +18,17 @@ import { screenKeys } from "../screenKeys";
 
 import styles from "./styles";
 
+const dataFields = [
+  {
+    key: "name",
+    header: "common:name",
+  },
+  {
+    key: "label",
+    header: "common:label",
+  },
+];
+
 export const SurveysListLocal = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -25,20 +36,6 @@ export const SurveysListLocal = () => {
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const confirm = useConfirm();
   const { loading, surveys } = state;
-
-  const dataFields = useMemo(
-    () => [
-      {
-        key: "name",
-        header: "common:name",
-      },
-      {
-        key: "label",
-        header: "common:label",
-      },
-    ],
-    []
-  );
 
   const loadSurveys = async () => {
     const _surveys = await SurveyService.fetchSurveySummariesLocal();
