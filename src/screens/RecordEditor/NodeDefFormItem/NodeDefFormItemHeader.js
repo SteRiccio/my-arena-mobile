@@ -29,10 +29,7 @@ export const NodeDefFormItemHeader = (props) => {
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
       </View>
       {!Objects.isEmpty(description) && (
-        <ViewMoreText
-          textStyle={styles.nodeDefDescriptionViewMoreText}
-          numberOfLines={2}
-        >
+        <ViewMoreText textStyle={styles.nodeDefDescriptionViewMoreText}>
           <Text style={styles.nodeDefDescriptionText}>{description}</Text>
         </ViewMoreText>
       )}
