@@ -35,6 +35,7 @@ export default {
   sizeAvailable: "{{size}} available",
   somethingWentWrong: "Something went wrong: {{error}}",
   srs: "SRS",
+  stop: "Stop",
   swipeToConfirm: "Swipe to confirm",
   textCopiedToClipboard: "Text copied to clipboard",
   true: "True",

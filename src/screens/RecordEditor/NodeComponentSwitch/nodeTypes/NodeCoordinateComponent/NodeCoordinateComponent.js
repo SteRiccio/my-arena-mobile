@@ -98,15 +98,17 @@ export const NodeCoordinateComponent = (props) => {
             labelStyle: styles.extraFieldFormItemLabel,
           })
       }
-      <LocationWatchingMonitor
-        locationAccuracy={accuracy}
-        locationAccuracyThreshold={locationAccuracyThreshold}
-        locationWatchElapsedTime={locationWatchElapsedTime}
-        locationWatchTimeout={locationWatchTimeout}
-        onStart={onStartGpsPress}
-        onStop={onStopGpsPress}
-        watchingLocation={watchingLocation}
-      />
+      {editable && (
+        <LocationWatchingMonitor
+          locationAccuracy={accuracy}
+          locationAccuracyThreshold={locationAccuracyThreshold}
+          locationWatchElapsedTime={locationWatchElapsedTime}
+          locationWatchTimeout={locationWatchTimeout}
+          onStart={onStartGpsPress}
+          onStop={onStopGpsPress}
+          watchingLocation={watchingLocation}
+        />
+      )}
       {compassNavigatorVisible && (
         <LocationNavigator
           onDismiss={hideCompassNavigator}
