@@ -52,6 +52,12 @@
             "deploymentTarget": "15.5"
           }
         }
+      ],
+      [
+        "./plugins/withAndroidMainActivityAttributes",
+        {
+          "android:largeHeap": true
+        }
       ]
     ]
   }
