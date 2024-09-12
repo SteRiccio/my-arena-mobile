@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { Dates, Surveys } from "@openforis/arena-core";
+import { Dates } from "@openforis/arena-core";
 import {
   Button,
   DataVisualizer,
@@ -16,7 +16,7 @@ import {
 } from "components";
 import { UpdateStatus } from "model";
 import { SurveyService } from "service";
-import { useNavigationFocus } from "hooks";
+import { useIsNetworkConnected, useNavigationFocus } from "hooks";
 import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
 import { SurveyActions, ScreenOptionsSelectors, useConfirm } from "state";
 import { ArrayUtils } from "utils/ArrayUtils";
@@ -99,6 +99,7 @@ export const SurveysListLocal = () => {
     updateStatusLoading: false,
     updateStatusChecked: false,
   });
+  const networkAvailable = useIsNetworkConnected();
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const confirm = useConfirm();
   const { loading, surveys, updateStatusChecked, updateStatusLoading } = state;
@@ -236,6 +237,7 @@ export const SurveysListLocal = () => {
       <HView style={styles.buttonsBar}>
         {surveysFiltered.length > 0 && (
           <Button
+            disabled={!networkAvailable}
             icon="update"
             onPress={onCheckUpdatesPress}
             style={styles.importButton}
@@ -243,6 +245,7 @@ export const SurveysListLocal = () => {
           />
         )}
         <Button
+          disabled={!networkAvailable}
           icon="cloud-download-outline"
           onPress={() => navigation.navigate(screenKeys.surveysListRemote)}
           style={styles.importButton}
