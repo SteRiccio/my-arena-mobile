@@ -15,7 +15,7 @@ const insertSurvey = async (survey) => {
       survey.props.labels?.["en"],
       "", // always save empty content (stored in FS)
       survey.dateCreated,
-      survey.dateModified,
+      survey.datePublished ?? survey.dateModified,
     ]
   );
   survey.remoteId = survey.id;
@@ -32,7 +32,7 @@ const updateSurvey = async ({ id, survey }) => {
       survey.props.labels?.["en"],
       "", // always set content to empty (stored in FS)
       survey.dateCreated,
-      survey.dateModified,
+      survey.datePublished ?? survey.dateModified,
       id,
     ]
   );
@@ -57,11 +57,11 @@ const fetchSurveyById = async (id) => {
 
 const fetchSurveySummaries = async () => {
   const surveys = await dbClient.many(
-    `SELECT id, server_url, remote_id, uuid, name, label 
+    `SELECT id, server_url, remote_id, uuid, name, label, date_modified
     FROM survey
     ORDER BY name`
   );
-  return surveys;
+  return surveys.map((survey) => Objects.camelize(survey));
 };
 
 const deleteSurveys = async (surveyIds) => {
