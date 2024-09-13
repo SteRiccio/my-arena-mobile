@@ -54,15 +54,11 @@ export const LocationWatchingMonitor = (props) => {
         <Button
           icon="play"
           onPress={onStart}
-          textKey="dataEntry:coordinate.startGPS"
+          textKey="dataEntry:coordinate.getLocation"
         />
       )}
       {watchingLocation && (
-        <Button
-          icon="stop"
-          onPress={onStop}
-          textKey="dataEntry:coordinate.stopGPS"
-        />
+        <Button icon="stop" onPress={onStop} textKey="common:stop" />
       )}
     </VView>
   );
