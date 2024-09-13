@@ -54,9 +54,10 @@
         }
       ],
       [
-        "./plugins/withAndroidMainActivityAttributes",
+        "./plugins/modifyAndroidManifestAttributes",
         {
-          "android:largeHeap": true
+          "android:hardwareAccelerated": "true",
+          "android:largeHeap": "true"
         }
       ]
     ]
