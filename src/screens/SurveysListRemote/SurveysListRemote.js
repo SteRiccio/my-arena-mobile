@@ -4,7 +4,14 @@ import { useNavigation } from "@react-navigation/native";
 
 import { DateFormats, Dates, Surveys } from "@openforis/arena-core";
 
-import { DataVisualizer, DataVisualizerCellPropTypes, Loader, Searchbar, Text, VView } from "components";
+import {
+  DataVisualizer,
+  DataVisualizerCellPropTypes,
+  Loader,
+  Searchbar,
+  Text,
+  VView,
+} from "components";
 import { useNavigationFocus } from "hooks";
 import { ScreenViewMode } from "model/ScreenViewMode";
 import { SurveyService } from "service";
@@ -33,7 +40,7 @@ const DescriptionCellRenderer = ({ item }) => {
   return description ? <Text>{description}</Text> : null;
 };
 
-DescriptionCellRenderer.propTypes = DataVisualizerCellPropTypes
+DescriptionCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const DatePublishedCellRenderer = ({ item }) => (
   <Text>
@@ -45,7 +52,7 @@ const DatePublishedCellRenderer = ({ item }) => (
   </Text>
 );
 
-DatePublishedCellRenderer.propTypes = DataVisualizerCellPropTypes
+DatePublishedCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const _renderStatusCell =
   (surveysLocal) =>
@@ -202,7 +209,7 @@ export const SurveysListRemote = () => {
         <Text
           textKey={
             surveys.length > 0
-              ? "surveys:noSurveysMatchYourSearch"
+              ? "surveys:noSurveysMatchingYourSearch"
               : "surveys:noAvailableSurveysFound"
           }
           variant="labelLarge"

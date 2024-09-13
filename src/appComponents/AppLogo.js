@@ -11,7 +11,7 @@ const animMinScale = 0.8;
 const animMaxScale = 1;
 
 export const AppLogo = (props) => {
-  const { animated = false, style } = props;
+  const { animated = true, style } = props;
 
   const scaleValueRef = useRef(new Animated.Value(1));
 

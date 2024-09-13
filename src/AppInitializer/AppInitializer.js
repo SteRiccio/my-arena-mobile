@@ -106,7 +106,7 @@ export const AppInitializer = (props) => {
   if (loading) {
     return (
       <VView style={styles.container}>
-        <AppLogo animated style={styles.logo} />
+        <AppLogo style={styles.logo} />
         <Text textKey="app:pleaseWaitMessage" />
       </VView>
     );

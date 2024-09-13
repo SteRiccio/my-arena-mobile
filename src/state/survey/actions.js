@@ -3,6 +3,7 @@ import { PreferencesService, SurveyService } from "service";
 
 import { ConfirmActions } from "../confirm";
 import { SurveyActionTypes } from "./actionTypes";
+import { MessageActions } from "state/message";
 
 const {
   CURRENT_SURVEY_SET,
@@ -37,6 +38,12 @@ const fetchAndSetCurrentSurvey =
     const survey = await SurveyService.fetchSurveyById(surveyId);
     if (survey) {
       dispatch(setCurrentSurvey({ survey, navigation }));
+    } else {
+      dispatch(
+        MessageActions.setMessage({
+          content: "surveys:errorFetchingLocalSurvey",
+        })
+      );
     }
   };
 
@@ -67,6 +74,7 @@ const updateSurveyRemote =
     navigation,
     confirmMessageKey = "surveys:updateSurveyConfirmMessage",
     onConfirm = null,
+    onCancel = null,
     onComplete = null,
   }) =>
   async (dispatch) => {
@@ -76,6 +84,7 @@ const updateSurveyRemote =
         messageKey: confirmMessageKey,
         messageParams: { surveyName },
         onConfirm: async () => {
+          dispatch(ConfirmActions.dismiss());
           onConfirm?.();
           const survey = await SurveyService.updateSurveyRemote({
             surveyId,
@@ -84,6 +93,7 @@ const updateSurveyRemote =
           dispatch(_onSurveyInsertOrUpdate({ survey, navigation }));
           onComplete?.();
         },
+        onCancel,
       })
     );
   };

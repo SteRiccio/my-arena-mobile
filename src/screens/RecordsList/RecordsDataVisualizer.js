@@ -202,7 +202,7 @@ export const RecordsDataVisualizer = (props) => {
     if (syncStatusLoading || syncStatusFetched) {
       result.push({
         key: "syncStatus",
-        header: "dataEntry:syncStatusHeader",
+        header: "common:status",
         cellRenderer: ({ item }) =>
           syncStatusLoading ? (
             <LoadingIcon />
