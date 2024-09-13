@@ -7,7 +7,6 @@ import {
   Button,
   DataVisualizer,
   HView,
-  Icon,
   Loader,
   LoadingIcon,
   Searchbar,
@@ -19,9 +18,10 @@ import { SurveyService } from "service";
 import { useIsNetworkConnected, useNavigationFocus } from "hooks";
 import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
 import { SurveyActions, ScreenOptionsSelectors, useConfirm } from "state";
-import { ArrayUtils } from "utils/ArrayUtils";
+import { ArrayUtils } from "utils";
 
 import { screenKeys } from "../screenKeys";
+import { SurveyStatusCell } from "./SurveyStatusCell";
 
 import styles from "./styles";
 
@@ -36,33 +36,13 @@ const dataFields = [
   },
 ];
 
-const statusIconByStatus = {
-  [UpdateStatus.error]: "alert",
-  [UpdateStatus.notUpToDate]: "update",
-  [UpdateStatus.upToDate]: "check",
-};
-
-const statusIconColorByStatus = {
-  [UpdateStatus.error]: "red",
-  [UpdateStatus.notUpToDate]: "orange",
-  [UpdateStatus.upToDate]: "green",
-};
-
-const SurveyStatusCellRenderer = ({ item }) =>
-  item.status ? (
-    <Icon
-      color={statusIconColorByStatus[item.status]}
-      source={statusIconByStatus[item.status]}
-    />
-  ) : null;
-
 const dataFieldsWithUpdateStatus = [
   ...dataFields,
   {
     key: "status",
     header: "common:status",
     style: { width: 10 },
-    cellRenderer: SurveyStatusCellRenderer,
+    cellRenderer: SurveyStatusCell,
   },
 ];
 
@@ -239,6 +219,7 @@ export const SurveysListLocal = () => {
           <Button
             disabled={!networkAvailable}
             icon="update"
+            loading={updateStatusLoading}
             onPress={onCheckUpdatesPress}
             style={styles.importButton}
             textKey="surveys:checkUpdates"
