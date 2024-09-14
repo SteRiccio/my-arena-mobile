@@ -1,17 +1,19 @@
 export default {
+  checkUpdates: "Check updates",
   confirmDeleteSurvey: {
     title: "Delete survey",
     message: "Delete the selected survey?",
     message_other: "Delete the selected surveys?",
   },
   currentSurvey: "Current survey",
-  description: 'Description',
+  description: "Description",
+  errorFetchingLocalSurvey: "Error loading survey from internal storage",
   errorFetchingSurveys: "Error fetching surveys from remote server",
   errorFetchingSurveysWithDetails:
     "$t(surveys:errorFetchingSurveys): {{details}}",
+  importFromCloud: "Import from cloud",
   importSurvey: "Import survey",
   importSurveyConfirmMessage: 'Import the survey "{{surveyName}}"?',
-  importSurveyFromCloud: "Import survey from cloud",
   loadStatus: {
     label: "Load status",
     notInDevice: "not in device",
@@ -22,7 +24,7 @@ export default {
     "Error fetching surveys from remote server.\n\nUser not logged in or session expired.\n\nLogin to the server?",
   manageSurveys: "Manage surveys",
   noAvailableSurveysFound: "No available surveys found",
-  noSurveysMatchYourSearch: "No surveys match your search",
+  noSurveysMatchingYourSearch: "No surveys matching your search",
   publishedOn: "Published on",
   selectSurvey: "Select a survey",
   surveysInTheCloud: "Surveys in the cloud",
