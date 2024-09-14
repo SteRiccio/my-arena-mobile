@@ -26,6 +26,9 @@ import { PageNodesList } from "../PageNodesList";
 import { useStyles } from "./styles";
 
 export const RecordEditorDrawer = () => {
+  if (__DEV__) {
+    console.log(`rendering RecordEditorDrawer`);
+  }
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();

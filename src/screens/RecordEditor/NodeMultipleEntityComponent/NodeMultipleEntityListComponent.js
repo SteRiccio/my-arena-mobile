@@ -42,6 +42,7 @@ export const NodeMultipleEntityListComponent = (props) => {
   const record = DataEntrySelectors.useRecord();
   const isTablet = DeviceInfoSelectors.useIsTablet();
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+  const canEditRecord = DataEntrySelectors.useCanEditRecord();
   const maxSummaryDefs = determineMaxSummaryDefs({ isTablet, isLandscape });
 
   const summaryDefs = SurveyDefs.getEntitySummaryDefs({
@@ -101,6 +102,8 @@ export const NodeMultipleEntityListComponent = (props) => {
 
   const rows = entities.map(entityToRow);
 
+  const canAddNew = canEditRecord && !NodeDefs.isEnumerate(entityDef);
+
   return (
     <VView style={styles.container}>
       {rows.length === 0 && (
@@ -117,12 +120,14 @@ export const NodeMultipleEntityListComponent = (props) => {
           items={rows}
           onItemPress={onRowPress}
           onDeleteSelectedItemIds={onDeleteSelectedNodeUuids}
-          selectable
+          selectable={canEditRecord}
         />
       )}
-      <Button icon="plus" onPress={onNewPress}>
-        {t("common:newItemWithParam", { item: nodeDefLabel })}
-      </Button>
+      {canAddNew && (
+        <Button icon="plus" onPress={onNewPress}>
+          {t("common:newItemWithParam", { item: nodeDefLabel })}
+        </Button>
+      )}
     </VView>
   );
 };

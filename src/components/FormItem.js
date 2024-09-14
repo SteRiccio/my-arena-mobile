@@ -14,7 +14,8 @@ export const FormItem = ({
 }) => {
   const { t } = useTranslation();
   const label = `${t(labelKey)}:`;
-  const hasTextContent = typeof children === "string";
+  const hasTextContent =
+    typeof children === "string" || typeof children === "number";
 
   return (
     <HView style={[{ alignItems: "baseline" }, style]}>

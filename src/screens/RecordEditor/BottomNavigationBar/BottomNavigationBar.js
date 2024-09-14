@@ -1,10 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-import { NodeDefs, Objects } from "@openforis/arena-core";
+import { NodeDefs, Objects, Records, Surveys } from "@openforis/arena-core";
 
-import { Button, HView, View } from "components";
+import { Button, HView, IconButton, View } from "components";
 import { RecordEditViewMode, RecordPageNavigator } from "model";
 import {
   DataEntryActions,
@@ -26,9 +26,10 @@ export const BottomNavigationBar = () => {
   const record = DataEntrySelectors.useRecord();
 
   const currentEntityPointer = DataEntrySelectors.useCurrentPageEntity();
-  const { entityDef, entityUuid } = currentEntityPointer;
+  const { entityDef, entityUuid, parentEntityUuid } = currentEntityPointer;
 
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
+  const canEditRecord = DataEntrySelectors.useCanEditRecord();
 
   if (__DEV__) {
     console.log(
@@ -36,29 +37,55 @@ export const BottomNavigationBar = () => {
     );
   }
 
-  const prevEntityPointer = useMemo(
-    () =>
+  const [prevEntityPointer, nextEntityPointer] = useMemo(
+    () => [
       RecordPageNavigator.getPrevEntityPointer({
         survey,
         record,
         currentEntityPointer,
       }),
-    [survey, record, currentEntityPointer]
-  );
-
-  const nextEntityPointer = useMemo(
-    () =>
       RecordPageNavigator.getNextEntityPointer({
         survey,
         record,
         currentEntityPointer,
       }),
+    ],
     [survey, record, currentEntityPointer]
   );
+
+  const maxCountReached = useMemo(() => {
+    const maxCount = NodeDefs.getMaxCount(entityDef);
+    if (Objects.isEmpty(maxCount)) return false;
+
+    const parentEntity = parentEntityUuid
+      ? Records.getNodeByUuid(parentEntityUuid)(record)
+      : null;
+    if (!parentEntity) return false;
+
+    const siblings = Records.getChildren(parentEntity, entityDef.uuid)(record);
+    return siblings.length >= maxCount;
+  }, [survey, record, entityDef, parentEntityUuid]);
+
+  const hasCurrentEntityKeysSpecified = useMemo(() => {
+    const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
+    if (Objects.isEmpty(keyDefs)) return false;
+
+    const entity = entityUuid
+      ? Records.getNodeByUuid(entityUuid)(record)
+      : null;
+    if (!entity) return false;
+
+    const keyValues = Records.getEntityKeyValues({ survey, record, entity });
+    return !keyValues.some((keyValue) => Objects.isEmpty(keyValue));
+  }, [survey, record, entityDef, entityUuid]);
 
   const childDefs = DataEntrySelectors.useCurrentPageEntityRelevantChildDefs();
   const activeChildIndex =
     DataEntrySelectors.useCurrentPageEntityActiveChildIndex();
+
+  const onNewPress = useCallback(() => {
+    dispatch(DataEntryActions.addNewEntity);
+  }, []);
 
   const activeChildIsLastChild = activeChildIndex + 1 === childDefs.length;
 
@@ -88,6 +115,16 @@ export const BottomNavigationBar = () => {
     activeChildIndex >= 0 &&
     !activeChildIsLastChild;
 
+  const newButtonVisible =
+    canEditRecord &&
+    pageButtonsVisible &&
+    prevEntityPointer &&
+    !!entityUuid &&
+    NodeDefs.isMultiple(entityDef) &&
+    !NodeDefs.isEnumerate(entityDef) &&
+    !maxCountReached &&
+    hasCurrentEntityKeysSpecified;
+
   return (
     <HView style={styles.container}>
       <View transparent>
@@ -113,6 +150,16 @@ export const BottomNavigationBar = () => {
           />
         )}
       </View>
+      {newButtonVisible && (
+        <IconButton
+          avoidMultiplePress
+          icon="plus"
+          mode="contained"
+          onPress={onNewPress}
+          selected
+        />
+      )}
+
       <View transparent>
         {nextPageButtonVisible && (
           <NodePageNavigationButton

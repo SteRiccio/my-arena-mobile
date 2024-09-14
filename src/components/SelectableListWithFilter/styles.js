@@ -6,6 +6,14 @@ export default StyleSheet.create({
     gap: 20,
     flex: 1,
   },
+  selectedItemContainerWrapper: {
+    width: "100%",
+    maxHeight: 40,
+  },
+  selectedItemsContainerWrapper: {
+    maxHeight: "20%",
+    width: "100%",
+  },
   selectedItemsContainer: {
     width: "100%",
     display: "flex",
@@ -15,9 +23,6 @@ export default StyleSheet.create({
   },
   list: {
     flex: 1,
-  },
-  item: {
-    paddingVertical: 0,
   },
   clearButton: {
     alignSelf: "flex-end",

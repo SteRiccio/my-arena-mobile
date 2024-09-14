@@ -5,6 +5,11 @@ import { useTranslation } from "localization";
 
 import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
 
+const yesNoValueByBooleanValue = {
+  true: "yes",
+  false: "no",
+};
+
 export const BooleanValuePreview = (props) => {
   const { nodeDef, value } = props;
 

@@ -1,4 +1,5 @@
 import { CollapsiblePanel } from "components";
+import { Cycles } from "model";
 import { DataEntrySelectors, SurveySelectors } from "state";
 
 import { NodeValuePreview } from "./NodeValuePreview";
@@ -29,11 +30,18 @@ export const PreviousCycleNodeValuePreview = (props) => {
     console.log("rendering PreviousCycleNodeValuePreview");
   }
 
-  if (SurveySelectors.useIsNodeDefRootKey(nodeDef)) {
+  const isRootDef = SurveySelectors.useIsNodeDefRootKey(nodeDef);
+  const prevCycle = DataEntrySelectors.usePreviousCycleKey();
+
+  if (isRootDef) {
     return null;
   }
+
   return (
-    <CollapsiblePanel headerKey="dataEntry:recordInPreviousCycle.valuePanelHeader">
+    <CollapsiblePanel
+      headerKey="dataEntry:recordInPreviousCycle.valuePanelHeader"
+      headerParams={{ prevCycle: Cycles.labelFunction(prevCycle) }}
+    >
       <PreviousCycleNodeValuePreviewInnerComponent nodeDef={nodeDef} />
     </CollapsiblePanel>
   );

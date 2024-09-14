@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 import { SortDirection } from "model";
+import { DeviceInfoSelectors } from "state/deviceInfo";
 
 import { Checkbox } from "../Checkbox";
 import { ScrollView } from "../ScrollView";
@@ -12,6 +13,7 @@ import { usePagination } from "./usePagination";
 
 export const DataTable = (props) => {
   const {
+    canDelete = true,
     fields,
     items,
     onItemPress: onItemPressProp,
@@ -56,6 +58,14 @@ export const DataTable = (props) => {
     onPageChange,
   } = usePagination({ items: items });
 
+  const isTablet = DeviceInfoSelectors.useIsTablet();
+  const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+
+  const visibleFields = fields.filter(
+    ({ optional = false }) =>
+      !optional || fields.length <= 3 || isTablet || isLandscape
+  );
+
   const visibleRows = showPagination ? visibleItems : items;
 
   const onHeaderPress = (fieldKey) => {
@@ -72,13 +82,14 @@ export const DataTable = (props) => {
   return (
     <VView style={{ flex: 1 }}>
       <ItemSelectedBanner
+        canDelete={canDelete}
         customActions={selectedItemsCustomActions}
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
-          {fields.map((field) => (
+          {visibleFields.map((field) => (
             <RNPDataTable.Title
               key={field.key}
               onPress={() =>
@@ -102,14 +113,18 @@ export const DataTable = (props) => {
               onPress={() => onItemPress(item)}
               onLongPress={() => onItemLongPress(item)}
             >
-              {fields.map(
+              {visibleFields.map(
                 ({ key: fKey, style, cellRenderer: CellRenderer = null }) => (
                   <RNPDataTable.Cell
                     key={fKey}
                     style={style}
                     textStyle={{ flex: 1 }}
                   >
-                    {CellRenderer ? <CellRenderer item={item} /> : item[fKey]}
+                    {CellRenderer ? (
+                      <CellRenderer item={item} />
+                    ) : (
+                      String(item[fKey] ?? "")
+                    )}
                   </RNPDataTable.Cell>
                 )
               )}
@@ -147,6 +162,7 @@ export const DataTable = (props) => {
 };
 
 DataTable.propTypes = {
+  canDelete: PropTypes.bool,
   fields: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   onItemPress: PropTypes.func,

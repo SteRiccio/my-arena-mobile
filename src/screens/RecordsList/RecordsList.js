@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import * as DocumentPicker from "expo-document-picker";
 
-import { Objects, Surveys } from "@openforis/arena-core";
+import { Dates, Objects, Surveys } from "@openforis/arena-core";
 
 import {
   Button,
   CollapsiblePanel,
+  FlexWrapView,
   FormItem,
   HView,
-  IconButton,
   Loader,
   MenuButton,
   Searchbar,
@@ -24,6 +25,7 @@ import {
   RecordOrigin,
   RecordSyncStatus,
   RecordUpdateConflictResolutionStrategy as ConflictResolutionStrategy,
+  RecordLoadStatus,
 } from "model";
 import { RecordService } from "service";
 import {
@@ -32,6 +34,7 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
+import { Files } from "utils/Files";
 
 import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
@@ -41,6 +44,12 @@ import { RecordsUtils } from "./RecordsUtils";
 import styles from "./styles";
 
 const minRecordsToShowSearchBar = 5;
+const noRecordsToExportTextKey =
+  "dataEntry:exportData.noRecordsInDeviceToExport";
+
+const dataImportOptions = {
+  overwriteExistingRecords: "overwriteExistingRecords",
+};
 
 export const RecordsList = () => {
   const navigation = useNavigation();
@@ -153,6 +162,51 @@ export const RecordsList = () => {
     await loadRecordsWithSyncStatus();
   }, [loadRecordsWithSyncStatus]);
 
+  const onImportRecordsFromFilePress = useCallback(async () => {
+    const fileResult = await DocumentPicker.getDocumentAsync();
+    const { assets, canceled } = fileResult;
+    if (canceled) return;
+
+    const asset = assets?.[0];
+    if (!asset) return;
+
+    const { name: fileName, uri } = asset;
+
+    const messagePrefix = "dataEntry:records.importRecordsFromFile.";
+
+    if (Files.getExtension(fileName) !== "zip") {
+      toaster.show(`${messagePrefix}invalidFileType`);
+      return;
+    }
+
+    const confirmResult = await confirm({
+      titleKey: `${messagePrefix}title`,
+      messageKey: `${messagePrefix}confirmMessage`,
+      messageParams: { fileName },
+      confirmButtonTextKey: `${messagePrefix}title`,
+      multipleChoiceOptions: [
+        {
+          value: dataImportOptions.overwriteExistingRecords,
+          label: `${messagePrefix}overwriteExistingRecords`,
+        },
+      ],
+    });
+    if (confirmResult) {
+      const { selectedMultipleChoiceValues } = confirmResult;
+      const overwriteExistingRecords = selectedMultipleChoiceValues.includes(
+        dataImportOptions.overwriteExistingRecords
+      );
+
+      dispatch(
+        DataEntryActions.importRecordsFromFile({
+          fileUri: uri,
+          overwriteExistingRecords,
+          onImportComplete: loadRecords,
+        })
+      );
+    }
+  }, [loadRecords]);
+
   const onNewRecordPress = () => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
     dispatch(DataEntryActions.createNewRecord({ navigation }));
@@ -173,7 +227,7 @@ export const RecordsList = () => {
     const conflictingRecordsCount = conflictingRecords.length;
 
     if (newRecordsCount + updatedRecordsCount + conflictingRecordsCount === 0) {
-      toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
+      toaster.show(noRecordsToExportTextKey);
       return { confirmResult: false };
     }
     const confirmSingleChoiceOptions =
@@ -204,36 +258,43 @@ export const RecordsList = () => {
     return { newRecords, updatedRecords, conflictingRecords, confirmResult };
   }, []);
 
-  const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
-    const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
-      await confirmExportRecords({ records });
-    if (confirmResult) {
-      const recordsToExport = [...newRecords, ...updatedRecords];
+  const exportSelectedRecords = useCallback(
+    async (selectedRecords) => {
+      const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
+        await confirmExportRecords({ records: selectedRecords });
+      if (confirmResult) {
+        const recordsToExport = [...newRecords, ...updatedRecords];
 
-      let conflictResolutionStrategy =
-        ConflictResolutionStrategy.overwriteIfUpdated;
-      if (
-        confirmResult.selectedSingleChoiceValue ===
-        ConflictResolutionStrategy.merge
-      ) {
-        recordsToExport.push(...conflictingRecords);
-        conflictResolutionStrategy = ConflictResolutionStrategy.merge;
+        let conflictResolutionStrategy =
+          ConflictResolutionStrategy.overwriteIfUpdated;
+        if (
+          confirmResult.selectedSingleChoiceValue ===
+          ConflictResolutionStrategy.merge
+        ) {
+          recordsToExport.push(...conflictingRecords);
+          conflictResolutionStrategy = ConflictResolutionStrategy.merge;
+        }
+        const recordUuids = recordsToExport.map((r) => r.uuid);
+        if (recordUuids.length === 0) {
+          toaster.show(noRecordsToExportTextKey);
+          return;
+        }
+        dispatch(
+          DataEntryActions.exportRecords({
+            cycle,
+            recordUuids,
+            conflictResolutionStrategy,
+            onJobComplete: loadRecordsWithSyncStatus,
+          })
+        );
       }
-      const recordUuids = recordsToExport.map((r) => r.uuid);
-      if (recordUuids.length === 0) {
-        toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
-        return;
-      }
-      dispatch(
-        DataEntryActions.exportRecords({
-          cycle,
-          recordUuids,
-          conflictResolutionStrategy,
-          onJobComplete: loadRecordsWithSyncStatus,
-        })
-      );
-    }
-  }, [cycle, loadRecordsWithSyncStatus, records]);
+    },
+    [confirmExportRecords, cycle, loadRecordsWithSyncStatus]
+  );
+
+  const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
+    await exportSelectedRecords(records);
+  }, [cycle, exportSelectedRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
     const recordUuids = records
@@ -241,13 +302,23 @@ export const RecordsList = () => {
       .map((record) => record.uuid);
 
     if (recordUuids.length === 0) {
-      toaster.show("dataEntry:exportData.noRecordsInDeviceToExport");
+      toaster.show(noRecordsToExportTextKey);
       return;
     }
     dispatch(
       DataEntryActions.exportRecords({ cycle, recordUuids, onlyLocally: true })
     );
   }, [cycle, records]);
+
+  const onExportSelectedRecordUuids = useCallback(
+    async (recordUuids) => {
+      const selectedRecords = records.filter((record) =>
+        recordUuids.includes(record.uuid)
+      );
+      await exportSelectedRecords(selectedRecords);
+    },
+    [cycle, exportSelectedRecords, records]
+  );
 
   const onDeleteSelectedRecordUuids = useCallback(
     async (recordUuids) => {
@@ -262,7 +333,31 @@ export const RecordsList = () => {
         await loadRecords();
       }
     },
-    [loadRecords]
+    [confirm, dispatch, loadRecords]
+  );
+
+  const checkRecordsCanBeImported = useCallback(
+    (selectedRecords) => {
+      const selectedLocalRecords = selectedRecords.filter(
+        (record) => record.origin === RecordOrigin.local
+      );
+      if (
+        selectedLocalRecords.length > 0 &&
+        selectedLocalRecords.some((record) => {
+          const { dateModified, dateModifiedRemote, dateSynced } = record;
+          return (
+            !dateSynced || !Dates.isAfter(dateModifiedRemote, dateModified)
+          );
+        })
+      ) {
+        toaster.show(
+          "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"
+        );
+        return false;
+      }
+      return true;
+    },
+    [toaster]
   );
 
   const onImportSelectedRecordUuids = useCallback(
@@ -270,12 +365,7 @@ export const RecordsList = () => {
       const selectedRecords = records.filter((record) =>
         selectedRecordUuids.includes(record.uuid)
       );
-      if (
-        selectedRecords.some((record) => record.origin !== RecordOrigin.remote)
-      ) {
-        toaster.show(
-          "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"
-        );
+      if (!checkRecordsCanBeImported(selectedRecords)) {
         return;
       }
       dispatch(
@@ -285,7 +375,46 @@ export const RecordsList = () => {
         })
       );
     },
-    [dispatch, loadRecords, records, toaster]
+    [checkRecordsCanBeImported, dispatch, loadRecords, records]
+  );
+
+  const checkRecordsCanBeCloned = useCallback(
+    (selectedRecords) => {
+      const selectedRemoteRecords = selectedRecords.filter(
+        (record) => record.origin === RecordOrigin.remote
+      );
+      if (
+        selectedRemoteRecords.length > 0 &&
+        selectedRemoteRecords.some(
+          (record) => record.loadStatus !== RecordLoadStatus.complete
+        )
+      ) {
+        toaster.show(
+          "dataEntry:records.cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
+        );
+        return false;
+      }
+      return true;
+    },
+    [toaster]
+  );
+
+  const onCloneSelectedRecordUuids = useCallback(
+    (selectedRecordUuids) => {
+      const selectedRecords = records.filter((record) =>
+        selectedRecordUuids.includes(record.uuid)
+      );
+      if (!checkRecordsCanBeCloned(selectedRecords)) {
+        return;
+      }
+      dispatch(
+        DataEntryActions.cloneRecordsIntoDefaultCycle({
+          recordSummaries: selectedRecords,
+          callback: loadRecords,
+        })
+      );
+    },
+    [checkRecordsCanBeCloned, dispatch, loadRecords, records]
   );
 
   const recordsFiltered = useMemo(() => {
@@ -322,23 +451,31 @@ export const RecordsList = () => {
                 <Text textKey={defaultCycleText} />
               </HView>
             )}
-          </>
-        </CollapsiblePanel>
-
-        <CollapsiblePanel headerKey="dataEntry:records.listOptions">
-          <>
-            <FormItem
-              labelKey="dataEntry:showOnlyLocalRecords"
-              style={styles.formItem}
-            >
-              <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
-              <IconButton
+            <FlexWrapView>
+              {cycles.length > 1 && (
+                <SurveyCycleSelector style={styles.cyclesSelector} />
+              )}
+              <FormItem
+                labelKey="dataEntry:showOnlyLocalRecords"
+                style={styles.formItem}
+              >
+                <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
+              </FormItem>
+              <Button
+                disabled={!networkAvailable}
                 icon="cloud-refresh"
                 loading={syncStatusLoading}
+                mode="outlined"
                 onPress={onRemoteSyncPress}
+                textKey="dataEntry:checkSyncStatus"
               />
-            </FormItem>
-            {cycles.length > 1 && <SurveyCycleSelector />}
+              <Button
+                icon="file-import-outline"
+                mode="text"
+                onPress={onImportRecordsFromFilePress}
+                textKey="dataEntry:records.importRecordsFromFile.title"
+              />
+            </FlexWrapView>
           </>
         </CollapsiblePanel>
 
@@ -355,7 +492,9 @@ export const RecordsList = () => {
             {records.length > 0 && (
               <RecordsDataVisualizer
                 loadRecords={loadRecords}
+                onCloneSelectedRecordUuids={onCloneSelectedRecordUuids}
                 onDeleteSelectedRecordUuids={onDeleteSelectedRecordUuids}
+                onExportSelectedRecordUuids={onExportSelectedRecordUuids}
                 onImportSelectedRecordUuids={onImportSelectedRecordUuids}
                 records={recordsFiltered}
                 showRemoteProps={!onlyLocal}
@@ -367,12 +506,14 @@ export const RecordsList = () => {
         )}
       </VView>
       <HView style={styles.bottomActionBar}>
-        <Button
-          icon="plus"
-          onPress={onNewRecordPress}
-          style={styles.newRecordButton}
-          textKey="dataEntry:newRecord"
-        />
+        {defaultCycleKey === cycle && (
+          <Button
+            icon="plus"
+            onPress={onNewRecordPress}
+            style={styles.newRecordButton}
+            textKey="dataEntry:newRecord"
+          />
+        )}
         {records.length > 0 && (
           <MenuButton
             icon="download"

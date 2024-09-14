@@ -25,7 +25,7 @@ import { Environment, Files, TimeUtils } from "utils";
 
 import { BatteryIcon } from "./BatteryIcon";
 
-import styles from "./styles.js";
+import styles from "./styles";
 
 const batteryStatusAvailable = !Environment.isIOS;
 

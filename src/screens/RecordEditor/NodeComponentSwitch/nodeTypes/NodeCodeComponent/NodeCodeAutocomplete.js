@@ -5,6 +5,8 @@ import { SelectableListWithFilter } from "components";
 
 import { SurveySelectors } from "state/survey";
 
+const itemKeyExtractor = (item) => item?.uuid;
+
 export const NodeCodeAutocomplete = (props) => {
   const {
     editable = true,
@@ -39,15 +41,20 @@ export const NodeCodeAutocomplete = (props) => {
         onSingleValueChange(selectedItem?.uuid);
       }
     },
-    [onItemAdd, onItemRemove, selectedItems, multiple]
+    [onItemAdd, onItemRemove, onSingleValueChange, selectedItems, multiple]
+  );
+
+  const itemDescriptionExtractor = useCallback(
+    (item) => item?.props?.descriptions?.[lang],
+    [lang]
   );
 
   return (
     <SelectableListWithFilter
       editable={editable}
-      itemKeyExtractor={(item) => item?.uuid}
+      itemKeyExtractor={itemKeyExtractor}
       itemLabelExtractor={itemLabelFunction}
-      itemDescriptionExtractor={(item) => item?.props?.descriptions?.[lang]}
+      itemDescriptionExtractor={itemDescriptionExtractor}
       items={items}
       multiple={multiple}
       onSelectedItemsChange={onSelectedItemsChange}

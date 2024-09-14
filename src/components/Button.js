@@ -1,11 +1,13 @@
-import React, { useCallback } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Button as RNButton } from "react-native-paper";
 
 import { useTranslation } from "localization";
+import { useButtonOnPress } from "./useButtonPress";
 
 export const Button = (props) => {
   const {
+    avoidMultiplePress = true,
     children,
     loading,
     mode = "contained",
@@ -18,17 +20,19 @@ export const Button = (props) => {
   const { t } = useTranslation();
   const text = t(textKey, textParams);
 
-  const onPress = useCallback(
-    (event) => {
-      if (!loading) {
-        onPressProp(event);
-      }
-    },
-    [loading, onPressProp]
-  );
+  const { actualLoading, onPress } = useButtonOnPress({
+    avoidMultiplePress,
+    loading,
+    onPressProp,
+  });
 
   return (
-    <RNButton loading={loading} mode={mode} onPress={onPress} {...otherProps}>
+    <RNButton
+      loading={actualLoading}
+      mode={mode}
+      onPress={onPress}
+      {...otherProps}
+    >
       {text}
       {children}
     </RNButton>
@@ -36,6 +40,7 @@ export const Button = (props) => {
 };
 
 Button.propTypes = {
+  avoidMultiplePress: PropTypes.bool,
   children: PropTypes.node,
   loading: PropTypes.bool,
   mode: PropTypes.oneOf([

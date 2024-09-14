@@ -26,13 +26,18 @@ import { DataEntryActionTypes } from "./actionTypes";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
 import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
-import { importRecordsFromServer } from "./actionsRecordsImport";
+import {
+  importRecordsFromFile,
+  importRecordsFromServer,
+} from "./actionsRecordsImport";
+import { cloneRecordsIntoDefaultCycle } from "./actionsRecordsClone";
 
 const {
   DATA_ENTRY_RESET,
   PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
   PAGE_ENTITY_SET,
   PAGE_SELECTOR_MENU_OPEN_SET,
+  RECORD_EDIT_LOCKED,
   RECORD_SET,
 } = DataEntryActionTypes;
 
@@ -76,7 +81,7 @@ const createNewRecord =
 
     record = await RecordService.insertRecord({ survey, record });
 
-    dispatch(editRecord({ navigation, record }));
+    dispatch(editRecord({ navigation, record, locked: false }));
   };
 
 const addNewEntity = async (dispatch, getState) => {
@@ -144,9 +149,14 @@ const deleteRecords = (recordUuids) => async (dispatch, getState) => {
 };
 
 const editRecord =
-  ({ navigation, record }) =>
+  ({ navigation, record, locked = true }) =>
   (dispatch) => {
-    dispatch({ type: RECORD_SET, record });
+    dispatch({
+      type: RECORD_SET,
+      record,
+      recordEditLockAvailable: locked,
+      recordEditLocked: locked,
+    });
     navigation.navigate(screenKeys.recordEditor);
   };
 
@@ -356,6 +366,13 @@ const closeRecordPageMenu = (dispatch, getState) => {
   }
 };
 
+const toggleRecordEditLock = (dispatch, getState) => {
+  Keyboard.dismiss();
+  const state = getState();
+  const locked = DataEntrySelectors.selectRecordEditLocked(state);
+  dispatch({ type: RECORD_EDIT_LOCKED, locked: !locked });
+};
+
 const navigateToRecordsList =
   ({ navigation }) =>
   (dispatch) => {
@@ -382,6 +399,7 @@ export const DataEntryActions = {
   selectCurrentPageEntity,
   selectCurrentPageEntityActiveChildIndex,
   toggleRecordPageMenuOpen,
+  toggleRecordEditLock,
 
   navigateToRecordsList,
   exportRecords,
@@ -389,5 +407,7 @@ export const DataEntryActions = {
   linkToRecordInPreviousCycle,
   unlinkFromRecordInPreviousCycle,
 
+  importRecordsFromFile,
   importRecordsFromServer,
+  cloneRecordsIntoDefaultCycle,
 };

@@ -3,7 +3,7 @@
     "name": "Arena Mobile Experiments",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "1.1.0",
+    "version": "1.1.12",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -14,21 +14,20 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 62
+      "versionCode": 76
     },
     "ios": {
-      "buildNumber": "62",
+      "buildNumber": "76",
       "bundleIdentifier": "org.stericcio.myarenamobile",
       "infoPlist": {
+        "LSMinimumSystemVersion": "13.0",
         "NSCameraUsageDescription": "Camera is used only when collecting images in file attributes (if defined in your survey).",
         "NSLocationWhenInUseUsageDescription": "Location is used only when collecting coordinates in coordinate attributes (if defined in your survey).",
         "NSMicrophoneUsageDescription": "Microfone is used only when recording audio or video in file attributes (if defined in your survey).",
@@ -46,7 +45,15 @@
       }
     },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.5"
+          }
+        }
+      ]
     ]
   }
 }

@@ -35,6 +35,7 @@ const confirmSlice = createSlice({
       ...action.payload,
       isOpen: true,
     }),
+    dismiss: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -44,12 +45,14 @@ const confirmSlice = createSlice({
 });
 
 const { actions, reducer: ConfirmReducer } = confirmSlice;
-const { show } = actions;
+const { show, dismiss } = actions;
 
 export const ConfirmActions = {
   show: ({
     titleKey = "common:confirm",
+    cancelButtonStyle = undefined,
     cancelButtonTextKey = "common:cancel",
+    confirmButtonStyle = undefined,
     confirmButtonTextKey = "common:confirm",
     messageKey,
     messageParams = {},
@@ -64,7 +67,9 @@ export const ConfirmActions = {
   }) =>
     show({
       titleKey,
+      cancelButtonStyle,
       cancelButtonTextKey,
+      confirmButtonStyle,
       confirmButtonTextKey,
       messageKey,
       messageParams,
@@ -77,6 +82,9 @@ export const ConfirmActions = {
       swipeToConfirm,
       swipeToConfirmTitleKey,
     }),
+  dismiss,
+
+  // internal (called from dialog component)
   confirm: ({ selectedMultipleChoiceValues, selectedSingleChoiceValue }) =>
     confirm({ selectedMultipleChoiceValues, selectedSingleChoiceValue }),
   cancel,

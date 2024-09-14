@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { Dates, Surveys } from "@openforis/arena-core";
 
-import { Button, FieldSet, HView, Text, VView } from "components";
+import { Button, FieldSet, HView, Text, ViewMoreText, VView } from "components";
 import { UpdateStatusIcon } from "components/UpdateStatusIcon";
 import { SurveyActions, SurveySelectors } from "state/survey";
 import { SurveyService } from "service/surveyService";
@@ -43,7 +43,8 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
             surveyName: Surveys.getName(survey),
             surveyRemoteId: survey.remoteId,
             navigation,
-            confirmMessageKey: 'surveys:updateSurveyWithNewVersionConfirmMessage',
+            confirmMessageKey:
+              "surveys:updateSurveyWithNewVersionConfirmMessage",
             onConfirm: () => setLoading(true),
             onComplete: () => setLoading(false),
           })
@@ -77,6 +78,7 @@ export const SelectedSurveyFieldset = () => {
   const surveyTitle = surveyLabelInDefaultLanguage
     ? `${surveyLabelInDefaultLanguage} [${surveyName}]`
     : surveyName;
+  const surveyDescription = survey?.props?.descriptions?.[lang];
   const [updateStatus, setUpdateStatus] = useState(UpdateStatus.loading);
 
   useEffect(() => {
@@ -115,13 +117,19 @@ export const SelectedSurveyFieldset = () => {
     <FieldSet headerKey="surveys:currentSurvey" style={styles.fieldset}>
       <VView style={styles.internalContainer}>
         <HView style={styles.surveyTitleContainer}>
-          <Text
-            style={styles.surveyTitle}
-            textKey={surveyTitle}
-            variant="titleMedium"
-          />
+          <Text style={styles.surveyTitle} variant="titleMedium">
+            {surveyTitle}
+          </Text>
+
           <SurveyUpdateStatusIcon updateStatus={updateStatus} />
         </HView>
+        {surveyDescription && (
+          <ViewMoreText numberOfLines={1}>
+            <Text style={styles.surveyTitle} variant="titleSmall">
+              {surveyDescription}
+            </Text>
+          </ViewMoreText>
+        )}
         <Button
           style={styles.goToDataEntryButton}
           textKey="dataEntry:goToDataEntry"

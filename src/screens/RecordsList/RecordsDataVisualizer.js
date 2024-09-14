@@ -3,7 +3,13 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
 
-import { DateFormats, Dates, NodeDefs, Objects } from "@openforis/arena-core";
+import {
+  DateFormats,
+  Dates,
+  NodeDefs,
+  Objects,
+  Surveys,
+} from "@openforis/arena-core";
 
 import {
   DataVisualizer,
@@ -12,8 +18,9 @@ import {
   LoadingIcon,
   Text,
 } from "components";
-import { i18n, useTranslation } from "localization";
+import { useTranslation } from "localization";
 import {
+  Cycles,
   RecordLoadStatus,
   RecordOrigin,
   ScreenViewMode,
@@ -74,7 +81,9 @@ RecordLoadStatusListCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 export const RecordsDataVisualizer = (props) => {
   const {
+    onCloneSelectedRecordUuids,
     onDeleteSelectedRecordUuids,
+    onExportSelectedRecordUuids,
     onImportSelectedRecordUuids,
     records,
     showRemoteProps,
@@ -89,8 +98,14 @@ export const RecordsDataVisualizer = (props) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const cycle = SurveySelectors.useCurrentSurveyCycle();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
+  const isPrevCycle = Cycles.isPreviousCycle({
+    defaultCycleKey,
+    cycleKey: cycle,
+  });
 
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const viewAsList = screenViewMode === ScreenViewMode.list;
   const [selectedRecordUuids, setSelectedRecordUuids] = useState([]);
   const [sort, setSort] = useState({ dateModified: SortDirection.desc });
 
@@ -141,8 +156,9 @@ export const RecordsDataVisualizer = (props) => {
     );
   }, []);
 
-  const fields = useMemo(
-    () => [
+  const fields = useMemo(() => {
+    const result = [];
+    result.push(
       ...rootDefKeys.map((keyDef) => ({
         key: Objects.camelize(NodeDefs.getName(keyDef)),
         header: NodeDefs.getLabelOrName(keyDef, lang),
@@ -151,69 +167,65 @@ export const RecordsDataVisualizer = (props) => {
       {
         key: "dateModified",
         header: "common:modifiedOn",
+        optional: true,
         sortable: true,
         style: { minWidth: 50 },
-      },
-      ...(showRemoteProps
-        ? [
-            {
-              key: "origin",
-              header: "dataEntry:records.origin.title",
-              style: { minWidth: 10 },
-              cellRenderer:
-                screenViewMode === ScreenViewMode.table
-                  ? RecordOriginTableCellRenderer
-                  : RecordOriginListCellRenderer,
-            },
-            ...(screenViewMode === ScreenViewMode.list
-              ? [
-                  {
-                    key: "dateModifiedRemote",
-                    header: "dataEntry:records.dateModifiedRemotely",
-                  },
-                  { key: "ownerName", header: "dataEntry:records.owner" },
-                ]
-              : []),
-            {
-              key: "loadStatus",
-              header: "dataEntry:records.loadStatus.title",
-              style: { minWidth: 10 },
-              cellRenderer:
-                screenViewMode === ScreenViewMode.table
-                  ? RecordLoadStatusTableCellRenderer
-                  : RecordLoadStatusListCellRenderer,
-            },
-          ]
-        : []),
-      ...(syncStatusLoading || syncStatusFetched
-        ? [
-            {
-              key: "syncStatus",
-              header: "dataEntry:syncStatusHeader",
-              cellRenderer: syncStatusLoading
-                ? LoadingIcon
-                : RecordSyncStatusIcon,
-            },
-          ]
-        : []),
-      ...(syncStatusFetched && screenViewMode === ScreenViewMode.list
-        ? [
-            {
-              key: "dateSynced",
-              header: "dataEntry:syncedOn",
-              style: { minWidth: 50 },
-            },
-          ]
-        : []),
-    ],
-    [
-      rootDefKeys,
-      screenViewMode,
-      showRemoteProps,
-      syncStatusLoading,
-      syncStatusFetched,
-    ]
-  );
+      }
+    );
+    if (showRemoteProps) {
+      result.push({
+        key: "origin",
+        header: "dataEntry:records.origin.title",
+        style: { minWidth: 10 },
+        cellRenderer: viewAsList
+          ? RecordOriginListCellRenderer
+          : RecordOriginTableCellRenderer,
+      });
+      if (viewAsList) {
+        result.push(
+          {
+            key: "dateModifiedRemote",
+            header: "dataEntry:records.dateModifiedRemotely",
+          },
+          { key: "ownerName", header: "dataEntry:records.owner" }
+        );
+      }
+      result.push({
+        key: "loadStatus",
+        header: "dataEntry:records.loadStatus.title",
+        style: { minWidth: 10 },
+        cellRenderer: viewAsList
+          ? RecordLoadStatusListCellRenderer
+          : RecordLoadStatusTableCellRenderer,
+      });
+    }
+    if (syncStatusLoading || syncStatusFetched) {
+      result.push({
+        key: "syncStatus",
+        header: "common:status",
+        cellRenderer: ({ item }) =>
+          syncStatusLoading ? (
+            <LoadingIcon />
+          ) : (
+            <RecordSyncStatusIcon item={item} showLabel={viewAsList} />
+          ),
+      });
+    }
+    if (syncStatusFetched && viewAsList) {
+      result.push({
+        key: "dateSynced",
+        header: "dataEntry:syncedOn",
+        style: { minWidth: 50 },
+      });
+    }
+    return result;
+  }, [
+    rootDefKeys,
+    screenViewMode,
+    showRemoteProps,
+    syncStatusLoading,
+    syncStatusFetched,
+  ]);
 
   const onSelectionChange = useCallback((selection) => {
     setSelectedRecordUuids(selection);
@@ -223,9 +235,50 @@ export const RecordsDataVisualizer = (props) => {
     onImportSelectedRecordUuids(selectedRecordUuids);
   }, [selectedRecordUuids, onImportSelectedRecordUuids]);
 
+  const onCloneSelectedItems = useCallback(() => {
+    onCloneSelectedRecordUuids(selectedRecordUuids);
+  }, [selectedRecordUuids, onCloneSelectedRecordUuids]);
+
+  const onExportSelectedItems = useCallback(() => {
+    onExportSelectedRecordUuids(selectedRecordUuids);
+  }, [selectedRecordUuids, onExportSelectedRecordUuids]);
+
   const onSortChange = useCallback((sortNext) => {
     setSort(sortNext);
   }, []);
+
+  const customActions = useMemo(() => {
+    const actions = [];
+    if (isPrevCycle) {
+      actions.push({
+        key: "cloneSelectedItems",
+        icon: "content-copy",
+        labelKey: "dataEntry:records.cloneRecords.title",
+        onPress: onCloneSelectedItems,
+      });
+    }
+    actions.push({
+      key: "importSelectedItems",
+      icon: "import",
+      labelKey: "dataEntry:records.importRecords.title",
+      onPress: onImportSelectedItems,
+    });
+    if (syncStatusFetched) {
+      actions.push({
+        key: "exportSelectedItems",
+        icon: "download-outline",
+        labelKey: "dataEntry:records.exportRecords.title",
+        onPress: onExportSelectedItems,
+      });
+    }
+    return actions;
+  }, [
+    isPrevCycle,
+    onCloneSelectedItems,
+    onExportSelectedItems,
+    onImportSelectedItems,
+    syncStatusFetched,
+  ]);
 
   return (
     <DataVisualizer
@@ -238,19 +291,16 @@ export const RecordsDataVisualizer = (props) => {
       onSortChange={onSortChange}
       selectable
       selectedItemIds={selectedRecordUuids}
-      selectedItemsCustomActions={[
-        {
-          label: i18n.t("dataEntry:records.importRecords.title"),
-          onPress: onImportSelectedItems,
-        },
-      ]}
+      selectedItemsCustomActions={customActions}
       sort={sort}
     />
   );
 };
 
 RecordsDataVisualizer.propTypes = {
+  onCloneSelectedRecordUuids: PropTypes.func.isRequired,
   onDeleteSelectedRecordUuids: PropTypes.func.isRequired,
+  onExportSelectedRecordUuids: PropTypes.func.isRequired,
   onImportSelectedRecordUuids: PropTypes.func.isRequired,
   records: PropTypes.array.isRequired,
   showRemoteProps: PropTypes.bool,

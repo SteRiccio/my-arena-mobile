@@ -1,4 +1,3 @@
-import ViewMoreText from "react-native-view-more-text";
 import PropTypes from "prop-types";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
@@ -7,6 +6,7 @@ import { SurveySelectors } from "state/survey";
 
 import { Text } from "components/Text";
 import { View } from "components/View";
+import { ViewMoreText } from "components/ViewMoreText";
 
 import { NodeValidationIcon } from "../NodeValidationIcon";
 import { useStyles } from "./styles";
@@ -18,7 +18,7 @@ export const NodeDefFormItemHeader = (props) => {
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const labelOrName = NodeDefs.getLabelOrName(nodeDef, lang);
-  const description = nodeDef.props?.descriptions?.[lang];
+  const description = NodeDefs.getDescription(nodeDef, lang);
 
   return (
     <>
@@ -29,10 +29,7 @@ export const NodeDefFormItemHeader = (props) => {
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
       </View>
       {!Objects.isEmpty(description) && (
-        <ViewMoreText
-          textStyle={styles.nodeDefDescriptionViewMoreText}
-          numberOfLines={2}
-        >
+        <ViewMoreText textStyle={styles.nodeDefDescriptionViewMoreText}>
           <Text style={styles.nodeDefDescriptionText}>{description}</Text>
         </ViewMoreText>
       )}

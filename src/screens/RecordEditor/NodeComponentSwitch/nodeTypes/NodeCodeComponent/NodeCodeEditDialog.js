@@ -1,10 +1,9 @@
-import * as React from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
 import { NodeCodeAutocomplete } from "./NodeCodeAutocomplete";
-import { useCallback } from "react";
 import { NodeEditDialogInternal } from "../NodeEditDialogInternal";
 
 export const NodeCodeEditDialog = (props) => {

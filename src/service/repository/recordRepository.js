@@ -67,16 +67,19 @@ const getPlaceholders = (count) =>
     .map(() => "?")
     .join(", ");
 
-const fetchRecord = async ({ survey, recordId }) => {
+const fetchRecord = async ({ survey, recordId, includeContent = true }) => {
   const { id: surveyId } = survey;
   const row = await dbClient.one(
-    `SELECT ${summarySelectFieldsJoint}, content
+    `SELECT ${summarySelectFieldsJoint}${includeContent ? ", content" : ""}
     FROM record
     WHERE survey_id = ? AND id = ?`,
     [surveyId, recordId]
   );
   return rowToRecord({ survey })(row);
 };
+
+const fetchRecordSummary = async ({ survey, recordId }) =>
+  fetchRecord({ survey, recordId, includeContent: false });
 
 const fetchRecords = async ({ survey, cycle = null, onlyLocal = true }) => {
   const { id: surveyId } = survey;
@@ -103,7 +106,7 @@ const fetchRecords = async ({ survey, cycle = null, onlyLocal = true }) => {
   return rows.map(rowToRecord({ survey }));
 };
 
-const findRecordIdsByKeys = async ({ survey, cycle, keyValues }) => {
+const findRecordSummariesByKeys = async ({ survey, cycle, keyValues }) => {
   const { id: surveyId } = survey;
   const keyColumnsConditions = keyColumnNames
     .map((keyCol, index) => {
@@ -120,12 +123,12 @@ const findRecordIdsByKeys = async ({ survey, cycle, keyValues }) => {
   }, []);
 
   const rows = await dbClient.many(
-    `SELECT id
+    `SELECT ${summarySelectFieldsJoint}
     FROM record
     WHERE survey_id = ? AND cycle = ? AND ${keyColumnsConditions}`,
     [surveyId, cycle, ...keyColumnsParams]
   );
-  return rows.map((row) => Number(row.id));
+  return rows.map(rowToRecord({ survey }));
 };
 
 const fetchRecordsWithEmptyCycle = async ({ survey }) => {
@@ -146,16 +149,10 @@ const insertRecord = async ({
   record,
   loadStatus = RecordLoadStatus.complete,
 }) => {
+  const { id: surveyId } = survey;
   const keyColumnsValues = extractKeyColumnsValues({ survey, record });
-  const {
-    uuid,
-    surveyId,
-    dateCreated,
-    dateModified,
-    cycle,
-    ownerUuid,
-    ownerName,
-  } = record;
+  const { uuid, dateCreated, dateModified, cycle, ownerUuid, ownerName } =
+    record;
 
   const { insertId } = await dbClient.executeSql(
     `INSERT INTO record (${insertColumnsJoint})
@@ -289,17 +286,17 @@ const updateRecord = async ({ survey, record }) => {
     path: ["info", "modifiedWith"],
     value: SystemUtils.getRecordAppInfo(),
   });
-  await updateRecordKeysAndContent({ survey, record: recordUpdated });
+  await updateRecordKeysAndContent({
+    survey,
+    record: recordUpdated,
+    updateOrigin: true,
+    origin: RecordOrigin.local,
+  });
   return recordUpdated;
 };
 
 const updateRecordWithContentFetchedRemotely = async ({ survey, record }) =>
-  updateRecordKeysAndContent({
-    survey,
-    record,
-    updateOrigin: true,
-    origin: RecordOrigin.remote,
-  });
+  updateRecordKeysAndContent({ survey, record, origin: RecordOrigin.remote });
 
 const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
   const sql = `UPDATE record 
@@ -339,17 +336,21 @@ const deleteRecords = async ({ surveyId, recordUuids }) => {
   return dbClient.executeSql(sql, [surveyId]);
 };
 
-const fixDatetime = (dateStr) => {
-  if (!dateStr) return dateStr;
+const fixDatetime = (dateStringOrNumber) => {
+  if (!dateStringOrNumber) return dateStringOrNumber;
 
+  if (typeof dateStringOrNumber === "number") {
+    return Dates.formatForStorage(new Date(dateStringOrNumber));
+  }
   const formatFrom = [
     DateFormats.datetimeStorage,
     DateFormats.datetimeDefault,
-  ].find((frmt) => Dates.isValidDateInFormat(dateStr, frmt));
+  ].find((frmt) => Dates.isValidDateInFormat(dateStringOrNumber, frmt));
 
-  if (!formatFrom || formatFrom === DateFormats.datetimeStorage) return dateStr;
+  if (!formatFrom || formatFrom === DateFormats.datetimeStorage)
+    return dateStringOrNumber;
 
-  const parsed = Dates.parse(dateStr, formatFrom);
+  const parsed = Dates.parse(dateStringOrNumber, formatFrom);
   return Dates.formatForStorage(parsed);
 };
 
@@ -360,7 +361,7 @@ const rowToRecord =
     const hasToBeFixed = true;
     const { cycle, content } = row;
     const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
-    const hasContent = !!content;
+    const hasContent = !Objects.isEmpty(content) && content !== "{}";
     const result = hasContent
       ? JSON.parse(row.content)
       : Objects.camelize(row, { skip: ["content"] });
@@ -411,8 +412,9 @@ const rowToRecord =
 
 export const RecordRepository = {
   fetchRecord,
+  fetchRecordSummary,
   fetchRecords,
-  findRecordIdsByKeys,
+  findRecordSummariesByKeys,
   fetchRecordsWithEmptyCycle,
   insertRecord,
   insertRecordSummaries,

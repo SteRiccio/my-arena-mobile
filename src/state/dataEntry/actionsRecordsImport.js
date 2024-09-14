@@ -3,6 +3,7 @@ import { JobStatus } from "@openforis/arena-core";
 import { RecordService } from "service/recordService";
 import { RecordsAndFilesImportJob } from "service/recordsAndFilesImportJob";
 import { JobMonitorActions } from "../jobMonitor/actions";
+import { MessageActions } from "../message";
 import { RemoteConnectionSelectors } from "../remoteConnection/selectors";
 import { SurveySelectors } from "../survey/selectors";
 import { ToastActions } from "../toast";
@@ -11,6 +12,38 @@ const handleImportErrors = ({ dispatch, error = null, errors = null }) => {
   const details = error?.toString() ?? JSON.stringify(errors);
   dispatch(ToastActions.show("dataEntry:records.importFailed", { details }));
 };
+
+export const importRecordsFromFile =
+  ({ fileUri, onImportComplete, overwriteExistingRecords = true }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const user = RemoteConnectionSelectors.selectLoggedUser(state);
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+
+    const importJob = new RecordsAndFilesImportJob({
+      survey,
+      user,
+      fileUri,
+      overwriteExistingRecords,
+    });
+
+    await importJob.start();
+
+    const { status, errors, result } = importJob.summary;
+
+    if (status === JobStatus.succeeded) {
+      const { processedRecords, insertedRecords, updatedRecords } = result;
+      dispatch(
+        MessageActions.setMessage({
+          content: "dataEntry:records.importCompleteSuccessfully",
+          contentParams: { processedRecords, insertedRecords, updatedRecords },
+        })
+      );
+      await onImportComplete();
+    } else {
+      handleImportErrors({ dispatch, errors });
+    }
+  };
 
 const _onExportFromServerJobComplete = async ({
   dispatch,
@@ -21,7 +54,6 @@ const _onExportFromServerJobComplete = async ({
   try {
     const { outputFileName: fileName } = job.result;
 
-    const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
 
     dispatch(JobMonitorActions.close());
@@ -32,24 +64,7 @@ const _onExportFromServerJobComplete = async ({
         fileName,
       });
 
-    const importJob = new RecordsAndFilesImportJob({
-      survey,
-      user,
-      fileUri,
-    });
-
-    await importJob.start();
-
-    const { status, errors } = importJob.summary;
-
-    if (status === JobStatus.succeeded) {
-      dispatch(
-        ToastActions.show("dataEntry:records.importCompleteSuccessfully")
-      );
-      await onImportComplete();
-    } else {
-      handleImportErrors({ dispatch, errors });
-    }
+    dispatch(importRecordsFromFile({ fileUri, onImportComplete }));
   } catch (error) {
     handleImportErrors({ dispatch, error });
   }
@@ -80,6 +95,6 @@ export const importRecordsFromServer =
         onImportComplete,
       });
     } catch (error) {
-      handleImportErrors({ dispatch, error, errors });
+      handleImportErrors({ dispatch, error });
     }
   };

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { RecordSyncStatus } from "model/RecordSyncStatus";
-import { Icon, Tooltip } from "components";
+import { HView, Icon, Text, Tooltip } from "components";
 
 const colors = {
   red: "red",
@@ -23,19 +23,29 @@ const colorBySyncStatus = {
 };
 
 export const RecordSyncStatusIcon = (props) => {
-  const { item } = props;
+  const { item, showLabel } = props;
   const { syncStatus } = item;
 
   if (!syncStatus || syncStatus === RecordSyncStatus.syncNotApplicable)
     return null;
 
-  return (
-    <Tooltip titleKey={`dataEntry:syncStatus.${syncStatus}`}>
-      <Icon color={colorBySyncStatus[syncStatus]} size={24} source="circle" />
-    </Tooltip>
+  const iconColor = colorBySyncStatus[syncStatus];
+
+  const icon = <Icon color={iconColor} size={24} source="circle" />;
+
+  const textKey = `dataEntry:syncStatus.${syncStatus}`;
+
+  return showLabel ? (
+    <HView>
+      {icon}
+      <Text textKey={textKey} />
+    </HView>
+  ) : (
+    <Tooltip titleKey={textKey}>{icon}</Tooltip>
   );
 };
 
 RecordSyncStatusIcon.propTypes = {
   item: PropTypes.object.isRequired,
+  showLabel: PropTypes.bool,
 };

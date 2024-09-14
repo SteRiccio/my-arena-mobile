@@ -1,24 +1,28 @@
 import LZString from "lz-string";
 
 import { DbUtils, dbClient } from "db";
-import { Objects } from "@openforis/arena-core";
+import { Objects, Surveys } from "@openforis/arena-core";
 
 const insertSurvey = async (survey) => {
+  const { id, uuid, dateCreated, datePublished, dateModified } = survey;
+  const name = Surveys.getName(survey);
+  const defaultLang = Surveys.getDefaultLanguage(survey);
+  const label = Surveys.getLabel(defaultLang)(survey);
   const { insertId } = await dbClient.executeSql(
     `INSERT INTO survey (server_url, remote_id, uuid, name, label, content, date_created, date_modified)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       survey.serverUrl || "localhost",
-      survey.id,
-      survey.uuid,
-      survey.props.name,
-      survey.props.labels?.["en"],
+      id,
+      uuid,
+      name,
+      label,
       "", // always save empty content (stored in FS)
-      survey.dateCreated,
-      survey.dateModified,
+      dateCreated,
+      datePublished ?? dateModified,
     ]
   );
-  survey.remoteId = survey.id;
+  survey.remoteId = id;
   survey.id = insertId;
   return survey;
 };
@@ -32,7 +36,7 @@ const updateSurvey = async ({ id, survey }) => {
       survey.props.labels?.["en"],
       "", // always set content to empty (stored in FS)
       survey.dateCreated,
-      survey.dateModified,
+      survey.datePublished ?? survey.dateModified,
       id,
     ]
   );
@@ -57,11 +61,11 @@ const fetchSurveyById = async (id) => {
 
 const fetchSurveySummaries = async () => {
   const surveys = await dbClient.many(
-    `SELECT id, server_url, remote_id, uuid, name, label 
+    `SELECT id, server_url, remote_id, uuid, name, label, date_modified
     FROM survey
     ORDER BY name`
   );
-  return surveys;
+  return surveys.map((survey) => Objects.camelize(survey));
 };
 
 const deleteSurveys = async (surveyIds) => {

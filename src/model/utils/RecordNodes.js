@@ -1,15 +1,32 @@
 import {
   NodeDefs,
+  NodeDefType,
   NodeValueFormatter,
   Nodes,
+  Numbers,
   Objects,
   RecordExpressionEvaluator,
   Records,
   Surveys,
 } from "@openforis/arena-core";
+import { valuePropsCoordinate } from "@openforis/arena-core/dist/node/nodeValueProps";
 import { SurveyDefs } from "./SurveyDefs";
 
-const EMPTY_VALUE = "---EMPTY---";
+const EMPTY_VALUE = "---";
+
+const coordinateAttributeMandatoryFields = [
+  valuePropsCoordinate[valuePropsCoordinate.x],
+  valuePropsCoordinate[valuePropsCoordinate.y],
+  valuePropsCoordinate[valuePropsCoordinate.srs],
+];
+
+const coordinateAttributeNumericFields = [
+  valuePropsCoordinate[valuePropsCoordinate.x],
+  valuePropsCoordinate[valuePropsCoordinate.y],
+  valuePropsCoordinate[valuePropsCoordinate.accuracy],
+  valuePropsCoordinate[valuePropsCoordinate.altitude],
+  valuePropsCoordinate[valuePropsCoordinate.altitudeAccuracy],
+];
 
 const getNodeName = ({ survey, record, nodeUuid }) => {
   const node = Records.getNodeByUuid(nodeUuid)(record);
@@ -23,25 +40,41 @@ const getNodeName = ({ survey, record, nodeUuid }) => {
   return null;
 };
 
-const getRootEntityKeysFormatted = ({ survey, record, lang }) => {
+const getEntityKeysFormatted = ({
+  survey,
+  record,
+  entity,
+  lang,
+  emptyValue = "",
+}) => {
   const { cycle } = record;
-  const keyDefs = SurveyDefs.getRootKeyDefs({ survey, cycle });
-  const rootEntity = Records.getRoot(record);
+  const entityDef = Surveys.getNodeDefByUuid({
+    survey,
+    uuid: entity.nodeDefUuid,
+  });
+  const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef, cycle });
   return keyDefs.map((keyDef) => {
-    const keyNode = Records.getChild(rootEntity, keyDef.uuid)(record);
-    return keyNode
-      ? NodeValueFormatter.format({
-          survey,
-          cycle,
-          nodeDef: keyDef,
-          node: keyNode,
-          value: keyNode.value,
-          showLabel: true,
-          lang,
-        })
-      : "";
+    const keyNode = Records.getChild(entity, keyDef.uuid)(record);
+    if (!keyNode) return emptyValue;
+    return NodeValueFormatter.format({
+      survey,
+      cycle,
+      nodeDef: keyDef,
+      node: keyNode,
+      value: keyNode.value,
+      showLabel: true,
+      lang,
+    });
   });
 };
+
+const getRootEntityKeysFormatted = ({ survey, record, lang }) =>
+  getEntityKeysFormatted({
+    survey,
+    record,
+    entity: Records.getRoot(record),
+    lang,
+  });
 
 const getEntitySummaryValuesByNameFormatted = ({
   survey,
@@ -169,11 +202,35 @@ const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
   return null;
 };
 
+const cleanupAttributeValue = ({ value, attributeDef }) => {
+  if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
+    const additionalFields =
+      NodeDefs.getCoordinateAdditionalFields(attributeDef);
+    const fieldsToRemove = Object.keys(value).filter(
+      (field) =>
+        !coordinateAttributeMandatoryFields.includes(field) &&
+        !additionalFields.includes(field)
+    );
+    fieldsToRemove.forEach((field) => {
+      delete value[field];
+    });
+    coordinateAttributeNumericFields.forEach((field) => {
+      const fieldValue = value[field];
+      if (!Objects.isNil(fieldValue) && typeof fieldValue === "string") {
+        value[field] = Numbers.toNumber(fieldValue);
+      }
+    });
+  }
+  return value;
+};
+
 export const RecordNodes = {
   getNodeName,
+  getEntityKeysFormatted,
   getRootEntityKeysFormatted,
   getEntitySummaryValuesByNameFormatted,
   getApplicableChildrenEntityDefs,
   getSiblingNode,
   getCoordinateDistanceTarget,
+  cleanupAttributeValue,
 };

@@ -1,15 +1,14 @@
 export default {
+  changelog: "Change Log",
   confirmExit: {
     title: "Exit",
     message: `Exit from the app?
 All changes are already saved.`,
   },
-  confirmUpdate: {
-    message:
-      "An update is available. Update the application to the latest version?",
-    title: "Update available",
-    update: "Update",
-  },
+  currentVersion: "Current version",
+  pleaseWaitMessage: "Please wait...",
+  update: "Update",
+  updateAvailable: "Update available",
   updateStatus: {
     error: "Error retrieving application update status: {{error}}",
     networkNotAvailable:

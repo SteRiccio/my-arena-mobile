@@ -1,4 +1,4 @@
-import { Dates, Objects } from "@openforis/arena-core";
+import { Dates, Objects, RecordCloner, Surveys } from "@openforis/arena-core";
 
 import {
   RecordLoadStatus,
@@ -11,9 +11,11 @@ import { ArrayUtils } from "utils";
 import { RecordRepository } from "./repository/recordRepository";
 import { RecordRemoteService } from "./recordRemoteService";
 import { RemoteService } from "./remoteService";
+import { RecordFileService } from "./recordFileService";
 
 const {
   fetchRecord,
+  fetchRecordSummary,
   fetchRecords,
   fetchRecordsWithEmptyCycle,
   insertRecord,
@@ -190,34 +192,72 @@ const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
   });
 };
 
-const findRecordIdsByKeys = async ({
+const findRecordSummariesByKeys = async ({
   survey,
   cycle,
   keyValues,
   keyValuesFormatted,
 }) => {
-  let recordIds = await RecordRepository.findRecordIdsByKeys({
+  let recordSummaries = await RecordRepository.findRecordSummariesByKeys({
     survey,
     cycle,
     keyValues,
   });
-  if (recordIds.length === 0) {
+  if (recordSummaries.length === 0) {
     // try to fetch records using formatted keys
-    recordIds = await RecordRepository.findRecordIdsByKeys({
+    recordSummaries = await RecordRepository.findRecordSummariesByKeys({
       survey,
       cycle,
       keyValues: keyValuesFormatted,
     });
   }
-  return recordIds;
+  return recordSummaries;
+};
+
+const cloneRecordsIntoDefaultCycle = async ({ survey, recordSummaries }) => {
+  const surveyId = survey.id;
+  const defaultCycle = Surveys.getDefaultCycleKey(survey);
+
+  for await (const recordSummary of recordSummaries) {
+    const { id: recordId } = recordSummary;
+    const record = await RecordRepository.fetchRecord({
+      survey,
+      recordId,
+      includeContent: true,
+    });
+    const { record: recordCloned, newFileUuidsByOldUuid } =
+      RecordCloner.cloneRecord({
+        survey,
+        record,
+        cycleTo: defaultCycle,
+        sideEffect: true,
+      });
+    await RecordRepository.insertRecord({ survey, record: recordCloned });
+
+    // clone files
+    for await (const [oldFileUuid, fileUuid] of Object.entries(
+      newFileUuidsByOldUuid
+    )) {
+      const sourceFileUri = RecordFileService.getRecordFileUri({
+        surveyId,
+        fileUuid: oldFileUuid,
+      });
+      await RecordFileService.saveRecordFile({
+        surveyId,
+        fileUuid,
+        sourceFileUri,
+      });
+    }
+  }
 };
 
 export const RecordService = {
   fetchRecord,
+  fetchRecordSummary,
   fetchRecords,
   syncRecordSummaries,
   fetchRecordsWithEmptyCycle,
-  findRecordIdsByKeys,
+  findRecordSummariesByKeys,
   insertRecord,
   updateRecord,
   updateRecordWithContentFetchedRemotely,
@@ -225,6 +265,7 @@ export const RecordService = {
   updateRecordsMergedInto,
   deleteRecords,
   fixRecordCycle,
+  cloneRecordsIntoDefaultCycle,
   // remote server
   startExportRecordsFromRemoteServer,
   downloadExportedRecordsFileFromRemoteServer,

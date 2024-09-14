@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
 
@@ -8,11 +8,13 @@ import { useTranslation } from "localization";
 import { DataEntrySelectors } from "state/dataEntry";
 import { SurveySelectors } from "state/survey";
 
-import { DataTable, Text, VView } from "components";
+import { DataVisualizer, Text, VView } from "components";
 
 import { NodeEditDialog } from "screens/RecordEditor/NodeComponentSwitch/nodeTypes/NodeEditDialog";
 
 import styles from "./styles";
+import { ScreenOptionsSelectors } from "state/screenOptions";
+import { RecordNodes } from "model/index";
 
 const getNodePath = ({ survey, record, nodeUuid, lang }) => {
   const node = Records.getNodeByUuid(nodeUuid)(record);
@@ -28,10 +30,14 @@ const getNodePath = ({ survey, record, nodeUuid, lang }) => {
     const labelOrName = NodeDefs.getLabelOrName(nodeDef, lang);
     let part = labelOrName;
     if (NodeDefs.isMultiple(nodeDef)) {
-      const parent = Records.getParent(visitedAncestor)(record);
-      const siblings = Records.getChildren(parent, nodeDef.uuid)(record);
-      const index = siblings.indexOf(visitedAncestor);
-      part = part + `[${index + 1}]`;
+      const keys = RecordNodes.getEntityKeysFormatted({
+        survey,
+        record,
+        entity: visitedAncestor,
+        lang,
+        emptyValue: "-",
+      });
+      part = part + `[${keys.join(",")}]`;
     }
     parts.unshift(part);
   })(record);
@@ -43,6 +49,7 @@ export const RecordValidationReport = () => {
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
+  const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const [state, setState] = useState({
     editDialogOpen: false,
     dialogNodeDef: null,
@@ -59,26 +66,30 @@ export const RecordValidationReport = () => {
 
   const { validation } = record;
 
-  const items = Object.entries(validation.fields).reduce(
-    (acc, [nodeUuid, validationResult]) => {
-      const node = Records.getNodeByUuid(nodeUuid)(record);
-      if (!node) return acc;
+  const items = useMemo(
+    () =>
+      Object.entries(validation.fields).reduce(
+        (acc, [nodeUuid, validationResult]) => {
+          const node = Records.getNodeByUuid(nodeUuid)(record);
+          if (!node) return acc;
 
-      const nodeDef = Surveys.getNodeDefByUuid({
-        survey,
-        uuid: node.nodeDefUuid,
-      });
-      const parentNodeUuid = node.parentUuid;
-      const path = getNodePath({ survey, record, nodeUuid, lang });
-      const error = Validations.getJointErrorText({
-        validation: validationResult,
-        t,
-        customMessageLang: lang,
-      });
-      acc.push({ key: nodeUuid, nodeDef, parentNodeUuid, path, error });
-      return acc;
-    },
-    []
+          const nodeDef = Surveys.getNodeDefByUuid({
+            survey,
+            uuid: node.nodeDefUuid,
+          });
+          const parentNodeUuid = node.parentUuid;
+          const path = getNodePath({ survey, record, nodeUuid, lang });
+          const error = Validations.getJointErrorText({
+            validation: validationResult,
+            t,
+            customMessageLang: lang,
+          });
+          acc.push({ key: nodeUuid, nodeDef, parentNodeUuid, path, error });
+          return acc;
+        },
+        []
+      ),
+    [lang, record, survey, validation]
   );
 
   const onRowPress = (item) => {
@@ -104,7 +115,7 @@ export const RecordValidationReport = () => {
         />
       )}
       {items.length > 0 && (
-        <DataTable
+        <DataVisualizer
           fields={[
             {
               key: "path",
@@ -115,8 +126,9 @@ export const RecordValidationReport = () => {
               header: "common:error",
             },
           ]}
-          onItemPress={onRowPress}
           items={items}
+          mode={screenViewMode}
+          onItemPress={onRowPress}
         />
       )}
       {editDialogOpen && (

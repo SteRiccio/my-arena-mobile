@@ -25,5 +25,5 @@ export const Searchbar = (props) => {
 Searchbar.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.any,
 };

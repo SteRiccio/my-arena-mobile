@@ -1,34 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { checkVersion } from "react-native-check-version";
-import { useDispatch } from "react-redux";
 
-import { DateFormats, Dates } from "@openforis/arena-core";
-
-import { HView, Text, UpdateStatusIcon } from "components";
-import { useAppInfo, useIsNetworkConnected, useToast } from "hooks";
-import { ConfirmActions } from "state/confirm";
+import { HView, UpdateStatusIcon } from "components";
+import { useIsNetworkConnected, useToast } from "hooks";
 import { UpdateStatus } from "model/UpdateStatus";
 
 import styles from "./versionNumberInfoStyles";
+import { ChangelogViewDialog } from "./ChangelogViewDialog";
+import { VersionNumberInfoText } from "./VersionNumberInfoText";
 
-const getLastUpdateTimeText = (lastUpdateTime) => {
-  if (!lastUpdateTime) return "";
-  const lastUpdateTimeFormatted = Dates.convertDate({
-    dateStr: lastUpdateTime,
-    formatFrom: DateFormats.datetimeStorage,
-    formatTo: DateFormats.dateDisplay,
-  });
-  return `(${lastUpdateTimeFormatted})`;
-};
-
-export const VersionNumberInfo = () => {
-  const dispatch = useDispatch();
-  const appInfo = useAppInfo();
+export const VersionNumberInfoButton = () => {
   const networkAvailable = useIsNetworkConnected();
   const toaster = useToast();
-  const [state, setState] = useState({ updateStatus: UpdateStatus.loading });
-  const { updateStatus, updateStatusError, updateUrl } = state;
+  const [state, setState] = useState({
+    changelogDialogOpen: false,
+    updateStatus: UpdateStatus.loading,
+    updateStatusError: null,
+    updateUrl: null,
+  });
+  const { changelogDialogOpen, updateStatus, updateStatusError, updateUrl } =
+    state;
 
   useEffect(() => {
     if (networkAvailable) {
@@ -65,6 +57,15 @@ export const VersionNumberInfo = () => {
     [updateUrl]
   );
 
+  const toggleChangelogViewDialogOpen = useCallback(
+    () =>
+      setState((statePrev) => ({
+        ...statePrev,
+        changelogDialogOpen: !statePrev.changelogDialogOpen,
+      })),
+    []
+  );
+
   const onUpdateStatusIconPress = useCallback(() => {
     switch (updateStatus) {
       case UpdateStatus.error:
@@ -77,29 +78,25 @@ export const VersionNumberInfo = () => {
         toaster.show("app:updateStatus.upToDate");
         break;
       case UpdateStatus.notUpToDate:
-        dispatch(
-          ConfirmActions.show({
-            titleKey: "app:confirmUpdate.title",
-            confirmButtonTextKey: "app:confirmUpdate.update",
-            messageKey: "app:confirmUpdate.message",
-            onConfirm: onUpdateConfirm,
-          })
-        );
+        toggleChangelogViewDialogOpen();
         break;
     }
   }, [updateStatus, updateStatusError]);
 
-  const lastUpdateTimeText = getLastUpdateTimeText(appInfo.lastUpdateTime);
-
   return (
     <HView style={styles.container}>
-      <Text style={styles.appVersionName} variant="labelLarge">
-        v{appInfo.version} [{appInfo.buildNumber}] {lastUpdateTimeText}
-      </Text>
+      <VersionNumberInfoText />
       {updateStatus !== UpdateStatus.error && (
         <UpdateStatusIcon
           updateStatus={updateStatus}
           onPress={onUpdateStatusIconPress}
+        />
+      )}
+      {changelogDialogOpen && (
+        <ChangelogViewDialog
+          onClose={toggleChangelogViewDialogOpen}
+          onUpdate={onUpdateConfirm}
+          title="app:updateAvailable"
         />
       )}
     </HView>

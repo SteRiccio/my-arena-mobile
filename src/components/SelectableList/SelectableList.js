@@ -8,7 +8,7 @@ import { Arrays } from "@openforis/arena-core";
 import { Checkbox } from "../Checkbox";
 import { RadioButton } from "../RadioButton";
 
-import styles from "../SelectableListWithFilter/styles";
+import styles from "./styles";
 
 const ListItemIcon = (props) => {
   const { multiple, checked, editable, onItemSelect, item } = props;
@@ -43,6 +43,10 @@ export const SelectableList = (props) => {
     style,
   } = props;
 
+  if (__DEV__) {
+    console.log(`rendering SelectableList`);
+  }
+
   const onItemSelect = useCallback(
     (item) => {
       const wasSelected = selectedItems.includes(item);
@@ -56,7 +60,7 @@ export const SelectableList = (props) => {
       }
       onChange(selectedItemsNext);
     },
-    [itemKeyExtractor, multiple, onChange, selectedItems]
+    [multiple, onChange, selectedItems]
   );
 
   const renderItem = useCallback(

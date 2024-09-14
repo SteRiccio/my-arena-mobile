@@ -1,6 +1,9 @@
+import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import TreeView from "react-native-final-tree-view";
 
 import { HView, ScrollView } from "components";
+import { DataEntryActions } from "state";
 
 import { EntityButton } from "./EntityButton";
 import { Indicator } from "./Indicator";
@@ -38,13 +41,24 @@ const TreeNodeRenderer = ({
 
 export const PagesNavigationTree = () => {
   const data = useTreeData();
+  const dispatch = useDispatch();
+
+  const onNodePress = useCallback(({ node: treeNode }) => {
+    const { entityPointer } = treeNode;
+    dispatch(DataEntryActions.selectCurrentPageEntity(entityPointer));
+  }, []);
 
   return (
     <ScrollView
       showsVerticalScrollIndicator
       style={{ flex: 1, backgroundColor: "transparent" }}
     >
-      <TreeView data={data} initialExpanded renderNode={TreeNodeRenderer} />
+      <TreeView
+        data={data}
+        initialExpanded
+        onNodePress={onNodePress}
+        renderNode={TreeNodeRenderer}
+      />
     </ScrollView>
   );
 };

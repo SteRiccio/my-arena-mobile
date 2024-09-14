@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Linking } from "react-native";
 
-import { VersionNumberInfo } from "appComponents/VersionNumberInfo";
+import { VersionNumberInfoButton } from "appComponents/VersionNumberInfoButton";
 import { Button, FormItem, ScrollView, Text, VView } from "components";
 import { useTranslation } from "localization";
 
 import styles from "./styles";
+import { ChangelogViewDialog } from "appComponents/ChangelogViewDialog";
 
 const developedBy = "Stefano Ricci";
 const supportEmailAddress = process.env.EXPO_PUBLIC_SUPPORT_EMAIL_ADDRESS;
@@ -13,12 +14,19 @@ const supportEmailAddress = process.env.EXPO_PUBLIC_SUPPORT_EMAIL_ADDRESS;
 export const AboutScreen = () => {
   const { t } = useTranslation();
 
-  const onSupportPress = () => {
+  const [changelogDialogOpen, setChangelogDialogOpen] = useState(false);
+
+  const onSupportPress = useCallback(() => {
     const openSupportEmailParams = new URLSearchParams({
       subject: t("common:appTitle"),
     }).toString();
     Linking.openURL(`mailto:${supportEmailAddress}?${openSupportEmailParams}`);
-  };
+  }, []);
+
+  const toggleChangelogDialogOpen = useCallback(
+    () => setChangelogDialogOpen((oldValue) => !oldValue),
+    []
+  );
 
   return (
     <ScrollView style={styles.container}>
@@ -31,7 +39,18 @@ export const AboutScreen = () => {
           </VView>
         </FormItem>
         <FormItem labelKey="about:version">
-          <VersionNumberInfo />
+          <VersionNumberInfoButton />
+          <Button
+            onPress={toggleChangelogDialogOpen}
+            mode="text"
+            textKey="app:changelog"
+          />
+          {changelogDialogOpen && (
+            <ChangelogViewDialog
+              onClose={toggleChangelogDialogOpen}
+              showCurrentVersionNumber={false}
+            />
+          )}
         </FormItem>
       </VView>
     </ScrollView>

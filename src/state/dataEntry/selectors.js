@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 
 import {
   NodeDefs,
-  NodeDefType,
   Nodes,
   NodeValues,
   Objects,
@@ -12,7 +11,7 @@ import {
   Validations,
 } from "@openforis/arena-core";
 
-import { SurveyDefs } from "model";
+import { RecordNodes, SurveyDefs } from "model";
 import { SurveySelectors } from "../survey/selectors";
 
 const getDataEntryState = (state) => state.dataEntry;
@@ -20,6 +19,20 @@ const getDataEntryState = (state) => state.dataEntry;
 const selectRecord = (state) => getDataEntryState(state).record;
 
 const selectIsEditingRecord = (state) => !!selectRecord(state);
+
+const selectRecordEditLocked = (state) =>
+  !!getDataEntryState(state).recordEditLocked;
+
+const selectRecordEditLockAvailable = (state) =>
+  !!getDataEntryState(state).recordEditLockAvailable;
+
+const selectCanEditRecord = (state) => {
+  const editLocked = selectRecordEditLocked(state);
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const defaultCycle = Surveys.getDefaultCycleKey(survey);
+  const record = selectRecord(state);
+  return !editLocked && String(defaultCycle) === String(record?.cycle);
+};
 
 const selectRecordRootNodeUuid = (state) => {
   const record = selectRecord(state);
@@ -98,35 +111,22 @@ const selectRecordNodePointerVisibility =
     return applicable || !hiddenWhenNotRelevant;
   };
 
-const _cleanupAttributeValue = ({ value, attributeDef }) => {
-  if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
-    const additionalFields =
-      NodeDefs.getCoordinateAdditionalFields(attributeDef);
-    const mandatoryFields = ["x", "y", "srs"];
-    const fieldsToRemove = Object.keys(value).filter(
-      (field) =>
-        !mandatoryFields.includes(field) && !additionalFields.includes(field)
-    );
-    fieldsToRemove.forEach((field) => {
-      delete value[field];
-    });
-  }
-  return value;
-};
-
 const selectRecordAttributeInfo =
   ({ nodeUuid }) =>
   (state) => {
     const record = selectRecord(state);
     const attribute = Records.getNodeByUuid(nodeUuid)(record);
-    let value = attribute?.value;
+    if (!attribute) {
+      return { applicable: false, value: null, validation: null };
+    }
+    let value = attribute.value;
     if (value) {
       const survey = SurveySelectors.selectCurrentSurvey(state);
       const attributeDef = Surveys.getNodeDefByUuid({
         survey,
         uuid: attribute.nodeDefUuid,
       });
-      value = _cleanupAttributeValue({ value, attributeDef });
+      value = RecordNodes.cleanupAttributeValue({ value, attributeDef });
     }
     const validation = RecordValidations.getValidationNode({ nodeUuid })(
       record.validation
@@ -219,9 +219,10 @@ const selectCurrentPageEntityRelevantChildDefs = (state) => {
     selectCurrentPageEntity(state);
   const childDefs = selectChildDefs({ nodeDef: entityDef })(state);
   const record = selectRecord(state);
-  const parentEntity = Records.getNodeByUuid(entityUuid || parentEntityUuid)(
-    record
-  );
+  const actualEntityUuid = entityUuid ?? parentEntityUuid;
+  if (!actualEntityUuid) return [];
+  const parentEntity = Records.getNodeByUuid(actualEntityUuid)(record);
+  if (!parentEntity) return [];
   return childDefs.filter((childDef) =>
     Nodes.isChildApplicable(parentEntity, childDef.uuid)
   );
@@ -239,8 +240,12 @@ const selectCanRecordBeLinkedToPreviousCycleRecord = (state) => {
   const record = selectRecord(state);
   return record?.cycle > "0";
 };
+
 const selectPreviousCycleRecord = (state) =>
   getDataEntryState(state).previousCycleRecord;
+
+const selectPreviousCycleKey = (state) =>
+  selectPreviousCycleRecord(state)?.cycle;
 
 const selectPreviousCycleRecordLoading = (state) =>
   getDataEntryState(state).previousCycleRecordLoading;
@@ -306,8 +311,15 @@ const selectPreviousCycleEntityWithSameKeys =
 export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageEntity,
+  selectRecordEditLocked,
 
   useRecord: () => useSelector(selectRecord),
+
+  useRecordEditLockAvailable: () => useSelector(selectRecordEditLockAvailable),
+
+  useRecordEditLocked: () => useSelector(selectRecordEditLocked),
+
+  useCanEditRecord: () => useSelector(selectCanEditRecord),
 
   useIsEditingRecord: () => useSelector(selectIsEditingRecord),
 
@@ -385,6 +397,8 @@ export const DataEntrySelectors = {
   // record previous cycle
   usePreviousCycleRecordLoading: () =>
     useSelector(selectPreviousCycleRecordLoading),
+
+  usePreviousCycleKey: () => useSelector(selectPreviousCycleKey),
 
   usePreviousCycleRecordPageEntity: () =>
     useSelector(selectPreviousCycleRecordPageEntity, Objects.isEqual),

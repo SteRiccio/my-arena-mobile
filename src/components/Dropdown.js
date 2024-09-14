@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useTheme } from "react-native-paper";
 import RNPDropdown from "react-native-paper-dropdown";
+import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
@@ -56,4 +57,15 @@ export const Dropdown = (props) => {
       visible={open}
     />
   );
+};
+
+Dropdown.propTypes = {
+  disabled: PropTypes.bool,
+  itemKeyExtractor: PropTypes.func,
+  itemLabelExtractor: PropTypes.func,
+  label: PropTypes.string,
+  items: PropTypes.array,
+  onChange: PropTypes.func,
+  showLabel: PropTypes.bool,
+  value: PropTypes.any,
 };
