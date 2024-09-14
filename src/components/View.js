@@ -14,7 +14,7 @@ export const View = (props) => {
   const {
     children,
     fullWidth = false,
-    style: styleProp,
+    style: styleProp = undefined,
     transparent = false,
     ...otherProps
   } = props;
