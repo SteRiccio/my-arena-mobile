@@ -83,5 +83,5 @@
     "metro-react-native-babel-preset": "^0.77.0"
   },
   "private": true,
-  "packageManager": "yarn@4.4.1"
+  "packageManager": "yarn@4.5.0"
 }
