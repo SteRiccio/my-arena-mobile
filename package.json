@@ -6,7 +6,8 @@
     "start-tunnel": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint --fix --ext .js,.jsx ."
   },
   "dependencies": {
     "@expo/webpack-config": "~19.0.1",
@@ -77,14 +78,20 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
+    "@babel/eslint-parser": "^7.25.1",
+    "@eslint/compat": "^1.1.1",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.10.0",
     "@react-native/eslint-config": "^0.75.3",
     "babel-plugin-module-resolver": "^5.0.2",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "dotenv": "^16.4.5",
     "eslint": "^9.10.0",
+    "eslint-plugin-ft-flow": "^3.0.11",
     "eslint-plugin-react": "^7.36.1",
     "metro-react-native-babel-preset": "^0.77.0",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2"
   },
   "private": true,
   "packageManager": "yarn@4.5.0"
