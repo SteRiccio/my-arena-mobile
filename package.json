@@ -77,10 +77,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
+    "@react-native/eslint-config": "^0.75.3",
     "babel-plugin-module-resolver": "^5.0.2",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "dotenv": "^16.4.5",
-    "metro-react-native-babel-preset": "^0.77.0"
+    "eslint": "^9.10.0",
+    "eslint-plugin-react": "^7.36.1",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "prettier": "^3.3.3"
   },
   "private": true,
   "packageManager": "yarn@4.5.0"
