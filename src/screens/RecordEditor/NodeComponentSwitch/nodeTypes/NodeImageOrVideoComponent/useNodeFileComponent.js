@@ -85,7 +85,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
       await updateNodeValue(valueUpdated, fileUri);
     },
-    [maxSize]
+    [maxSize, updateNodeValue]
   );
 
   const onFileChoosePress = useCallback(async () => {

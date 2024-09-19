@@ -24,7 +24,7 @@ export const NodeBooleanComponent = (props) => {
     (val) => {
       updateNodeValue(val === value ? null : val);
     },
-    [value]
+    [updateNodeValue, value]
   );
 
   const labelValue = nodeDef.props.labelValue ?? "trueFalse";

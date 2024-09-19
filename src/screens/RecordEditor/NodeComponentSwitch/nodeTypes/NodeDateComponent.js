@@ -16,10 +16,13 @@ export const NodeDateComponent = (props) => {
     nodeUuid,
   });
 
-  const onChange = useCallback((date) => {
-    const dateNodeValue = Dates.format(date, DateFormats.dateStorage);
-    updateNodeValue(dateNodeValue);
-  }, []);
+  const onChange = useCallback(
+    (date) => {
+      const dateNodeValue = Dates.format(date, DateFormats.dateStorage);
+      updateNodeValue(dateNodeValue);
+    },
+    [updateNodeValue]
+  );
 
   const editable = !nodeDef.props.readOnly;
 

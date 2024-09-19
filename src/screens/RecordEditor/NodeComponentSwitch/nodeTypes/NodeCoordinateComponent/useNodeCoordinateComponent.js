@@ -217,7 +217,13 @@ export const useNodeCoordinateComponent = (props) => {
         updateNodeValue({ ...uiVal, srs: val });
       }
     },
-    [performCoordinateConversion, onChangeValueField]
+    [
+      confirm,
+      getUiValueFromState,
+      performCoordinateConversion,
+      onChangeValueField,
+      updateNodeValue,
+    ]
   );
 
   const onStartGpsPress = useCallback(async () => {
