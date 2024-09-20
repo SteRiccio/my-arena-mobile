@@ -79,10 +79,6 @@ export const SurveysListRemote = () => {
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const viewAsList = screenViewMode === ScreenViewMode.list;
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
-  const statusCellRenderer = useCallback(
-    ({ item }) => _renderStatusCell(surveysLocal)({ item }),
-    [surveysLocal]
-  );
 
   const dataFields = useMemo(() => {
     const fields = [
