@@ -104,7 +104,7 @@ export const SettingsRemoteConnectionScreen = () => {
         })
       );
     }
-  }, [serverUrl]);
+  }, [dispatch, serverUrl]);
 
   const onEmailChange = useCallback(
     (text) =>
@@ -130,7 +130,7 @@ export const SettingsRemoteConnectionScreen = () => {
     dispatch(
       RemoteConnectionActions.login({ serverUrl, email: emailNew, password })
     );
-  }, [email, password, serverUrl]);
+  }, [dispatch, email, password, serverUrl]);
 
   return (
     <ScrollView>

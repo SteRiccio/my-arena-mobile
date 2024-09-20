@@ -11,7 +11,7 @@ import { VView, View } from "components";
 
 import { NodeDefFormItem } from "../NodeDefFormItem";
 
-import { useStyles } from "./styles";
+import styles from "./styles";
 
 export const RecordNodesCarousel = () => {
   const dispatch = useDispatch();
@@ -26,19 +26,21 @@ export const RecordNodesCarousel = () => {
 
   const pagerViewRef = useRef(null);
   const pagerViewScrollStateRef = useRef(null);
-  const styles = useStyles();
 
   const childrenDefs =
     DataEntrySelectors.useCurrentPageEntityRelevantChildDefs();
   const activeChildIndex =
     DataEntrySelectors.useCurrentPageEntityActiveChildIndex();
 
-  const onPageSelected = useCallback((e) => {
-    const position = e.nativeEvent.position;
-    dispatch(
-      DataEntryActions.selectCurrentPageEntityActiveChildIndex(position)
-    );
-  }, []);
+  const onPageSelected = useCallback(
+    (e) => {
+      const position = e.nativeEvent.position;
+      dispatch(
+        DataEntryActions.selectCurrentPageEntityActiveChildIndex(position)
+      );
+    },
+    [dispatch]
+  );
 
   const onPageScrollStateChanged = useCallback((e) => {
     pagerViewScrollStateRef.current = e.nativeEvent.pageScrollState;

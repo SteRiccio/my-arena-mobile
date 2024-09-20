@@ -81,7 +81,7 @@ export const VersionNumberInfoButton = () => {
         toggleChangelogViewDialogOpen();
         break;
     }
-  }, [updateStatus, updateStatusError]);
+  }, [toaster, toggleChangelogViewDialogOpen, updateStatus, updateStatusError]);
 
   return (
     <HView style={styles.container}>

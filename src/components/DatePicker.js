@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import PropTypes from "prop-types";
 
 import { DateFormats, Dates } from "@openforis/arena-core";
 
@@ -40,4 +41,9 @@ export const DatePicker = (props) => {
       )}
     </HView>
   );
+};
+
+DatePicker.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.any,
 };

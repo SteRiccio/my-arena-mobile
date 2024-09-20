@@ -123,7 +123,7 @@ export const useNodeComponentLocalState = ({
         );
       }
     },
-    [nodeUuid, updateDelay, uiValueToNodeValue]
+    [uiValueToNodeValue, updateDelay, nodeUuid, dispatch]
   );
 
   const getUiValueFromState = () => {

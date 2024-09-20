@@ -40,7 +40,7 @@ export const IconButton = (props) => {
 IconButton.propTypes = {
   avoidMultiplePress: PropTypes.bool,
   disabled: PropTypes.bool,
-  icon: PropTypes.string.isRequired,
+  icon: PropTypes.string,
   iconColor: PropTypes.string,
   loading: PropTypes.bool,
   mode: PropTypes.string,

@@ -2,10 +2,12 @@ import { useMemo, useState } from "react";
 
 import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
 
+import { RecordNodes } from "model";
 import { Validations } from "model/utils/Validations";
 import { useTranslation } from "localization";
 
 import { DataEntrySelectors } from "state/dataEntry";
+import { ScreenOptionsSelectors } from "state/screenOptions";
 import { SurveySelectors } from "state/survey";
 
 import { DataVisualizer, Text, VView } from "components";
@@ -13,8 +15,6 @@ import { DataVisualizer, Text, VView } from "components";
 import { NodeEditDialog } from "screens/RecordEditor/NodeComponentSwitch/nodeTypes/NodeEditDialog";
 
 import styles from "./styles";
-import { ScreenOptionsSelectors } from "state/screenOptions";
-import { RecordNodes } from "model/index";
 
 const getNodePath = ({ survey, record, nodeUuid, lang }) => {
   const node = Records.getNodeByUuid(nodeUuid)(record);
@@ -65,10 +65,11 @@ export const RecordValidationReport = () => {
   } = state;
 
   const { validation } = record;
+  const { fields: validationFields } = validation;
 
   const items = useMemo(
     () =>
-      Object.entries(validation.fields).reduce(
+      Object.entries(validationFields).reduce(
         (acc, [nodeUuid, validationResult]) => {
           const node = Records.getNodeByUuid(nodeUuid)(record);
           if (!node) return acc;
@@ -89,7 +90,7 @@ export const RecordValidationReport = () => {
         },
         []
       ),
-    [lang, record, survey, validation]
+    [lang, record, survey, t, validationFields]
   );
 
   const onRowPress = (item) => {

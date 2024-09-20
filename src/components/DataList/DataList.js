@@ -72,7 +72,15 @@ export const DataList = (props) => {
         </HView>
       </TouchableHighlight>
     ),
-    [fields, onItemPress, onItemLongPress]
+    [
+      styles.item,
+      fields,
+      selectionEnabled,
+      selectedItemIds,
+      onItemPress,
+      onItemLongPress,
+      onItemSelect,
+    ]
   );
 
   return (

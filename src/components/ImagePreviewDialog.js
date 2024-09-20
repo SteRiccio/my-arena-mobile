@@ -38,11 +38,11 @@ const ImageInfo = (props) => {
 
   useEffect(() => {
     if (imageUri) {
-      fetchInfo().catch((e) => {
+      fetchInfo().catch(() => {
         // ignore it
       });
     }
-  }, [imageUri]);
+  }, [fetchInfo, imageUri]);
 
   if (!info) return <LoadingIcon />;
 
