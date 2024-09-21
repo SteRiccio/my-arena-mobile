@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { HView, SegmentedButtons } from "components";
 
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
+import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
 
 const booleanValues = ["true", "false"];
 const yesNoValueByBooleanValue = {
@@ -50,3 +51,5 @@ export const NodeBooleanComponent = (props) => {
     </HView>
   );
 };
+
+NodeBooleanComponent.propTypes = NodeComponentPropTypes;

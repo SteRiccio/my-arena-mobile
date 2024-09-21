@@ -119,7 +119,7 @@ export const useLocationWatch = ({
     if (isMountedRef.current) {
       locationCallback(lastLocationRef.current);
     }
-  }, [_stopLocationWatch, locationCallback]);
+  }, [_stopLocationWatch, isMountedRef, locationCallback]);
 
   const startLocationWatch = useCallback(async () => {
     if (!(await Permissions.requestLocationForegroundPermission())) return;
@@ -153,12 +153,13 @@ export const useLocationWatch = ({
     }
     setState((statePrev) => ({ ...statePrev, watchingLocation: true }));
   }, [
+    _stopLocationWatch,
+    accuracy,
+    distanceInterval,
     locationCallback,
-    locationAccuracyThreshold,
     locationWatchTimeout,
     stopOnTimeout,
     stopLocationWatch,
-    _stopLocationWatch,
   ]);
 
   return {

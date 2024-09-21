@@ -1,9 +1,11 @@
 import { useCallback } from "react";
+
 import { DateFormats, Dates, Objects } from "@openforis/arena-core";
 
 import { TimePicker } from "components";
 
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
+import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
 
 export const NodeTimeComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
@@ -15,10 +17,13 @@ export const NodeTimeComponent = (props) => {
     nodeUuid,
   });
 
-  const onChange = useCallback((date) => {
-    const timeNodeValue = Dates.format(date, DateFormats.timeStorage);
-    updateNodeValue(timeNodeValue);
-  }, [updateNodeValue]);
+  const onChange = useCallback(
+    (date) => {
+      const timeNodeValue = Dates.format(date, DateFormats.timeStorage);
+      updateNodeValue(timeNodeValue);
+    },
+    [updateNodeValue]
+  );
 
   const editable = !nodeDef.props.readOnly;
 
@@ -30,3 +35,5 @@ export const NodeTimeComponent = (props) => {
     <TimePicker editable={editable} onChange={onChange} value={dateValue} />
   );
 };
+
+NodeTimeComponent.propTypes = NodeComponentPropTypes;

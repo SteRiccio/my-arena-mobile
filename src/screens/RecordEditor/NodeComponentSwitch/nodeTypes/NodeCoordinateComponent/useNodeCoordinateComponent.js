@@ -116,7 +116,12 @@ export const useNodeCoordinateComponent = (props) => {
       uiValueToNodeValue,
     });
 
-  const { accuracy, srs = defaultSrsCode } = uiValue || {};
+  const {
+    accuracy,
+    srs = defaultSrsCode,
+    x: uiValueX,
+    y: uiValueY,
+  } = uiValue ?? {};
 
   const onValueChange = useCallback(
     (valueNext) => {
@@ -149,7 +154,7 @@ export const useNodeCoordinateComponent = (props) => {
 
       onValueChange(valueNext);
     },
-    [onValueChange, srs]
+    [nodeDef, onValueChange, srs, srsIndex]
   );
 
   const {
@@ -179,7 +184,7 @@ export const useNodeCoordinateComponent = (props) => {
 
   useEffect(() => {
     return stopLocationWatch;
-  }, []);
+  }, [stopLocationWatch]);
 
   const performCoordinateConversion = useCallback(
     (uiVal, srsTo) => {
@@ -190,7 +195,7 @@ export const useNodeCoordinateComponent = (props) => {
       const uiValueNext = { ...uiValue, ...pointToUiValue(pointTo) };
       onValueChange(uiValueNext);
     },
-    [onValueChange]
+    [onValueChange, srsIndex, uiValue]
   );
 
   const onChangeSrs = useCallback(
@@ -217,26 +222,20 @@ export const useNodeCoordinateComponent = (props) => {
         updateNodeValue({ ...uiVal, srs: val });
       }
     },
-    [
-      confirm,
-      getUiValueFromState,
-      performCoordinateConversion,
-      onChangeValueField,
-      updateNodeValue,
-    ]
+    [confirm, getUiValueFromState, performCoordinateConversion, updateNodeValue]
   );
 
   const onStartGpsPress = useCallback(async () => {
     if (
-      Objects.isEmpty(uiValue?.x) ||
-      Objects.isEmpty(uiValue?.y) ||
+      Objects.isEmpty(uiValueX) ||
+      Objects.isEmpty(uiValueY) ||
       (await confirm({
         messageKey: "dataEntry:coordinate.overwriteConfirmMessage",
       }))
     ) {
       await startLocationWatch();
     }
-  }, [startLocationWatch, uiValue]);
+  }, [confirm, startLocationWatch, uiValueX, uiValueY]);
 
   const onStopGpsPress = useCallback(() => {
     stopLocationWatch();
@@ -270,7 +269,7 @@ export const useNodeCoordinateComponent = (props) => {
       });
       onValueChange(valueNext);
     },
-    [nodeDef, srs, onValueChange]
+    [nodeDef, srs, srsIndex, onValueChange]
   );
 
   return {

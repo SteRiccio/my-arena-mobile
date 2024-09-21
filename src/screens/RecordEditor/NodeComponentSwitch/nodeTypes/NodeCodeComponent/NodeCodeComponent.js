@@ -1,5 +1,3 @@
-import PropTypes from "prop-types";
-
 import { NodeDefs } from "@openforis/arena-core";
 
 import {
@@ -18,6 +16,7 @@ import { NodeCodeEditDialog } from "./NodeCodeEditDialog";
 import { NodeCodePreview } from "./NodeCodePreview";
 import { NodeCodeAutocomplete } from "./NodeCodeAutocomplete";
 import { NodeCodeFindClosestSamplingPointDialog } from "./NodeCodeFindClosestSamplingPointDialog";
+import { NodeComponentPropTypes } from "../nodeComponentPropTypes";
 
 const MAX_VISIBLE_ITEMS = 10;
 
@@ -146,7 +145,4 @@ export const NodeCodeComponent = (props) => {
   );
 };
 
-NodeCodeComponent.propTypes = {
-  nodeDef: PropTypes.object.isRequired,
-  parentNodeUuid: PropTypes.string,
-};
+NodeCodeComponent.propTypes = NodeComponentPropTypes;

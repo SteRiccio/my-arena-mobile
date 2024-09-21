@@ -13,7 +13,7 @@ import styles from "./styles";
 const ListItemIcon = (props) => {
   const { multiple, checked, editable, onItemSelect, item } = props;
 
-  const onPress = useCallback(() => onItemSelect(item), [onItemSelect]);
+  const onPress = useCallback(() => onItemSelect(item), [item, onItemSelect]);
 
   return multiple ? (
     <Checkbox checked={checked} disabled={!editable} onPress={onPress} />

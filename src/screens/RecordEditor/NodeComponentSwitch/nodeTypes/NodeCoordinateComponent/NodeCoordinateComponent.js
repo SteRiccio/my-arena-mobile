@@ -8,6 +8,7 @@ import { SrsDropdown } from "../../../SrsDropdown";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
 import { LocationNavigator } from "./LocationNavigator";
 import { OpenMapButton } from "./OpenMapButton";
+import { NodeComponentPropTypes } from "../nodeComponentPropTypes";
 
 import styles from "./styles";
 
@@ -119,3 +120,5 @@ export const NodeCoordinateComponent = (props) => {
     </VView>
   );
 };
+
+NodeCoordinateComponent.propTypes = NodeComponentPropTypes;

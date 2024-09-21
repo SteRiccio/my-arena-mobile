@@ -13,7 +13,7 @@ export const HView = (props) => {
   const {
     children,
     fullWidth = false,
-    style: styleProp = {},
+    style: styleProp,
     ...otherProps
   } = props;
 
@@ -26,8 +26,4 @@ export const HView = (props) => {
   );
 };
 
-HView.propTypes = {
-  children: PropTypes.node,
-  fullWidth: PropTypes.bool,
-  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-};
+HView.propTypes = View.propTypes;

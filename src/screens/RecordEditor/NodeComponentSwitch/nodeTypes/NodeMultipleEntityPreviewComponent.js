@@ -5,6 +5,8 @@ import { NodeDefs } from "@openforis/arena-core";
 import { Button, VView } from "components";
 import { DataEntryActions, SurveySelectors } from "state";
 
+import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
+
 export const NodeMultipleEntityPreviewComponent = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
@@ -31,3 +33,5 @@ export const NodeMultipleEntityPreviewComponent = (props) => {
     </VView>
   );
 };
+
+NodeMultipleEntityPreviewComponent.propTypes = NodeComponentPropTypes;

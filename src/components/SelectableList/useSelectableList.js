@@ -65,7 +65,7 @@ export const useSelectableList = (props) => {
 
       onSelectionChange?.(selectedItemIdsNext);
     },
-    [selectedItemIds]
+    [onSelectionChange, selectedItemIds]
   );
 
   const onDeleteSelected = useCallback(() => {
@@ -82,12 +82,7 @@ export const useSelectableList = (props) => {
     } else {
       performDelete();
     }
-  }, [
-    initialState,
-    selectedItemIds,
-    onDeleteSelectedItemIds,
-    onSelectionChange,
-  ]);
+  }, [selectedItemIds, onDeleteSelectedItemIds, onSelectionChange]);
 
   const onItemPress = useCallback(
     (item) => {

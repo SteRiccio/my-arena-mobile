@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { NodeDefs } from "@openforis/arena-core";
 
 import { Tooltip, WarningIconButton } from "components";
@@ -60,4 +62,9 @@ export const NodeValidationIcon = (props) => {
   }
 
   return null;
+};
+
+NodeValidationIcon.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
 };
