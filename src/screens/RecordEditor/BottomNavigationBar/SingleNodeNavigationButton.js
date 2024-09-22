@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
@@ -19,7 +20,7 @@ export const SingleNodeNavigationButton = (props) => {
       dispatch(
         DataEntryActions.selectCurrentPageEntityActiveChildIndex(childDefIndex)
       ),
-    [childDefIndex]
+    [childDefIndex, dispatch]
   );
 
   return (
@@ -30,4 +31,10 @@ export const SingleNodeNavigationButton = (props) => {
       onPress={onPress}
     />
   );
+};
+
+SingleNodeNavigationButton.propTypes = {
+  childDefIndex: PropTypes.number,
+  icon: PropTypes.string,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

@@ -95,7 +95,15 @@ export const Breadcrumbs = () => {
       currentEntity = parentEntity;
     }
     return _items;
-  }, [survey, record, entityDef, actualEntityUuid, itemLabelFunction]);
+  }, [
+    actualEntityUuid,
+    parentEntityUuid,
+    entityUuid,
+    record,
+    entityDef,
+    itemLabelFunction,
+    survey,
+  ]);
 
   const onItemPress = ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
     dispatch(

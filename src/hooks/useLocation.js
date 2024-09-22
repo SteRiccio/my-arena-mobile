@@ -61,7 +61,7 @@ export const useLocation = () => {
     return () => {
       stopLocationWatch();
     };
-  }, []);
+  }, [startLocationWatch, stopLocationWatch]);
 
   return {
     location,

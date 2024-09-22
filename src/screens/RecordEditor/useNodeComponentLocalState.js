@@ -135,6 +135,5 @@ export const useNodeComponentLocalState = ({
     uiValue,
     validation: updateDelay ? validation : nodeValidation,
     updateNodeValue,
-    getUiValueFromState,
   };
 };

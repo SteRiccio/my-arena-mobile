@@ -14,6 +14,7 @@ import {
 } from "state";
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
+import { NodeComponentPropTypes } from "./nodeTypes/nodeComponentPropTypes";
 
 export const MultipleAttributeComponentWrapper = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -52,7 +53,7 @@ export const MultipleAttributeComponentWrapper = (props) => {
         })
       );
     }
-  }, [nodes]);
+  }, [dispatch, nodeDef, nodes, parentNodeUuid]);
 
   const onDeletePress = (node) => () => {
     const performDelete = () =>
@@ -89,3 +90,5 @@ export const MultipleAttributeComponentWrapper = (props) => {
     </VView>
   );
 };
+
+MultipleAttributeComponentWrapper.propTypes = NodeComponentPropTypes;
