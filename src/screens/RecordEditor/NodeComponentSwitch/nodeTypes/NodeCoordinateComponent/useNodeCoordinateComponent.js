@@ -108,13 +108,36 @@ export const useNodeCoordinateComponent = (props) => {
     [includedExtraFields]
   );
 
-  const { applicable, uiValue, updateNodeValue, getUiValueFromState } =
-    useNodeComponentLocalState({
-      nodeUuid,
-      updateDelay: 500,
-      nodeValueToUiValue,
-      uiValueToNodeValue,
-    });
+  const isNodeValueEqual = useCallback(
+    (nodeValueA, nodeValueB) => {
+      const transformCoordinateValue = (coordVal) => {
+        if (!coordVal) return null;
+        const includedFields = ["x", "y", "srs", ...includedExtraFields];
+        return Object.entries(coordVal).reduce((acc, [key, value]) => {
+          if (includedFields.includes(key)) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {});
+      };
+      const coordValA = transformCoordinateValue(nodeValueA);
+      const coordValB = transformCoordinateValue(nodeValueB);
+      return (
+        Objects.isEqual(coordValA, coordValB) ||
+        JSON.stringify(coordValA) === JSON.stringify(coordValB) ||
+        (Objects.isEmpty(coordValA) && Objects.isEmpty(coordValB))
+      );
+    },
+    [includedExtraFields]
+  );
+
+  const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
+    nodeUuid,
+    updateDelay: 500,
+    nodeValueToUiValue,
+    uiValueToNodeValue,
+    isNodeValueEqual,
+  });
 
   const {
     accuracy,
@@ -187,8 +210,8 @@ export const useNodeCoordinateComponent = (props) => {
   }, [stopLocationWatch]);
 
   const performCoordinateConversion = useCallback(
-    (uiVal, srsTo) => {
-      const { x, y, srs } = uiVal;
+    (srsTo) => {
+      const { x, y, srs } = uiValue;
       const pointFrom = PointFactory.createInstance({ x, y, srs });
       const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
 
@@ -199,30 +222,29 @@ export const useNodeCoordinateComponent = (props) => {
   );
 
   const onChangeSrs = useCallback(
-    async (val) => {
+    async (srsTo) => {
       // workaround related to onChange callback passed to Dropdown:
       // get uiValue from state otherwise it will use an old value of it
-      const uiVal = getUiValueFromState();
-      const { x, y, srs } = uiVal;
+      const { x, y, srs } = uiValue;
 
-      if (val === srs) return;
+      if (srsTo === srs) return;
 
       if (
         !Objects.isEmpty(x) &&
         !Objects.isEmpty(y) &&
         (await confirm({
           messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
-          messageParams: { srsFrom: srs, srsTo: val },
+          messageParams: { srsFrom: srs, srsTo },
           confirmButtonTextKey: "dataEntry:coordinate.convert",
           cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
         }))
       ) {
-        performCoordinateConversion(uiVal, val);
+        performCoordinateConversion(srsTo);
       } else {
-        updateNodeValue({ ...uiVal, srs: val });
+        updateNodeValue({ ...uiValue, srs: srsTo });
       }
     },
-    [confirm, getUiValueFromState, performCoordinateConversion, updateNodeValue]
+    [confirm, performCoordinateConversion, uiValue, updateNodeValue]
   );
 
   const onStartGpsPress = useCallback(async () => {

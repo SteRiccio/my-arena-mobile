@@ -58,7 +58,7 @@ export const NodeCoordinateComponent = (props) => {
         />
       </HView>
     ),
-    [applicable, editable, uiValue]
+    [applicable, editable, onChangeValueField, uiValue]
   );
 
   return (

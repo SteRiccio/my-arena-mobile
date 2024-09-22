@@ -3,10 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { DataEntryActions, DataEntrySelectors, StoreUtils } from "state";
+import { Functions } from "utils";
 
 const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
 
-const isNodeValueEqual = (nodeValueA, nodeValueB) =>
+const isNodeValueEqualDefault = (nodeValueA, nodeValueB) =>
   Objects.isEqual(nodeValueA, nodeValueB) ||
   JSON.stringify(nodeValueA) === JSON.stringify(nodeValueB) ||
   (Objects.isEmpty(nodeValueA) && Objects.isEmpty(nodeValueB));
@@ -14,8 +15,9 @@ const isNodeValueEqual = (nodeValueA, nodeValueB) =>
 export const useNodeComponentLocalState = ({
   nodeUuid,
   updateDelay = 0,
-  uiValueToNodeValue = (value) => value,
-  nodeValueToUiValue = (value) => value,
+  uiValueToNodeValue = Functions.identity,
+  nodeValueToUiValue = Functions.identity,
+  isNodeValueEqual = isNodeValueEqualDefault,
 }) => {
   const dispatch = useDispatch();
   const dirtyRef = useRef(false);
@@ -41,7 +43,6 @@ export const useNodeComponentLocalState = ({
     if (!updateDelay) return;
 
     const nodeValueFromUI = uiValueToNodeValue(uiValue);
-
     const dirty = dirtyRef.current;
 
     if (isNodeValueEqual(nodeValue, nodeValueFromUI)) {
@@ -64,6 +65,7 @@ export const useNodeComponentLocalState = ({
     }
   }, [
     invalidValue,
+    isNodeValueEqual,
     nodeValue,
     nodeValidation,
     nodeValueToUiValue,
@@ -125,15 +127,6 @@ export const useNodeComponentLocalState = ({
     },
     [uiValueToNodeValue, updateDelay, nodeUuid, dispatch]
   );
-
-  const getUiValueFromState = () => {
-    let uiVal = null;
-    setState((statePrev) => {
-      uiVal = statePrev.uiValue;
-      return statePrev;
-    });
-    return uiVal;
-  };
 
   return {
     applicable,
