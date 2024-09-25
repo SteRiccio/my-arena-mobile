@@ -37,7 +37,7 @@ export const LocationWatchingMonitor = (props) => {
             <HView>
               <View style={{ width: "80%" }}>
                 <AccuracyProgressBar
-                  accuracy={locationAccuracy}
+                  accuracy={Number(locationAccuracy)}
                   accuracyThreshold={locationAccuracyThreshold}
                 />
               </View>

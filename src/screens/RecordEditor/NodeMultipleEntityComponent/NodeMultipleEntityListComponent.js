@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { NodeDefs, Records } from "@openforis/arena-core";
 
@@ -71,18 +72,21 @@ export const NodeMultipleEntityListComponent = (props) => {
         })
       );
     },
-    [parentEntityUuid, entityDefUuid]
+    [dispatch, parentEntityUuid, entityDefUuid]
   );
 
-  const onDeleteSelectedNodeUuids = useCallback(async (nodeUuids) => {
-    if (
-      await confirm({
-        messageKey: "dataEntry:confirmDeleteSelectedItems.message",
-      })
-    ) {
-      dispatch(DataEntryActions.deleteNodes(nodeUuids));
-    }
-  }, []);
+  const onDeleteSelectedNodeUuids = useCallback(
+    async (nodeUuids) => {
+      if (
+        await confirm({
+          messageKey: "dataEntry:confirmDeleteSelectedItems.message",
+        })
+      ) {
+        dispatch(DataEntryActions.deleteNodes(nodeUuids));
+      }
+    },
+    [confirm, dispatch]
+  );
 
   const entityToRow = useCallback(
     (entity) => ({
@@ -97,7 +101,7 @@ export const NodeMultipleEntityListComponent = (props) => {
         summaryDefs,
       }),
     }),
-    [survey, record, summaryDefs]
+    [survey, record, lang, summaryDefs]
   );
 
   const rows = entities.map(entityToRow);
@@ -130,4 +134,9 @@ export const NodeMultipleEntityListComponent = (props) => {
       )}
     </VView>
   );
+};
+
+NodeMultipleEntityListComponent.propTypes = {
+  entityDef: PropTypes.object.isRequired,
+  parentEntityUuid: PropTypes.string,
 };

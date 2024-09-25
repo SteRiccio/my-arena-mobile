@@ -37,5 +37,5 @@ export const useTaxonByNodeValue = ({ value }) => {
       }
     }
     return scientificName ? { ...taxon, scientificName } : taxon;
-  }, [value]);
+  }, [survey, value]);
 };

@@ -10,11 +10,11 @@ export const useJobMonitor = () => {
 
   const cancel = useCallback(() => {
     dispatch(JobMonitorActions.cancel());
-  }, []);
+  }, [dispatch]);
 
   const close = useCallback(() => {
     dispatch(JobMonitorActions.close());
-  }, []);
+  }, [dispatch]);
 
   return {
     ...jobMonitorState,

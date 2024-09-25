@@ -68,6 +68,10 @@ export const useNodeCoordinateComponent = (props) => {
     () => NodeDefs.getCoordinateAdditionalFields(nodeDef),
     [nodeDef]
   );
+  const includedFields = useMemo(
+    () => ["x", "y", "srs", ...includedExtraFields],
+    [includedExtraFields]
+  );
 
   const [state, setState] = useState({
     compassNavigatorVisible: false,
@@ -99,7 +103,6 @@ export const useNodeCoordinateComponent = (props) => {
         y: stringToNumber(y),
         srs,
       };
-
       includedExtraFields.forEach((fieldKey) => {
         result[fieldKey] = stringToNumber(uiValue?.[fieldKey]);
       });
@@ -108,15 +111,42 @@ export const useNodeCoordinateComponent = (props) => {
     [includedExtraFields]
   );
 
-  const { applicable, uiValue, updateNodeValue, getUiValueFromState } =
-    useNodeComponentLocalState({
-      nodeUuid,
-      updateDelay: 500,
-      nodeValueToUiValue,
-      uiValueToNodeValue,
-    });
+  const isNodeValueEqual = useCallback(
+    (nodeValueA, nodeValueB) => {
+      const transformCoordinateValue = (coordVal) => {
+        if (!coordVal) return null;
+        return Object.entries(coordVal).reduce((acc, [key, value]) => {
+          if (includedFields.includes(key)) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {});
+      };
+      const coordValA = transformCoordinateValue(nodeValueA);
+      const coordValB = transformCoordinateValue(nodeValueB);
+      return (
+        Objects.isEqual(coordValA, coordValB) ||
+        JSON.stringify(coordValA) === JSON.stringify(coordValB) ||
+        (Objects.isEmpty(coordValA) && Objects.isEmpty(coordValB))
+      );
+    },
+    [includedFields]
+  );
 
-  const { accuracy, srs = defaultSrsCode } = uiValue || {};
+  const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
+    nodeUuid,
+    updateDelay: 500,
+    nodeValueToUiValue,
+    uiValueToNodeValue,
+    isNodeValueEqual,
+  });
+
+  const {
+    accuracy,
+    srs = defaultSrsCode,
+    x: uiValueX,
+    y: uiValueY,
+  } = uiValue ?? {};
 
   const onValueChange = useCallback(
     (valueNext) => {
@@ -146,10 +176,9 @@ export const useNodeCoordinateComponent = (props) => {
         srsTo: srs,
         srsIndex,
       });
-
       onValueChange(valueNext);
     },
-    [onValueChange, srs]
+    [nodeDef, onValueChange, srs, srsIndex]
   );
 
   const {
@@ -179,64 +208,55 @@ export const useNodeCoordinateComponent = (props) => {
 
   useEffect(() => {
     return stopLocationWatch;
-  }, []);
+  }, [stopLocationWatch]);
 
   const performCoordinateConversion = useCallback(
-    (uiVal, srsTo) => {
-      const { x, y, srs } = uiVal;
+    (srsTo) => {
+      const { x, y, srs } = uiValue;
       const pointFrom = PointFactory.createInstance({ x, y, srs });
       const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
 
       const uiValueNext = { ...uiValue, ...pointToUiValue(pointTo) };
       onValueChange(uiValueNext);
     },
-    [onValueChange]
+    [onValueChange, srsIndex, uiValue]
   );
 
   const onChangeSrs = useCallback(
-    async (val) => {
+    async (srsTo) => {
       // workaround related to onChange callback passed to Dropdown:
       // get uiValue from state otherwise it will use an old value of it
-      const uiVal = getUiValueFromState();
-      const { x, y, srs } = uiVal;
+      const { x, y, srs } = uiValue;
 
-      if (val === srs) return;
+      if (srsTo === srs) return;
 
-      if (
-        !Objects.isEmpty(x) &&
-        !Objects.isEmpty(y) &&
-        (await confirm({
+      if (Objects.isEmpty(x) || Objects.isEmpty(y)) {
+        updateNodeValue({ ...uiValue, srs: srsTo });
+      } else if (
+        await confirm({
           messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
-          messageParams: { srsFrom: srs, srsTo: val },
+          messageParams: { srsFrom: srs, srsTo },
           confirmButtonTextKey: "dataEntry:coordinate.convert",
           cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
-        }))
+        })
       ) {
-        performCoordinateConversion(uiVal, val);
-      } else {
-        updateNodeValue({ ...uiVal, srs: val });
+        performCoordinateConversion(srsTo);
       }
     },
-    [
-      confirm,
-      getUiValueFromState,
-      performCoordinateConversion,
-      onChangeValueField,
-      updateNodeValue,
-    ]
+    [confirm, performCoordinateConversion, uiValue, updateNodeValue]
   );
 
   const onStartGpsPress = useCallback(async () => {
     if (
-      Objects.isEmpty(uiValue?.x) ||
-      Objects.isEmpty(uiValue?.y) ||
+      Objects.isEmpty(uiValueX) ||
+      Objects.isEmpty(uiValueY) ||
       (await confirm({
         messageKey: "dataEntry:coordinate.overwriteConfirmMessage",
       }))
     ) {
       await startLocationWatch();
     }
-  }, [startLocationWatch, uiValue]);
+  }, [confirm, startLocationWatch, uiValueX, uiValueY]);
 
   const onStopGpsPress = useCallback(() => {
     stopLocationWatch();
@@ -270,7 +290,7 @@ export const useNodeCoordinateComponent = (props) => {
       });
       onValueChange(valueNext);
     },
-    [nodeDef, srs, onValueChange]
+    [nodeDef, srs, srsIndex, onValueChange]
   );
 
   return {

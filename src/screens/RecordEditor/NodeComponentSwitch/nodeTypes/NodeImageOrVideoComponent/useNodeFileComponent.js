@@ -85,7 +85,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
       await updateNodeValue(valueUpdated, fileUri);
     },
-    [maxSize, updateNodeValue]
+    [fileType, maxSize, toaster, updateNodeValue]
   );
 
   const onFileChoosePress = useCallback(async () => {
@@ -100,7 +100,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
             mediaTypes,
           });
     onFileSelected(result);
-  }, [onFileSelected, requestMediaLibraryPermission, mediaTypes]);
+  }, [requestMediaLibraryPermission, fileType, mediaTypes, onFileSelected]);
 
   const onOpenCameraPress = useCallback(async () => {
     if (!(await requestCameraPermission())) return;
@@ -118,7 +118,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
         },
       })
     );
-  }, [updateNodeValue]);
+  }, [dispatch, updateNodeValue]);
 
   return {
     nodeValue: value,

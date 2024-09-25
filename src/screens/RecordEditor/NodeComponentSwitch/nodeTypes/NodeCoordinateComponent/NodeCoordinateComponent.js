@@ -8,6 +8,7 @@ import { SrsDropdown } from "../../../SrsDropdown";
 import { useNodeCoordinateComponent } from "./useNodeCoordinateComponent";
 import { LocationNavigator } from "./LocationNavigator";
 import { OpenMapButton } from "./OpenMapButton";
+import { NodeComponentPropTypes } from "../nodeComponentPropTypes";
 
 import styles from "./styles";
 
@@ -46,7 +47,7 @@ export const NodeCoordinateComponent = (props) => {
       <HView key={fieldKey} style={styles.formItem}>
         <Text style={labelStyle} textKey={`dataEntry:coordinate.${fieldKey}`} />
         <TextInput
-          editable={editable}
+          editable={editable && !watchingLocation}
           keyboardType="numeric"
           style={[
             styles.numericTextInput,
@@ -57,7 +58,7 @@ export const NodeCoordinateComponent = (props) => {
         />
       </HView>
     ),
-    [applicable, editable, uiValue]
+    [applicable, editable, onChangeValueField, uiValue, watchingLocation]
   );
 
   return (
@@ -81,7 +82,11 @@ export const NodeCoordinateComponent = (props) => {
       </HView>
       <HView style={styles.formItem}>
         <Text style={styles.formItemLabel} textKey="common:srs" />
-        <SrsDropdown editable={editable} onChange={onChangeSrs} value={srs} />
+        <SrsDropdown
+          editable={editable && !watchingLocation}
+          onChange={onChangeSrs}
+          value={srs}
+        />
       </HView>
       {includedExtraFields.map((fieldKey) =>
         createNumericFieldFormItem({
@@ -119,3 +124,5 @@ export const NodeCoordinateComponent = (props) => {
     </VView>
   );
 };
+
+NodeCoordinateComponent.propTypes = NodeComponentPropTypes;

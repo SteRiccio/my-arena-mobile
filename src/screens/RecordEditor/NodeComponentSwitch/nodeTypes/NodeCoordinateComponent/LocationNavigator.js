@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Dimensions, Image } from "react-native";
 import { useTheme } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { Objects, Points } from "@openforis/arena-core";
 
@@ -92,7 +93,7 @@ export const LocationNavigator = (props) => {
         distance: distanceNew,
       });
     },
-    [updateState]
+    [srsIndex, targetPoint, updateState]
   );
 
   const { startLocationWatch, stopLocationWatch } = useLocationWatch({
@@ -133,7 +134,7 @@ export const LocationNavigator = (props) => {
     return () => {
       stopLocationWatch();
     };
-  }, []);
+  }, [startLocationWatch, stopLocationWatch]);
 
   const onUseCurrentLocationPress = useCallback(() => {
     onUseCurrentLocation(currentLocation);
@@ -249,4 +250,10 @@ export const LocationNavigator = (props) => {
       </VView>
     </Modal>
   );
+};
+
+LocationNavigator.propTypes = {
+  targetPoint: PropTypes.object.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+  onUseCurrentLocation: PropTypes.func.isRequired,
 };

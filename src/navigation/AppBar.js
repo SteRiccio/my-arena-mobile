@@ -69,7 +69,7 @@ export const AppBar = (props) => {
 
   const onToggleDrawerPress = useCallback(
     () => dispatch(DataEntryActions.toggleRecordPageMenuOpen),
-    []
+    [dispatch]
   );
 
   const toggleMenu = useCallback(
@@ -80,12 +80,12 @@ export const AppBar = (props) => {
 
   const onToggleScreenViewModePress = useCallback(
     () => dispatch(ScreenOptionsActions.toggleScreenViewMode({ screenKey })),
-    [screenKey]
+    [dispatch, screenKey]
   );
 
   const toggleRecordLock = useCallback(
     () => dispatch(DataEntryActions.toggleRecordEditLock),
-    []
+    [dispatch]
   );
 
   const toggleRecordEditViewMode = useCallback(() => {
@@ -96,7 +96,7 @@ export const AppBar = (props) => {
           : RecordEditViewMode.form
       )
     );
-  }, [recordEditViewMode]);
+  }, [dispatch, recordEditViewMode]);
 
   const onValidationIconPress = useCallback(
     () => navigation.navigate(screenKeys.recordValidationReport),
@@ -109,7 +109,7 @@ export const AppBar = (props) => {
         ? DataEntryActions.unlinkFromRecordInPreviousCycle()
         : DataEntryActions.linkToRecordInPreviousCycle()
     );
-  }, [isLinkedToPreviousCycleRecord]);
+  }, [dispatch, isLinkedToPreviousCycleRecord]);
 
   return (
     <RNPAppbar.Header elevated mode={editingRecord ? "medium" : "small"}>

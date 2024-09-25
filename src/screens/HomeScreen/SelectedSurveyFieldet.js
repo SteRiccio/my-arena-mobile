@@ -7,6 +7,7 @@ import { Dates, Surveys } from "@openforis/arena-core";
 
 import { Button, FieldSet, HView, Text, ViewMoreText, VView } from "components";
 import { UpdateStatusIcon } from "components/UpdateStatusIcon";
+import { RemoteConnectionSelectors } from "state/remoteConnection";
 import { SurveyActions, SurveySelectors } from "state/survey";
 import { SurveyService } from "service/surveyService";
 import { useIsNetworkConnected } from "hooks/useIsNetworkConnected";
@@ -16,7 +17,6 @@ import { UpdateStatus } from "model/UpdateStatus";
 import { screenKeys } from "../screenKeys";
 
 import styles from "./selectedSurveyFieldsetStyles";
-import { RemoteConnectionSelectors } from "state/remoteConnection";
 
 const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const dispatch = useDispatch();
@@ -109,7 +109,7 @@ export const SelectedSurveyFieldset = () => {
     } else if (survey) {
       checkLastPublishDate();
     }
-  }, [networkAvailable, survey, user]);
+  }, [networkAvailable, survey, surveyName, user]);
 
   if (!survey) return null;
 

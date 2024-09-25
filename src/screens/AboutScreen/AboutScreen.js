@@ -21,7 +21,7 @@ export const AboutScreen = () => {
       subject: t("common:appTitle"),
     }).toString();
     Linking.openURL(`mailto:${supportEmailAddress}?${openSupportEmailParams}`);
-  }, []);
+  }, [t]);
 
   const toggleChangelogDialogOpen = useCallback(
     () => setChangelogDialogOpen((oldValue) => !oldValue),

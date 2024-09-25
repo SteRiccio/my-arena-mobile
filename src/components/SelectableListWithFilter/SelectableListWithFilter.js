@@ -68,7 +68,14 @@ export const SelectableListWithFilter = (props) => {
             .toLocaleLowerCase()
             .includes(filterInputValue.toLocaleLowerCase()))
     );
-  }, [filterItems, filterVisible, items, selectedItems]);
+  }, [
+    filterItems,
+    filterVisible,
+    itemLabelExtractor,
+    items,
+    maxItemsToShow,
+    selectedItems,
+  ]);
 
   const [state, setState] = useState({
     loading: false,

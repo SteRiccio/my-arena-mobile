@@ -10,5 +10,5 @@ export const useIsNetworkConnectedMonitor = () => {
 
   useEffect(() => {
     dispatch(DeviceInfoActions.updateIsNetworkConnected(isNetworkConnected));
-  }, [isNetworkConnected]);
+  }, [dispatch, isNetworkConnected]);
 };

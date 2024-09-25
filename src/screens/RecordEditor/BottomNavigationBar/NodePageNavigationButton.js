@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
@@ -23,7 +24,7 @@ export const NodePageNavigationButton = (props) => {
           entityUuid,
         })
       ),
-    [entityDef, entityUuid, parentEntityUuid]
+    [dispatch, entityDef.uuid, entityUuid, parentEntityUuid]
   );
   return (
     <Button
@@ -37,4 +38,11 @@ export const NodePageNavigationButton = (props) => {
       onPress={onPress}
     />
   );
+};
+
+NodePageNavigationButton.propTypes = {
+  entityPointer: PropTypes.object,
+  icon: PropTypes.string,
+  mode: PropTypes.string,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

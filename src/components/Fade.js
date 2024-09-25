@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Animated } from "react-native";
+import PropTypes from "prop-types";
 
 export const Fade = (props) => {
   const {
@@ -28,7 +29,7 @@ export const Fade = (props) => {
       duration,
       useNativeDriver: true,
     }).start(() => setChildrenVisible(visibleProp));
-  }, [visibleProp]);
+  }, [animatedValue, duration, visibleProp]);
 
   const containerStyle = {
     opacity: animatedValue.interpolate({
@@ -50,4 +51,11 @@ export const Fade = (props) => {
       {childrenVisible ? children : null}
     </Animated.View>
   );
+};
+
+Fade.propTypes = {
+  duration: PropTypes.number,
+  visible: PropTypes.bool,
+  style: PropTypes.object,
+  children: PropTypes.node,
 };

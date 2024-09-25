@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { DowngradeError, initialize as initializeDb } from "db";
 import { AppLogo } from "appComponents/AppLogo";
@@ -101,7 +102,7 @@ export const AppInitializer = (props) => {
             : "Unexpected error: " + err;
         setState((statePrev) => ({ ...statePrev, errorMessage }));
       });
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return (
@@ -120,4 +121,8 @@ export const AppInitializer = (props) => {
   }
 
   return children;
+};
+
+AppInitializer.propTypes = {
+  children: PropTypes.node,
 };

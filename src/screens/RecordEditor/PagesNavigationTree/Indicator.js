@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { Text } from "components";
 
 export const Indicator = (props) => {
@@ -19,4 +21,9 @@ export const Indicator = (props) => {
       textKey={getIndicatorText()}
     />
   );
+};
+
+Indicator.propTypes = {
+  isExpanded: PropTypes.bool,
+  hasChildrenNodes: PropTypes.bool,
 };

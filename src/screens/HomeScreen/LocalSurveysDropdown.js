@@ -18,7 +18,7 @@ export const LocalSurveysDropdown = () => {
         SurveyActions.fetchAndSetCurrentSurvey({ surveyId, navigation })
       );
     },
-    [surveySummaries, navigation]
+    [dispatch, navigation]
   );
 
   return (

@@ -19,7 +19,7 @@ export const ErrorFallbackComponent = (props) => {
         title: "common:error",
       })
     );
-  }, [error]);
+  }, [dispatch, error, resetError]);
 
   return null;
 };

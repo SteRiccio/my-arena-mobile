@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 
 import { Dropdown, Text } from "components";
 import { SurveySelectors } from "state";
@@ -27,4 +28,10 @@ export const SrsDropdown = (props) => {
       value={value}
     />
   );
+};
+
+SrsDropdown.propTypes = {
+  editable: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.any,
 };

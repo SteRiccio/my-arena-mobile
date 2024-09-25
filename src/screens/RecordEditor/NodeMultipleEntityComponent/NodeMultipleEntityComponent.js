@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { NodeDefs } from "@openforis/arena-core";
 
 import { RecordEditViewMode } from "model";
@@ -35,4 +37,10 @@ export const NodeMultipleEntityComponent = (props) => {
       parentEntityUuid={parentEntityUuid}
     />
   );
+};
+
+NodeMultipleEntityComponent.propTypes = {
+  entityDef: PropTypes.object.isRequired,
+  parentEntityUuid: PropTypes.string,
+  entityUuid: PropTypes.string,
 };

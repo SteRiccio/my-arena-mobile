@@ -83,7 +83,7 @@ const SettingsItem = (props) => {
         onPropValueChange({ key: settingKey })(val);
       }
     },
-    [onPropValueChange, value]
+    [onPropValueChange, settingKey, value]
   );
 
   switch (type) {

@@ -64,7 +64,7 @@ export const BottomNavigationBar = () => {
 
     const siblings = Records.getChildren(parentEntity, entityDef.uuid)(record);
     return siblings.length >= maxCount;
-  }, [survey, record, entityDef, parentEntityUuid]);
+  }, [record, entityDef, parentEntityUuid]);
 
   const hasCurrentEntityKeysSpecified = useMemo(() => {
     const keyDefs = Surveys.getNodeDefKeys({ survey, nodeDef: entityDef });
@@ -85,7 +85,7 @@ export const BottomNavigationBar = () => {
 
   const onNewPress = useCallback(() => {
     dispatch(DataEntryActions.addNewEntity);
-  }, []);
+  }, [dispatch]);
 
   const activeChildIsLastChild = activeChildIndex + 1 === childDefs.length;
 
