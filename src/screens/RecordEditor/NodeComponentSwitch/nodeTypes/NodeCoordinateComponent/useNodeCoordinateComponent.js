@@ -68,6 +68,10 @@ export const useNodeCoordinateComponent = (props) => {
     () => NodeDefs.getCoordinateAdditionalFields(nodeDef),
     [nodeDef]
   );
+  const includedFields = useMemo(
+    () => ["x", "y", "srs", ...includedExtraFields],
+    [includedExtraFields]
+  );
 
   const [state, setState] = useState({
     compassNavigatorVisible: false,
@@ -99,7 +103,6 @@ export const useNodeCoordinateComponent = (props) => {
         y: stringToNumber(y),
         srs,
       };
-
       includedExtraFields.forEach((fieldKey) => {
         result[fieldKey] = stringToNumber(uiValue?.[fieldKey]);
       });
@@ -112,7 +115,6 @@ export const useNodeCoordinateComponent = (props) => {
     (nodeValueA, nodeValueB) => {
       const transformCoordinateValue = (coordVal) => {
         if (!coordVal) return null;
-        const includedFields = ["x", "y", "srs", ...includedExtraFields];
         return Object.entries(coordVal).reduce((acc, [key, value]) => {
           if (includedFields.includes(key)) {
             acc[key] = value;
@@ -128,7 +130,7 @@ export const useNodeCoordinateComponent = (props) => {
         (Objects.isEmpty(coordValA) && Objects.isEmpty(coordValB))
       );
     },
-    [includedExtraFields]
+    [includedFields]
   );
 
   const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
@@ -174,7 +176,6 @@ export const useNodeCoordinateComponent = (props) => {
         srsTo: srs,
         srsIndex,
       });
-
       onValueChange(valueNext);
     },
     [nodeDef, onValueChange, srs, srsIndex]
@@ -229,19 +230,17 @@ export const useNodeCoordinateComponent = (props) => {
 
       if (srsTo === srs) return;
 
-      if (
-        !Objects.isEmpty(x) &&
-        !Objects.isEmpty(y) &&
-        (await confirm({
+      if (Objects.isEmpty(x) || Objects.isEmpty(y)) {
+        updateNodeValue({ ...uiValue, srs: srsTo });
+      } else if (
+        await confirm({
           messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
           messageParams: { srsFrom: srs, srsTo },
           confirmButtonTextKey: "dataEntry:coordinate.convert",
           cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
-        }))
+        })
       ) {
         performCoordinateConversion(srsTo);
-      } else {
-        updateNodeValue({ ...uiValue, srs: srsTo });
       }
     },
     [confirm, performCoordinateConversion, uiValue, updateNodeValue]

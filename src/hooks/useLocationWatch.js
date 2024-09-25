@@ -66,20 +66,25 @@ export const useLocationWatch = ({
   }, []);
 
   const _stopLocationWatch = useCallback(() => {
-    locationSubscriptionRef.current?.remove();
-    locationSubscriptionRef.current = null;
+    const wasActive = !!locationSubscriptionRef.current;
+    if (wasActive) {
+      locationSubscriptionRef.current?.remove();
+      locationSubscriptionRef.current = null;
 
-    clearLocationWatchTimeout();
+      clearLocationWatchTimeout();
 
-    setState((statePrev) => ({
-      ...statePrev,
-      locationWatchElapsedTime: 0,
-      watchingLocation: false,
-    }));
+      setState((statePrev) => ({
+        ...statePrev,
+        locationWatchElapsedTime: 0,
+        watchingLocation: false,
+      }));
+    }
+    return wasActive;
   }, [clearLocationWatchTimeout]);
 
   const locationCallback = useCallback(
     (location) => {
+      console.log("===location callback", location);
       lastLocationRef.current = location; // location could be null when watch timeout is reached
 
       const { coords } = location ?? {};
@@ -115,8 +120,7 @@ export const useLocationWatch = ({
   );
 
   const stopLocationWatch = useCallback(() => {
-    _stopLocationWatch();
-    if (isMountedRef.current) {
+    if (_stopLocationWatch() && isMountedRef.current) {
       locationCallback(lastLocationRef.current);
     }
   }, [_stopLocationWatch, isMountedRef, locationCallback]);

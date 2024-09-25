@@ -44,6 +44,6 @@ IconButton.propTypes = {
   iconColor: PropTypes.string,
   loading: PropTypes.bool,
   mode: PropTypes.string,
-  onPress: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
   size: PropTypes.number,
 };

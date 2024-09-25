@@ -51,7 +51,7 @@ export const useNodeComponentLocalState = ({
         dirtyRef.current = false;
       }
     } else if (dirty) {
-      // component is dirty (value being updated by the user): do not update UI using node value
+      // component is dirty (value is being updated by the user): do not update UI using node value
     } else if (!invalidValue) {
       // UI value not in sync with node value: update UI
       const uiValueNext = nodeValueToUiValue(nodeValue);
@@ -90,7 +90,6 @@ export const useNodeComponentLocalState = ({
         }));
         return;
       }
-
       if (updateDelay) {
         dirtyRef.current = true;
 
