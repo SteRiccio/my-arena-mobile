@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import { ToastActions } from "state/toast";

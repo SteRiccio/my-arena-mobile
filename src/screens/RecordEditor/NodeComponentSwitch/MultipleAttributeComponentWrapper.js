@@ -6,11 +6,11 @@ import { NodeDefs, Nodes } from "@openforis/arena-core";
 import { Button, HView, IconButton, VView } from "components";
 import { useTranslation } from "localization";
 import {
-  ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
   MessageActions,
   SurveySelectors,
+  useConfirm,
 } from "state";
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
@@ -27,6 +27,7 @@ export const MultipleAttributeComponentWrapper = (props) => {
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const { nodes } = DataEntrySelectors.useRecordChildNodes({
@@ -55,18 +56,14 @@ export const MultipleAttributeComponentWrapper = (props) => {
     }
   }, [dispatch, nodeDef, nodes, parentNodeUuid]);
 
-  const onDeletePress = (node) => () => {
+  const onDeletePress = (node) => async () => {
     const performDelete = () =>
       dispatch(DataEntryActions.deleteNodes([node.uuid]));
 
-    if (!Nodes.isValueBlank(node)) {
-      dispatch(
-        ConfirmActions.show({
-          messageKey: "dataEntry:confirmDeleteValue.message",
-          onConfirm: performDelete,
-        })
-      );
-    } else {
+    if (
+      Nodes.isValueBlank(node) ||
+      (await confirm({ messageKey: "dataEntry:confirmDeleteValue.message" }))
+    ) {
       performDelete();
     }
   };
