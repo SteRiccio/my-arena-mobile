@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
 
 import { NodeDefs, Objects, Records, Surveys } from "@openforis/arena-core";
 
-import { Button, HView, IconButton, View } from "components";
+import { NavigateToRecordsListButton } from "appComponents/NavigateToRecordsListButton";
+import { HView, IconButton, View } from "components";
 import { RecordEditViewMode, RecordPageNavigator } from "model";
 import {
   DataEntryActions,
@@ -21,7 +21,6 @@ import { useStyles } from "./styles";
 export const BottomNavigationBar = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
 
@@ -128,15 +127,7 @@ export const BottomNavigationBar = () => {
   return (
     <HView style={styles.container}>
       <View transparent>
-        {listOfRecordsButtonVisible && (
-          <Button
-            icon="format-list-bulleted"
-            textKey="dataEntry:listOfRecords"
-            onPress={() => {
-              dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
-            }}
-          />
-        )}
+        {listOfRecordsButtonVisible && <NavigateToRecordsListButton />}
         {prevPageButtonVisible && (
           <NodePageNavigationButton
             icon="chevron-left"

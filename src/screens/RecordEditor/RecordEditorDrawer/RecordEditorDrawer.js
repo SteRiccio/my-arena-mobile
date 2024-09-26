@@ -3,15 +3,9 @@ import { useNavigation } from "@react-navigation/native";
 
 import { Surveys } from "@openforis/arena-core";
 
-import {
-  Button,
-  CloseIconButton,
-  HView,
-  IconButton,
-  Text,
-  View,
-} from "components";
+import { CloseIconButton, HView, IconButton, Text, View } from "components";
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
+import { NavigateToRecordsListButton } from "appComponents/NavigateToRecordsListButton";
 import { RecordEditViewMode } from "model";
 import { screenKeys } from "screens/screenKeys";
 import {
@@ -66,13 +60,7 @@ export const RecordEditorDrawer = () => {
       <GpsLockingEnabledWarning />
 
       <HView style={styles.buttonBar} transparent>
-        <Button
-          icon="format-list-bulleted"
-          textKey="dataEntry:listOfRecords"
-          onPress={() =>
-            dispatch(DataEntryActions.navigateToRecordsList({ navigation }))
-          }
-        />
+        <NavigateToRecordsListButton />
         <IconButton
           icon="cog"
           onPress={() => navigation.navigate(screenKeys.settings)}

@@ -124,6 +124,7 @@ export const Breadcrumbs = () => {
             return (
               <HView key={item.entityDefUuid} style={styles.item} transparent>
                 <Button
+                  avoidMultiplePress={false}
                   compact
                   labelStyle={styles.itemButtonLabel}
                   mode={isLastItem ? "contained" : "outlined"}
