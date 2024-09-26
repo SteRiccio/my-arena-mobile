@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { useDispatch } from "react-redux";
 import { List, useTheme } from "react-native-paper";
@@ -69,6 +69,23 @@ export const PageNodesList = () => {
   };
   const activeItemIconColor = theme.colors.onPrimary;
 
+  const onItemPress = useCallback(
+    (index) => () =>
+      dispatch(DataEntryActions.selectCurrentPageEntityActiveChildIndex(index)),
+    [dispatch]
+  );
+
+  const renderItemLeftIcon = useCallback(
+    ({ item, isActiveItem, ...otherProps }) => (
+      <List.Icon
+        {...otherProps}
+        color={isActiveItem ? activeItemIconColor : undefined}
+        icon={getNodeDefIcon(item)}
+      />
+    ),
+    [activeItemIconColor]
+  );
+
   return (
     <VView style={{ flex: 1, backgroundColor: "transparent" }}>
       {!NodeDefs.isRoot(entityDef) && prevEntityPointer && (
@@ -83,26 +100,17 @@ export const PageNodesList = () => {
           style={{ flex: 1 }}
           data={childDefs}
           renderItem={({ index, item }) => {
-            const activeItem = index === activeChildIndex;
+            const isActiveItem = index === activeChildIndex;
+
             return (
               <List.Item
                 title={NodeDefs.getLabelOrName(item, lang)}
-                onPress={() =>
-                  dispatch(
-                    DataEntryActions.selectCurrentPageEntityActiveChildIndex(
-                      index
-                    )
-                  )
+                onPress={onItemPress(index)}
+                left={(iconProps) =>
+                  renderItemLeftIcon({ ...iconProps, item, isActiveItem })
                 }
-                left={(props) => (
-                  <List.Icon
-                    {...props}
-                    color={activeItem ? activeItemIconColor : undefined}
-                    icon={getNodeDefIcon(item)}
-                  />
-                )}
-                style={activeItem ? activeChildItemStyle : undefined}
-                titleStyle={activeItem ? activeChildTextStyle : undefined}
+                style={isActiveItem ? activeChildItemStyle : undefined}
+                titleStyle={isActiveItem ? activeChildTextStyle : undefined}
               />
             );
           }}

@@ -1,8 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useMemo } from "react";
 
-import { RecordSyncStatus } from "model/RecordSyncStatus";
-import { HView, Icon, Text, Tooltip } from "components";
+import {
+  DataVisualizerCellPropTypes,
+  HView,
+  Icon,
+  Text,
+  Tooltip,
+} from "components";
+import { RecordSyncStatus, ScreenViewMode } from "model";
+import { ScreenOptionsSelectors } from "state/screenOptions";
 
 const colors = {
   red: "red",
@@ -23,19 +29,25 @@ const colorBySyncStatus = {
 };
 
 export const RecordSyncStatusIcon = (props) => {
-  const { item, showLabel } = props;
+  const { item } = props;
   const { syncStatus } = item;
+
+  const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const viewAsList = screenViewMode === ScreenViewMode.list;
+
+  const iconColor = colorBySyncStatus[syncStatus];
+
+  const icon = useMemo(
+    () => <Icon color={iconColor} size={24} source="circle" />,
+    [iconColor]
+  );
 
   if (!syncStatus || syncStatus === RecordSyncStatus.syncNotApplicable)
     return null;
 
-  const iconColor = colorBySyncStatus[syncStatus];
-
-  const icon = <Icon color={iconColor} size={24} source="circle" />;
-
   const textKey = `dataEntry:syncStatus.${syncStatus}`;
 
-  return showLabel ? (
+  return viewAsList ? (
     <HView>
       {icon}
       <Text textKey={textKey} />
@@ -45,7 +57,4 @@ export const RecordSyncStatusIcon = (props) => {
   );
 };
 
-RecordSyncStatusIcon.propTypes = {
-  item: PropTypes.object.isRequired,
-  showLabel: PropTypes.bool,
-};
+RecordSyncStatusIcon.propTypes = DataVisualizerCellPropTypes;

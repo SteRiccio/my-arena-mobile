@@ -1,5 +1,5 @@
 import { Magnetometer } from "expo-sensors";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const radsToDegrees = (rads) =>
   (rads >= 0 ? rads : rads + 2 * Math.PI) * (180 / Math.PI);
@@ -28,35 +28,39 @@ export const useMagnetometerHeading = () => {
 
   const { magnetometerAvailable, heading } = state;
 
+  const onMagnetometerData = useCallback((data) => {
+    setState((statePrev) => ({
+      ...statePrev,
+      heading: magnetometerDataToAngle(data),
+    }));
+  }, []);
+
+  const checkMagnetomterAvailable = useCallback(async () => {
+    try {
+      const available = await Magnetometer.isAvailableAsync();
+      if (available) {
+        magnetometerSubscriptionRef.current =
+          Magnetometer.addListener(onMagnetometerData);
+      }
+      setState((statePrev) => ({
+        ...statePrev,
+        magnetometerAvailable: available,
+      }));
+    } catch (_error) {
+      setState((statePrev) => ({
+        ...statePrev,
+        magnetometerAvailable: false,
+      }));
+    }
+  }, [onMagnetometerData]);
+
   useEffect(() => {
-    Magnetometer.isAvailableAsync()
-      .then((available) => {
-        if (available) {
-          magnetometerSubscriptionRef.current = Magnetometer.addListener(
-            (data) => {
-              setState((statePrev) => ({
-                ...statePrev,
-                heading: magnetometerDataToAngle(data),
-              }));
-            }
-          );
-        }
-        setState((statePrev) => ({
-          ...statePrev,
-          magnetometerAvailable: available,
-        }));
-      })
-      .catch(() => {
-        setState((statePrev) => ({
-          ...statePrev,
-          magnetometerAvailable: false,
-        }));
-      });
+    checkMagnetomterAvailable();
 
     return () => {
       magnetometerSubscriptionRef.current?.remove();
     };
-  }, []);
+  }, [checkMagnetomterAvailable]);
 
   return { magnetometerAvailable, heading };
 };
