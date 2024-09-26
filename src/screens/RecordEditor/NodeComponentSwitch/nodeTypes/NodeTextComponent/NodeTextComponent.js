@@ -53,7 +53,7 @@ export const NodeTextComponent = (props) => {
 
   const onCopyPress = () => {
     if (SystemUtils.copyValueToClipboard(uiValue)) {
-      toaster.show("common:textCopiedToClipboard");
+      toaster("common:textCopiedToClipboard");
     }
   };
 

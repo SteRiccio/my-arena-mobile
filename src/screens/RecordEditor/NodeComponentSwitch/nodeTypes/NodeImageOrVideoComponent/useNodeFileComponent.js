@@ -76,7 +76,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
           fileUri = resizedFileUri;
           fileSize = resizedFileSize;
 
-          toaster.show("dataEntry:fileAttributeImage.pictureResizedToSize", {
+          toaster("dataEntry:fileAttributeImage.pictureResizedToSize", {
             size: Files.toHumanReadableFileSize(resizedFileSize),
           });
         }

@@ -28,13 +28,13 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const onPress = () => {
     switch (updateStatus) {
       case UpdateStatus.error:
-        toaster.show("surveys:updateStatus.error");
+        toaster("surveys:updateStatus.error");
         break;
       case UpdateStatus.networkNotAvailable:
-        toaster.show("surveys:updateStatus.networkNotAvailable");
+        toaster("surveys:updateStatus.networkNotAvailable");
         break;
       case UpdateStatus.upToDate:
-        toaster.show("surveys:updateStatus.upToDate");
+        toaster("surveys:updateStatus.upToDate");
         break;
       case UpdateStatus.notUpToDate:
         dispatch(

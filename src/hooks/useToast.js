@@ -6,12 +6,10 @@ import { ToastActions } from "state/toast";
 export const useToast = () => {
   const dispatch = useDispatch();
 
-  const show = useCallback(
+  return useCallback(
     (textKey, textParams = {}) => {
       dispatch(ToastActions.show(textKey, textParams));
     },
     [dispatch]
   );
-
-  return useMemo(() => ({ show }), [show]);
 };

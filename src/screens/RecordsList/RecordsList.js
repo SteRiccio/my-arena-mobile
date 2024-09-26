@@ -175,7 +175,7 @@ export const RecordsList = () => {
     const messagePrefix = "dataEntry:records.importRecordsFromFile.";
 
     if (Files.getExtension(fileName) !== "zip") {
-      toaster.show(`${messagePrefix}invalidFileType`);
+      toaster(`${messagePrefix}invalidFileType`);
       return;
     }
 
@@ -233,7 +233,7 @@ export const RecordsList = () => {
         newRecordsCount + updatedRecordsCount + conflictingRecordsCount ===
         0
       ) {
-        toaster.show(noRecordsToExportTextKey);
+        toaster(noRecordsToExportTextKey);
         return { confirmResult: false };
       }
       const confirmSingleChoiceOptions =
@@ -284,7 +284,7 @@ export const RecordsList = () => {
         }
         const recordUuids = recordsToExport.map((r) => r.uuid);
         if (recordUuids.length === 0) {
-          toaster.show(noRecordsToExportTextKey);
+          toaster(noRecordsToExportTextKey);
           return;
         }
         dispatch(
@@ -310,7 +310,7 @@ export const RecordsList = () => {
       .map((record) => record.uuid);
 
     if (recordUuids.length === 0) {
-      toaster.show(noRecordsToExportTextKey);
+      toaster(noRecordsToExportTextKey);
       return;
     }
     dispatch(
@@ -358,9 +358,7 @@ export const RecordsList = () => {
           );
         })
       ) {
-        toaster.show(
-          "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"
-        );
+        toaster("dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported");
         return false;
       }
       return true;
@@ -397,7 +395,7 @@ export const RecordsList = () => {
           (record) => record.loadStatus !== RecordLoadStatus.complete
         )
       ) {
-        toaster.show(
+        toaster(
           "dataEntry:records.cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
         );
         return false;
