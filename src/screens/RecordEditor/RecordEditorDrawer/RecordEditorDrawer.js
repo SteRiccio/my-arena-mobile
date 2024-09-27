@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import * as WebBrowser from "expo-web-browser";
 
 import { Surveys } from "@openforis/arena-core";
 
@@ -26,10 +27,11 @@ export const RecordEditorDrawer = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const survey = SurveySelectors.useCurrentSurvey();
-  const langCode = SurveySelectors.useCurrentSurveyPreferredLang();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const pageSelectorOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const styles = useStyles();
+  const fieldManualUrl = Surveys.getFieldManualLink(lang)(survey);
 
   if (!pageSelectorOpen) return null;
 
@@ -40,9 +42,7 @@ export const RecordEditorDrawer = () => {
           numberOfLines={1}
           variant="headlineMedium"
           style={styles.titleText}
-          textKey={
-            Surveys.getLabel(langCode)(survey) || Surveys.getName(survey)
-          }
+          textKey={Surveys.getLabel(lang)(survey) || Surveys.getName(survey)}
         />
         <CloseIconButton
           onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}
@@ -61,6 +61,13 @@ export const RecordEditorDrawer = () => {
 
       <HView style={styles.buttonBar} transparent>
         <NavigateToRecordsListButton />
+        {fieldManualUrl && (
+          <IconButton
+            icon="help"
+            mode="outlined"
+            onPress={() => WebBrowser.openBrowserAsync(fieldManualUrl)}
+          />
+        )}
         <IconButton
           icon="cog"
           onPress={() => navigation.navigate(screenKeys.settings)}
