@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   NodeDefs,
@@ -13,7 +13,12 @@ import {
 
 import { useLocationWatch } from "hooks";
 import { RecordNodes } from "model/utils/RecordNodes";
-import { DataEntrySelectors, SurveySelectors, useConfirm } from "state";
+import {
+  DataEntryActions,
+  DataEntrySelectors,
+  SurveySelectors,
+  useConfirm,
+} from "state";
 import { NumberUtils } from "utils";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 
@@ -58,6 +63,7 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
 export const useNodeCoordinateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
+  const dispatch = useDispatch();
   const confirm = useConfirm();
   const survey = SurveySelectors.useCurrentSurvey();
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
@@ -210,40 +216,11 @@ export const useNodeCoordinateComponent = (props) => {
     return stopLocationWatch;
   }, [stopLocationWatch]);
 
-  const performCoordinateConversion = useCallback(
-    (srsTo) => {
-      const { x, y, srs } = uiValue;
-      const pointFrom = PointFactory.createInstance({ x, y, srs });
-      const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
-
-      const uiValueNext = { ...uiValue, ...pointToUiValue(pointTo) };
-      onValueChange(uiValueNext);
-    },
-    [onValueChange, srsIndex, uiValue]
-  );
-
   const onChangeSrs = useCallback(
-    async (srsTo) => {
-      // workaround related to onChange callback passed to Dropdown:
-      // get uiValue from state otherwise it will use an old value of it
-      const { x, y, srs } = uiValue;
-
-      if (srsTo === srs) return;
-
-      if (Objects.isEmpty(x) || Objects.isEmpty(y)) {
-        updateNodeValue({ ...uiValue, srs: srsTo });
-      } else if (
-        await confirm({
-          messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
-          messageParams: { srsFrom: srs, srsTo },
-          confirmButtonTextKey: "dataEntry:coordinate.convert",
-          cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
-        })
-      ) {
-        performCoordinateConversion(srsTo);
-      }
+    (srsTo) => {
+      dispatch(DataEntryActions.updateCoordinateValueSrs({ nodeUuid, srsTo }));
     },
-    [confirm, performCoordinateConversion, uiValue, updateNodeValue]
+    [dispatch, nodeUuid]
   );
 
   const onStartGpsPress = useCallback(async () => {
