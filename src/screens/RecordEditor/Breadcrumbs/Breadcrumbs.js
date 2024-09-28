@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -101,16 +101,15 @@ export const Breadcrumbs = () => {
   }, Objects.isEqual);
 
   const onItemPress = useCallback(
-    () =>
-      ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
-        dispatch(
-          DataEntryActions.selectCurrentPageEntity({
-            parentEntityUuid,
-            entityDefUuid,
-            entityUuid,
-          })
-        );
-      },
+    ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
+      dispatch(
+        DataEntryActions.selectCurrentPageEntity({
+          parentEntityUuid,
+          entityDefUuid,
+          entityUuid,
+        })
+      );
+    },
     [dispatch]
   );
 
@@ -127,7 +126,7 @@ export const Breadcrumbs = () => {
                   compact
                   labelStyle={styles.itemButtonLabel}
                   mode={isLastItem ? "contained" : "outlined"}
-                  onPress={onItemPress(item)}
+                  onPress={() => onItemPress(item)}
                   style={styles.itemButton}
                   textKey={item.name}
                 />
