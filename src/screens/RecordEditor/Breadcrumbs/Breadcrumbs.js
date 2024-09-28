@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
+import { NodeDefs, Objects, Records, Surveys } from "@openforis/arena-core";
 
 import { RecordNodes } from "model/utils/RecordNodes";
 import { SurveySelectors } from "../../../state/survey/selectors";
@@ -23,10 +23,10 @@ export const Breadcrumbs = () => {
 
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
-  const record = DataEntrySelectors.useRecord();
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
   const { entityUuid, parentEntityUuid, entityDef } = currentPageEntity;
-  const actualEntityUuid = entityUuid || parentEntityUuid;
+  const actualEntityUuid = entityUuid ?? parentEntityUuid;
+  const entityDefUuid = entityDef.uuid;
 
   const itemLabelFunction = useCallback(
     ({ nodeDef, record = null, entity = null, parentEntity = null }) => {
@@ -51,19 +51,22 @@ export const Breadcrumbs = () => {
   );
 
   useEffect(() => {
-    // scroll to the end (right)
+    // scroll to the end (right) when selected entity changes
     scrollViewRef?.current?.scrollToEnd({ animated: true });
-  }, [actualEntityUuid]);
+  }, [entityDefUuid]);
 
-  const items = useMemo(() => {
+  const items = useSelector((state) => {
     if (!actualEntityUuid) return [];
+
+    const record = DataEntrySelectors.selectRecord(state);
+    const survey = SurveySelectors.selectCurrentSurvey(state);
 
     const _items = [];
 
     if (parentEntityUuid && !entityUuid) {
       _items.push({
         parentEntityUuid,
-        entityDefUuid: entityDef.uuid,
+        entityDefUuid,
         entityUuid: null,
         name: itemLabelFunction({ nodeDef: entityDef }),
       });
@@ -95,25 +98,21 @@ export const Breadcrumbs = () => {
       currentEntity = parentEntity;
     }
     return _items;
-  }, [
-    actualEntityUuid,
-    parentEntityUuid,
-    entityUuid,
-    record,
-    entityDef,
-    itemLabelFunction,
-    survey,
-  ]);
+  }, Objects.isEqual);
 
-  const onItemPress = ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
-    dispatch(
-      DataEntryActions.selectCurrentPageEntity({
-        parentEntityUuid,
-        entityDefUuid,
-        entityUuid,
-      })
-    );
-  };
+  const onItemPress = useCallback(
+    () =>
+      ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
+        dispatch(
+          DataEntryActions.selectCurrentPageEntity({
+            parentEntityUuid,
+            entityDefUuid,
+            entityUuid,
+          })
+        );
+      },
+    [dispatch]
+  );
 
   return (
     <HView style={styles.externalContainer} transparent>
@@ -128,7 +127,7 @@ export const Breadcrumbs = () => {
                   compact
                   labelStyle={styles.itemButtonLabel}
                   mode={isLastItem ? "contained" : "outlined"}
-                  onPress={() => onItemPress(item)}
+                  onPress={onItemPress(item)}
                   style={styles.itemButton}
                   textKey={item.name}
                 />

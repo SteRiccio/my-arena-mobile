@@ -84,7 +84,6 @@ export const useLocationWatch = ({
 
   const locationCallback = useCallback(
     (location) => {
-      console.log("===location callback", location);
       lastLocationRef.current = location; // location could be null when watch timeout is reached
 
       const { coords } = location ?? {};
