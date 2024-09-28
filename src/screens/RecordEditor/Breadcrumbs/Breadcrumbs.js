@@ -7,12 +7,11 @@ import { NodeDefs, Objects, Records, Surveys } from "@openforis/arena-core";
 import { RecordNodes } from "model/utils/RecordNodes";
 import { SurveySelectors } from "../../../state/survey/selectors";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { Button, HView, Icon } from "../../../components";
+import { HView } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
+import { BreadcrumbItem } from "./BreadcrumbItem";
 
 import styles from "./styles";
-
-const Separator = () => <Icon source="greater-than" />;
 
 export const Breadcrumbs = () => {
   if (__DEV__) {
@@ -117,23 +116,14 @@ export const Breadcrumbs = () => {
     <HView style={styles.externalContainer} transparent>
       <ScrollView horizontal ref={scrollViewRef}>
         <HView style={styles.internalContainer} transparent>
-          {items.map((item, index) => {
-            const isLastItem = index === items.length - 1;
-            return (
-              <HView key={item.entityDefUuid} style={styles.item} transparent>
-                <Button
-                  avoidMultiplePress={false}
-                  compact
-                  labelStyle={styles.itemButtonLabel}
-                  mode={isLastItem ? "contained" : "outlined"}
-                  onPress={() => onItemPress(item)}
-                  style={styles.itemButton}
-                  textKey={item.name}
-                />
-                {!isLastItem && <Separator />}
-              </HView>
-            );
-          })}
+          {items.map((item, index) => (
+            <BreadcrumbItem
+              key={item.entityDefUuid}
+              isLastItem={index === items.length - 1}
+              item={item}
+              onItemPress={onItemPress}
+            />
+          ))}
         </HView>
       </ScrollView>
     </HView>
