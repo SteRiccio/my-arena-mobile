@@ -11,6 +11,7 @@ export default {
   errorFetchingSurveys: "Error fetching surveys from remote server",
   errorFetchingSurveysWithDetails:
     "$t(surveys:errorFetchingSurveys): {{details}}",
+  fieldManual: "Field manual",
   importFromCloud: "Import from cloud",
   importSurvey: "Import survey",
   importSurveyConfirmMessage: 'Import the survey "{{surveyName}}"?',

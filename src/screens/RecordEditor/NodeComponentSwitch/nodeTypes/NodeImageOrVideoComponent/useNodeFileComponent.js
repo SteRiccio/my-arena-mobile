@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 
@@ -11,7 +10,7 @@ import {
   useToast,
 } from "hooks";
 
-import { ConfirmActions } from "state/confirm";
+import { useConfirm } from "state/confirm";
 import { Files, ImageUtils } from "utils";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
@@ -22,9 +21,8 @@ const mediaTypesByFileType = {
 };
 
 export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
-  const dispatch = useDispatch();
-
   const toaster = useToast();
+  const confirm = useConfirm();
 
   const { request: requestCameraPermission } = useRequestCameraPermission();
 
@@ -76,7 +74,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
           fileUri = resizedFileUri;
           fileSize = resizedFileSize;
 
-          toaster.show("dataEntry:fileAttributeImage.pictureResizedToSize", {
+          toaster("dataEntry:fileAttributeImage.pictureResizedToSize", {
             size: Files.toHumanReadableFileSize(resizedFileSize),
           });
         }
@@ -110,15 +108,14 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   }, [onFileSelected, requestCameraPermission, mediaTypes]);
 
   const onDeletePress = useCallback(async () => {
-    dispatch(
-      ConfirmActions.show({
+    if (
+      await confirm({
         messageKey: "dataEntry:fileAttribute.deleteConfirmMessage",
-        onConfirm: async () => {
-          await updateNodeValue(null);
-        },
       })
-    );
-  }, [dispatch, updateNodeValue]);
+    ) {
+      await updateNodeValue(null);
+    }
+  }, [confirm, updateNodeValue]);
 
   return {
     nodeValue: value,

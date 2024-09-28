@@ -206,12 +206,7 @@ export const RecordsDataVisualizer = (props) => {
       result.push({
         key: "syncStatus",
         header: "common:status",
-        cellRenderer: ({ item }) =>
-          syncStatusLoading ? (
-            <LoadingIcon />
-          ) : (
-            <RecordSyncStatusIcon item={item} showLabel={viewAsList} />
-          ),
+        cellRenderer: syncStatusLoading ? LoadingIcon : RecordSyncStatusIcon,
       });
     }
     if (syncStatusFetched && viewAsList) {

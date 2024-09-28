@@ -127,7 +127,7 @@ const SettingsItem = (props) => {
           />
         </SettingsFormItem>
       );
-    case SettingsModel.propertyType.slider:
+    case SettingsModel.propertyType.slider: {
       const { minValue, maxValue, step } = prop;
       return (
         <SettingsFormItem
@@ -146,6 +146,7 @@ const SettingsItem = (props) => {
           />
         </SettingsFormItem>
       );
+    }
     default:
       return null;
   }

@@ -5,7 +5,15 @@ import { useNavigation } from "@react-navigation/native";
 
 import { Dates, Surveys } from "@openforis/arena-core";
 
-import { Button, FieldSet, HView, Text, ViewMoreText, VView } from "components";
+import {
+  Button,
+  FieldSet,
+  HView,
+  Link,
+  Text,
+  ViewMoreText,
+  VView,
+} from "components";
 import { UpdateStatusIcon } from "components/UpdateStatusIcon";
 import { RemoteConnectionSelectors } from "state/remoteConnection";
 import { SurveyActions, SurveySelectors } from "state/survey";
@@ -28,13 +36,13 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const onPress = () => {
     switch (updateStatus) {
       case UpdateStatus.error:
-        toaster.show("surveys:updateStatus.error");
+        toaster("surveys:updateStatus.error");
         break;
       case UpdateStatus.networkNotAvailable:
-        toaster.show("surveys:updateStatus.networkNotAvailable");
+        toaster("surveys:updateStatus.networkNotAvailable");
         break;
       case UpdateStatus.upToDate:
-        toaster.show("surveys:updateStatus.upToDate");
+        toaster("surveys:updateStatus.upToDate");
         break;
       case UpdateStatus.notUpToDate:
         dispatch(
@@ -78,7 +86,9 @@ export const SelectedSurveyFieldset = () => {
   const surveyTitle = surveyLabelInDefaultLanguage
     ? `${surveyLabelInDefaultLanguage} [${surveyName}]`
     : surveyName;
-  const surveyDescription = survey?.props?.descriptions?.[lang];
+  const surveyDescription = Surveys.getDescription(lang)(survey);
+  const fieldManualUrl = Surveys.getFieldManualLink(lang)(survey);
+
   const [updateStatus, setUpdateStatus] = useState(UpdateStatus.loading);
 
   useEffect(() => {
@@ -120,7 +130,6 @@ export const SelectedSurveyFieldset = () => {
           <Text style={styles.surveyTitle} variant="titleMedium">
             {surveyTitle}
           </Text>
-
           <SurveyUpdateStatusIcon updateStatus={updateStatus} />
         </HView>
         {surveyDescription && (
@@ -129,6 +138,9 @@ export const SelectedSurveyFieldset = () => {
               {surveyDescription}
             </Text>
           </ViewMoreText>
+        )}
+        {fieldManualUrl && (
+          <Link labelKey="surveys:fieldManual" url={fieldManualUrl} />
         )}
         <Button
           style={styles.goToDataEntryButton}

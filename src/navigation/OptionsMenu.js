@@ -2,13 +2,20 @@ import { useDispatch } from "react-redux";
 import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { BackHandler } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import * as WebBrowser from "expo-web-browser";
 import PropTypes from "prop-types";
 
 import { useScreenKey } from "hooks";
 import { useTranslation } from "localization";
 import { screenKeys } from "screens";
-import { ConfirmActions, DataEntryActions, DataEntrySelectors } from "state";
+import {
+  ConfirmActions,
+  DataEntryActions,
+  DataEntrySelectors,
+  SurveySelectors,
+} from "state";
 import { Environment } from "utils";
+import { Surveys } from "@openforis/arena-core";
 
 export const OptionsMenu = (props) => {
   const { toggleMenu, visible } = props;
@@ -21,6 +28,11 @@ export const OptionsMenu = (props) => {
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
+  const survey = SurveySelectors.useCurrentSurvey();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const fieldManualUrl = survey
+    ? Surveys.getFieldManualLink(lang)(survey)
+    : null;
 
   return (
     <Menu
@@ -39,14 +51,26 @@ export const OptionsMenu = (props) => {
         />
       )}
       {editingRecord && (
-        <Menu.Item
-          leadingIcon="view-list"
-          onPress={() => {
-            toggleMenu();
-            dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
-          }}
-          title={t("dataEntry:listOfRecords")}
-        />
+        <>
+          <Menu.Item
+            leadingIcon="view-list"
+            onPress={() => {
+              toggleMenu();
+              dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
+            }}
+            title={t("dataEntry:listOfRecords")}
+          />
+          {fieldManualUrl && (
+            <Menu.Item
+              leadingIcon="help"
+              onPress={() => {
+                toggleMenu();
+                WebBrowser.openBrowserAsync(fieldManualUrl);
+              }}
+              title={t("surveys:fieldManual")}
+            />
+          )}
+        </>
       )}
       <Divider />
       <Menu.Item

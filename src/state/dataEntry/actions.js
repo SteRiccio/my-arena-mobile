@@ -3,6 +3,9 @@ import { Keyboard } from "react-native";
 import {
   NodeDefs,
   NodeDefType,
+  Objects,
+  PointFactory,
+  Points,
   RecordFactory,
   Records,
   RecordUpdater,
@@ -277,6 +280,57 @@ const updateAttribute =
     }
   };
 
+const performCoordinateValueSrsConversion =
+  ({ nodeUuid, srsTo }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = DataEntrySelectors.selectRecord(state);
+    const srsIndex = Surveys.getSRSIndex(survey);
+
+    const node = Records.getNodeByUuid(nodeUuid)(record);
+    const prevValue = node?.value ?? {};
+    const { x, y, srs } = prevValue;
+    const pointFrom = PointFactory.createInstance({ x, y, srs });
+    const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
+    const nextValue = { ...prevValue, ...pointTo };
+    dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
+  };
+
+const updateCoordinateValueSrs =
+  ({ nodeUuid, srsTo }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const record = DataEntrySelectors.selectRecord(state);
+
+    const node = Records.getNodeByUuid(nodeUuid)(record);
+    const prevValue = node?.value ?? {};
+    const { x, y, srs } = prevValue;
+
+    if (srsTo === srs) return;
+
+    if (Objects.isEmpty(x) || Objects.isEmpty(y)) {
+      const nextValue = {
+        ...prevValue,
+        x: Objects.isEmpty(x) ? 0 : x,
+        y: Objects.isEmpty(y) ? 0 : y,
+        srs: srsTo,
+      };
+      dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
+    } else {
+      dispatch(
+        ConfirmActions.show({
+          messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
+          messageParams: { srsFrom: srs, srsTo },
+          confirmButtonTextKey: "dataEntry:coordinate.convert",
+          cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
+          onConfirm: () =>
+            dispatch(performCoordinateValueSrsConversion({ nodeUuid, srsTo })),
+        })
+      );
+    }
+  };
+
 const addNewAttribute =
   ({ nodeDef, parentNodeUuid, value = null }) =>
   async (dispatch, getState) => {
@@ -396,6 +450,7 @@ export const DataEntryActions = {
   deleteRecords,
   fetchAndEditRecord,
   updateAttribute,
+  updateCoordinateValueSrs,
   selectCurrentPageEntity,
   selectCurrentPageEntityActiveChildIndex,
   toggleRecordPageMenuOpen,

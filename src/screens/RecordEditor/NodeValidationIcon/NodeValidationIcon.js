@@ -7,11 +7,14 @@ import { useTranslation } from "localization";
 import { Validations } from "model/utils/Validations";
 import { DataEntrySelectors, SurveySelectors } from "state";
 
+const { getJointErrorText, getJointWarningText } = Validations;
+
 export const NodeValidationIcon = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
   const { t } = useTranslation();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const customMessageLang = lang;
 
   const nodeDefUuid = nodeDef.uuid;
 
@@ -32,31 +35,26 @@ export const NodeValidationIcon = (props) => {
     const message = "required field";
     return (
       <Tooltip titleKey={message}>
-        <WarningIconButton />
+        <WarningIconButton avoidMultiplePress={false} />
       </Tooltip>
     );
   }
   if (validation && !validation.valid && NodeDefs.isSingle(nodeDef)) {
-    const errorMessage = Validations.getJointErrorText({
-      validation,
-      t,
-      customMessageLang: lang,
-    });
-    const warningMessage = Validations.getJointWarningText({
-      validation,
-      t,
-      customMessageLang: lang,
-    });
-    const backgroundColor = errorMessage ? "darkred" : "orange";
-    const textColor = errorMessage ? "white" : "black";
+    const err = getJointErrorText({ validation, t, customMessageLang });
+    const warn = getJointWarningText({ validation, t, customMessageLang });
+    const backgroundColor = err ? "darkred" : "orange";
+    const textColor = err ? "white" : "black";
 
     return (
       <Tooltip
         backgroundColor={backgroundColor}
         textColor={textColor}
-        titleKey={errorMessage || warningMessage}
+        titleKey={err || warn}
       >
-        <WarningIconButton iconColor={backgroundColor} />
+        <WarningIconButton
+          avoidMultiplePress={false}
+          iconColor={backgroundColor}
+        />
       </Tooltip>
     );
   }
