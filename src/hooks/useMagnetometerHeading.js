@@ -36,22 +36,18 @@ export const useMagnetometerHeading = () => {
   }, []);
 
   const checkMagnetomterAvailable = useCallback(async () => {
+    let available = false;
     try {
-      const available = await Magnetometer.isAvailableAsync();
+      available = await Magnetometer.isAvailableAsync();
       if (available) {
         magnetometerSubscriptionRef.current =
           Magnetometer.addListener(onMagnetometerData);
       }
-      setState((statePrev) => ({
-        ...statePrev,
-        magnetometerAvailable: available,
-      }));
-    } catch (_error) {
-      setState((statePrev) => ({
-        ...statePrev,
-        magnetometerAvailable: false,
-      }));
-    }
+    } catch (_error) {}
+    setState((statePrev) => ({
+      ...statePrev,
+      magnetometerAvailable: available,
+    }));
   }, [onMagnetometerData]);
 
   useEffect(() => {
