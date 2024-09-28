@@ -311,7 +311,10 @@ const selectPreviousCycleEntityWithSameKeys =
 export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageEntity,
+  selectCurrentPageEntityActiveChildDefIndex,
+  selectCurrentPageEntityRelevantChildDefs,
   selectRecordEditLocked,
+  selectCanEditRecord,
 
   useRecord: () => useSelector(selectRecord),
 
