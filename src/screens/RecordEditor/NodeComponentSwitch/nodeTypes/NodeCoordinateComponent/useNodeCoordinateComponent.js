@@ -60,6 +60,8 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   return result;
 };
 
+const nonNumericFields = ["srs"];
+
 export const useNodeCoordinateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
@@ -121,12 +123,21 @@ export const useNodeCoordinateComponent = (props) => {
     (nodeValueA, nodeValueB) => {
       const transformCoordinateValue = (coordVal) => {
         if (!coordVal) return null;
-        return Object.entries(coordVal).reduce((acc, [key, value]) => {
-          if (includedFields.includes(key)) {
-            acc[key] = value;
-          }
-          return acc;
-        }, {});
+        const coordValCleaned = Object.entries(coordVal).reduce(
+          (acc, [key, value]) => {
+            if (includedFields.includes(key)) {
+              acc[key] = nonNumericFields.includes(key)
+                ? value
+                : Numbers.toNumber(value);
+            }
+            return acc;
+          },
+          {}
+        );
+        if (!coordValCleaned.srs) {
+          coordValCleaned.srs = defaultSrsCode;
+        }
+        return coordValCleaned;
       };
       const coordValA = transformCoordinateValue(nodeValueA);
       const coordValB = transformCoordinateValue(nodeValueB);
@@ -136,7 +147,7 @@ export const useNodeCoordinateComponent = (props) => {
         (Objects.isEmpty(coordValA) && Objects.isEmpty(coordValB))
       );
     },
-    [includedFields]
+    [defaultSrsCode, includedFields]
   );
 
   const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
@@ -171,6 +182,16 @@ export const useNodeCoordinateComponent = (props) => {
     },
     [onValueChange, uiValue]
   );
+
+  const onClearPress = useCallback(async () => {
+    if (
+      await confirm({
+        messageKey: "dataEntry:confirmDeleteValue.message",
+      })
+    ) {
+      updateNodeValue(null);
+    }
+  }, [confirm, updateNodeValue]);
 
   const locationCallback = useCallback(
     ({ location }) => {
@@ -228,7 +249,7 @@ export const useNodeCoordinateComponent = (props) => {
       Objects.isEmpty(uiValueX) ||
       Objects.isEmpty(uiValueY) ||
       (await confirm({
-        messageKey: "dataEntry:coordinate.overwriteConfirmMessage",
+        messageKey: "dataEntry:confirmOverwriteValue.message",
       }))
     ) {
       await startLocationWatch();
@@ -284,6 +305,7 @@ export const useNodeCoordinateComponent = (props) => {
     locationWatchTimeout,
     onChangeSrs,
     onChangeValueField,
+    onClearPress,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
     onStopGpsPress,

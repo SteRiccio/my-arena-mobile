@@ -309,13 +309,13 @@ const updateCoordinateValueSrs =
 
     if (srsTo === srs) return;
 
+    const nextValue = {
+      ...prevValue,
+      x: Objects.isEmpty(x) ? 0 : x,
+      y: Objects.isEmpty(y) ? 0 : y,
+      srs: srsTo,
+    };
     if (Objects.isEmpty(x) || Objects.isEmpty(y)) {
-      const nextValue = {
-        ...prevValue,
-        x: Objects.isEmpty(x) ? 0 : x,
-        y: Objects.isEmpty(y) ? 0 : y,
-        srs: srsTo,
-      };
       dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
     } else {
       dispatch(
@@ -326,6 +326,8 @@ const updateCoordinateValueSrs =
           cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
           onConfirm: () =>
             dispatch(performCoordinateValueSrsConversion({ nodeUuid, srsTo })),
+          onCancel: () =>
+            dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue })),
         })
       );
     }
