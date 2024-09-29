@@ -122,6 +122,7 @@ export const useLocationWatch = ({
     if (_stopLocationWatch() && isMountedRef.current) {
       locationCallback(lastLocationRef.current);
     }
+    lastLocationRef.current = null;
   }, [_stopLocationWatch, isMountedRef, locationCallback]);
 
   const startLocationWatch = useCallback(async () => {
