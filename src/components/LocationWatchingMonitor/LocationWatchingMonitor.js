@@ -9,6 +9,8 @@ import { VView } from "../VView";
 import { AccuracyProgressBar } from "./AccuracyProgressBar";
 import { ElapsedTimeProgressBar } from "./ElapsedTimeProgressBar";
 
+import styles from "./styles";
+
 export const LocationWatchingMonitor = (props) => {
   const {
     locationAccuracy,
@@ -30,12 +32,12 @@ export const LocationWatchingMonitor = (props) => {
       : locationAccuracy?.toFixed?.(2);
 
   return (
-    <VView style={{ gap: 4 }}>
+    <VView style={styles.outerContainer}>
       {watchingLocation && (
         <>
           <FieldSet headerKey="dataEntry:coordinate.accuracy">
             <HView>
-              <View style={{ width: "80%" }}>
+              <View style={styles.accuracyProgressBarWrapper}>
                 <AccuracyProgressBar
                   accuracy={Number(locationAccuracy)}
                   accuracyThreshold={locationAccuracyThreshold}
@@ -54,11 +56,17 @@ export const LocationWatchingMonitor = (props) => {
         <Button
           icon="play"
           onPress={onStart}
+          style={styles.button}
           textKey="dataEntry:coordinate.getLocation"
         />
       )}
       {watchingLocation && (
-        <Button icon="stop" onPress={onStop} textKey="common:stop" />
+        <Button
+          icon="stop"
+          onPress={onStop}
+          style={styles.button}
+          textKey="common:stop"
+        />
       )}
     </VView>
   );

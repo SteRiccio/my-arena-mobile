@@ -81,7 +81,7 @@ export const MultipleAttributeComponentWrapper = (props) => {
           <IconButton icon="trash-can-outline" onPress={onDeletePress(node)} />
         </HView>
       ))}
-      <Button icon="plus" onPress={onNewPress}>
+      <Button icon="plus" onPress={onNewPress} style={{ alignSelf: "center" }}>
         {t("common:newItemWithParam", { item: nodeDefLabel })}
       </Button>
     </VView>

@@ -43,21 +43,24 @@ export const BottomNavigationBar = () => {
 
   return (
     <HView style={styles.container}>
-      <View transparent>
+      <View style={styles.buttonContainer} transparent>
         {listOfRecordsButtonVisible && <NavigateToRecordsListButton />}
         {prevPageButtonVisible && (
           <NodePageNavigationButton
             icon="chevron-left"
             entityPointer={prevEntityPointer}
+            style={styles.leftButton}
           />
         )}
         {prevSingleNodeButtonVisible && (
           <SingleNodeNavigationButton
             icon="chevron-left"
             childDefIndex={activeChildIndex - 1}
+            style={styles.leftButton}
           />
         )}
       </View>
+
       {newButtonVisible && (
         <IconButton
           avoidMultiplePress
@@ -68,17 +71,19 @@ export const BottomNavigationBar = () => {
         />
       )}
 
-      <View transparent>
+      <View style={styles.buttonContainer} transparent>
         {nextPageButtonVisible && (
           <NodePageNavigationButton
             icon="chevron-right"
             entityPointer={nextEntityPointer}
+            style={styles.rightButton}
           />
         )}
         {nextSingleNodeButtonVisible && (
           <SingleNodeNavigationButton
             icon="chevron-right"
             childDefIndex={activeChildIndex + 1}
+            style={styles.rightButton}
           />
         )}
       </View>
