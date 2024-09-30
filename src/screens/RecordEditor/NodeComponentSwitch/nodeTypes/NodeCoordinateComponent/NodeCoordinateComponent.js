@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 
-import { NodeDefs, Objects } from "@openforis/arena-core";
+import { Objects } from "@openforis/arena-core";
 
 import { HView, IconButton, Text, TextInput, VView } from "components";
 import { LocationWatchingMonitor } from "components/LocationWatchingMonitor";
@@ -23,6 +23,7 @@ export const NodeCoordinateComponent = (props) => {
     accuracy,
     applicable,
     compassNavigatorVisible,
+    deleteButtonVisible,
     distanceTarget,
     editable,
     hideCompassNavigator,
@@ -82,7 +83,7 @@ export const NodeCoordinateComponent = (props) => {
                 />
               )}
             </HView>
-            {uiValue && editable && !NodeDefs.isRequired(nodeDef) && (
+            {deleteButtonVisible && (
               <IconButton icon="trash-can-outline" onPress={onClearPress} />
             )}
           </VView>

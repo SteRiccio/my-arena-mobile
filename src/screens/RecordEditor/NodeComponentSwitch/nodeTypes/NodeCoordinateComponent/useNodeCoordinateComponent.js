@@ -89,7 +89,7 @@ export const useNodeCoordinateComponent = (props) => {
 
   const nodeValueToUiValue = useCallback(
     (nodeValue) => {
-      const { x, y, srs = defaultSrsCode } = nodeValue || {};
+      const { x, y, srs = defaultSrsCode } = nodeValue ?? {};
 
       const result = pointToUiValue({ x, y, srs });
       includedExtraFields.forEach((fieldKey) => {
@@ -102,7 +102,7 @@ export const useNodeCoordinateComponent = (props) => {
 
   const uiValueToNodeValue = useCallback(
     (uiValue) => {
-      const { x, y, srs } = uiValue || {};
+      const { x, y, srs } = uiValue ?? {};
 
       if (Objects.isEmpty(x) && Objects.isEmpty(y)) return null;
 
@@ -229,10 +229,6 @@ export const useNodeCoordinateComponent = (props) => {
     });
   }, Objects.isEqual);
 
-  const editable =
-    !NodeDefs.isReadOnly(nodeDef) &&
-    !NodeDefs.isAllowOnlyDeviceCoordinate(nodeDef);
-
   useEffect(() => {
     return stopLocationWatch;
   }, [stopLocationWatch]);
@@ -291,10 +287,21 @@ export const useNodeCoordinateComponent = (props) => {
     [nodeDef, srs, srsIndex, onValueChange]
   );
 
+  const editable =
+    !NodeDefs.isReadOnly(nodeDef) &&
+    !NodeDefs.isAllowOnlyDeviceCoordinate(nodeDef);
+
+  const deleteButtonVisible =
+    editable &&
+    !NodeDefs.isRequired(nodeDef) &&
+    uiValue &&
+    (Objects.isNotEmpty(uiValue.x) || Objects.isNotEmpty(uiValue.y));
+
   return {
     accuracy,
     applicable,
     compassNavigatorVisible,
+    deleteButtonVisible,
     distanceTarget,
     editable,
     hideCompassNavigator,
