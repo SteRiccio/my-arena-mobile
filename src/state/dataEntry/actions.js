@@ -18,7 +18,7 @@ import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
 
-import { SystemUtils } from "utils";
+import { NumberUtils, SystemUtils } from "utils";
 
 import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
@@ -293,7 +293,12 @@ const performCoordinateValueSrsConversion =
     const { x, y, srs } = prevValue;
     const pointFrom = PointFactory.createInstance({ x, y, srs });
     const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
-    const nextValue = { ...prevValue, ...pointTo };
+    const nextValue = {
+      ...prevValue,
+      x: NumberUtils.roundToDecimals(pointTo.x, 6),
+      y: NumberUtils.roundToDecimals(pointTo.y, 6),
+      srs: srsTo,
+    };
     dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
   };
 

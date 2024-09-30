@@ -50,7 +50,11 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
 
   const includedExtraFields = NodeDefs.getCoordinateAdditionalFields(nodeDef);
 
-  const result = pointToUiValue({ x, y, srs: srsTo });
+  const result = pointToUiValue({
+    x: NumberUtils.roundToDecimals(x, 6),
+    y: NumberUtils.roundToDecimals(y, 6),
+    srs: srsTo,
+  });
 
   includedExtraFields.forEach((field) => {
     result[field] = numberToString(coords[field], 2);
