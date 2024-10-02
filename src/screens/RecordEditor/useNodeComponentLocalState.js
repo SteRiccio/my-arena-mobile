@@ -75,7 +75,7 @@ export const useNodeComponentLocalState = ({
   ]);
 
   const updateNodeValue = useCallback(
-    async (uiValueUpdated, fileUri = null) => {
+    async ({ value: uiValueUpdated, fileUri = null, ignoreDelay = false }) => {
       const nodeValueUpdated = uiValueToNodeValue(uiValueUpdated);
 
       if (
@@ -90,7 +90,12 @@ export const useNodeComponentLocalState = ({
         }));
         return;
       }
-      if (updateDelay) {
+      const action = DataEntryActions.updateAttribute({
+        uuid: nodeUuid,
+        value: nodeValueUpdated,
+        fileUri,
+      });
+      if (!ignoreDelay && updateDelay) {
         dirtyRef.current = true;
 
         setState((statePrev) => ({
@@ -104,24 +109,14 @@ export const useNodeComponentLocalState = ({
         debouncedUpdateRef.current?.cancel();
 
         debouncedUpdateRef.current = StoreUtils.debounceAction(
-          DataEntryActions.updateAttribute({
-            uuid: nodeUuid,
-            value: nodeValueUpdated,
-            fileUri,
-          }),
+          action,
           getNodeUpdateActionKey({ nodeUuid }),
           updateDelay
         );
 
         dispatch(debouncedUpdateRef.current);
       } else {
-        dispatch(
-          DataEntryActions.updateAttribute({
-            uuid: nodeUuid,
-            value: nodeValueUpdated,
-            fileUri,
-          })
-        );
+        dispatch(action);
       }
     },
     [uiValueToNodeValue, updateDelay, nodeUuid, dispatch]

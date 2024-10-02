@@ -20,7 +20,7 @@ export const NodeTimeComponent = (props) => {
   const onChange = useCallback(
     (date) => {
       const timeNodeValue = Dates.format(date, DateFormats.timeStorage);
-      updateNodeValue(timeNodeValue);
+      updateNodeValue({ value: timeNodeValue });
     },
     [updateNodeValue]
   );

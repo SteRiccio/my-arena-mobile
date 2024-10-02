@@ -23,7 +23,7 @@ export const NodeBooleanComponent = (props) => {
 
   const onChange = useCallback(
     (val) => {
-      updateNodeValue(val === value ? null : val);
+      updateNodeValue({ value: val === value ? null : val });
     },
     [updateNodeValue, value]
   );

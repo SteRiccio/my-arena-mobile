@@ -170,19 +170,20 @@ export const useNodeCoordinateComponent = (props) => {
   } = uiValue ?? {};
 
   const onValueChange = useCallback(
-    (valueNext) => {
+    ({ value: valueNext, ignoreDelay = false }) => {
       if (!valueNext.srs && singleSrs) {
         // set default SRS
         valueNext.srs = defaultSrsCode;
       }
-      updateNodeValue(valueNext);
+      updateNodeValue({ value: valueNext, ignoreDelay });
     },
     [defaultSrsCode, singleSrs, updateNodeValue]
   );
 
   const onChangeValueField = useCallback(
     (fieldKey) => (val) => {
-      onValueChange({ ...uiValue, [fieldKey]: val });
+      const valueNext = { ...uiValue, [fieldKey]: val };
+      onValueChange({ value: valueNext });
     },
     [onValueChange, uiValue]
   );
@@ -193,7 +194,7 @@ export const useNodeCoordinateComponent = (props) => {
         messageKey: "dataEntry:confirmDeleteValue.message",
       })
     ) {
-      updateNodeValue(null);
+      updateNodeValue({ value: null, ignoreDelay: true });
     }
   }, [confirm, updateNodeValue]);
 
@@ -207,7 +208,7 @@ export const useNodeCoordinateComponent = (props) => {
         srsTo: srs,
         srsIndex,
       });
-      onValueChange(valueNext);
+      onValueChange({ value: valueNext });
     },
     [nodeDef, onValueChange, srs, srsIndex]
   );
@@ -286,7 +287,7 @@ export const useNodeCoordinateComponent = (props) => {
         srsTo: srs,
         srsIndex,
       });
-      onValueChange(valueNext);
+      onValueChange({ value: valueNext, ignoreDelay: true });
     },
     [nodeDef, srs, srsIndex, onValueChange]
   );

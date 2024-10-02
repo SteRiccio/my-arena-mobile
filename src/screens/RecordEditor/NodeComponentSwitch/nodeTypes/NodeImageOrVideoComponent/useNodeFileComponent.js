@@ -81,7 +81,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
         setResizing(false);
       }
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
-      await updateNodeValue(valueUpdated, fileUri);
+      await updateNodeValue({ value: valueUpdated, fileUri });
     },
     [fileType, maxSize, toaster, updateNodeValue]
   );
@@ -113,7 +113,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
         messageKey: "dataEntry:fileAttribute.deleteConfirmMessage",
       })
     ) {
-      await updateNodeValue(null);
+      await updateNodeValue({ value: null });
     }
   }, [confirm, updateNodeValue]);
 
