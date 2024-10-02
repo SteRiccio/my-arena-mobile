@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -7,8 +7,10 @@ import { NodeDefs, Objects } from "@openforis/arena-core";
 import { Button } from "components";
 import { DataEntryActions, SurveySelectors } from "state";
 
+import buttonStyles from "./buttonStyles";
+
 export const NodePageNavigationButton = (props) => {
-  const { entityPointer, icon, mode, style } = props;
+  const { entityPointer, icon, mode, style: styleProp } = props;
 
   const { parentEntityUuid, entityDef, entityUuid, index } = entityPointer;
 
@@ -26,11 +28,14 @@ export const NodePageNavigationButton = (props) => {
       ),
     [dispatch, entityDef.uuid, entityUuid, parentEntityUuid]
   );
+
+  const style = useMemo(() => [buttonStyles.button, styleProp], [styleProp]);
+
   return (
     <Button
       icon={icon}
       mode={mode}
-      style={[{ maxWidth: 200 }, style]}
+      style={style}
       textKey={
         NodeDefs.getLabelOrName(entityDef, lang) +
         (Objects.isEmpty(index) ? "" : `[${index + 1}]`)

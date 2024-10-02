@@ -16,6 +16,8 @@ import {
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
 import { NodeComponentPropTypes } from "./nodeTypes/nodeComponentPropTypes";
 
+import styles from "./multipleAttributeComponentWrapperStyles";
+
 export const MultipleAttributeComponentWrapper = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
@@ -69,19 +71,19 @@ export const MultipleAttributeComponentWrapper = (props) => {
   };
 
   return (
-    <VView>
+    <VView style={styles.container}>
       {nodes.map((node) => (
         <HView key={node.uuid}>
           <SingleAttributeComponentSwitch
             nodeDef={nodeDef}
             nodeUuid={node.uuid}
             parentNodeUuid={parentNodeUuid}
-            wrapperStyle={{ flex: 1 }}
+            wrapperStyle={styles.attributeComponentWrapper}
           />
           <IconButton icon="trash-can-outline" onPress={onDeletePress(node)} />
         </HView>
       ))}
-      <Button icon="plus" onPress={onNewPress}>
+      <Button icon="plus" onPress={onNewPress} style={styles.newButton}>
         {t("common:newItemWithParam", { item: nodeDefLabel })}
       </Button>
     </VView>

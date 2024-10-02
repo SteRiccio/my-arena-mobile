@@ -15,8 +15,8 @@ export const NodeTaxonEditDialog = (props) => {
   } = props;
 
   const updateNodeValue = useCallback(
-    (valueNext) => {
-      updateNodeValueProp(valueNext);
+    ({ value: valueNext }) => {
+      updateNodeValueProp({ value: valueNext });
       onDismiss();
     },
     [onDismiss, updateNodeValueProp]

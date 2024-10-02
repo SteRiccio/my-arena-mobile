@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
@@ -15,6 +15,8 @@ import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
 import { TaxonValuePreview } from "../../../NodeValuePreview/TaxonValuePreview";
 import { useTaxonByNodeValue } from "../../../NodeValuePreview/useTaxonByNodeValue";
+
+import styles from "./styles";
 
 export const NodeTaxonComponent = (props) => {
   const { nodeDef, nodeUuid, parentNodeUuid } = props;
@@ -49,12 +51,16 @@ export const NodeTaxonComponent = (props) => {
   });
 
   const selectedTaxon = useTaxonByNodeValue({ value });
+  const selectedTaxonVernacularName = selectedTaxon?.vernacularName;
 
-  const selectedTaxonContainerHeight = selectedTaxon?.vernacularName ? 60 : 30;
+  const selectedTaxonContainerStyle = useMemo(
+    () => ({ height: selectedTaxonVernacularName ? 60 : 30 }),
+    [selectedTaxonVernacularName]
+  );
 
   return (
     <VView>
-      <View style={{ height: selectedTaxonContainerHeight }}>
+      <View style={selectedTaxonContainerStyle}>
         {selectedTaxon ? (
           <TaxonValuePreview nodeDef={nodeDef} value={value} />
         ) : (
@@ -70,7 +76,12 @@ export const NodeTaxonComponent = (props) => {
       )}
       {viewMode === RecordEditViewMode.form && (
         <>
-          <Button textKey="dataEntry:taxon.search" onPress={openEditDialog} />
+          <Button
+            icon="magnify"
+            onPress={openEditDialog}
+            style={styles.searchButton}
+            textKey="dataEntry:taxon.search"
+          />
           {editDialogOpen && (
             <NodeTaxonEditDialog
               onDismiss={closeEditDialog}

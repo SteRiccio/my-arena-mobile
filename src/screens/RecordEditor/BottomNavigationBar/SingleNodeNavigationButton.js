@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -7,8 +7,10 @@ import { NodeDefs } from "@openforis/arena-core";
 import { Button } from "components";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 
+import buttonStyles from "./buttonStyles";
+
 export const SingleNodeNavigationButton = (props) => {
-  const { childDefIndex, icon, style } = props;
+  const { childDefIndex, icon, style: styleProp } = props;
 
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -23,10 +25,12 @@ export const SingleNodeNavigationButton = (props) => {
     [childDefIndex, dispatch]
   );
 
+  const style = useMemo(() => [buttonStyles.button, styleProp], [styleProp]);
+
   return (
     <Button
       icon={icon}
-      style={[{ maxWidth: 200 }, style]}
+      style={style}
       textKey={NodeDefs.getLabelOrName(childDef, lang)}
       onPress={onPress}
     />

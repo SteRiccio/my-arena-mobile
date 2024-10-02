@@ -18,7 +18,7 @@ import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
 
-import { SystemUtils } from "utils";
+import { NumberUtils, SystemUtils } from "utils";
 
 import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
@@ -293,7 +293,12 @@ const performCoordinateValueSrsConversion =
     const { x, y, srs } = prevValue;
     const pointFrom = PointFactory.createInstance({ x, y, srs });
     const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
-    const nextValue = { ...prevValue, ...pointTo };
+    const nextValue = {
+      ...prevValue,
+      x: NumberUtils.roundToDecimals(pointTo.x, 6),
+      y: NumberUtils.roundToDecimals(pointTo.y, 6),
+      srs: srsTo,
+    };
     dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
   };
 
@@ -309,13 +314,13 @@ const updateCoordinateValueSrs =
 
     if (srsTo === srs) return;
 
+    const nextValue = {
+      ...prevValue,
+      x: Objects.isEmpty(x) ? 0 : x,
+      y: Objects.isEmpty(y) ? 0 : y,
+      srs: srsTo,
+    };
     if (Objects.isEmpty(x) || Objects.isEmpty(y)) {
-      const nextValue = {
-        ...prevValue,
-        x: Objects.isEmpty(x) ? 0 : x,
-        y: Objects.isEmpty(y) ? 0 : y,
-        srs: srsTo,
-      };
       dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
     } else {
       dispatch(
@@ -326,6 +331,8 @@ const updateCoordinateValueSrs =
           cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
           onConfirm: () =>
             dispatch(performCoordinateValueSrsConversion({ nodeUuid, srsTo })),
+          onCancel: () =>
+            dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue })),
         })
       );
     }

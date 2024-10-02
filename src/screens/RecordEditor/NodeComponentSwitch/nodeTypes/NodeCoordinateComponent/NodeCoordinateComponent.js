@@ -23,6 +23,7 @@ export const NodeCoordinateComponent = (props) => {
     accuracy,
     applicable,
     compassNavigatorVisible,
+    deleteButtonVisible,
     distanceTarget,
     editable,
     hideCompassNavigator,
@@ -32,6 +33,7 @@ export const NodeCoordinateComponent = (props) => {
     locationWatchTimeout,
     onChangeSrs,
     onChangeValueField,
+    onClearPress,
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
     onStopGpsPress,
@@ -54,7 +56,7 @@ export const NodeCoordinateComponent = (props) => {
             ...(applicable ? [] : [styles.textInputNotApplicable]),
           ]}
           onChange={onChangeValueField(fieldKey)}
-          value={uiValue[fieldKey]}
+          value={uiValue?.[fieldKey] ?? ""}
         />
       </HView>
     ),
@@ -62,23 +64,30 @@ export const NodeCoordinateComponent = (props) => {
   );
 
   return (
-    <VView>
-      <HView style={{ alignItems: "center" }}>
-        <VView style={{ flex: 1 }}>
+    <VView style={styles.mainContainer}>
+      <HView style={styles.internalContainer}>
+        <VView style={styles.fieldsWrapper}>
           {createNumericFieldFormItem({ fieldKey: "x" })}
           {createNumericFieldFormItem({ fieldKey: "y" })}
         </VView>
-        <HView style={{ alignItems: "center" }}>
-          {uiValue && <OpenMapButton point={uiValue} srsIndex={srsIndex} />}
-          {distanceTarget && (
-            <IconButton
-              icon="compass-outline"
-              onPress={showCompassNavigator}
-              size={30}
-              style={{ alignSelf: "center", margin: 20 }}
-            />
-          )}
-        </HView>
+        {!watchingLocation && (
+          <VView style={styles.internalContainer}>
+            <HView style={styles.internalContainer}>
+              {uiValue && <OpenMapButton point={uiValue} srsIndex={srsIndex} />}
+              {distanceTarget && (
+                <IconButton
+                  icon="compass-outline"
+                  onPress={showCompassNavigator}
+                  size={30}
+                  style={styles.showCompassButton}
+                />
+              )}
+            </HView>
+            {deleteButtonVisible && (
+              <IconButton icon="trash-can-outline" onPress={onClearPress} />
+            )}
+          </VView>
+        )}
       </HView>
       <HView style={styles.formItem}>
         <Text style={styles.formItemLabel} textKey="common:srs" />

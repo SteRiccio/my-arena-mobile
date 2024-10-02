@@ -34,7 +34,7 @@ export default {
   updateStatus: {
     error: "Error retrieving survey update status",
     networkNotAvailable:
-      "Cannot verify survey udpate status: network not available",
+      "Cannot verify survey update status: network not available",
     upToDate: "Survey up-to-date",
   },
   updateSurvey: "Update survey",
