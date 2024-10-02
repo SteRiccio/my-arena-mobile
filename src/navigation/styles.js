@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   topBarContainer: {
-    gap: 10,
+    gap: 6,
   },
   title: {
     flex: 1,
