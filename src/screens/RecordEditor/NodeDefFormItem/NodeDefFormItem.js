@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { View } from "react-native";
 
 import { NodeDefs, Objects } from "@openforis/arena-core";
 
@@ -14,10 +13,11 @@ import { Fade, VView } from "components";
 import { RecordEditViewMode } from "model";
 
 import { NodeComponentSwitch } from "../NodeComponentSwitch/NodeComponentSwitch";
-
 import { NodeDefFormItemHeader } from "./NodeDefFormItemHeader";
+import { CurrentRecordNodeValuePreview } from "../CurrentRecordNodeValuePreview";
+import { PreviousCycleNodeValuePreview } from "../PreviousCycleNodeValuePreview";
 
-import { useStyles } from "./styles.js";
+import { useStyles } from "./styles";
 
 export const NodeDefFormItem = (props) => {
   const { nodeDef, parentNodeUuid, onFocus } = props;
@@ -30,11 +30,14 @@ export const NodeDefFormItem = (props) => {
 
   const alwaysVisible = Objects.isEmpty(NodeDefs.getApplicable(nodeDef));
 
+  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const visible = DataEntrySelectors.useRecordNodePointerVisibility({
     parentNodeUuid,
     nodeDefUuid: nodeDef.uuid,
   });
-  const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
+  const isLinkedToPreviousCycleRecord =
+    DataEntrySelectors.useIsLinkedToPreviousCycleRecord();
+  const canEditRecord = DataEntrySelectors.useCanEditRecord();
 
   const formItemComponent = (
     <VView
@@ -47,18 +50,28 @@ export const NodeDefFormItem = (props) => {
         nodeDef={nodeDef}
         parentNodeUuid={parentNodeUuid}
       />
-      <View
+      <VView
         style={[
           styles.internalContainer,
           viewMode === RecordEditViewMode.oneNode ? { flex: 1 } : {},
         ]}
       >
-        <NodeComponentSwitch
-          nodeDef={nodeDef}
-          parentNodeUuid={parentNodeUuid}
-          onFocus={onFocus}
-        />
-      </View>
+        {isLinkedToPreviousCycleRecord && (
+          <PreviousCycleNodeValuePreview nodeDef={nodeDef} />
+        )}
+        {canEditRecord ? (
+          <NodeComponentSwitch
+            nodeDef={nodeDef}
+            parentNodeUuid={parentNodeUuid}
+            onFocus={onFocus}
+          />
+        ) : (
+          <CurrentRecordNodeValuePreview
+            nodeDef={nodeDef}
+            parentNodeUuid={parentNodeUuid}
+          />
+        )}
+      </VView>
     </VView>
   );
 

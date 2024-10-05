@@ -5,7 +5,14 @@ import { useTranslation } from "localization";
 import { Button } from "../Button";
 
 export const Dialog = (props) => {
-  const { children, closeButtonTextKey, onClose, style, title } = props;
+  const {
+    actions = [],
+    children,
+    closeButtonTextKey = "common:close",
+    onClose,
+    style,
+    title,
+  } = props;
 
   const { t } = useTranslation();
   return (
@@ -14,6 +21,9 @@ export const Dialog = (props) => {
         <RNPDialog.Title>{t(title)}</RNPDialog.Title>
         <RNPDialog.Content>{children}</RNPDialog.Content>
         <RNPDialog.Actions>
+          {actions.map(({ onPress, textKey }) => (
+            <Button key={textKey} onPress={onPress} textKey={textKey} />
+          ))}
           <Button onPress={onClose} textKey={closeButtonTextKey} />
         </RNPDialog.Actions>
       </RNPDialog>
@@ -23,12 +33,9 @@ export const Dialog = (props) => {
 
 Dialog.propTypes = {
   children: PropTypes.node,
+  actions: PropTypes.array,
   closeButtonTextKey: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   style: PropTypes.object,
   title: PropTypes.string.isRequired,
-};
-
-Dialog.defaultProps = {
-  closeButtonTextKey: "common:close",
 };

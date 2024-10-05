@@ -7,6 +7,7 @@ import { Arrays, Objects } from "@openforis/arena-core";
 
 import { IconButton } from "../IconButton";
 import { LoadingIcon } from "../LoadingIcon";
+import { ScrollView } from "../ScrollView";
 import { Searchbar } from "../Searchbar";
 import { Text } from "../Text";
 import { VView } from "../VView";
@@ -24,17 +25,17 @@ const _objToArray = (obj) => {
 
 export const SelectableListWithFilter = (props) => {
   const {
-    editable,
+    editable = true,
     filterItems,
-    itemKeyExtractor,
-    itemLabelExtractor,
-    itemDescriptionExtractor,
-    items,
-    itemsCountToShowFilter,
-    maxItemsToShow,
-    multiple,
+    itemKeyExtractor = (item) => item?.key,
+    itemLabelExtractor = (item) => item?.label,
+    itemDescriptionExtractor = (item) => item?.description,
+    items = [],
+    itemsCountToShowFilter = 10,
+    maxItemsToShow = 1000,
+    multiple = false,
     onSelectedItemsChange,
-    selectedItems,
+    selectedItems = [],
   } = props;
 
   const inputValueRef = useRef(null);
@@ -56,7 +57,6 @@ export const SelectableListWithFilter = (props) => {
           .slice(0, maxItemsToShow);
       }
     }
-
     if (filterItems) {
       return filterItems({ items, filterInputValue });
     }
@@ -68,7 +68,14 @@ export const SelectableListWithFilter = (props) => {
             .toLocaleLowerCase()
             .includes(filterInputValue.toLocaleLowerCase()))
     );
-  }, [filterItems, filterVisible, items, selectedItems]);
+  }, [
+    filterItems,
+    filterVisible,
+    itemLabelExtractor,
+    items,
+    maxItemsToShow,
+    selectedItems,
+  ]);
 
   const [state, setState] = useState({
     loading: false,
@@ -78,18 +85,17 @@ export const SelectableListWithFilter = (props) => {
 
   const updateItemsFiltered = useCallback(() => {
     const itemsFilteredNext = calculateItemsFiltered();
-    if (!Objects.isEqual(itemsFiltered, itemsFilteredNext)) {
-      setState((statePrev) => ({
-        ...statePrev,
-        loading: false,
-        itemsFiltered: itemsFilteredNext,
-      }));
-    } else if (debounceFiltering) {
-      setState((statePrev) => ({
-        ...statePrev,
-        loading: false,
-      }));
-    }
+    setState((statePrev) => {
+      const { itemsFiltered } = statePrev;
+      if (!Objects.isEqual(itemsFiltered, itemsFilteredNext)) {
+        return {
+          ...statePrev,
+          loading: false,
+          itemsFiltered: itemsFilteredNext,
+        };
+      }
+      return debounceFiltering ? { ...statePrev, loading: false } : statePrev;
+    });
   }, [calculateItemsFiltered, debounceFiltering]);
 
   const updateItemsFilteredDebouced = useMemo(
@@ -101,17 +107,24 @@ export const SelectableListWithFilter = (props) => {
     (text) => {
       inputValueRef.current = text;
       if (debounceFiltering) {
-        setState((statePrev) => ({
-          ...statePrev,
-          loading: true,
-          itemsFiltered: [],
-        }));
+        if (!loading) {
+          setState((statePrev) => ({
+            ...statePrev,
+            loading: true,
+            itemsFiltered: [],
+          }));
+        }
         updateItemsFilteredDebouced();
       } else {
         updateItemsFiltered();
       }
     },
-    [debounceFiltering, updateItemsFiltered]
+    [
+      debounceFiltering,
+      loading,
+      updateItemsFiltered,
+      updateItemsFilteredDebouced,
+    ]
   );
 
   const _onSelectedItemsChange = useCallback(
@@ -132,7 +145,7 @@ export const SelectableListWithFilter = (props) => {
     (item) => {
       _onSelectedItemsChange(Arrays.removeItem(item)(selectedItems));
     },
-    [_onSelectedItemsChange]
+    [_onSelectedItemsChange, selectedItems]
   );
 
   useEffect(() => {
@@ -147,17 +160,27 @@ export const SelectableListWithFilter = (props) => {
     <VView style={styles.container}>
       {filterVisible && (
         <>
-          <View style={styles.selectedItemsContainer}>
-            {selectedItems.map((item) => (
-              <Chip
-                key={itemKeyExtractor(item)}
-                onClose={() => onItemRemove(item)}
-              >
-                {itemLabelExtractor(item)}
-              </Chip>
-            ))}
-          </View>
-
+          {selectedItems.length > 0 && (
+            <ScrollView
+              persistentScrollbar
+              style={
+                multiple
+                  ? styles.selectedItemsContainerWrapper
+                  : styles.selectedItemContainerWrapper
+              }
+            >
+              <View style={styles.selectedItemsContainer}>
+                {selectedItems.map((item) => (
+                  <Chip
+                    key={itemKeyExtractor(item)}
+                    onClose={() => onItemRemove(item)}
+                  >
+                    {itemLabelExtractor(item)}
+                  </Chip>
+                ))}
+              </View>
+            </ScrollView>
+          )}
           {(multiple || selectedItems.length === 0) && (
             <Text
               variant="titleMedium"
@@ -214,16 +237,4 @@ SelectableListWithFilter.propTypes = {
   multiple: PropTypes.bool,
   onSelectedItemsChange: PropTypes.func.isRequired,
   selectedItems: PropTypes.array,
-};
-
-SelectableListWithFilter.defaultProps = {
-  editable: true,
-  itemKeyExtractor: (item) => item?.key,
-  itemLabelExtractor: (item) => item?.label,
-  itemDescriptionExtractor: (item) => item?.description,
-  items: [],
-  itemsCountToShowFilter: 10,
-  maxItemsToShow: 1000,
-  multiple: false,
-  selectedItems: [],
 };

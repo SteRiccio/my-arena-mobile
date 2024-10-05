@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
-import { NodeDefs, NodeValues } from "@openforis/arena-core";
+import { NodeDefs } from "@openforis/arena-core";
 
 import { Button, Text, VView, View } from "components";
+import { RecordEditViewMode } from "model";
 import { Taxa } from "model/Taxa";
 import { SurveyOptionsSelectors, SurveySelectors } from "state";
 
@@ -11,9 +12,11 @@ import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState"
 import { useItemsFilter } from "../useItemsFilter";
 import { useTaxa } from "./useTaxa";
 import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
-import { TaxonPreview } from "./TaxonPreview";
-import { RecordEditViewMode } from "model/RecordEditViewMode";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
+import { TaxonValuePreview } from "../../../NodeValuePreview/TaxonValuePreview";
+import { useTaxonByNodeValue } from "../../../NodeValuePreview/useTaxonByNodeValue";
+
+import styles from "./styles";
 
 export const NodeTaxonComponent = (props) => {
   const { nodeDef, nodeUuid, parentNodeUuid } = props;
@@ -47,27 +50,19 @@ export const NodeTaxonComponent = (props) => {
       [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
   });
 
-  const selectedTaxon = useMemo(() => {
-    if (!value) return null;
-    const {
-      scientificName, // unlisted scientific name
-      vernacularNameUuid,
-    } = value;
-    const taxon = taxa.find(
-      (taxon) =>
-        taxon.uuid === NodeValues.getValueTaxonUuid(value) &&
-        taxon.vernacularNameUuid === vernacularNameUuid
-    );
-    return scientificName ? { ...taxon, scientificName } : taxon;
-  }, [taxa, value]);
+  const selectedTaxon = useTaxonByNodeValue({ value });
+  const selectedTaxonVernacularName = selectedTaxon?.vernacularName;
 
-  const selectedTaxonContainerHeight = selectedTaxon?.vernacularName ? 60 : 30;
+  const selectedTaxonContainerStyle = useMemo(
+    () => ({ height: selectedTaxonVernacularName ? 60 : 30 }),
+    [selectedTaxonVernacularName]
+  );
 
   return (
     <VView>
-      <View style={{ height: selectedTaxonContainerHeight }}>
+      <View style={selectedTaxonContainerStyle}>
         {selectedTaxon ? (
-          <TaxonPreview nodeDef={nodeDef} taxon={selectedTaxon} />
+          <TaxonValuePreview nodeDef={nodeDef} value={value} />
         ) : (
           <Text textKey="dataEntry:taxon.taxonNotSelected" />
         )}
@@ -81,7 +76,12 @@ export const NodeTaxonComponent = (props) => {
       )}
       {viewMode === RecordEditViewMode.form && (
         <>
-          <Button textKey="dataEntry:taxon.search" onPress={openEditDialog} />
+          <Button
+            icon="magnify"
+            onPress={openEditDialog}
+            style={styles.searchButton}
+            textKey="dataEntry:taxon.search"
+          />
           {editDialogOpen && (
             <NodeTaxonEditDialog
               onDismiss={closeEditDialog}

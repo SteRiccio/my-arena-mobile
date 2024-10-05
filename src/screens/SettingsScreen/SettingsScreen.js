@@ -34,7 +34,7 @@ const SettingsFormItem = (props) => {
     labelParams,
     descriptionKey,
     descriptionParams,
-    direction,
+    direction = "vertical",
     children,
   } = props;
 
@@ -60,10 +60,6 @@ const SettingsFormItem = (props) => {
   );
 };
 
-SettingsFormItem.defaultProps = {
-  direction: "vertical",
-};
-
 SettingsFormItem.propTypes = {
   settingKey: PropTypes.string.isRequired,
   labelKey: PropTypes.string,
@@ -87,7 +83,7 @@ const SettingsItem = (props) => {
         onPropValueChange({ key: settingKey })(val);
       }
     },
-    [onPropValueChange, value]
+    [onPropValueChange, settingKey, value]
   );
 
   switch (type) {
@@ -131,7 +127,7 @@ const SettingsItem = (props) => {
           />
         </SettingsFormItem>
       );
-    case SettingsModel.propertyType.slider:
+    case SettingsModel.propertyType.slider: {
       const { minValue, maxValue, step } = prop;
       return (
         <SettingsFormItem
@@ -150,6 +146,7 @@ const SettingsItem = (props) => {
           />
         </SettingsFormItem>
       );
+    }
     default:
       return null;
   }

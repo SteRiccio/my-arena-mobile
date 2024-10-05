@@ -19,17 +19,38 @@ export const MenuButton = (props) => {
       style={style}
       visible={visible}
       onDismiss={closeMenu}
-      anchor={<Button icon={icon} onPress={openMenu} textKey={label} />}
-    >
-      {items.map(({ key, disabled, icon, label, onPress }) => (
-        <Menu.Item
-          key={key}
-          disabled={disabled}
-          leadingIcon={icon}
-          onPress={onPress}
-          title={t(label)}
+      anchor={
+        <Button
+          avoidMultiplePress={false}
+          icon={icon}
+          onPress={openMenu}
+          textKey={label}
         />
-      ))}
+      }
+    >
+      {items.map(
+        ({
+          key,
+          disabled,
+          icon,
+          label,
+          onPress,
+          keepMenuOpenOnPress = false,
+        }) => (
+          <Menu.Item
+            key={key}
+            disabled={disabled}
+            leadingIcon={icon}
+            onPress={() => {
+              if (!keepMenuOpenOnPress) {
+                closeMenu();
+              }
+              onPress();
+            }}
+            title={t(label)}
+          />
+        )
+      )}
     </Menu>
   );
 };

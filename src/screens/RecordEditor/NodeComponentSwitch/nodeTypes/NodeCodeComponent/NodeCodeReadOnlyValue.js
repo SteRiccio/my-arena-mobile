@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { Text } from "components";
 
 import styles from "./styles";
@@ -12,4 +14,9 @@ export const NodeCodeReadOnlyValue = (props) => {
       {itemLabels}
     </Text>
   );
+};
+
+NodeCodeReadOnlyValue.propTypes = {
+  itemLabelFunction: PropTypes.func,
+  selectedItems: PropTypes.array,
 };

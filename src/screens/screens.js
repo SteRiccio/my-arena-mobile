@@ -2,6 +2,7 @@
 
 import HomeScreen from "./HomeScreen";
 
+import AboutScreen from "./AboutScreen";
 import RecordEditor from "./RecordEditor";
 import RecordsList from "./RecordsList";
 import RecordValidationReport from "./RecordValidationReport";
@@ -28,6 +29,11 @@ const screenDefaults = {
 };
 
 export const screens = {
+  [screenKeys.about]: {
+    ...screenDefaults,
+    title: "common:about",
+    component: AboutScreen,
+  },
   [screenKeys.home]: {
     ...screenDefaults,
     title: "common:appTitle",
@@ -49,6 +55,7 @@ export const screens = {
 
   [screenKeys.recordValidationReport]: {
     ...screenDefaults,
+    hasToggleScreenView: true,
     title: "dataEntry:validationReport.title",
     component: RecordValidationReport,
   },

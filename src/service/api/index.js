@@ -1,4 +1,5 @@
-import { Strings } from "@openforis/arena-core";
+import { Strings, UUIDs } from "@openforis/arena-core";
+import * as FileSystem from "expo-file-system";
 
 const defaultOptions = {
   credentials: "include",
@@ -17,28 +18,28 @@ const fetchWithTimeout = async (url, opts = {}, timeout = 120000) => {
   const signal = controller.signal;
   const abortTimeoutId = setTimeout(() => controller.abort(), timeout);
 
-  const result = await fetch(url, {
-    ...options,
-    signal,
-  });
+  const result = await fetch(url, { ...options, signal });
 
   clearTimeout(abortTimeoutId);
 
   return result;
 };
 
-const _sendGet = async (serverUrl, uri, params = {}, options = {}) => {
+const getUrlWithParams = ({ serverUrl, uri, params = {} }) => {
   const requestParams = Object.entries(params).reduce((acc, [key, value]) => {
     acc.append(key, value);
     return acc;
   }, new URLSearchParams());
-
-  return fetchWithTimeout(
+  const requestParamsString = requestParams.toString();
+  return (
     getUrl({ serverUrl, uri }) +
-      (requestParams.size > 0 ? "?" + requestParams.toString() : ""),
-    options,
-    options?.timeout
+    (requestParamsString ? "?" + requestParamsString : "")
   );
+};
+
+const _sendGet = async (serverUrl, uri, params = {}, options = {}) => {
+  const url = getUrlWithParams({ serverUrl, uri, params });
+  return fetchWithTimeout(url, options, options?.timeout);
 };
 
 const get = async (serverUrl, uri, params = {}, options = {}) => {
@@ -47,6 +48,27 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
   const data = await response.json();
 
   return { data };
+};
+
+const getFile = async (
+  serverUrl,
+  uri,
+  params,
+  callback,
+  targetFileUri = null,
+  options = {}
+) => {
+  const url = getUrlWithParams({ serverUrl, uri, params });
+  const actualTargetFileUri =
+    targetFileUri ?? FileSystem.cacheDirectory + UUIDs.v4() + ".tmp";
+  const downloadResumable = FileSystem.createDownloadResumable(
+    url,
+    actualTargetFileUri,
+    options,
+    callback
+  );
+  const { uri: finalTargetUri } = await downloadResumable.downloadAsync();
+  return finalTargetUri;
 };
 
 const test = async (serverUrl, uri, params = {}) => {
@@ -60,7 +82,8 @@ const test = async (serverUrl, uri, params = {}) => {
 
 const post = async (serverUrl, uri, data, options = {}) => {
   const formData = Object.entries(data).reduce((acc, [key, value]) => {
-    acc.append(key, value);
+    const formDataValue = Array.isArray(value) ? JSON.stringify(value) : value;
+    acc.append(key, formDataValue);
     return acc;
   }, new FormData());
 
@@ -75,6 +98,7 @@ const post = async (serverUrl, uri, data, options = {}) => {
 
 export const API = {
   get,
+  getFile,
   post,
   test,
 };

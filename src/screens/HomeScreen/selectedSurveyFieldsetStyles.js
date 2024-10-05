@@ -15,7 +15,6 @@ export default StyleSheet.create({
   },
   surveyTitle: {
     flex: 1,
-    textAlign: "justify",
   },
   goToDataEntryButton: {
     // alignSelf: "center",

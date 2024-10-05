@@ -25,7 +25,7 @@ import { Environment, Files, TimeUtils } from "utils";
 
 import { BatteryIcon } from "./BatteryIcon";
 
-import styles from "./styles.js";
+import styles from "./styles";
 
 const batteryStatusAvailable = !Environment.isIOS;
 
@@ -199,10 +199,9 @@ export const StatusBar = () => {
             </HView>
           )}
           {locationGpsLocked && <Icon source="crosshairs-gps" />}
-          <Icon
-            source={isNetworkConnected ? "web" : "cloud-off-outline"}
-            size={20}
-          />
+
+          <Icon source={isNetworkConnected ? "web" : "cloud-off-outline"} />
+
           <HView>
             <Icon source="chart-pie" />
             <Text variant="titleSmall">

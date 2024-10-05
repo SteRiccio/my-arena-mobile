@@ -3,7 +3,7 @@
     "name": "Arena Mobile Experiments",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "1.0.19",
+    "version": "1.1.15",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -21,12 +21,13 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 61
+      "versionCode": 79
     },
     "ios": {
-      "buildNumber": "61",
+      "buildNumber": "79",
       "bundleIdentifier": "org.stericcio.myarenamobile",
       "infoPlist": {
+        "LSMinimumSystemVersion": "13.0",
         "NSCameraUsageDescription": "Camera is used only when collecting images in file attributes (if defined in your survey).",
         "NSLocationWhenInUseUsageDescription": "Location is used only when collecting coordinates in coordinate attributes (if defined in your survey).",
         "NSMicrophoneUsageDescription": "Microfone is used only when recording audio or video in file attributes (if defined in your survey).",
@@ -42,6 +43,25 @@
       "eas": {
         "projectId": "012cdbda-2ceb-4767-923c-f7be51666f1d"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.5"
+          }
+        }
+      ],
+      [
+        "./plugins/modifyAndroidManifestAttributes",
+        {
+          "application": {
+            "android:hardwareAccelerated": "true",
+            "android:largeHeap": "true"
+          }
+        }
+      ]
+    ]
   }
 }

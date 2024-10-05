@@ -1,10 +1,13 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 
-import { SelectableListWithFilter } from "components";
-
-import { Taxa } from "model/Taxa";
 import { NodeDefs } from "@openforis/arena-core";
+
+import { SelectableListWithFilter } from "components";
+import { Taxa } from "model";
+
+const alwaysIncludeVernacularNames = false;
+const alwaysIncludeSingleVernacularName = true;
 
 const itemKeyExtractor = (item) => `${item?.uuid}_${item?.vernacularNameUuid}`;
 
@@ -50,7 +53,7 @@ const createTaxonValue = ({ taxon, inputValue }) => {
 const preparePartForSearch = (part) => part.toLocaleLowerCase();
 
 const extractPartsForSearch = (value) =>
-  value?.split(" ").map(preparePartForSearch) ?? [];
+  value?.trim()?.split(" ").map(preparePartForSearch) ?? [];
 
 const filterItems =
   ({ nodeDef, unlistedTaxon, unknownTaxon }) =>
@@ -68,7 +71,16 @@ const filterItems =
     ) {
       const taxon = taxa[index];
 
-      const { vernacularName } = taxon;
+      const { vernacularName, vernacularNamesCount } = taxon;
+      const singleVernacularName = vernacularNamesCount === 1;
+      if (
+        alwaysIncludeSingleVernacularName &&
+        singleVernacularName &&
+        !vernacularName
+      ) {
+        // skip taxon without vernacular name specified
+        continue;
+      }
       const { code } = taxon.props;
       const codeForSearch = preparePartForSearch(code);
       const vernacularNameParts = extractPartsForSearch(vernacularName);
@@ -76,13 +88,20 @@ const filterItems =
       const itemLabel = itemLabelExtractor({ nodeDef })(taxon);
       const itemLabelParts = extractPartsForSearch(itemLabel);
 
-      const match = inputValueParts.every(
-        (inputValuePart) =>
-          codeForSearch.startsWith(inputValuePart) ||
-          itemLabelParts.some((part) => part.startsWith(inputValuePart)) ||
-          vernacularNameParts.some((part) => part.startsWith(inputValuePart))
+      const matchingCode = codeForSearch.startsWith(inputValueParts[0]);
+      const matchingLabel = inputValueParts.every((inputValuePart) =>
+        itemLabelParts.some((part) => part.startsWith(inputValuePart))
       );
-      if (match) {
+      const matchingVernarcularName = inputValueParts.every((inputValuePart) =>
+        vernacularNameParts.some((part) => part.startsWith(inputValuePart))
+      );
+      if (
+        ((matchingCode || matchingLabel) &&
+          (alwaysIncludeVernacularNames ||
+            !vernacularName ||
+            (alwaysIncludeSingleVernacularName && singleVernacularName))) ||
+        matchingVernarcularName
+      ) {
         taxaFiltered.push(taxon);
       }
     }
@@ -95,18 +114,27 @@ const filterItems =
 export const NodeTaxonAutocomplete = (props) => {
   const { nodeDef, selectedTaxon, taxa, updateNodeValue } = props;
 
-  const unlistedTaxon = taxa.find(
-    (taxon) => taxon.props.code === Taxa.unlistedCode
-  );
-  const unknownTaxon = taxa.find(
-    (taxon) => taxon.props.code === Taxa.unknownCode
-  );
+  const { unlistedTaxon, unknownTaxon } = useMemo(() => {
+    let _unlistedTaxon = null;
+    let _unknownTaxon = null;
+
+    taxa.some((taxon) => {
+      const taxonCode = taxon.props.code;
+      if (!_unlistedTaxon && taxonCode === Taxa.unlistedCode) {
+        _unlistedTaxon = taxon;
+      } else if (!_unknownTaxon && taxonCode === Taxa.unknownCode) {
+        _unknownTaxon = taxon;
+      }
+      return !!_unlistedTaxon && !!_unknownTaxon;
+    });
+    return { unknownTaxon: _unknownTaxon, unlistedTaxon: _unlistedTaxon };
+  }, [taxa]);
 
   const onSelectedItemsChange = useCallback(
     (selection, inputValue) => {
       const taxon = selection[0];
       const valueNext = createTaxonValue({ taxon, inputValue });
-      updateNodeValue(valueNext);
+      updateNodeValue({ value: valueNext });
     },
     [updateNodeValue]
   );

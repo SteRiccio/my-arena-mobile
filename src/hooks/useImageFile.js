@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Environment, Files } from "utils";
 
-export const useImageFile = (uri, defaultExtension = "jpg") => {
+const defaultImageExtension = "jpg";
+
+export const useImageFile = (uri, defaultExtension = defaultImageExtension) => {
   const tempFileUriRef = useRef(null);
   const [finalUri, setFinalUri] = useState(uri);
 
@@ -13,7 +15,7 @@ export const useImageFile = (uri, defaultExtension = "jpg") => {
     const tempFileUri = Files.path(tempFolderUri, fileNameWithExtension);
     await Files.copyFile({ from: uri, to: tempFileUri });
     return tempFileUri;
-  }, [uri]);
+  }, [defaultExtension, uri]);
 
   useEffect(() => {
     const fileName = Files.getNameFromUri(uri);
@@ -46,7 +48,7 @@ export const useImageFile = (uri, defaultExtension = "jpg") => {
           });
       }
     };
-  }, [uri]);
+  }, [copyToTempFileWithExtension, uri]);
 
   return finalUri;
 };

@@ -1,11 +1,10 @@
-import { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { HView, Icon, Text } from "components";
 import { DataEntryActions } from "state";
 
-import styles from "./styles";
+import styles from "./EntityButtonStyles";
 
 export const EntityButton = ({ treeNode, isCurrentEntity }) => {
   const { label, entityPointer, isNotValid } = treeNode;
@@ -14,7 +13,7 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
 
   const onPress = useCallback(() => {
     dispatch(DataEntryActions.selectCurrentPageEntity(entityPointer));
-  }, [entityPointer]);
+  }, [dispatch, entityPointer]);
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -31,4 +30,9 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
       </HView>
     </TouchableOpacity>
   );
+};
+
+EntityButton.propTypes = {
+  treeNode: PropTypes.object.isRequired,
+  isCurrentEntity: PropTypes.bool,
 };

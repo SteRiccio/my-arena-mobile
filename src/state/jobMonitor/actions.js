@@ -16,6 +16,7 @@ const start =
     messageKey,
     messageParams = {},
     onJobComplete = undefined,
+    onJobEnd = undefined,
     onCancel = undefined,
     onClose = undefined,
   }) =>
@@ -29,7 +30,6 @@ const start =
         closeButtonTextKey,
         messageKey,
         messageParams,
-        onJobComplete,
         onCancel,
         onClose,
       },
@@ -37,8 +37,8 @@ const start =
 
     const ws = await WebSocketService.open();
 
-    ws.on(WebSocketService.EVENTS.jobUpdate, (job) => {
-      const { progressPercent, status } = job;
+    const notifyJobUpdate = (job) => {
+      const { ended, progressPercent, status } = job;
       dispatch({
         type: JOB_MONITOR_UPDATE,
         payload: {
@@ -46,11 +46,32 @@ const start =
           status,
         },
       });
-      if (status === JobStatus.succeeded && onJobComplete) {
-        onJobComplete();
+      if (ended) {
+        WebSocketService.close();
+        if (onJobComplete && status === JobStatus.succeeded) {
+          onJobComplete(job);
+        }
+        onJobEnd?.(job);
       }
-    });
+    };
+    ws.on(WebSocketService.EVENTS.jobUpdate, notifyJobUpdate);
   };
+
+const startAsync = async ({ dispatch, ...otherParams }) =>
+  new Promise((resolve, reject) => {
+    dispatch(
+      start({
+        ...otherParams,
+        onJobEnd: (jobEnd) => {
+          if (jobEnd.status === JobStatus.succeeded) {
+            resolve(jobEnd);
+          } else {
+            reject(jobEnd);
+          }
+        },
+      })
+    );
+  });
 
 const cancel = () => (dispatch, getState) => {
   const state = getState();
@@ -74,6 +95,7 @@ export const JobMonitorActions = {
   JOB_MONITOR_END,
 
   start,
+  startAsync,
   cancel,
   close,
 };

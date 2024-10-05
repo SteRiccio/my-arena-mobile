@@ -10,7 +10,7 @@ import { NodeDefFormItemHeader } from "screens/RecordEditor/NodeDefFormItem/Node
 export const NodeEditDialogInternal = (props) => {
   const {
     children,
-    doneButtonLabel,
+    doneButtonLabel = "common:close",
     nodeDef,
     onDismiss,
     onDone,
@@ -38,8 +38,4 @@ NodeEditDialogInternal.propTypes = {
   onDismiss: PropTypes.func.isRequired,
   onDone: PropTypes.func,
   parentNodeUuid: PropTypes.string,
-};
-
-NodeEditDialogInternal.defaultProps = {
-  doneButtonLabel: "common:close",
 };

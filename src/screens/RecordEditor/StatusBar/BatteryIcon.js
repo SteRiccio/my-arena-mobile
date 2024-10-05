@@ -18,14 +18,9 @@ export const BatteryIcon = (props) => {
   const theme = useTheme();
   const color =
     batteryLevel < 0.2 ? theme.colors.error : theme.colors.onBackground;
+  const iconSource = getBatteryIconSource({ batteryLevel, batteryState });
 
-  return (
-    <Icon
-      color={color}
-      source={getBatteryIconSource({ batteryLevel, batteryState })}
-      size={20}
-    />
-  );
+  return <Icon color={color} source={iconSource} />;
 };
 
 BatteryIcon.propTypes = {

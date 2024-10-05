@@ -1,6 +1,7 @@
 export default {
-  confirmGoToListOfRecordsAndTerminateRecordEditing:
-    "Go to list of records and terminate record editing?",
+  confirmGoToListOfRecords: `Go to list of records?
+
+(all changes already saved)`,
   checkSyncStatus: "Check sync status",
   closestSamplingPoint: {
     findClosestSamplingPoint: "Find closest sampling point",
@@ -10,16 +11,41 @@ export default {
       "Items found at a distance of {{minDistance}}m",
     useSelectedItem: "Use selected item",
   },
+  confirmDeleteSelectedItems: {
+    message: "Delete the selected items?",
+  },
+  confirmDeleteValue: {
+    message: "Delete this value?",
+  },
+  confirmOverwriteValue: {
+    message: "Overwrite existing value?",
+  },
+  cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
-  options: "Data entry options",
+  options: "Options",
   errorFetchingRecordsSyncStatus:
     "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
-  exportData: "Export data",
+  exportData: {
+    title: "Export data",
+    confirm: {
+      title: "Confirm export data",
+      message: `Records to export:
+- {{newRecordsCount}} new records;
+- {{updatedRecordsCount}} updated records
+- {{conflictingRecordsCount}} conflicting records`,
+    },
+    noRecordsInDeviceToExport: "No records in the device to export",
+    onlyNewOrUpdatedRecords: "Export only new or updated records",
+    mergeConflictingRecords: "Merge conflicting records (same keys)",
+    onlyRecordsInRemoteServerCanBeImported:
+      "Only records already in remote server or records that have been updated remotely can be imported",
+  },
   exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
+  noEntitiesDefined: "No entities defined",
   goToDataEntry: "Go to data entry",
   goToListOfRecords: "Go to list of records",
   gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
@@ -27,9 +53,77 @@ export default {
   newRecord: "New record",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
+  recordInPreviousCycle: {
+    confirmShowValuesPreviousCycle: {
+      title: "Show values from previous cycle",
+      message: "Select previous cycle:",
+      cycleItem: "Cycle {{cycleLabel}}",
+    },
+    foundMessage: "Record in previous cycle found!",
+    notFoundMessage:
+      "Record in cycle {{cycle}} with keys {{keyValues}} not found",
+    confirmFetchRecordInCycle:
+      "Record in cycle {{cycle}} with keys {{keyValues}} not fully loaded; download it from the server?",
+    confirmSyncRecordsSummaryAndTryAgain:
+      "$t(dataEntry:recordInPreviousCycle.notFoundMessage): fetch the list of records from the server and try again?",
+    fetchError: "Error fetching record in previuos cycle: {{details}}",
+    multipleRecordsFound:
+      "Multiple records with keys {{keyValues}} found in cycle {{cycle}}",
+
+    valuePanelHeader: "Value in cycle {{prevCycle}}",
+  },
+  records: {
+    cloneRecords: {
+      title: "Clone",
+      confirm: {
+        message:
+          "Clone the selected {{recordsCount}} records into cycle {{cycle}}?",
+      },
+      onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned:
+        "Only records imported in device or modified locally can be cloned into next cycle",
+      completeSuccessfully: "Records cloned successfully into cycle {{cycle}}!",
+    },
+    confirmImportRecordFromServer: "Import record from server?",
+    dateModifiedRemotely: "Date modified remotely",
+    deleteRecordsConfirm: {
+      title: "Delete records",
+      message: "Delete the selected records?",
+    },
+    exportRecords: {
+      title: "Export",
+    },
+    importRecord: "Import record",
+    importRecords: {
+      title: "Import from server",
+    },
+    importRecordsFromFile: {
+      title: "Import",
+      confirmMessage: `Import records from selected file
+{{fileName}}?`,
+      invalidFileType: "Invalid file type (expected .zip)",
+      overwriteExistingRecords: "Overwrite existing records",
+      selectFile: "Select file",
+    },
+    importCompleteSuccessfully: `Records import complete successfully!
+- {{processedRecords}} records processed
+- {{insertedRecords}} records inserted
+- {{updatedRecords}} records updated`,
+    importFailed: "Records import failed: {{details}}",
+    loadStatus: {
+      title: "Loaded",
+      C: "Complete",
+      P: "Partial (without files)",
+      S: "Only summary",
+    },
+    origin: { title: "Origin", L: "Local", R: "Remote" },
+    owner: "Owner",
+  },
+  showOnlyLocalRecords: "Show only local records",
+  syncedOn: "Synced on",
   syncStatusHeader: "Status",
   syncStatus: {
-    keysNotSpecified: `Key attributes not specified`,
+    conflictingKeys: "Record with same key(s) already exists",
+    keysNotSpecified: `Key(s) not specified`,
     new: "New (not uploaded yet)",
     notModified: "Not modified (no changes to upload)",
     modifiedLocally: "Modified locally",
@@ -55,20 +149,20 @@ export default {
   },
   coordinate: {
     accuracy: "Accuracy (m)",
+    altitude: "Altitude (m)",
+    altitudeAccuracy: "Altitude accuracy (m)",
     angleToTargetLocation: "Angle to target",
     confirmConvertCoordinate:
       "Convert coordinate from SRS {{srsFrom}} to SRS {{srsTo}}?",
     convert: "Convert",
     currentLocation: "Current location",
     distance: "Distance (m)",
-    altitude: "Altitude (m)",
-    altitudeAccuracy: "Altitude accuracy (m)",
+    getLocation: "Get location",
     heading: "Heading (deg)",
     keepXAndY: "Keep X and Y",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
-    startGPS: "Start GPS",
-    stopGPS: "Stop GPS",
+    srs: "$t(common:srs)",
     useCurrentLocation: "Use current location",
     x: "X",
     y: "Y",
@@ -103,5 +197,10 @@ export default {
   location: {
     gettingCurrentLocation: "Getting current location",
     usingCurrentLocation: "Using current location",
+  },
+  unlock: {
+    label: "Unlock",
+    confirmMessage: "Record edit is locked; unlock it?",
+    confirmTitle: "Edit is locked",
   },
 };

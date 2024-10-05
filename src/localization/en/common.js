@@ -1,4 +1,5 @@
 export default {
+  about: "About",
   appTitle: "Arena Mobile Experiments",
   cancel: "Cancel",
   clear: "Clear",
@@ -34,6 +35,8 @@ export default {
   sizeAvailable: "{{size}} available",
   somethingWentWrong: "Something went wrong: {{error}}",
   srs: "SRS",
+  status: "Status",
+  stop: "Stop",
   swipeToConfirm: "Swipe to confirm",
   textCopiedToClipboard: "Text copied to clipboard",
   true: "True",

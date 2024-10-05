@@ -2,22 +2,30 @@ import { DataTable as RNPDataTable } from "react-native-paper";
 import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
+import { SortDirection } from "model";
+import { DeviceInfoSelectors } from "state/deviceInfo";
+
 import { Checkbox } from "../Checkbox";
 import { ScrollView } from "../ScrollView";
 import { VView } from "../VView";
-import { usePagination } from "./usePagination";
 import { ItemSelectedBanner, useSelectableList } from "../SelectableList";
+import { usePagination } from "./usePagination";
 
 export const DataTable = (props) => {
   const {
+    canDelete = true,
     fields,
     items,
     onItemPress: onItemPressProp,
     onItemLongPress: onItemLongPressProp,
     onSelectionChange,
+    onSortChange = null,
     onDeleteSelectedItemIds,
-    selectable,
-    showPagination,
+    selectable = false,
+    selectedItemIds: selectedItemIdsProp,
+    selectedItemsCustomActions = [],
+    showPagination = false,
+    sort = null,
   } = props;
 
   const { t } = useTranslation();
@@ -35,6 +43,7 @@ export const DataTable = (props) => {
     onItemLongPress: onItemLongPressProp,
     onSelectionChange,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
   });
 
   const {
@@ -49,19 +58,44 @@ export const DataTable = (props) => {
     onPageChange,
   } = usePagination({ items: items });
 
+  const isTablet = DeviceInfoSelectors.useIsTablet();
+  const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+
+  const visibleFields = fields.filter(
+    ({ optional = false }) =>
+      !optional || fields.length <= 3 || isTablet || isLandscape
+  );
+
   const visibleRows = showPagination ? visibleItems : items;
+
+  const onHeaderPress = (fieldKey) => {
+    const fieldSortPrev = sort?.[fieldKey];
+    const fieldSortNext = SortDirection.getNextSortDirection(fieldSortPrev);
+    const sortNext = {};
+    // allow only one sort field at a time
+    if (fieldSortNext) {
+      sortNext[fieldKey] = fieldSortNext;
+    }
+    onSortChange(sortNext);
+  };
 
   return (
     <VView style={{ flex: 1 }}>
       <ItemSelectedBanner
+        canDelete={canDelete}
+        customActions={selectedItemsCustomActions}
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
       />
       <RNPDataTable style={{ flex: 1 }}>
         <RNPDataTable.Header>
-          {fields.map((field) => (
+          {visibleFields.map((field) => (
             <RNPDataTable.Title
               key={field.key}
+              onPress={() =>
+                field.sortable ? onHeaderPress(field.key) : undefined
+              }
+              sortDirection={sort?.[field.key]}
               style={[{ flex: 1 }, field.style]}
               textStyle={{ fontWeight: "bold", fontSize: 15 }}
             >
@@ -79,15 +113,21 @@ export const DataTable = (props) => {
               onPress={() => onItemPress(item)}
               onLongPress={() => onItemLongPress(item)}
             >
-              {fields.map(({ key: fieldKey, style, cellRenderer = null }) => (
-                <RNPDataTable.Cell
-                  key={fieldKey}
-                  style={style}
-                  textStyle={{ flex: 1 }}
-                >
-                  {cellRenderer ? cellRenderer({ item }) : item[fieldKey]}
-                </RNPDataTable.Cell>
-              ))}
+              {visibleFields.map(
+                ({ key: fKey, style, cellRenderer: CellRenderer = null }) => (
+                  <RNPDataTable.Cell
+                    key={fKey}
+                    style={style}
+                    textStyle={{ flex: 1 }}
+                  >
+                    {CellRenderer ? (
+                      <CellRenderer item={item} />
+                    ) : (
+                      String(item[fKey] ?? "")
+                    )}
+                  </RNPDataTable.Cell>
+                )
+              )}
               {selectionEnabled && (
                 <RNPDataTable.Cell style={{ maxWidth: 40, minWidth: 40 }}>
                   <Checkbox
@@ -122,17 +162,17 @@ export const DataTable = (props) => {
 };
 
 DataTable.propTypes = {
+  canDelete: PropTypes.bool,
   fields: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   onItemPress: PropTypes.func,
   onItemLongPress: PropTypes.func,
   onSelectionChange: PropTypes.func,
+  onSortChange: PropTypes.func,
   onDeleteSelectedItemIds: PropTypes.func,
   selectable: PropTypes.bool,
+  selectedItemIds: PropTypes.array,
+  selectedItemsCustomActions: PropTypes.array,
   showPagination: PropTypes.bool,
-};
-
-DataTable.defaultProps = {
-  selectable: false,
-  showPagination: false,
+  sort: PropTypes.object,
 };

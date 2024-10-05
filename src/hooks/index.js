@@ -1,4 +1,5 @@
 export { useAppInfo } from "./useAppInfo";
+export { useBackHandler } from "./useBackHandler";
 export { useEffectiveTheme } from "./useEffectiveTheme";
 export { useImageFile } from "./useImageFile";
 export { useIsMountedRef } from "./useIsMountedRef";

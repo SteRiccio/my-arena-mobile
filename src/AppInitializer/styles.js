@@ -6,4 +6,8 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  logo: {
+    width: 100,
+    height: 100,
+  },
 });

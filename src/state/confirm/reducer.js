@@ -8,10 +8,13 @@ const initialState = {
 const confirm = createAsyncThunk(
   "confirm/show",
   async (params, { getState }) => {
-    const { selectedSingleChoiceValue } = params;
+    const { selectedMultipleChoiceValues, selectedSingleChoiceValue } = params;
     const state = getState();
     const { onConfirm } = state.confirm;
-    await onConfirm?.({ selectedSingleChoiceValue });
+    await onConfirm?.({
+      selectedMultipleChoiceValues,
+      selectedSingleChoiceValue,
+    });
   }
 );
 
@@ -32,6 +35,7 @@ const confirmSlice = createSlice({
       ...action.payload,
       isOpen: true,
     }),
+    dismiss: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -41,37 +45,48 @@ const confirmSlice = createSlice({
 });
 
 const { actions, reducer: ConfirmReducer } = confirmSlice;
-const { show } = actions;
+const { show, dismiss } = actions;
 
 export const ConfirmActions = {
   show: ({
     titleKey = "common:confirm",
+    cancelButtonStyle = undefined,
     cancelButtonTextKey = "common:cancel",
+    confirmButtonStyle = undefined,
     confirmButtonTextKey = "common:confirm",
     messageKey,
     messageParams = {},
+    multipleChoiceOptions = [],
     onConfirm,
     onCancel = undefined,
     singleChoiceOptions = [],
+    defaultMultipleChoiceValues = [],
     defaultSingleChoiceValue = null,
     swipeToConfirm = false,
     swipeToConfirmTitleKey = "common:swipeToConfirm",
   }) =>
     show({
       titleKey,
+      cancelButtonStyle,
       cancelButtonTextKey,
+      confirmButtonStyle,
       confirmButtonTextKey,
       messageKey,
       messageParams,
+      multipleChoiceOptions,
       onConfirm,
       onCancel,
       singleChoiceOptions,
+      defaultMultipleChoiceValues,
       defaultSingleChoiceValue,
       swipeToConfirm,
       swipeToConfirmTitleKey,
     }),
-  confirm: ({ selectedSingleChoiceValue }) =>
-    confirm({ selectedSingleChoiceValue }),
+  dismiss,
+
+  // internal (called from dialog component)
+  confirm: ({ selectedMultipleChoiceValues, selectedSingleChoiceValue }) =>
+    confirm({ selectedMultipleChoiceValues, selectedSingleChoiceValue }),
   cancel,
 };
 export { ConfirmReducer };

@@ -1,21 +1,12 @@
-import { TouchableHighlight } from "react-native";
 import PropTypes from "prop-types";
 
-import {
-  Button,
-  HView,
-  IconButton,
-  Image,
-  Loader,
-  Text,
-  VView,
-  View,
-} from "components";
+import { NodeDefFileType, NodeDefs } from "@openforis/arena-core";
+
+import { Button, HView, IconButton, Loader, VView, View } from "components";
+import { ImageOrVideoValuePreview } from "screens/RecordEditor/NodeValuePreview/ImageOrVideoValuePreview";
 import { useNodeFileComponent } from "./useNodeFileComponent";
 
 import styles from "./styles";
-import { NodeDefFileType } from "@openforis/arena-core";
-import { ImagePreviewDialog } from "./ImagePreviewDialog";
 
 const fileChooseTextKeySuffixByFileType = {
   [NodeDefFileType.audio]: "Audio",
@@ -37,15 +28,10 @@ export const NodeImageOrVideoComponent = (props) => {
   const fileChooseTextKeySuffix = fileChooseTextKeySuffixByFileType[fileType];
 
   const {
-    closeImagePreview,
-    fileName,
-    imagePreviewOpen,
+    nodeValue,
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
-    onFileOpenPress,
-    onImagePreviewPress,
-    pickedFileUri,
     resizing,
   } = useNodeFileComponent({ nodeDef, nodeUuid });
 
@@ -53,30 +39,16 @@ export const NodeImageOrVideoComponent = (props) => {
     <HView style={styles.container}>
       <View style={styles.previewContainer}>
         {resizing && <Loader />}
-        {!resizing && pickedFileUri && (
-          <>
-            {fileType === NodeDefFileType.image ? (
-              <TouchableHighlight onPress={onImagePreviewPress}>
-                <Image source={{ uri: pickedFileUri }} style={styles.image} />
-              </TouchableHighlight>
-            ) : (
-              <VView>
-                <IconButton
-                  icon="file-outline"
-                  onPress={onFileOpenPress}
-                  size={40}
-                />
-                <Text>{fileName}</Text>
-              </VView>
-            )}
-          </>
+        {!resizing && nodeValue && (
+          <ImageOrVideoValuePreview nodeDef={nodeDef} value={nodeValue} />
         )}
       </View>
 
       <VView style={styles.buttonsContainer}>
-        {pickedFileUri ? (
+        {nodeValue && NodeDefs.isSingle(nodeDef) && (
           <IconButton icon="trash-can-outline" onPress={onDeletePress} />
-        ) : (
+        )}
+        {!nodeValue && (
           <>
             {[NodeDefFileType.image, NodeDefFileType.video].includes(
               fileType
@@ -96,14 +68,6 @@ export const NodeImageOrVideoComponent = (props) => {
           </>
         )}
       </VView>
-
-      {imagePreviewOpen && (
-        <ImagePreviewDialog
-          fileName={fileName}
-          imageUri={pickedFileUri}
-          onClose={closeImagePreview}
-        />
-      )}
     </HView>
   );
 };

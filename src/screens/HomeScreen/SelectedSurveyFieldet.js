@@ -5,8 +5,17 @@ import { useNavigation } from "@react-navigation/native";
 
 import { Dates, Surveys } from "@openforis/arena-core";
 
-import { Button, FieldSet, HView, Text, VView } from "components";
+import {
+  Button,
+  FieldSet,
+  HView,
+  Link,
+  Text,
+  ViewMoreText,
+  VView,
+} from "components";
 import { UpdateStatusIcon } from "components/UpdateStatusIcon";
+import { RemoteConnectionSelectors } from "state/remoteConnection";
 import { SurveyActions, SurveySelectors } from "state/survey";
 import { SurveyService } from "service/surveyService";
 import { useIsNetworkConnected } from "hooks/useIsNetworkConnected";
@@ -16,7 +25,6 @@ import { UpdateStatus } from "model/UpdateStatus";
 import { screenKeys } from "../screenKeys";
 
 import styles from "./selectedSurveyFieldsetStyles";
-import { RemoteConnectionSelectors } from "state/remoteConnection";
 
 const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const dispatch = useDispatch();
@@ -28,13 +36,13 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const onPress = () => {
     switch (updateStatus) {
       case UpdateStatus.error:
-        toaster.show("surveys:updateStatus.error");
+        toaster("surveys:updateStatus.error");
         break;
       case UpdateStatus.networkNotAvailable:
-        toaster.show("surveys:updateStatus.networkNotAvailable");
+        toaster("surveys:updateStatus.networkNotAvailable");
         break;
       case UpdateStatus.upToDate:
-        toaster.show("surveys:updateStatus.upToDate");
+        toaster("surveys:updateStatus.upToDate");
         break;
       case UpdateStatus.notUpToDate:
         dispatch(
@@ -43,7 +51,8 @@ const SurveyUpdateStatusIcon = ({ updateStatus }) => {
             surveyName: Surveys.getName(survey),
             surveyRemoteId: survey.remoteId,
             navigation,
-            confirmMessageKey: 'surveys:updateSurveyWithNewVersionConfirmMessage',
+            confirmMessageKey:
+              "surveys:updateSurveyWithNewVersionConfirmMessage",
             onConfirm: () => setLoading(true),
             onComplete: () => setLoading(false),
           })
@@ -77,6 +86,9 @@ export const SelectedSurveyFieldset = () => {
   const surveyTitle = surveyLabelInDefaultLanguage
     ? `${surveyLabelInDefaultLanguage} [${surveyName}]`
     : surveyName;
+  const surveyDescription = Surveys.getDescription(lang)(survey);
+  const fieldManualUrl = Surveys.getFieldManualLink(lang)(survey);
+
   const [updateStatus, setUpdateStatus] = useState(UpdateStatus.loading);
 
   useEffect(() => {
@@ -107,7 +119,7 @@ export const SelectedSurveyFieldset = () => {
     } else if (survey) {
       checkLastPublishDate();
     }
-  }, [networkAvailable, survey, user]);
+  }, [networkAvailable, survey, surveyName, user]);
 
   if (!survey) return null;
 
@@ -115,13 +127,21 @@ export const SelectedSurveyFieldset = () => {
     <FieldSet headerKey="surveys:currentSurvey" style={styles.fieldset}>
       <VView style={styles.internalContainer}>
         <HView style={styles.surveyTitleContainer}>
-          <Text
-            style={styles.surveyTitle}
-            textKey={surveyTitle}
-            variant="titleMedium"
-          />
+          <Text style={styles.surveyTitle} variant="titleMedium">
+            {surveyTitle}
+          </Text>
           <SurveyUpdateStatusIcon updateStatus={updateStatus} />
         </HView>
+        {surveyDescription && (
+          <ViewMoreText numberOfLines={1}>
+            <Text style={styles.surveyTitle} variant="titleSmall">
+              {surveyDescription}
+            </Text>
+          </ViewMoreText>
+        )}
+        {fieldManualUrl && (
+          <Link labelKey="surveys:fieldManual" url={fieldManualUrl} />
+        )}
         <Button
           style={styles.goToDataEntryButton}
           textKey="dataEntry:goToDataEntry"

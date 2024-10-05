@@ -20,5 +20,5 @@ export const useFreeDiskStorageMonitor = () => {
         clearTimeout(intervalId);
       }
     };
-  }, []);
+  }, [dispatch]);
 };

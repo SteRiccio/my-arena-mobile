@@ -18,6 +18,7 @@ export const DataList = (props) => {
     onDeleteSelectedItemIds,
     onSelectionChange,
     selectable,
+    selectedItemsCustomActions,
   } = props;
 
   const styles = useStyles();
@@ -48,7 +49,7 @@ export const DataList = (props) => {
         <HView style={styles.item}>
           <VView style={{ flex: 1 }}>
             {fields.map((field) => {
-              const { cellRenderer, header, key, style } = field;
+              const { cellRenderer: CellRenderer, header, key, style } = field;
               return (
                 <FormItem
                   key={key}
@@ -57,7 +58,7 @@ export const DataList = (props) => {
                   style={style}
                   textVariant="titleMedium"
                 >
-                  {cellRenderer ? cellRenderer({ item }) : item[key]}
+                  {CellRenderer ? <CellRenderer item={item} /> : item[key]}
                 </FormItem>
               );
             })}
@@ -71,12 +72,21 @@ export const DataList = (props) => {
         </HView>
       </TouchableHighlight>
     ),
-    [fields, onItemPress, onItemLongPress]
+    [
+      styles.item,
+      fields,
+      selectionEnabled,
+      selectedItemIds,
+      onItemPress,
+      onItemLongPress,
+      onItemSelect,
+    ]
   );
 
   return (
     <VView>
       <ItemSelectedBanner
+        customActions={selectedItemsCustomActions}
         onDeleteSelected={onDeleteSelected}
         selectedItemIds={selectedItemIds}
       />
@@ -97,4 +107,5 @@ DataList.propTypes = {
   onDeleteSelectedItemIds: PropTypes.func,
   onSelectionChange: PropTypes.func,
   selectable: PropTypes.bool,
+  selectedItemsCustomActions: PropTypes.array,
 };

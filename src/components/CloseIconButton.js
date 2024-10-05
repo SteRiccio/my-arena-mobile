@@ -9,3 +9,5 @@ export const CloseIconButton = (props) => {
     </IconButton>
   );
 };
+
+CloseIconButton.propTypes = IconButton.propTypes;

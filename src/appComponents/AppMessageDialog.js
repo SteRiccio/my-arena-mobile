@@ -18,7 +18,7 @@ export const AppMessageDialog = () => {
   const onDismiss = useCallback(() => {
     onDismissProp?.();
     dispatch(MessageActions.dismissMessage());
-  }, [onDismissProp]);
+  }, [dispatch, onDismissProp]);
 
   if (!content) return null;
 

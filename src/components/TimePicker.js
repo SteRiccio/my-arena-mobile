@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import PropTypes from "prop-types";
 
 import { DateFormats, Dates } from "@openforis/arena-core";
 
@@ -8,7 +9,10 @@ import { IconButton } from "./IconButton";
 import { TextInput } from "./TextInput";
 
 export const TimePicker = (props) => {
-  const { value, onChange: onChangeProp } = props;
+  const { editable = true, onChange: onChangeProp, value } = props;
+
+  const valueFormattedForStorage = Dates.format(value, DateFormats.timeStorage);
+  const dateTimePickerValue = value ?? new Date();
 
   const [show, setShow] = useState(false);
 
@@ -28,17 +32,23 @@ export const TimePicker = (props) => {
         nonEditableStyleVisible={false}
         onPressIn={showTimePicker}
         style={{ width: 100 }}
-        value={Dates.format(value, DateFormats.timeStorage)}
+        value={valueFormattedForStorage}
       />
-      <IconButton icon="clock" onPress={showTimePicker} />
+      <IconButton disabled={!editable} icon="clock" onPress={showTimePicker} />
       {show && (
         <DateTimePicker
           is24Hour
           mode="time"
           onChange={onChange}
-          value={value || new Date()}
+          value={dateTimePickerValue}
         />
       )}
     </HView>
   );
+};
+
+TimePicker.propTypes = {
+  editable: PropTypes.bool,
+  onChange: PropTypes.func,
+  value: PropTypes.any,
 };

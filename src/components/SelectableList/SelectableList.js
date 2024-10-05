@@ -8,12 +8,12 @@ import { Arrays } from "@openforis/arena-core";
 import { Checkbox } from "../Checkbox";
 import { RadioButton } from "../RadioButton";
 
-import styles from "../SelectableListWithFilter/styles";
+import styles from "./styles";
 
 const ListItemIcon = (props) => {
   const { multiple, checked, editable, onItemSelect, item } = props;
 
-  const onPress = useCallback(() => onItemSelect(item), [onItemSelect]);
+  const onPress = useCallback(() => onItemSelect(item), [item, onItemSelect]);
 
   return multiple ? (
     <Checkbox checked={checked} disabled={!editable} onPress={onPress} />
@@ -32,16 +32,20 @@ ListItemIcon.propTypes = {
 
 export const SelectableList = (props) => {
   const {
-    editable,
+    editable = true,
     itemKeyExtractor,
-    itemLabelExtractor,
-    itemDescriptionExtractor,
+    itemLabelExtractor = () => null,
+    itemDescriptionExtractor = () => null,
     items,
-    multiple,
+    multiple = false,
     onChange,
-    selectedItems,
+    selectedItems = [],
     style,
   } = props;
+
+  if (__DEV__) {
+    console.log(`rendering SelectableList`);
+  }
 
   const onItemSelect = useCallback(
     (item) => {
@@ -56,7 +60,7 @@ export const SelectableList = (props) => {
       }
       onChange(selectedItemsNext);
     },
-    [itemKeyExtractor, multiple, onChange, selectedItems]
+    [multiple, onChange, selectedItems]
   );
 
   const renderItem = useCallback(
@@ -113,12 +117,4 @@ SelectableList.propTypes = {
   onChange: PropTypes.func,
   selectedItems: PropTypes.array,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-};
-
-SelectableList.defaultProps = {
-  editable: true,
-  itemLabelExtractor: () => null,
-  itemDescriptionExtractor: () => null,
-  multiple: false,
-  selectedItems: [],
 };

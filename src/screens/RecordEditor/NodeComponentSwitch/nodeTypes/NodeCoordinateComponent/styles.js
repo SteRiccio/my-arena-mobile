@@ -1,6 +1,11 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
+  mainContainer: {
+    gap: 10,
+  },
+  internalContainer: { alignItems: "center" },
+  fieldsWrapper: { flex: 1, gap: 10 },
   formItem: { alignItems: "center" },
   formItemLabel: {
     width: 50,
@@ -23,5 +28,9 @@ export default StyleSheet.create({
   },
   textInputNotApplicable: {
     backgroundColor: "lightgray",
+  },
+  showCompassButton: {
+    alignSelf: "center",
+    margin: 20,
   },
 });

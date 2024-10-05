@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { DowngradeError, initialize as initializeDb } from "db";
-import { Text, View } from "components";
+import { AppLogo } from "appComponents/AppLogo";
+import { Text, View, VView } from "components";
 import {
   DataMigrationService,
   PreferencesService,
@@ -38,8 +40,9 @@ export const AppInitializer = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
-      console.log("Initializing app");
-
+      if (__DEV__) {
+        console.log("Initializing app");
+      }
       await dispatch(DeviceInfoActions.initDeviceInfo());
 
       const settings = await SettingsService.fetchSettings();
@@ -59,9 +62,6 @@ export const AppInitializer = (props) => {
 
       if (dbMigrationsRun) {
         await DataMigrationService.migrateData({ prevDbVersion });
-      } else {
-        // TODO remove it, temporary fix until db version 3 is released
-        await DataMigrationService.fixRecordCycle();
       }
 
       // initialize local surveys
@@ -81,27 +81,32 @@ export const AppInitializer = (props) => {
 
       dispatch(RemoteConnectionActions.checkLoggedIn());
 
-      console.log("App initialized");
+      if (__DEV__) {
+        console.log("App initialized");
+      }
     };
     initialize()
       .then(() => {
         setState((statePrev) => ({ ...statePrev, loading: false }));
       })
       .catch((err) => {
-        console.error("===error", err);
+        if (__DEV__) {
+          console.error("===error", err);
+        }
         const errorMessage =
           err instanceof DowngradeError
             ? "Downgrade error"
-            : "Unexpected error";
+            : "Unexpected error: " + err;
         setState((statePrev) => ({ ...statePrev, errorMessage }));
       });
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text textKey="Initializing application..." />
-      </View>
+      <VView style={styles.container}>
+        <AppLogo style={styles.logo} />
+        <Text textKey="app:pleaseWaitMessage" />
+      </VView>
     );
   }
   if (errorMessage) {
@@ -113,4 +118,8 @@ export const AppInitializer = (props) => {
   }
 
   return children;
+};
+
+AppInitializer.propTypes = {
+  children: PropTypes.node,
 };

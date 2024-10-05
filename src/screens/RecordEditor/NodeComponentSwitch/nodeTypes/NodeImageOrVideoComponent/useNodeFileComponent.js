@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 
@@ -11,13 +10,10 @@ import {
   useToast,
 } from "hooks";
 
-import { SurveySelectors } from "state/survey";
-import { ConfirmActions } from "state/confirm";
-import { RecordFileService } from "service/recordFileService";
+import { useConfirm } from "state/confirm";
+import { Files, ImageUtils } from "utils";
 
 import { useNodeComponentLocalState } from "screens/RecordEditor/useNodeComponentLocalState";
-import { Files } from "utils";
-import { ImageUtils } from "./imageUtils";
 
 const mediaTypesByFileType = {
   [NodeDefFileType.image]: ImagePicker.MediaTypeOptions.Images,
@@ -25,17 +21,13 @@ const mediaTypesByFileType = {
 };
 
 export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
-  const dispatch = useDispatch();
-
   const toaster = useToast();
+  const confirm = useConfirm();
 
   const { request: requestCameraPermission } = useRequestCameraPermission();
 
   const { request: requestMediaLibraryPermission } =
     useRequestMediaLibraryPermission();
-
-  const survey = SurveySelectors.useCurrentSurvey();
-  const surveyId = survey.id;
 
   const { fileType = NodeDefFileType.other, maxSize: maxSizeMB = 10 } =
     nodeDef.props;
@@ -47,21 +39,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
-
-  const { fileName, fileUuid } = value || {};
-
-  const [pickedFileUri, setPickedFileUri] = useState(null);
   const [resizing, setResizing] = useState(false);
-  const [imagePreviewOpen, setImagePreviewOpen] = useState(false);
-
-  useEffect(() => {
-    const fileUri = fileUuid
-      ? RecordFileService.getRecordFileUri({ surveyId, fileUuid })
-      : null;
-    if (fileUri !== pickedFileUri) {
-      setPickedFileUri(fileUri);
-    }
-  }, [pickedFileUri, fileUuid]);
 
   const onFileSelected = useCallback(
     async (result) => {
@@ -96,17 +74,16 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
           fileUri = resizedFileUri;
           fileSize = resizedFileSize;
 
-          toaster.show("dataEntry:fileAttributeImage.pictureResizedToSize", {
+          toaster("dataEntry:fileAttributeImage.pictureResizedToSize", {
             size: Files.toHumanReadableFileSize(resizedFileSize),
           });
         }
         setResizing(false);
       }
-      setPickedFileUri(fileUri);
       const valueUpdated = { fileUuid: UUIDs.v4(), fileName, fileSize };
-      await updateNodeValue(valueUpdated, fileUri);
+      await updateNodeValue({ value: valueUpdated, fileUri });
     },
-    [maxSize]
+    [fileType, maxSize, toaster, updateNodeValue]
   );
 
   const onFileChoosePress = useCallback(async () => {
@@ -121,12 +98,7 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
             mediaTypes,
           });
     onFileSelected(result);
-  }, [onFileSelected, requestMediaLibraryPermission, mediaTypes]);
-
-  const onFileOpenPress = useCallback(async () => {
-    const mimeType = Files.getMimeTypeFromName(fileName);
-    await Files.shareFile({ url: pickedFileUri, mimeType });
-  }, [fileName, pickedFileUri]);
+  }, [requestMediaLibraryPermission, fileType, mediaTypes, onFileSelected]);
 
   const onOpenCameraPress = useCallback(async () => {
     if (!(await requestCameraPermission())) return;
@@ -136,34 +108,20 @@ export const useNodeFileComponent = ({ nodeDef, nodeUuid }) => {
   }, [onFileSelected, requestCameraPermission, mediaTypes]);
 
   const onDeletePress = useCallback(async () => {
-    dispatch(
-      ConfirmActions.show({
+    if (
+      await confirm({
         messageKey: "dataEntry:fileAttribute.deleteConfirmMessage",
-        onConfirm: async () => {
-          await updateNodeValue(null);
-        },
       })
-    );
-  }, [updateNodeValue]);
-
-  const onImagePreviewPress = useCallback(() => {
-    setImagePreviewOpen(true);
-  }, []);
-
-  const closeImagePreview = useCallback(() => {
-    setImagePreviewOpen(false);
-  }, []);
+    ) {
+      await updateNodeValue({ value: null });
+    }
+  }, [confirm, updateNodeValue]);
 
   return {
-    closeImagePreview,
-    fileName,
-    imagePreviewOpen,
+    nodeValue: value,
     onDeletePress,
     onOpenCameraPress,
     onFileChoosePress,
-    onFileOpenPress,
-    onImagePreviewPress,
-    pickedFileUri,
     resizing,
   };
 };

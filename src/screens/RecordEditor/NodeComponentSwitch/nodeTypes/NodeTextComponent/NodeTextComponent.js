@@ -51,9 +51,14 @@ export const NodeTextComponent = (props) => {
       uiValueToNodeValue,
     });
 
+  const onChange = useCallback(
+    (value) => updateNodeValue({ value }),
+    [updateNodeValue]
+  );
+
   const onCopyPress = () => {
     if (SystemUtils.copyValueToClipboard(uiValue)) {
-      toaster.show("common:textCopiedToClipboard");
+      toaster("common:textCopiedToClipboard");
     }
   };
 
@@ -70,7 +75,7 @@ export const NodeTextComponent = (props) => {
         ]}
         multiline={multiline}
         numberOfLines={multiline ? 4 : 1}
-        onChange={updateNodeValue}
+        onChange={onChange}
         value={uiValue}
       />
       {!editable && (

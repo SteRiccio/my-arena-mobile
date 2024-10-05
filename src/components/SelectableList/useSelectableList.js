@@ -15,15 +15,39 @@ export const useSelectableList = (props) => {
     onSelectionChange,
     onDeleteSelectedItemIds,
     selectable,
+    selectedItemIds: selectedItemIdsProp,
   } = props;
 
-  const [state, setState] = useState({ ...initialState });
+  const [state, setState] = useState({
+    ...initialState,
+    selectedItemIds: selectedItemIdsProp ?? [],
+  });
 
   const { selectedItemIds, selectionEnabled } = state;
 
+  // reset state on items change
   useEffect(() => {
     setState((statePrev) => ({ ...statePrev, ...initialState }));
-  }, [items]);
+    onSelectionChange?.([]);
+  }, [items, onSelectionChange, selectable]);
+
+  // update internal selected item ids on prop change
+  useEffect(() => {
+    if (
+      selectedItemIds === selectedItemIdsProp ||
+      (selectedItemIds?.length === 0 && selectedItemIdsProp?.length === 0)
+    ) {
+      return;
+    }
+    const selectedItemIdsNext = selectedItemIdsProp ?? selectedItemIds;
+    const selectionEnabledNext = selectedItemIdsNext?.length > 0;
+
+    setState((statePrev) => ({
+      ...statePrev,
+      selectedItemIds: selectedItemIdsNext,
+      selectionEnabled: selectionEnabledNext,
+    }));
+  }, [selectedItemIds, selectedItemIdsProp]);
 
   const onItemSelect = useCallback(
     (item) => {
@@ -39,15 +63,26 @@ export const useSelectableList = (props) => {
         selectedItemIds: selectedItemIdsNext,
       }));
 
-      onSelectionChange?.(selectedItemIds);
+      onSelectionChange?.(selectedItemIdsNext);
     },
-    [selectedItemIds]
+    [onSelectionChange, selectedItemIds]
   );
 
   const onDeleteSelected = useCallback(() => {
-    onDeleteSelectedItemIds?.(selectedItemIds);
-    setState((statePrev) => ({ ...statePrev, ...initialState }));
-  }, [selectedItemIds, onDeleteSelectedItemIds]);
+    const performDelete = () => {
+      onSelectionChange?.([]);
+      setState((statePrev) => ({ ...statePrev, ...initialState }));
+    };
+    if (onDeleteSelectedItemIds) {
+      onDeleteSelectedItemIds(selectedItemIds)
+        ?.then(performDelete)
+        ?.catch(() => {
+          // ignore it
+        });
+    } else {
+      performDelete();
+    }
+  }, [selectedItemIds, onDeleteSelectedItemIds, onSelectionChange]);
 
   const onItemPress = useCallback(
     (item) => {
@@ -57,7 +92,7 @@ export const useSelectableList = (props) => {
         onItemPressProp?.(item);
       }
     },
-    [onItemPressProp, onItemSelect]
+    [onItemPressProp, onItemSelect, selectionEnabled]
   );
 
   const onItemLongPress = useCallback(
@@ -68,7 +103,7 @@ export const useSelectableList = (props) => {
         onItemLongPressProp?.(item);
       }
     },
-    [onItemLongPressProp, onItemSelect]
+    [onItemLongPressProp, onItemSelect, selectable]
   );
 
   return {

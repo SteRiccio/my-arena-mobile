@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 import { NodeDefs, Records } from "@openforis/arena-core";
 
@@ -7,11 +8,11 @@ import { Button, DataTable, Text, VView } from "components";
 import { SurveyDefs } from "model/utils/SurveyDefs";
 import { RecordNodes } from "model/utils/RecordNodes";
 import {
-  ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
   DeviceInfoSelectors,
   SurveySelectors,
+  useConfirm,
 } from "state";
 import { useTranslation } from "localization";
 
@@ -28,6 +29,7 @@ export const NodeMultipleEntityListComponent = (props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const confirm = useConfirm();
 
   if (__DEV__) {
     console.log(
@@ -41,6 +43,7 @@ export const NodeMultipleEntityListComponent = (props) => {
   const record = DataEntrySelectors.useRecord();
   const isTablet = DeviceInfoSelectors.useIsTablet();
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
+  const canEditRecord = DataEntrySelectors.useCanEditRecord();
   const maxSummaryDefs = determineMaxSummaryDefs({ isTablet, isLandscape });
 
   const summaryDefs = SurveyDefs.getEntitySummaryDefs({
@@ -69,19 +72,21 @@ export const NodeMultipleEntityListComponent = (props) => {
         })
       );
     },
-    [parentEntityUuid, entityDefUuid]
+    [dispatch, parentEntityUuid, entityDefUuid]
   );
 
-  const onDeleteSelectedNodeUuids = useCallback((nodeUuids) => {
-    dispatch(
-      ConfirmActions.show({
-        messageKey: "Delete the selected items?",
-        onConfirm: () => {
-          dispatch(DataEntryActions.deleteNodes(nodeUuids));
-        },
-      })
-    );
-  }, []);
+  const onDeleteSelectedNodeUuids = useCallback(
+    async (nodeUuids) => {
+      if (
+        await confirm({
+          messageKey: "dataEntry:confirmDeleteSelectedItems.message",
+        })
+      ) {
+        dispatch(DataEntryActions.deleteNodes(nodeUuids));
+      }
+    },
+    [confirm, dispatch]
+  );
 
   const entityToRow = useCallback(
     (entity) => ({
@@ -96,15 +101,17 @@ export const NodeMultipleEntityListComponent = (props) => {
         summaryDefs,
       }),
     }),
-    [survey, record, summaryDefs]
+    [survey, record, lang, summaryDefs]
   );
 
   const rows = entities.map(entityToRow);
 
+  const canAddNew = canEditRecord && !NodeDefs.isEnumerate(entityDef);
+
   return (
     <VView style={styles.container}>
       {rows.length === 0 && (
-        <Text textKey="No entities defined" variant="titleMedium" />
+        <Text textKey="dataEntry:noEntitiesDefined" variant="titleMedium" />
       )}
       {rows.length > 0 && (
         <DataTable
@@ -117,12 +124,19 @@ export const NodeMultipleEntityListComponent = (props) => {
           items={rows}
           onItemPress={onRowPress}
           onDeleteSelectedItemIds={onDeleteSelectedNodeUuids}
-          selectable
+          selectable={canEditRecord}
         />
       )}
-      <Button icon="plus" onPress={onNewPress}>
-        {t("common:newItemWithParam", { item: nodeDefLabel })}
-      </Button>
+      {canAddNew && (
+        <Button icon="plus" onPress={onNewPress}>
+          {t("common:newItemWithParam", { item: nodeDefLabel })}
+        </Button>
+      )}
     </VView>
   );
+};
+
+NodeMultipleEntityListComponent.propTypes = {
+  entityDef: PropTypes.object.isRequired,
+  parentEntityUuid: PropTypes.string,
 };

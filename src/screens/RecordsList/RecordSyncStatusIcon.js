@@ -1,31 +1,60 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useMemo } from "react";
 
-import { RecordSyncStatus } from "model/RecordSyncStatus";
-import { Icon, Tooltip } from "components";
+import {
+  DataVisualizerCellPropTypes,
+  HView,
+  Icon,
+  Text,
+  Tooltip,
+} from "components";
+import { RecordSyncStatus, ScreenViewMode } from "model";
+import { ScreenOptionsSelectors } from "state/screenOptions";
+
+const colors = {
+  red: "red",
+  darkgrey: "darkgrey",
+  yellow: "yellow",
+  green: "green",
+};
 
 const colorBySyncStatus = {
-  [RecordSyncStatus.keysNotSpecified]: "red",
-  [RecordSyncStatus.new]: "darkgrey",
-  [RecordSyncStatus.modifiedLocally]: "yellow",
-  [RecordSyncStatus.modifiedRemotely]: "red",
-  [RecordSyncStatus.notInEntryStepAnymore]: "red",
-  [RecordSyncStatus.notModified]: "green",
+  [RecordSyncStatus.keysNotSpecified]: colors.red,
+  [RecordSyncStatus.conflictingKeys]: colors.red,
+  [RecordSyncStatus.new]: colors.darkgrey,
+  [RecordSyncStatus.modifiedLocally]: colors.yellow,
+  [RecordSyncStatus.modifiedRemotely]: colors.red,
+  [RecordSyncStatus.notInEntryStepAnymore]: colors.red,
+  [RecordSyncStatus.notModified]: colors.green,
+  [RecordSyncStatus.notUpToDate]: colors.yellow,
 };
 
 export const RecordSyncStatusIcon = (props) => {
   const { item } = props;
   const { syncStatus } = item;
 
-  if (!syncStatus) return null;
+  const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
+  const viewAsList = screenViewMode === ScreenViewMode.list;
 
-  return (
-    <Tooltip titleKey={`dataEntry:syncStatus.${syncStatus}`}>
-      <Icon color={colorBySyncStatus[syncStatus]} size={24} source="circle" />
-    </Tooltip>
+  const iconColor = colorBySyncStatus[syncStatus];
+
+  const icon = useMemo(
+    () => <Icon color={iconColor} size={24} source="circle" />,
+    [iconColor]
+  );
+
+  if (!syncStatus || syncStatus === RecordSyncStatus.syncNotApplicable)
+    return null;
+
+  const textKey = `dataEntry:syncStatus.${syncStatus}`;
+
+  return viewAsList ? (
+    <HView>
+      {icon}
+      <Text textKey={textKey} />
+    </HView>
+  ) : (
+    <Tooltip titleKey={textKey}>{icon}</Tooltip>
   );
 };
 
-RecordSyncStatusIcon.propTypes = {
-  item: PropTypes.object.isRequired,
-};
+RecordSyncStatusIcon.propTypes = DataVisualizerCellPropTypes;

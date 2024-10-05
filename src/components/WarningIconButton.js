@@ -9,3 +9,5 @@ export const WarningIconButton = (props) => {
     </IconButton>
   );
 };
+
+WarningIconButton.propTypes = IconButton.propTypes;

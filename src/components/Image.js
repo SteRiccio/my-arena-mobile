@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { useImageFile } from "hooks";
 
 export const Image = (props) => {
-  const { defaultExtension, source: sourceProp, style } = props;
+  const { defaultExtension = "jpg", source: sourceProp, style } = props;
 
   const { uri: sourcePropUri } = sourceProp ?? {};
 
@@ -17,9 +17,5 @@ export const Image = (props) => {
 Image.propTypes = {
   defaultExtension: PropTypes.string,
   source: PropTypes.object.isRequired,
-  style: PropTypes.object,
-};
-
-Image.defaultProps = {
-  defaultExtension: "jpg",
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

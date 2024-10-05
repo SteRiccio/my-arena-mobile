@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { HView, SegmentedButtons } from "components";
 
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
+import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
 
 const booleanValues = ["true", "false"];
 const yesNoValueByBooleanValue = {
@@ -22,9 +23,9 @@ export const NodeBooleanComponent = (props) => {
 
   const onChange = useCallback(
     (val) => {
-      updateNodeValue(val === value ? null : val);
+      updateNodeValue({ value: val === value ? null : val });
     },
-    [value]
+    [updateNodeValue, value]
   );
 
   const labelValue = nodeDef.props.labelValue ?? "trueFalse";
@@ -50,3 +51,5 @@ export const NodeBooleanComponent = (props) => {
     </HView>
   );
 };
+
+NodeBooleanComponent.propTypes = NodeComponentPropTypes;

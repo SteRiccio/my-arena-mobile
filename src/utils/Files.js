@@ -13,7 +13,7 @@ const MIME_TYPES = {
   zip: "application/zip ",
 };
 
-const { cacheDirectory, documentDirectory } = FileSystem;
+const { cacheDirectory, documentDirectory, readDirectoryAsync } = FileSystem;
 
 const path = (...parts) =>
   parts.map(Strings.removeSuffix(PATH_SEPARATOR)).join(PATH_SEPARATOR);
@@ -63,22 +63,6 @@ const visitDirFilesRecursively = async ({
   }
 };
 
-const getDirSize = async (dirUri) => {
-  let total = 0;
-  await visitDirFilesRecursively({
-    dirUri,
-    visitor: async (fileUri) => {
-      const size = await getSize(fileUri);
-      total += size;
-    },
-  });
-  return total;
-};
-
-const getFreeDiskStorage = async () => FileSystem.getFreeDiskStorageAsync();
-
-const jsonToString = (obj) => JSON.stringify(obj, null, 2);
-
 const getInfo = async (fileUri, ignoreErrors = true) => {
   try {
     const info = await FileSystem.getInfoAsync(fileUri);
@@ -91,13 +75,39 @@ const getInfo = async (fileUri, ignoreErrors = true) => {
   }
 };
 
+const getSize = async (fileUri, ignoreErrors = true) => {
+  const info = await getInfo(fileUri, ignoreErrors);
+  return info?.size ?? 0;
+};
+
+const getDirSize = async (dirUri) => {
+  let total = 0;
+  await visitDirFilesRecursively({
+    dirUri,
+    visitor: async (fileUri) => {
+      const size = await getSize(fileUri);
+      total += size;
+    },
+  });
+  return total;
+};
+
+const exists = async (fileUri) => {
+  const info = await getInfo(fileUri);
+  return info?.exists;
+};
+
+const getFreeDiskStorage = async () => FileSystem.getFreeDiskStorageAsync();
+
+const jsonToString = (obj) => JSON.stringify(obj, null, 2);
+
 const getNameFromUri = (uri) => uri.substring(uri.lastIndexOf("/") + 1);
 
 const getExtension = (uri) => {
   const indexOfDot = uri.lastIndexOf(".");
   return indexOfDot < 0 || indexOfDot === uri.length
     ? ""
-    : uri.substring(indexOfDot + 1);
+    : uri.substring(indexOfDot + 1).toLocaleLowerCase();
 };
 
 const getMimeTypeFromUri = (uri) => {
@@ -107,21 +117,31 @@ const getMimeTypeFromUri = (uri) => {
 
 const getMimeTypeFromName = (fileName) => mime.getType(fileName);
 
-const getSize = async (fileUri, ignoreErrors = true) => {
-  const info = await getInfo(fileUri, ignoreErrors);
-  return info?.size ?? 0;
-};
+const readAsString = async (fileUri) => FileSystem.readAsStringAsync(fileUri);
 
 const readJsonFromFile = async ({ fileUri }) => {
-  const content = await FileSystem.readAsStringAsync(fileUri);
-  return JSON.parse(content);
+  if (await exists(fileUri)) {
+    const content = await readAsString(fileUri);
+    return JSON.parse(content);
+  }
+  return null;
+};
+
+const listDirectory = async (fileUri) => {
+  try {
+    return readDirectoryAsync(fileUri);
+  } catch (e) {
+    // ignore it
+    return [];
+  }
 };
 
 const copyFile = async ({ from, to }) => FileSystem.copyAsync({ from, to });
 
 const moveFile = async ({ from, to }) => FileSystem.moveAsync({ from, to });
 
-const del = async (fileUri) => FileSystem.deleteAsync(fileUri);
+const del = async (fileUri, ignoreErrors = false) =>
+  FileSystem.deleteAsync(fileUri, { idempotent: ignoreErrors });
 
 const moveFileToDownloadFolder = async (fileUri) => {
   const permissionsResponse = await MediaLibrary.requestPermissionsAsync(true);
@@ -196,12 +216,15 @@ export const Files = {
   getDirSize,
   getFreeDiskStorage,
   getInfo,
+  exists,
   getMimeTypeFromName,
   getMimeTypeFromUri,
   getNameFromUri,
   getExtension,
   getSize,
+  readAsString,
   readJsonFromFile,
+  listDirectory,
   isSharingAvailable,
   shareFile,
   copyFile,

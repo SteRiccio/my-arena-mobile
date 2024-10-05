@@ -8,14 +8,8 @@ const keys = {
 };
 
 const getRecordEditViewMode = (state) => state[keys.recordEditViewMode];
-const getScreenViewMode = (screenKey) => (state) => {
-  console.log("===screenKye", screenKey);
-  console.log("===state", state);
-  const result =
-    state?.[keys.viewModesByScreen]?.[screenKey] ?? ScreenViewMode.table;
-  console.log("===result", result);
-  return result;
-};
+const getScreenViewMode = (screenKey) => (state) =>
+  state?.[keys.viewModesByScreen]?.[screenKey] ?? ScreenViewMode.table;
 
 export const SurveyOptionsState = {
   stateKey,

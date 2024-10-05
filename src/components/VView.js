@@ -15,6 +15,4 @@ export const VView = (props) => {
   );
 };
 
-VView.defaultProps = {
-  style: {},
-};
+VView.propTypes = View.propTypes;

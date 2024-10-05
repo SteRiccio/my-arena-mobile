@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import { HView, RadioButton, RadioButtonGroup } from "components";
 import styles from "./styles";
@@ -21,4 +22,12 @@ export const NodeCodeSingleRadioComponent = (props) => {
       </HView>
     </RadioButtonGroup>
   );
+};
+
+NodeCodeSingleRadioComponent.propTypes = {
+  editable: PropTypes.bool,
+  itemLabelFunction: PropTypes.func,
+  items: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.any,
 };

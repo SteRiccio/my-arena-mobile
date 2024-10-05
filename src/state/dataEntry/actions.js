@@ -3,32 +3,52 @@ import { Keyboard } from "react-native";
 import {
   NodeDefs,
   NodeDefType,
+  Objects,
+  PointFactory,
+  Points,
   RecordFactory,
   Records,
   RecordUpdater,
   Surveys,
 } from "@openforis/arena-core";
 
+import { RecordOrigin, RecordLoadStatus } from "model";
 import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
 
-import { SystemUtils } from "utils";
+import { NumberUtils, SystemUtils } from "utils";
 
 import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
 import { SurveySelectors } from "../survey";
 
 import { RemoteConnectionSelectors } from "../remoteConnection";
+import { DataEntryActionTypes } from "./actionTypes";
 import { DataEntrySelectors } from "./selectors";
 import { exportRecords } from "./dataExportActions";
+import { DataEntryActionsRecordPreviousCycle } from "./actionsRecordPreviousCycle";
+import {
+  importRecordsFromFile,
+  importRecordsFromServer,
+} from "./actionsRecordsImport";
+import { cloneRecordsIntoDefaultCycle } from "./actionsRecordsClone";
 
-const RECORD_SET = "RECORD_SET";
-const PAGE_SELECTOR_MENU_OPEN_SET = "PAGE_SELECTOR_MENU_OPEN_SET";
-const PAGE_ENTITY_SET = "PAGE_ENTITY_SET";
-const PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET = "PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET";
-const DATA_ENTRY_RESET = "DATA_ENTRY_RESET";
+const {
+  DATA_ENTRY_RESET,
+  PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
+  PAGE_ENTITY_SET,
+  PAGE_SELECTOR_MENU_OPEN_SET,
+  RECORD_EDIT_LOCKED,
+  RECORD_SET,
+} = DataEntryActionTypes;
+
+const {
+  linkToRecordInPreviousCycle,
+  unlinkFromRecordInPreviousCycle,
+  updatePreviousCyclePageEntity,
+} = DataEntryActionsRecordPreviousCycle;
 
 const removeNodesFlags = (nodes) => {
   Object.values(nodes).forEach((node) => {
@@ -45,6 +65,7 @@ const createNewRecord =
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const cycle = Surveys.getDefaultCycleKey(survey);
+    // to always use the selected cycle, use this: const cycle = SurveySelectors.selectCurrentSurveyCycle(state);
     const appInfo = SystemUtils.getRecordAppInfo();
     const recordEmpty = RecordFactory.createInstance({
       surveyUuid: survey.uuid,
@@ -63,7 +84,7 @@ const createNewRecord =
 
     record = await RecordService.insertRecord({ survey, record });
 
-    dispatch(editRecord({ navigation, record }));
+    dispatch(editRecord({ navigation, record, locked: false }));
   };
 
 const addNewEntity = async (dispatch, getState) => {
@@ -131,19 +152,71 @@ const deleteRecords = (recordUuids) => async (dispatch, getState) => {
 };
 
 const editRecord =
-  ({ navigation, record }) =>
+  ({ navigation, record, locked = true }) =>
   (dispatch) => {
-    dispatch({ type: RECORD_SET, record });
+    dispatch({
+      type: RECORD_SET,
+      record,
+      recordEditLockAvailable: locked,
+      recordEditLocked: locked,
+    });
     navigation.navigate(screenKeys.recordEditor);
   };
 
+const _fetchAndEditRecordInternal = async ({
+  dispatch,
+  navigation,
+  survey,
+  recordId,
+}) => {
+  const record = await RecordService.fetchRecord({ survey, recordId });
+  await dispatch(editRecord({ navigation, record }));
+};
+
 const fetchAndEditRecord =
-  ({ navigation, recordId }) =>
+  ({ navigation, recordSummary }) =>
   async (dispatch, getState) => {
     const state = getState();
     const survey = SurveySelectors.selectCurrentSurvey(state);
-    const record = await RecordService.fetchRecord({ survey, recordId });
-    dispatch(editRecord({ navigation, record }));
+    const {
+      id: recordId,
+      uuid: recordUuid,
+      origin,
+      loadStatus,
+    } = recordSummary;
+    if (
+      origin === RecordOrigin.remote &&
+      loadStatus !== RecordLoadStatus.complete
+    ) {
+      dispatch(
+        ConfirmActions.show({
+          confirmButtonTextKey: "dataEntry:records.importRecord",
+          messageKey: "dataEntry:records.confirmImportRecordFromServer",
+          onConfirm: () => {
+            dispatch(
+              importRecordsFromServer({
+                recordUuids: [recordUuid],
+                onImportComplete: async () => {
+                  await _fetchAndEditRecordInternal({
+                    dispatch,
+                    navigation,
+                    survey,
+                    recordId,
+                  });
+                },
+              })
+            );
+          },
+        })
+      );
+    } else {
+      await _fetchAndEditRecordInternal({
+        dispatch,
+        navigation,
+        survey,
+        recordId,
+      });
+    }
   };
 
 const updateAttribute =
@@ -159,7 +232,7 @@ const updateAttribute =
       uuid: node.nodeDefUuid,
     });
 
-    const { record: recordUpdated, nodes: nodesUpdated } =
+    let { record: recordUpdated, nodes: nodesUpdated } =
       await RecordUpdater.updateAttributeValue({
         survey,
         record,
@@ -192,9 +265,77 @@ const updateAttribute =
       }
       dispatch(DeviceInfoActions.updateFreeDiskStorage());
     }
-    await RecordService.updateRecord({ survey, record: recordUpdated });
+    recordUpdated = await RecordService.updateRecord({
+      survey,
+      record: recordUpdated,
+    });
 
-    dispatch({ type: RECORD_SET, record: recordUpdated });
+    await dispatch({ type: RECORD_SET, record: recordUpdated });
+
+    if (
+      DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state) &&
+      NodeDefs.isKey(nodeDef)
+    ) {
+      dispatch(unlinkFromRecordInPreviousCycle());
+    }
+  };
+
+const performCoordinateValueSrsConversion =
+  ({ nodeUuid, srsTo }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const survey = SurveySelectors.selectCurrentSurvey(state);
+    const record = DataEntrySelectors.selectRecord(state);
+    const srsIndex = Surveys.getSRSIndex(survey);
+
+    const node = Records.getNodeByUuid(nodeUuid)(record);
+    const prevValue = node?.value ?? {};
+    const { x, y, srs } = prevValue;
+    const pointFrom = PointFactory.createInstance({ x, y, srs });
+    const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
+    const nextValue = {
+      ...prevValue,
+      x: NumberUtils.roundToDecimals(pointTo.x, 6),
+      y: NumberUtils.roundToDecimals(pointTo.y, 6),
+      srs: srsTo,
+    };
+    dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
+  };
+
+const updateCoordinateValueSrs =
+  ({ nodeUuid, srsTo }) =>
+  async (dispatch, getState) => {
+    const state = getState();
+    const record = DataEntrySelectors.selectRecord(state);
+
+    const node = Records.getNodeByUuid(nodeUuid)(record);
+    const prevValue = node?.value ?? {};
+    const { x, y, srs } = prevValue;
+
+    if (srsTo === srs) return;
+
+    const nextValue = {
+      ...prevValue,
+      x: Objects.isEmpty(x) ? 0 : x,
+      y: Objects.isEmpty(y) ? 0 : y,
+      srs: srsTo,
+    };
+    if (Objects.isEmpty(x) || Objects.isEmpty(y)) {
+      dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
+    } else {
+      dispatch(
+        ConfirmActions.show({
+          messageKey: "dataEntry:coordinate.confirmConvertCoordinate",
+          messageParams: { srsFrom: srs, srsTo },
+          confirmButtonTextKey: "dataEntry:coordinate.convert",
+          cancelButtonTextKey: "dataEntry:coordinate.keepXAndY",
+          onConfirm: () =>
+            dispatch(performCoordinateValueSrsConversion({ nodeUuid, srsTo })),
+          onCancel: () =>
+            dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue })),
+        })
+      );
+    }
   };
 
 const addNewAttribute =
@@ -250,12 +391,17 @@ const selectCurrentPageEntity =
       return;
     }
 
-    dispatch({
-      type: PAGE_ENTITY_SET,
+    const payload = {
       parentEntityUuid,
       entityDefUuid,
       entityUuid: nextEntityUuid,
-    });
+    };
+
+    dispatch({ type: PAGE_ENTITY_SET, payload });
+
+    if (DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state)) {
+      dispatch(updatePreviousCyclePageEntity);
+    }
 
     dispatch(closeRecordPageMenu);
   };
@@ -281,14 +427,20 @@ const closeRecordPageMenu = (dispatch, getState) => {
   }
 };
 
+const toggleRecordEditLock = (dispatch, getState) => {
+  Keyboard.dismiss();
+  const state = getState();
+  const locked = DataEntrySelectors.selectRecordEditLocked(state);
+  dispatch({ type: RECORD_EDIT_LOCKED, locked: !locked });
+};
+
 const navigateToRecordsList =
   ({ navigation }) =>
   (dispatch) => {
     dispatch(
       ConfirmActions.show({
         confirmButtonTextKey: "dataEntry:goToListOfRecords",
-        messageKey:
-          "dataEntry:confirmGoToListOfRecordsAndTerminateRecordEditing",
+        messageKey: "dataEntry:confirmGoToListOfRecords",
         onConfirm: () => {
           dispatch({ type: DATA_ENTRY_RESET });
           navigation.navigate(screenKeys.recordsList);
@@ -298,12 +450,6 @@ const navigateToRecordsList =
   };
 
 export const DataEntryActions = {
-  RECORD_SET,
-  PAGE_ENTITY_SET,
-  PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET,
-  PAGE_SELECTOR_MENU_OPEN_SET,
-  DATA_ENTRY_RESET,
-
   createNewRecord,
   addNewEntity,
   addNewAttribute,
@@ -311,10 +457,19 @@ export const DataEntryActions = {
   deleteRecords,
   fetchAndEditRecord,
   updateAttribute,
+  updateCoordinateValueSrs,
   selectCurrentPageEntity,
   selectCurrentPageEntityActiveChildIndex,
   toggleRecordPageMenuOpen,
+  toggleRecordEditLock,
 
   navigateToRecordsList,
   exportRecords,
+
+  linkToRecordInPreviousCycle,
+  unlinkFromRecordInPreviousCycle,
+
+  importRecordsFromFile,
+  importRecordsFromServer,
+  cloneRecordsIntoDefaultCycle,
 };
