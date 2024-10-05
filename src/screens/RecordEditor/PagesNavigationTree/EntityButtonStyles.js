@@ -1,11 +1,16 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  entityButton: {
+  entityButtonContent: {
+    flex: 1,
+    alignItems: "baseline",
+    justifyContent: "space-between",
+  },
+  entityButtonText: {
     fontSize: 20,
     fontWeight: "normal",
   },
-  entityButtonCurrentEntity: {
+  entityButtonCurrentEntityText: {
     fontSize: 24,
     fontWeight: "bold",
   },

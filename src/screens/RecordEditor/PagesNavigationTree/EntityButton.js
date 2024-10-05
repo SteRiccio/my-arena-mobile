@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
+import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
 import { HView, Icon, Text } from "components";
@@ -6,7 +8,8 @@ import { DataEntryActions } from "state";
 
 import styles from "./EntityButtonStyles";
 
-export const EntityButton = ({ treeNode, isCurrentEntity }) => {
+export const EntityButton = (props) => {
+  const { treeNode, isCurrentEntity } = props;
   const { label, entityPointer, isNotValid } = treeNode;
 
   const dispatch = useDispatch();
@@ -21,7 +24,7 @@ export const EntityButton = ({ treeNode, isCurrentEntity }) => {
         <Text
           style={
             isCurrentEntity
-              ? styles.currentEntityButtonText
+              ? styles.entityButtonCurrentEntityText
               : styles.entityButtonText
           }
           textKey={label}
