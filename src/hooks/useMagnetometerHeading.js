@@ -1,5 +1,13 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Magnetometer } from "expo-sensors";
-import { useCallback, useEffect, useRef, useState } from "react";
+
+import { Numbers, Objects } from "@openforis/arena-core";
+
+import { AverageAnglePicker } from "utils/AverageAnglePicker";
+import { Functions } from "utils/Functions";
+
+const updateHeadingThrottleDelay = 200;
+const averageAnglePicker = new AverageAnglePicker();
 
 const radsToDegrees = (rads) =>
   (rads >= 0 ? rads : rads + 2 * Math.PI) * (180 / Math.PI);
@@ -12,51 +20,66 @@ const magnetometerDataToAngle = (magnetometer) => {
     angle = radsToDegrees(rads);
   }
   // Match the device top with 0° degree angle (by default 0° starts from the right of the device)
-  let result = Math.round(angle) - 90;
-  if (result < 0) {
-    result += 360;
-  }
+  let result = Numbers.roundToPrecision(angle, 1) - 90;
+  result = Numbers.absMod(360)(result);
   return result;
 };
 
 export const useMagnetometerHeading = () => {
   const magnetometerSubscriptionRef = useRef(null);
-  const [state, setState] = useState({
-    magnetometerAvailable: true,
-    heading: 0,
-  });
+  const lastMagnetometerAngleRef = useRef(0);
 
-  const { magnetometerAvailable, heading } = state;
+  const [magnetometerAvailable, setMagnetometerAvailable] = useState(true);
+  const [heading, setHeading] = useState(0);
 
-  const onMagnetometerData = useCallback((data) => {
-    setState((statePrev) => ({
-      ...statePrev,
-      heading: magnetometerDataToAngle(data),
-    }));
+  const updateHeading = useCallback(() => {
+    const lastHeading = lastMagnetometerAngleRef.current;
+    if (Objects.isNotEmpty(lastHeading)) {
+      setHeading(lastHeading);
+    }
   }, []);
 
-  const checkMagnetomterAvailable = useCallback(async () => {
-    let available = false;
+  const throttledUpdateHeading = useMemo(
+    () => Functions.throttle(updateHeading, updateHeadingThrottleDelay),
+    [updateHeading]
+  );
+
+  const onMagnetometerData = useCallback(
+    (data) => {
+      const prevMagnetometerAngle = lastMagnetometerAngleRef.current;
+      const magnetometerAngle = magnetometerDataToAngle(data);
+      let avgAngle = averageAnglePicker.push(magnetometerAngle);
+      avgAngle = Numbers.absMod(360)(avgAngle);
+
+      lastMagnetometerAngleRef.current = avgAngle;
+
+      if (avgAngle !== prevMagnetometerAngle) {
+        throttledUpdateHeading();
+      }
+    },
+    [throttledUpdateHeading]
+  );
+
+  const subscribeToMagnetometerData = useCallback(async () => {
     try {
-      available = await Magnetometer.isAvailableAsync();
+      const available = await Magnetometer.isAvailableAsync();
       if (available) {
         magnetometerSubscriptionRef.current =
           Magnetometer.addListener(onMagnetometerData);
+      } else {
+        setMagnetometerAvailable(false);
       }
-    } catch (_error) {}
-    setState((statePrev) => ({
-      ...statePrev,
-      magnetometerAvailable: available,
-    }));
-  }, [onMagnetometerData]);
+    } catch (_error) {
+      setMagnetometerAvailable(false);
+    }
+  }, [onMagnetometerData, setMagnetometerAvailable]);
 
   useEffect(() => {
-    checkMagnetomterAvailable();
-
+    subscribeToMagnetometerData();
     return () => {
       magnetometerSubscriptionRef.current?.remove();
     };
-  }, [checkMagnetomterAvailable]);
+  }, [subscribeToMagnetometerData]);
 
   return { magnetometerAvailable, heading };
 };
