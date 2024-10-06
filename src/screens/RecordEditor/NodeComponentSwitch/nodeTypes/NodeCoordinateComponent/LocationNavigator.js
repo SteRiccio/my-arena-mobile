@@ -30,6 +30,17 @@ const arrowToTargetHeight = compassImageSize * 0.7;
 const targetLocationBoxWidth = compassImageSize * 0.7;
 const targetLocationMarkerHeight = height / 26;
 
+const compassWrapperStyle = {
+  height: compassImageSize,
+  width: compassImageSize,
+};
+
+const targetLocationMarkerStyle = {
+  alignSelf: "center",
+  height: targetLocationMarkerHeight,
+  resizeMode: "contain",
+};
+
 const getArrowImageByAngle = (angle) => {
   if (angle <= 20 || 360 - angle <= 20) return arrowUpGreen;
   if (angle <= 45 || 360 - angle <= 45) return arrowUpOrange;
@@ -72,6 +83,9 @@ export const LocationNavigator = (props) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
 
   const updateState = useCallback((params) => {
+    if (__DEV__) {
+      console.log("LocationNavigator: updateState");
+    }
     setState((statePrev) => ({ ...statePrev, ...params }));
   }, []);
 
@@ -163,12 +177,7 @@ export const LocationNavigator = (props) => {
         }}
       /> */}
 
-          <View
-            style={{
-              height: compassImageSize,
-              width: compassImageSize,
-            }}
-          >
+          <View style={compassWrapperStyle}>
             <Image
               source={compassBg}
               style={{
@@ -206,19 +215,12 @@ export const LocationNavigator = (props) => {
                   transform: [{ rotate: angleToTargetDifference + "deg" }],
                 }}
               >
-                <Image
-                  source={circleGreen}
-                  style={{
-                    alignSelf: "center",
-                    height: targetLocationMarkerHeight,
-                    resizeMode: "contain",
-                  }}
-                />
+                <Image source={circleGreen} style={targetLocationMarkerStyle} />
               </View>
             )}
           </View>
 
-          <HView style={{ justifyContent: "space-between" }}>
+          <HView style={styles.fieldsRow}>
             <FormItem labelKey="dataEntry:coordinate.accuracy">
               {formatNumber(accuracy, undefined, "m")}
             </FormItem>
@@ -226,9 +228,9 @@ export const LocationNavigator = (props) => {
               {formatNumber(distance, undefined, "m")}
             </FormItem>
           </HView>
-          <HView style={{ justifyContent: "space-between" }}>
+          <HView style={styles.fieldsRow}>
             <FormItem labelKey="dataEntry:coordinate.heading">
-              {formatNumber(heading, 0, Symbols.degree)}
+              {formatNumber(heading, 1, Symbols.degree)}
             </FormItem>
             <FormItem labelKey="dataEntry:coordinate.angleToTargetLocation">
               {formatNumber(angleToTarget, 0, Symbols.degree)}

@@ -133,8 +133,9 @@ export const useLocationWatch = ({
       { accuracy, distanceInterval },
       locationCallback
     );
-    locationWatchIntervalRef.current = setInterval(
-      () => {
+
+    if (stopOnTimeout) {
+      locationWatchIntervalRef.current = setInterval(() => {
         setState((statePrev) => {
           const elapsedTimeNext =
             statePrev.locationWatchElapsedTime +
@@ -145,12 +146,8 @@ export const useLocationWatch = ({
             locationWatchProgress: elapsedTimeNext / locationWatchTimeout,
           };
         });
-      },
-      locationWatchElapsedTimeIntervalDelay,
-      locationWatchTimeout
-    );
+      }, locationWatchElapsedTimeIntervalDelay);
 
-    if (stopOnTimeout) {
       locationAccuracyWatchTimeoutRef.current = setTimeout(() => {
         stopLocationWatch();
       }, locationWatchTimeout);
