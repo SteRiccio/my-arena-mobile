@@ -18,7 +18,6 @@ export const BreadcrumbItem = (props) => {
   return (
     <HView style={styles.item} transparent>
       <Button
-        avoidMultiplePress={false}
         compact
         labelStyle={styles.itemButtonLabel}
         mode={isLastItem ? "contained" : "outlined"}
