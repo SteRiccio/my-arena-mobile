@@ -1,7 +1,13 @@
-import { Numbers } from "@openforis/arena-core";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Magnetometer } from "expo-sensors";
-import { useCallback, useEffect, useRef, useState } from "react";
+
+import { Numbers, Objects } from "@openforis/arena-core";
+
 import { AverageAnglePicker } from "utils/AverageAnglePicker";
+import { Functions } from "utils/Functions";
+
+const updateHeadingThrottleDelay = 200;
+const averageAnglePicker = new AverageAnglePicker();
 
 const radsToDegrees = (rads) =>
   (rads >= 0 ? rads : rads + 2 * Math.PI) * (180 / Math.PI);
@@ -19,8 +25,6 @@ const magnetometerDataToAngle = (magnetometer) => {
   return result;
 };
 
-const averageAnglePicker = new AverageAnglePicker();
-
 export const useMagnetometerHeading = () => {
   const magnetometerSubscriptionRef = useRef(null);
   const lastMagnetometerAngleRef = useRef(0);
@@ -28,17 +32,33 @@ export const useMagnetometerHeading = () => {
   const [magnetometerAvailable, setMagnetometerAvailable] = useState(true);
   const [heading, setHeading] = useState(0);
 
-  const onMagnetometerData = useCallback((data) => {
-    const prevMagnetometerAngle = lastMagnetometerAngleRef.current;
-    const magnetometerAngle = magnetometerDataToAngle(data);
-    let avgAngle = averageAnglePicker.push(magnetometerAngle);
-    avgAngle = Numbers.absMod(360)(avgAngle);
-
-    if (avgAngle !== prevMagnetometerAngle) {
-      setHeading(avgAngle);
+  const updateHeading = useCallback(() => {
+    const lastHeading = lastMagnetometerAngleRef.current;
+    if (Objects.isNotEmpty(lastHeading)) {
+      setHeading(lastHeading);
     }
-    lastMagnetometerAngleRef.current = avgAngle;
   }, []);
+
+  const throttledUpdateHeading = useMemo(
+    () => Functions.throttle(updateHeading, updateHeadingThrottleDelay),
+    [updateHeading]
+  );
+
+  const onMagnetometerData = useCallback(
+    (data) => {
+      const prevMagnetometerAngle = lastMagnetometerAngleRef.current;
+      const magnetometerAngle = magnetometerDataToAngle(data);
+      let avgAngle = averageAnglePicker.push(magnetometerAngle);
+      avgAngle = Numbers.absMod(360)(avgAngle);
+
+      lastMagnetometerAngleRef.current = avgAngle;
+
+      if (avgAngle !== prevMagnetometerAngle) {
+        throttledUpdateHeading();
+      }
+    },
+    [throttledUpdateHeading]
+  );
 
   const subscribeToMagnetometerData = useCallback(async () => {
     try {
