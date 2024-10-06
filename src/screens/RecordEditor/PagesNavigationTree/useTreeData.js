@@ -7,6 +7,7 @@ import {
 } from "@openforis/arena-core";
 
 import { RecordNodes } from "model/utils/RecordNodes";
+import { ValidationUtils } from "model/utils/ValidationUtils";
 
 import { DataEntrySelectors, SurveySelectors } from "state";
 
@@ -41,11 +42,11 @@ const findNotValidTreeItemIds = ({ record, treeItemsById }) => {
           !!treeItemsById[visitedAncestor.nodeDefUuid],
       });
       if (notValidNodeInTree) {
-        acc.add(notValidNodeInTree.nodeDefUuid);
+        acc.treeItemIdsWithErrors.add(notValidNodeInTree.nodeDefUuid);
       }
       return acc;
     },
-    new Set()
+    { treeItemIdsWithErrors: new Set(), treeItemIdsWithWarnings: new Set() }
   );
 };
 
@@ -144,14 +145,14 @@ export const useTreeData = () => {
     });
   }
 
-  const notValidTreeItemsIds = findNotValidTreeItemIds({
-    record,
-    treeItemsById,
-  });
+  const { treeItemIdsWithErrors, treeItemIdsWithWarnings } =
+    findNotValidTreeItemIds({ record, treeItemsById });
 
-  notValidTreeItemsIds.forEach((notValidTreeItemId) => {
-    treeItemsById[notValidTreeItemId].isNotValid = true;
+  treeItemIdsWithErrors.forEach((treeItemId) => {
+    treeItemsById[treeItemId].hasErrors = true;
   });
-
+  treeItemIdsWithWarnings.forEach((treeItemId) => {
+    treeItemsById[treeItemId].hasWarnings = true;
+  });
   return [rootTreeItem];
 };

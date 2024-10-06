@@ -4,10 +4,10 @@ import { NodeDefs } from "@openforis/arena-core";
 
 import { Tooltip, WarningIconButton } from "components";
 import { useTranslation } from "localization";
-import { Validations } from "model/utils/Validations";
+import { ValidationUtils } from "model/utils/ValidationUtils";
 import { DataEntrySelectors, SurveySelectors } from "state";
 
-const { getJointErrorText, getJointWarningText } = Validations;
+const { getJointErrorText, getJointWarningText } = ValidationUtils;
 
 export const NodeValidationIcon = (props) => {
   const { nodeDef, parentNodeUuid } = props;
