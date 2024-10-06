@@ -61,7 +61,7 @@ const _processFieldValidation = ({
       uuid: notValidNodeDefUuid,
     });
     notValidNodeDefUuids.forEach((uuid) => {
-      if (!!treeItemsById[uuid]) {
+      if (treeItemsById[uuid]) {
         acc.treeItemIdsWithErrors.add(uuid);
       }
     });
