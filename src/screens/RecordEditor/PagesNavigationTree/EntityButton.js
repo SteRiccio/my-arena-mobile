@@ -24,17 +24,20 @@ export const EntityButton = (props) => {
     return undefined;
   }, [hasErrors, hasWarnings]);
 
+  const textStyle = useMemo(
+    () => [
+      styles.entityButtonText,
+      isCurrentEntity
+        ? styles.entityButtonCurrentEntityText
+        : styles.entityButtonNonCurrentEntityText,
+    ],
+    [isCurrentEntity]
+  );
+
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={{ flex: 1 }}>
       <HView style={styles.entityButtonContent} transparent>
-        <Text
-          style={
-            isCurrentEntity
-              ? styles.entityButtonCurrentEntityText
-              : styles.entityButtonText
-          }
-          textKey={label}
-        />
+        <Text style={textStyle} textKey={label} />
         {alertIconColor && <Icon color={alertIconColor} source="alert" />}
       </HView>
     </TouchableOpacity>

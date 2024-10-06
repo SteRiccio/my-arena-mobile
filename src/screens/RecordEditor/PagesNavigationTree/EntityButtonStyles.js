@@ -7,6 +7,10 @@ export default StyleSheet.create({
     justifyContent: "space-between",
   },
   entityButtonText: {
+    flex: 1,
+    flexWrap: "wrap",
+  },
+  entityButtonNonCurrentEntityText: {
     fontSize: 20,
     fontWeight: "normal",
   },

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  NodeDefs,
   NodeDefType,
   NodeValueFormatter,
   Objects,
@@ -26,7 +27,7 @@ export const NodeValuePreview = (props) => {
   const { nodeDef, value } = props;
 
   if (__DEV__) {
-    console.log("rendering NodeValuePreview");
+    console.log(`rendering NodeValuePreview for ${NodeDefs.getName(nodeDef)}`);
   }
 
   const survey = SurveySelectors.useCurrentSurvey();

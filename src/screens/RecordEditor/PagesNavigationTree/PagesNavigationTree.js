@@ -17,7 +17,6 @@ const TreeNode = ({ node: treeNode, level, isExpanded, hasChildrenNodes }) => {
       marginLeft: isRoot ? 0 : 20 * (level - 1),
       fontSize: 18,
       gap: 2,
-      height: 30,
       backgroundColor: "transparent",
       alignItems: "center",
     }),
