@@ -49,7 +49,6 @@ export class AverageAnglePicker {
     const items = this._queue.items;
     const { min, max } = this._calculateMinMax();
     const hasToAdapt = max - min > 180;
-    const size = items.length;
     items.forEach((item, index) => {
       const weight = this._calculateItemWeight(index);
       const value =
