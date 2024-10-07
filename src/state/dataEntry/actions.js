@@ -3,6 +3,7 @@ import { Keyboard } from "react-native";
 import {
   NodeDefs,
   NodeDefType,
+  Numbers,
   Objects,
   PointFactory,
   Points,
@@ -18,7 +19,7 @@ import { RecordFileService } from "service/recordFileService";
 
 import { screenKeys } from "screens/screenKeys";
 
-import { NumberUtils, SystemUtils } from "utils";
+import { SystemUtils } from "utils";
 
 import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
@@ -295,8 +296,8 @@ const performCoordinateValueSrsConversion =
     const pointTo = Points.transform(pointFrom, srsTo, srsIndex);
     const nextValue = {
       ...prevValue,
-      x: NumberUtils.roundToDecimals(pointTo.x, 6),
-      y: NumberUtils.roundToDecimals(pointTo.y, 6),
+      x: Numbers.roundToPrecision(pointTo.x, 6),
+      y: Numbers.roundToPrecision(pointTo.y, 6),
       srs: srsTo,
     };
     dispatch(updateAttribute({ uuid: nodeUuid, value: nextValue }));
