@@ -1,10 +1,9 @@
 import * as Battery from "expo-battery";
 import * as Device from "expo-device";
-import * as ExpoScreenOrientation from "expo-screen-orientation";
 import NetInfo from "@react-native-community/netinfo";
 
-import { BatteryState, ScreenOrientation } from "model";
-import { Files } from "utils";
+import { BatteryState } from "model";
+import { Files, SystemUtils } from "utils";
 
 import { DeviceInfoSelectors } from "./selectors";
 
@@ -39,15 +38,10 @@ const initDeviceInfo = () => async (dispatch) => {
   const freeDiskStorage = await Files.getFreeDiskStorage();
   const { isConnected: isNetworkConnected } = await NetInfo.fetch();
 
-  const orientationExpo = await ExpoScreenOrientation.getOrientationAsync();
-  const orientation = ScreenOrientation.fromExpoOrientation(orientationExpo);
+  const orientation = await SystemUtils.getOrientation();
 
-  ExpoScreenOrientation.addOrientationChangeListener((event) => {
-    const { orientationInfo } = event;
-    const { orientation: orientationNext } = orientationInfo;
-    dispatch(
-      updateOrientation(ScreenOrientation.fromExpoOrientation(orientationNext))
-    );
+  SystemUtils.addOrientationChangeListener((orientation) => {
+    dispatch(updateOrientation(orientation));
   });
 
   dispatch(
