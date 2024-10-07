@@ -23,6 +23,7 @@ export default {
   cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
   options: "Options",
+  editNodeDef: "Edit {{nodeDef}}",
   errorFetchingRecordsSyncStatus:
     "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:

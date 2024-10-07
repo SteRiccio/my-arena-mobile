@@ -19,7 +19,7 @@ export const EntityButton = (props) => {
   }, [dispatch, entityPointer]);
 
   const alertIconColor = useMemo(() => {
-    if (hasErrors) return "darkred";
+    if (hasErrors) return "red";
     if (hasWarnings) return "orange";
     return undefined;
   }, [hasErrors, hasWarnings]);
@@ -35,7 +35,7 @@ export const EntityButton = (props) => {
   );
 
   return (
-    <TouchableOpacity onPress={onPress} style={{ flex: 1 }}>
+    <TouchableOpacity onPress={onPress} style={styles.entityButtonWrapper}>
       <HView style={styles.entityButtonContent} transparent>
         <Text style={textStyle} textKey={label} />
         {alertIconColor && <Icon color={alertIconColor} source="alert" />}

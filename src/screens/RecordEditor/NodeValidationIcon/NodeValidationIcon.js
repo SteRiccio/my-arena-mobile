@@ -11,7 +11,7 @@ const { getJointErrorText, getJointWarningText } = ValidationUtils;
 
 const colors = {
   tooltipBackgroundColor: {
-    error: "darkred",
+    error: "red",
     warning: "orange",
   },
   tooltipTextColor: {
