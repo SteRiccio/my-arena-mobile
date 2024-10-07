@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
 
 import { RecordNodes } from "model";
-import { Validations } from "model/utils/Validations";
+import { ValidationUtils } from "model/utils/ValidationUtils";
 import { useTranslation } from "localization";
 
 import { DataEntrySelectors } from "state/dataEntry";
@@ -80,7 +80,7 @@ export const RecordValidationReport = () => {
           });
           const parentNodeUuid = node.parentUuid;
           const path = getNodePath({ survey, record, nodeUuid, lang });
-          const error = Validations.getJointErrorText({
+          const error = ValidationUtils.getJointErrorText({
             validation: validationResult,
             t,
             customMessageLang: lang,

@@ -4,7 +4,6 @@ export { Environment } from "./Environment";
 export { Files } from "./Files";
 export { Functions } from "./Functions";
 export { ImageUtils } from "./ImageUtils";
-export { NumberUtils } from "./NumberUtils";
 export { Permissions } from "./Permissions";
 export { Refs } from "./Refs";
 export { SystemUtils } from "./SystemUtils";

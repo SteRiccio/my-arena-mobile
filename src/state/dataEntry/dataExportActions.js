@@ -10,7 +10,7 @@ import { MessageActions } from "../message";
 
 import { SurveySelectors } from "../survey";
 import { Files } from "utils";
-import { Validations } from "model/utils/Validations";
+import { ValidationUtils } from "model/utils/ValidationUtils";
 
 const { t } = i18n;
 
@@ -97,7 +97,7 @@ const _onExportFileGenerationError = ({ errors, dispatch }) => {
   const validationErrors = Object.values(errors).map((item) => item.error);
   const details = validationErrors
     .map((validationError) =>
-      Validations.getJointErrorText({
+      ValidationUtils.getJointErrorText({
         validation: validationError,
         t,
       })

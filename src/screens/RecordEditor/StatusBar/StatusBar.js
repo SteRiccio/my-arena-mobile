@@ -199,7 +199,9 @@ export const StatusBar = () => {
             </HView>
           )}
           {locationGpsLocked && <Icon source="crosshairs-gps" />}
+
           <Icon source={isNetworkConnected ? "web" : "cloud-off-outline"} />
+
           <HView>
             <Icon source="chart-pie" />
             <Text variant="titleSmall">

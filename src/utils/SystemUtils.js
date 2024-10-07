@@ -1,7 +1,10 @@
-import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import * as Application from "expo-application";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import * as ExpoScreenOrientation from "expo-screen-orientation";
+
 import { Dates } from "@openforis/arena-core";
 
+import { ScreenOrientation } from "model";
 import { Environment } from "./Environment";
 
 const { nativeBuildVersion: buildNumber, nativeApplicationVersion: version } =
@@ -19,6 +22,16 @@ let Clipboard;
 if (!isExpoGo) {
   Clipboard = require("@react-native-clipboard/clipboard")?.default;
 }
+
+const copyValueToClipboard = (value) => {
+  try {
+    Clipboard?.setString(value);
+    return true;
+  } catch (_error) {
+    // ignore it
+    return false;
+  }
+};
 
 const getLastUpdateTime = async () =>
   isAndroid ? Application.getLastUpdateTimeAsync() : null;
@@ -56,20 +69,36 @@ const setKeepScreenAwake = async (keepScreenAwake) => {
   }
 };
 
-const copyValueToClipboard = (value) => {
-  try {
-    Clipboard?.setString(value);
-    return true;
-  } catch (_error) {
-    // ignore it
-    return false;
-  }
+const getOrientation = async () => {
+  const orientationExpo = await ExpoScreenOrientation.getOrientationAsync();
+  return ScreenOrientation.fromExpoOrientation(orientationExpo);
+};
+
+const addOrientationChangeListener = (handler) => {
+  ExpoScreenOrientation.addOrientationChangeListener((event) => {
+    const orientationNext = event?.orientationInfo?.orientation;
+    handler(ScreenOrientation.fromExpoOrientation(orientationNext));
+  });
+};
+
+const lockOrientationToPortrait = async () => {
+  await ExpoScreenOrientation.lockAsync(
+    ExpoScreenOrientation.OrientationLock.PORTRAIT_UP
+  );
+};
+
+const unlockOrientation = async () => {
+  await ExpoScreenOrientation.unlockAsync();
 };
 
 export const SystemUtils = {
+  addOrientationChangeListener,
+  copyValueToClipboard,
   getApplicationInfo,
+  getOrientation,
   getRecordAppInfo,
   setFullScreen,
   setKeepScreenAwake,
-  copyValueToClipboard,
+  lockOrientationToPortrait,
+  unlockOrientation,
 };

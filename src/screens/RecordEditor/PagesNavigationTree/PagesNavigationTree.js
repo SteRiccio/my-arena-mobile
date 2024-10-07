@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import TreeView from "react-native-final-tree-view";
 import PropTypes from "prop-types";
@@ -10,25 +10,21 @@ import { EntityButton } from "./EntityButton";
 import { Indicator } from "./Indicator";
 import { useTreeData } from "./useTreeData";
 
-const TreeNodeRenderer = ({
-  node: treeNode,
-  level,
-  isExpanded,
-  hasChildrenNodes,
-}) => {
+const TreeNode = ({ node: treeNode, level, isExpanded, hasChildrenNodes }) => {
   const { isCurrentEntity, isRoot } = treeNode;
+  const style = useMemo(
+    () => ({
+      marginLeft: isRoot ? 0 : 20 * (level - 1),
+      fontSize: 18,
+      gap: 2,
+      backgroundColor: "transparent",
+      alignItems: "center",
+    }),
+    [isRoot, level]
+  );
 
   return (
-    <HView
-      style={{
-        marginLeft: isRoot ? 0 : 20 * (level - 1),
-        fontSize: 18,
-        gap: 2,
-        height: 30,
-        backgroundColor: "transparent",
-        alignItems: "center",
-      }}
-    >
+    <HView style={style}>
       {!isRoot && (
         <Indicator
           isExpanded={isExpanded}
@@ -40,7 +36,7 @@ const TreeNodeRenderer = ({
   );
 };
 
-TreeNodeRenderer.propTypes = {
+TreeNode.propTypes = {
   node: PropTypes.object.isRequired,
   level: PropTypes.number.isRequired,
   isExpanded: PropTypes.bool,
@@ -68,7 +64,7 @@ export const PagesNavigationTree = () => {
         data={data}
         initialExpanded
         onNodePress={onNodePress}
-        renderNode={TreeNodeRenderer}
+        renderNode={TreeNode}
       />
     </ScrollView>
   );

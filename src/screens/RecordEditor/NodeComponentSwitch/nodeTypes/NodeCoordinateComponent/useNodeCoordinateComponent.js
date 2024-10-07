@@ -19,17 +19,12 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
-import { NumberUtils } from "utils";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 
 const stringToNumber = (str) => Numbers.toNumber(str);
 const numberToString = (num, roundToDecimals = NaN) => {
   if (Objects.isEmpty(num)) return "";
-  return String(
-    Number.isNaN(roundToDecimals)
-      ? num
-      : NumberUtils.roundToDecimals(num, roundToDecimals)
-  );
+  return String(Numbers.roundToPrecision(num, roundToDecimals));
 };
 const pointToUiValue = ({ x, y, srs }) => ({
   x: numberToString(x),
@@ -51,8 +46,8 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
   const includedExtraFields = NodeDefs.getCoordinateAdditionalFields(nodeDef);
 
   const result = pointToUiValue({
-    x: NumberUtils.roundToDecimals(x, 6),
-    y: NumberUtils.roundToDecimals(y, 6),
+    x: Numbers.roundToPrecision(x, 6),
+    y: Numbers.roundToPrecision(y, 6),
     srs: srsTo,
   });
 

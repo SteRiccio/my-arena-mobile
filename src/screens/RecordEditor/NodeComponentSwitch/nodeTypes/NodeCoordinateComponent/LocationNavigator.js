@@ -8,6 +8,7 @@ import { Objects, Points } from "@openforis/arena-core";
 import { useLocationWatch, useMagnetometerHeading } from "hooks";
 import { Button, FormItem, HView, Modal, Text, View, VView } from "components";
 import { SurveySelectors } from "state";
+import { SystemUtils } from "utils";
 
 import styles from "./locationNavigatorStyles";
 
@@ -144,9 +145,11 @@ export const LocationNavigator = (props) => {
 
   useEffect(() => {
     startLocationWatch();
+    SystemUtils.lockOrientationToPortrait();
 
     return () => {
       stopLocationWatch();
+      SystemUtils.unlockOrientation();
     };
   }, [startLocationWatch, stopLocationWatch]);
 

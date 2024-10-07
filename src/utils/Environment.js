@@ -1,5 +1,5 @@
-import Constants, { ExecutionEnvironment } from "expo-constants";
 import { Platform } from "react-native";
+import Constants, { ExecutionEnvironment } from "expo-constants";
 
 const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;

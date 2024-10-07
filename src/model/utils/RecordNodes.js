@@ -202,7 +202,18 @@ const getCoordinateDistanceTarget = ({ survey, nodeDef, record, node }) => {
   return null;
 };
 
-const cleanupAttributeValue = ({ value, attributeDef }) => {
+const findAncestor = ({ record, node, predicate }) => {
+  let result = null;
+  Records.visitAncestorsAndSelf(node, (visitedAncestor) => {
+    if (!result && predicate(visitedAncestor)) {
+      result = visitedAncestor;
+    }
+  })(record);
+  return result;
+}
+
+
+  const cleanupAttributeValue = ({ value, attributeDef }) => {
   if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
     const additionalFields =
       NodeDefs.getCoordinateAdditionalFields(attributeDef);
@@ -232,5 +243,6 @@ export const RecordNodes = {
   getApplicableChildrenEntityDefs,
   getSiblingNode,
   getCoordinateDistanceTarget,
+  findAncestor,
   cleanupAttributeValue,
 };

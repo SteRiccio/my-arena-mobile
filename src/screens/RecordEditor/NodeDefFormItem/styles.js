@@ -22,7 +22,7 @@ export const useStyles = () => {
       width: "100%",
     },
     nodeDefLabel: {
-      flexGrow: 1,
+      flex: 1,
     },
     nodeDefDescriptionViewMoreText: {
       textAlign: "justify",
