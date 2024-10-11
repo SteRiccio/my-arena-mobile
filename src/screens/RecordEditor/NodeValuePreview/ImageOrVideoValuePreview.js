@@ -3,7 +3,7 @@ import { TouchableHighlight } from "react-native";
 
 import { NodeDefFileType } from "@openforis/arena-core";
 
-import { IconButton, Image, ImagePreviewDialog, VView } from "components";
+import { IconButton, Image, ImagePreviewDialog, Text, VView } from "components";
 import { RecordFileService } from "service";
 import { SurveySelectors } from "state";
 import { Files } from "utils";
@@ -27,7 +27,7 @@ export const ImageOrVideoValuePreview = (props) => {
       ? RecordFileService.getRecordFileUri({ surveyId, fileUuid })
       : null;
     setFileUri(fileUri);
-  }, [fileUuid]);
+  }, [fileUuid, surveyId]);
 
   const onFileOpenPress = useCallback(async () => {
     const mimeType = Files.getMimeTypeFromName(fileName);

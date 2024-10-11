@@ -76,7 +76,7 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
       minDistance,
       minDistanceItems,
     };
-  }, [pointLatLong, srsIndex]);
+  }, [items, pointLatLong, srsIndex]);
 
   useEffect(() => {
     if (items && locationFetched && pointLatLong) {
@@ -94,7 +94,7 @@ export const NodeCodeFindClosestSamplingPointDialog = ({
         minDistanceItems,
       }));
     }
-  }, [items, locationFetched, pointLatLong]);
+  }, [findItemsWithMinDistance, items, locationFetched, pointLatLong]);
 
   const onUseSelectedItemPress = useCallback(() => {
     onItemSelected(selectedMinDistanceItem);

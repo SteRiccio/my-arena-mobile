@@ -1,18 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 
-import { NodeDefs, Records, Surveys } from "@openforis/arena-core";
-
-import { RecordNodes } from "model/utils/RecordNodes";
-import { SurveySelectors } from "../../../state/survey/selectors";
 import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { Button, HView, Icon } from "../../../components";
+import { HView } from "../../../components";
 import { DataEntryActions } from "../../../state/dataEntry/actions";
+import { BreadcrumbItem } from "./BreadcrumbItem";
+import { useBreadcrumbItems } from "./useBreadcrumbItems";
 
 import styles from "./styles";
-
-const Separator = () => <Icon source="greater-than" />;
 
 export const Breadcrumbs = () => {
   if (__DEV__) {
@@ -21,112 +17,36 @@ export const Breadcrumbs = () => {
   const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
 
-  const survey = SurveySelectors.useCurrentSurvey();
-  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
-  const record = DataEntrySelectors.useRecord();
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
-  const { entityUuid, parentEntityUuid, entityDef } = currentPageEntity;
-  const actualEntityUuid = entityUuid || parentEntityUuid;
-
-  const itemLabelFunction = useCallback(
-    ({ nodeDef, record = null, entity = null, parentEntity = null }) => {
-      const nodeDefLabel = NodeDefs.getLabelOrName(nodeDef, lang);
-
-      if (
-        NodeDefs.isRoot(nodeDef) ||
-        (NodeDefs.isMultiple(nodeDef) && parentEntity)
-      ) {
-        const keyValuesByName =
-          RecordNodes.getEntitySummaryValuesByNameFormatted({
-            survey,
-            record,
-            entity,
-            lang,
-          });
-        return nodeDefLabel + `[${Object.values(keyValuesByName)}]`;
-      }
-      return nodeDefLabel;
-    },
-    [lang, survey]
-  );
+  const { entityDef } = currentPageEntity;
+  const entityDefUuid = entityDef.uuid;
 
   useEffect(() => {
-    // scroll to the end (right)
+    // scroll to the end (right) when selected entity changes
     scrollViewRef?.current?.scrollToEnd({ animated: true });
-  }, [actualEntityUuid]);
+  }, [entityDefUuid]);
 
-  const items = useMemo(() => {
-    if (!actualEntityUuid) return [];
+  const items = useBreadcrumbItems();
 
-    const _items = [];
-
-    if (parentEntityUuid && !entityUuid) {
-      _items.push({
-        parentEntityUuid,
-        entityDefUuid: entityDef.uuid,
-        entityUuid: null,
-        name: itemLabelFunction({ nodeDef: entityDef }),
-      });
-    }
-
-    let currentEntity = Records.getNodeByUuid(actualEntityUuid)(record);
-
-    while (currentEntity) {
-      const parentEntity = Records.getParent(currentEntity)(record);
-
-      const currentEntityDef = Surveys.getNodeDefByUuid({
-        survey,
-        uuid: currentEntity.nodeDefUuid,
-      });
-      const itemName = itemLabelFunction({
-        nodeDef: currentEntityDef,
-        record,
-        parentEntity,
-        entity: currentEntity,
-      });
-
-      _items.unshift({
-        parentEntityUuid: parentEntity?.uuid,
-        entityDefUuid: currentEntityDef.uuid,
-        entityUuid: currentEntity.uuid,
-        name: itemName,
-      });
-
-      currentEntity = parentEntity;
-    }
-    return _items;
-  }, [survey, record, entityDef, actualEntityUuid, itemLabelFunction]);
-
-  const onItemPress = ({ parentEntityUuid, entityDefUuid, entityUuid }) => {
-    dispatch(
-      DataEntryActions.selectCurrentPageEntity({
-        parentEntityUuid,
-        entityDefUuid,
-        entityUuid,
-      })
-    );
-  };
+  const onItemPress = useCallback(
+    (pageEntityItem) => {
+      dispatch(DataEntryActions.selectCurrentPageEntity(pageEntityItem));
+    },
+    [dispatch]
+  );
 
   return (
     <HView style={styles.externalContainer} transparent>
       <ScrollView horizontal ref={scrollViewRef}>
         <HView style={styles.internalContainer} transparent>
-          {items.map((item, index) => {
-            const isLastItem = index === items.length - 1;
-            return (
-              <HView key={item.entityDefUuid} style={styles.item} transparent>
-                <Button
-                  compact
-                  labelStyle={styles.itemButtonLabel}
-                  mode={isLastItem ? "contained" : "outlined"}
-                  onPress={() => onItemPress(item)}
-                  style={styles.itemButton}
-                  textKey={item.name}
-                />
-                {!isLastItem && <Separator />}
-              </HView>
-            );
-          })}
+          {items.map((item, index) => (
+            <BreadcrumbItem
+              key={item.entityDefUuid}
+              isLastItem={index === items.length - 1}
+              item={item}
+              onItemPress={onItemPress}
+            />
+          ))}
         </HView>
       </ScrollView>
     </HView>

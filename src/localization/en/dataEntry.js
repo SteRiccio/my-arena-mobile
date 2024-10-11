@@ -17,9 +17,13 @@ export default {
   confirmDeleteValue: {
     message: "Delete this value?",
   },
+  confirmOverwriteValue: {
+    message: "Overwrite existing value?",
+  },
   cycle: "Cycle",
   cycleForNewRecords: "Cycle for new records:",
   options: "Options",
+  editNodeDef: "Edit {{nodeDef}}",
   errorFetchingRecordsSyncStatus:
     "Error fetching records sync status: {{details}}",
   errorGeneratingRecordsExportFile:
@@ -159,7 +163,6 @@ export default {
     keepXAndY: "Keep X and Y",
     magnetometerNotAvailable: "Magnetometer not available!",
     navigateToTarget: "Navigate to target",
-    overwriteConfirmMessage: "Overwrite existing value?",
     srs: "$t(common:srs)",
     useCurrentLocation: "Use current location",
     x: "X",

@@ -14,3 +14,7 @@ Icon.propTypes = {
   size: PropTypes.number,
   source: PropTypes.string.isRequired,
 };
+
+Icon.defaultProps = {
+  size: 20,
+};

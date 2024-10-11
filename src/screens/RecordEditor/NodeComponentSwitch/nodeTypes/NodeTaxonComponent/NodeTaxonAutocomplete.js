@@ -134,7 +134,7 @@ export const NodeTaxonAutocomplete = (props) => {
     (selection, inputValue) => {
       const taxon = selection[0];
       const valueNext = createTaxonValue({ taxon, inputValue });
-      updateNodeValue(valueNext);
+      updateNodeValue({ value: valueNext });
     },
     [updateNodeValue]
   );

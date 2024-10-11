@@ -3,10 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { DataEntryActions, DataEntrySelectors, StoreUtils } from "state";
+import { Functions } from "utils";
 
 const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
 
-const isNodeValueEqual = (nodeValueA, nodeValueB) =>
+const isNodeValueEqualDefault = (nodeValueA, nodeValueB) =>
   Objects.isEqual(nodeValueA, nodeValueB) ||
   JSON.stringify(nodeValueA) === JSON.stringify(nodeValueB) ||
   (Objects.isEmpty(nodeValueA) && Objects.isEmpty(nodeValueB));
@@ -14,8 +15,9 @@ const isNodeValueEqual = (nodeValueA, nodeValueB) =>
 export const useNodeComponentLocalState = ({
   nodeUuid,
   updateDelay = 0,
-  uiValueToNodeValue = (value) => value,
-  nodeValueToUiValue = (value) => value,
+  uiValueToNodeValue = Functions.identity,
+  nodeValueToUiValue = Functions.identity,
+  isNodeValueEqual = isNodeValueEqualDefault,
 }) => {
   const dispatch = useDispatch();
   const dirtyRef = useRef(false);
@@ -41,7 +43,6 @@ export const useNodeComponentLocalState = ({
     if (!updateDelay) return;
 
     const nodeValueFromUI = uiValueToNodeValue(uiValue);
-
     const dirty = dirtyRef.current;
 
     if (isNodeValueEqual(nodeValue, nodeValueFromUI)) {
@@ -50,7 +51,7 @@ export const useNodeComponentLocalState = ({
         dirtyRef.current = false;
       }
     } else if (dirty) {
-      // component is dirty (value being updated by the user): do not update UI using node value
+      // component is dirty (value is being updated by the user): do not update UI using node value
     } else if (!invalidValue) {
       // UI value not in sync with node value: update UI
       const uiValueNext = nodeValueToUiValue(nodeValue);
@@ -64,6 +65,7 @@ export const useNodeComponentLocalState = ({
     }
   }, [
     invalidValue,
+    isNodeValueEqual,
     nodeValue,
     nodeValidation,
     nodeValueToUiValue,
@@ -73,7 +75,7 @@ export const useNodeComponentLocalState = ({
   ]);
 
   const updateNodeValue = useCallback(
-    async (uiValueUpdated, fileUri = null) => {
+    async ({ value: uiValueUpdated, fileUri = null, ignoreDelay = false }) => {
       const nodeValueUpdated = uiValueToNodeValue(uiValueUpdated);
 
       if (
@@ -88,8 +90,12 @@ export const useNodeComponentLocalState = ({
         }));
         return;
       }
-
-      if (updateDelay) {
+      const action = DataEntryActions.updateAttribute({
+        uuid: nodeUuid,
+        value: nodeValueUpdated,
+        fileUri,
+      });
+      if (!ignoreDelay && updateDelay) {
         dirtyRef.current = true;
 
         setState((statePrev) => ({
@@ -103,37 +109,18 @@ export const useNodeComponentLocalState = ({
         debouncedUpdateRef.current?.cancel();
 
         debouncedUpdateRef.current = StoreUtils.debounceAction(
-          DataEntryActions.updateAttribute({
-            uuid: nodeUuid,
-            value: nodeValueUpdated,
-            fileUri,
-          }),
+          action,
           getNodeUpdateActionKey({ nodeUuid }),
           updateDelay
         );
 
         dispatch(debouncedUpdateRef.current);
       } else {
-        dispatch(
-          DataEntryActions.updateAttribute({
-            uuid: nodeUuid,
-            value: nodeValueUpdated,
-            fileUri,
-          })
-        );
+        dispatch(action);
       }
     },
-    [nodeUuid, updateDelay, uiValueToNodeValue]
+    [uiValueToNodeValue, updateDelay, nodeUuid, dispatch]
   );
-
-  const getUiValueFromState = () => {
-    let uiVal = null;
-    setState((statePrev) => {
-      uiVal = statePrev.uiValue;
-      return statePrev;
-    });
-    return uiVal;
-  };
 
   return {
     applicable,
@@ -142,6 +129,5 @@ export const useNodeComponentLocalState = ({
     uiValue,
     validation: updateDelay ? validation : nodeValidation,
     updateNodeValue,
-    getUiValueFromState,
   };
 };

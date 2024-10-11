@@ -1,10 +1,10 @@
-import React from "react";
 import { Tooltip as RNPTooltip } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
 export const Tooltip = (props) => {
-  const { backgroundColor, children, textColor, titleKey } = props;
+  const { backgroundColor, children, textColor, titleKey, titleParams } = props;
 
   const { t } = useTranslation();
 
@@ -20,8 +20,20 @@ export const Tooltip = (props) => {
       : undefined;
 
   return (
-    <RNPTooltip enterTouchDelay={50} theme={theme} title={t(titleKey)}>
+    <RNPTooltip
+      enterTouchDelay={50}
+      theme={theme}
+      title={t(titleKey, titleParams)}
+    >
       {children}
     </RNPTooltip>
   );
+};
+
+Tooltip.propTypes = {
+  backgroundColor: PropTypes.string,
+  children: PropTypes.node,
+  textColor: PropTypes.string,
+  titleKey: PropTypes.string.isRequired,
+  titleParams: PropTypes.object,
 };

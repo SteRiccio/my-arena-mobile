@@ -6,14 +6,17 @@ import { NodeDefs, Nodes } from "@openforis/arena-core";
 import { Button, HView, IconButton, VView } from "components";
 import { useTranslation } from "localization";
 import {
-  ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
   MessageActions,
   SurveySelectors,
+  useConfirm,
 } from "state";
 
 import { SingleAttributeComponentSwitch } from "./SingleAttributeComponentSwitch";
+import { NodeComponentPropTypes } from "./nodeTypes/nodeComponentPropTypes";
+
+import styles from "./multipleAttributeComponentWrapperStyles";
 
 export const MultipleAttributeComponentWrapper = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -26,6 +29,7 @@ export const MultipleAttributeComponentWrapper = (props) => {
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const confirm = useConfirm();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
   const { nodes } = DataEntrySelectors.useRecordChildNodes({
@@ -52,40 +56,38 @@ export const MultipleAttributeComponentWrapper = (props) => {
         })
       );
     }
-  }, [nodes]);
+  }, [dispatch, nodeDef, nodes, parentNodeUuid]);
 
-  const onDeletePress = (node) => () => {
+  const onDeletePress = (node) => async () => {
     const performDelete = () =>
       dispatch(DataEntryActions.deleteNodes([node.uuid]));
 
-    if (!Nodes.isValueBlank(node)) {
-      dispatch(
-        ConfirmActions.show({
-          messageKey: "dataEntry:confirmDeleteValue.message",
-          onConfirm: performDelete,
-        })
-      );
-    } else {
+    if (
+      Nodes.isValueBlank(node) ||
+      (await confirm({ messageKey: "dataEntry:confirmDeleteValue.message" }))
+    ) {
       performDelete();
     }
   };
 
   return (
-    <VView>
+    <VView style={styles.container}>
       {nodes.map((node) => (
         <HView key={node.uuid}>
           <SingleAttributeComponentSwitch
             nodeDef={nodeDef}
             nodeUuid={node.uuid}
             parentNodeUuid={parentNodeUuid}
-            wrapperStyle={{ flex: 1 }}
+            wrapperStyle={styles.attributeComponentWrapper}
           />
           <IconButton icon="trash-can-outline" onPress={onDeletePress(node)} />
         </HView>
       ))}
-      <Button icon="plus" onPress={onNewPress}>
+      <Button icon="plus" onPress={onNewPress} style={styles.newButton}>
         {t("common:newItemWithParam", { item: nodeDefLabel })}
       </Button>
     </VView>
   );
 };
+
+MultipleAttributeComponentWrapper.propTypes = NodeComponentPropTypes;

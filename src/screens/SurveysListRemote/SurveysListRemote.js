@@ -54,22 +54,23 @@ const DatePublishedCellRenderer = ({ item }) => (
 
 DatePublishedCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
-const _renderStatusCell =
-  (surveysLocal) =>
-  ({ item }) => {
-    const localSurvey = surveysLocal.find(
-      (surveyLocal) => surveyLocal.uuid === item.uuid
-    );
-    let messageKey = null;
-    if (!localSurvey) {
-      messageKey = "surveys:loadStatus.notInDevice";
-    } else if (Dates.isAfter(item.datePublished, localSurvey.datePublished)) {
-      messageKey = "surveys:loadStatus.updated";
-    } else {
-      messageKey = "surveys:loadStatus.upToDate";
-    }
-    return <Text textKey={messageKey} />;
-  };
+const StatusCell = ({ item }) => {
+  const surveysLocal = SurveySelectors.useSurveysLocal();
+  const localSurvey = surveysLocal.find(
+    (surveyLocal) => surveyLocal.uuid === item.uuid
+  );
+  let messageKey = null;
+  if (!localSurvey) {
+    messageKey = "surveys:loadStatus.notInDevice";
+  } else if (Dates.isAfter(item.datePublished, localSurvey.datePublished)) {
+    messageKey = "surveys:loadStatus.updated";
+  } else {
+    messageKey = "surveys:loadStatus.upToDate";
+  }
+  return <Text textKey={messageKey} />;
+};
+
+StatusCell.propTypes = DataVisualizerCellPropTypes;
 
 export const SurveysListRemote = () => {
   const navigation = useNavigation();
@@ -78,10 +79,6 @@ export const SurveysListRemote = () => {
   const screenViewMode = ScreenOptionsSelectors.useCurrentScreenViewMode();
   const viewAsList = screenViewMode === ScreenViewMode.list;
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
-  const statusCellRenderer = useCallback(
-    ({ item }) => _renderStatusCell(surveysLocal)({ item }),
-    [surveysLocal]
-  );
 
   const dataFields = useMemo(() => {
     const fields = [
@@ -109,12 +106,12 @@ export const SurveysListRemote = () => {
         {
           key: "loadStatus",
           header: "surveys:loadStatus.label",
-          cellRenderer: statusCellRenderer,
+          cellRenderer: StatusCell,
         }
       );
     }
     return fields;
-  }, [isLandscape, surveysLocal, viewAsList]);
+  }, [isLandscape, viewAsList]);
 
   const [state, setState] = useState(INITIAL_STATE);
   const { surveys, loading, errorKey } = state;
@@ -187,7 +184,7 @@ export const SurveysListRemote = () => {
         );
       }
     },
-    [surveysLocal]
+    [dispatch, navigation, surveysLocal]
   );
 
   if (loading) return <Loader />;

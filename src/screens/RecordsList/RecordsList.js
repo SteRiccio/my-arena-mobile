@@ -141,7 +141,7 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [survey, cycle, onlyLocal]);
+  }, [survey, cycle, onlyLocal, dispatch]);
 
   const onOnlyLocalChange = useCallback(
     (onlyLocalUpdated) =>
@@ -175,7 +175,7 @@ export const RecordsList = () => {
     const messagePrefix = "dataEntry:records.importRecordsFromFile.";
 
     if (Files.getExtension(fileName) !== "zip") {
-      toaster.show(`${messagePrefix}invalidFileType`);
+      toaster(`${messagePrefix}invalidFileType`);
       return;
     }
 
@@ -205,58 +205,66 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [loadRecords]);
+  }, [confirm, dispatch, loadRecords, toaster]);
 
   const onNewRecordPress = () => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
     dispatch(DataEntryActions.createNewRecord({ navigation }));
   };
 
-  const confirmExportRecords = useCallback(async ({ records }) => {
-    const getRecordsByStatus = (status) =>
-      records.filter((r) => r.syncStatus === status);
-    const newRecords = getRecordsByStatus(RecordSyncStatus.new);
-    const newRecordsCount = newRecords.length;
+  const confirmExportRecords = useCallback(
+    async ({ records }) => {
+      const getRecordsByStatus = (status) =>
+        records.filter((r) => r.syncStatus === status);
+      const newRecords = getRecordsByStatus(RecordSyncStatus.new);
+      const newRecordsCount = newRecords.length;
 
-    const updatedRecords = getRecordsByStatus(RecordSyncStatus.modifiedLocally);
-    const updatedRecordsCount = updatedRecords.length;
+      const updatedRecords = getRecordsByStatus(
+        RecordSyncStatus.modifiedLocally
+      );
+      const updatedRecordsCount = updatedRecords.length;
 
-    const conflictingRecords = getRecordsByStatus(
-      RecordSyncStatus.conflictingKeys
-    );
-    const conflictingRecordsCount = conflictingRecords.length;
+      const conflictingRecords = getRecordsByStatus(
+        RecordSyncStatus.conflictingKeys
+      );
+      const conflictingRecordsCount = conflictingRecords.length;
 
-    if (newRecordsCount + updatedRecordsCount + conflictingRecordsCount === 0) {
-      toaster.show(noRecordsToExportTextKey);
-      return { confirmResult: false };
-    }
-    const confirmSingleChoiceOptions =
-      conflictingRecordsCount > 0
-        ? [
-            {
-              value: ConflictResolutionStrategy.overwriteIfUpdated,
-              label: "dataEntry:exportData.onlyNewOrUpdatedRecords",
-            },
-            {
-              value: ConflictResolutionStrategy.merge,
-              label: "dataEntry:exportData.mergeConflictingRecords",
-            },
-          ]
-        : [];
-    const confirmResult = await confirm({
-      titleKey: "dataEntry:exportData.confirm.title",
-      messageKey: "dataEntry:exportData.confirm.message",
-      messageParams: {
-        newRecordsCount,
-        updatedRecordsCount,
-        conflictingRecordsCount,
-      },
-      confirmButtonTextKey: "dataEntry:exportData.title",
-      singleChoiceOptions: confirmSingleChoiceOptions,
-      defaultSingleChoiceValue: confirmSingleChoiceOptions[0]?.value,
-    });
-    return { newRecords, updatedRecords, conflictingRecords, confirmResult };
-  }, []);
+      if (
+        newRecordsCount + updatedRecordsCount + conflictingRecordsCount ===
+        0
+      ) {
+        toaster(noRecordsToExportTextKey);
+        return { confirmResult: false };
+      }
+      const confirmSingleChoiceOptions =
+        conflictingRecordsCount > 0
+          ? [
+              {
+                value: ConflictResolutionStrategy.overwriteIfUpdated,
+                label: "dataEntry:exportData.onlyNewOrUpdatedRecords",
+              },
+              {
+                value: ConflictResolutionStrategy.merge,
+                label: "dataEntry:exportData.mergeConflictingRecords",
+              },
+            ]
+          : [];
+      const confirmResult = await confirm({
+        titleKey: "dataEntry:exportData.confirm.title",
+        messageKey: "dataEntry:exportData.confirm.message",
+        messageParams: {
+          newRecordsCount,
+          updatedRecordsCount,
+          conflictingRecordsCount,
+        },
+        confirmButtonTextKey: "dataEntry:exportData.title",
+        singleChoiceOptions: confirmSingleChoiceOptions,
+        defaultSingleChoiceValue: confirmSingleChoiceOptions[0]?.value,
+      });
+      return { newRecords, updatedRecords, conflictingRecords, confirmResult };
+    },
+    [confirm, toaster]
+  );
 
   const exportSelectedRecords = useCallback(
     async (selectedRecords) => {
@@ -276,7 +284,7 @@ export const RecordsList = () => {
         }
         const recordUuids = recordsToExport.map((r) => r.uuid);
         if (recordUuids.length === 0) {
-          toaster.show(noRecordsToExportTextKey);
+          toaster(noRecordsToExportTextKey);
           return;
         }
         dispatch(
@@ -289,12 +297,12 @@ export const RecordsList = () => {
         );
       }
     },
-    [confirmExportRecords, cycle, loadRecordsWithSyncStatus]
+    [confirmExportRecords, cycle, dispatch, loadRecordsWithSyncStatus, toaster]
   );
 
   const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
     await exportSelectedRecords(records);
-  }, [cycle, exportSelectedRecords, records]);
+  }, [exportSelectedRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
     const recordUuids = records
@@ -302,13 +310,13 @@ export const RecordsList = () => {
       .map((record) => record.uuid);
 
     if (recordUuids.length === 0) {
-      toaster.show(noRecordsToExportTextKey);
+      toaster(noRecordsToExportTextKey);
       return;
     }
     dispatch(
       DataEntryActions.exportRecords({ cycle, recordUuids, onlyLocally: true })
     );
-  }, [cycle, records]);
+  }, [cycle, dispatch, records, toaster]);
 
   const onExportSelectedRecordUuids = useCallback(
     async (recordUuids) => {
@@ -317,7 +325,7 @@ export const RecordsList = () => {
       );
       await exportSelectedRecords(selectedRecords);
     },
-    [cycle, exportSelectedRecords, records]
+    [exportSelectedRecords, records]
   );
 
   const onDeleteSelectedRecordUuids = useCallback(
@@ -350,9 +358,7 @@ export const RecordsList = () => {
           );
         })
       ) {
-        toaster.show(
-          "dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported"
-        );
+        toaster("dataEntry:exportData.onlyRecordsInRemoteServerCanBeImported");
         return false;
       }
       return true;
@@ -389,7 +395,7 @@ export const RecordsList = () => {
           (record) => record.loadStatus !== RecordLoadStatus.complete
         )
       ) {
-        toaster.show(
+        toaster(
           "dataEntry:records.cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
         );
         return false;
@@ -434,7 +440,7 @@ export const RecordsList = () => {
           String(value).toLocaleLowerCase().includes(searchValueLowerCase)
       );
     });
-  }, [survey, lang, records, searchValue]);
+  }, [searchValue, records, survey, lang, t]);
 
   return (
     <VView style={styles.container}>

@@ -11,6 +11,7 @@ export default {
   errorFetchingSurveys: "Error fetching surveys from remote server",
   errorFetchingSurveysWithDetails:
     "$t(surveys:errorFetchingSurveys): {{details}}",
+  fieldManual: "Field manual",
   importFromCloud: "Import from cloud",
   importSurvey: "Import survey",
   importSurveyConfirmMessage: 'Import the survey "{{surveyName}}"?',
@@ -33,7 +34,7 @@ export default {
   updateStatus: {
     error: "Error retrieving survey update status",
     networkNotAvailable:
-      "Cannot verify survey udpate status: network not available",
+      "Cannot verify survey update status: network not available",
     upToDate: "Survey up-to-date",
   },
   updateSurvey: "Update survey",

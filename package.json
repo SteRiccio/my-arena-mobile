@@ -1,17 +1,18 @@
 {
   "name": "arena-mobile-experiments",
-  "version": "1.1.12",
+  "version": "1.1.16",
   "scripts": {
     "start": "expo start",
     "start-tunnel": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint --fix --ext .js,.jsx ."
   },
   "dependencies": {
     "@expo/webpack-config": "~19.0.1",
     "@miblanchard/react-native-slider": "^2.6.0",
-    "@openforis/arena-core": "^0.0.203",
+    "@openforis/arena-core": "^0.0.207",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-clipboard/clipboard": "^1.14.1",
     "@react-native-community/datetimepicker": "8.0.1",
@@ -19,7 +20,7 @@
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
     "@reduxjs/toolkit": "^2.2.6",
-    "expo": "^51.0.32",
+    "expo": "^51.0.37",
     "expo-application": "~5.9.1",
     "expo-asset": "~10.0.10",
     "expo-battery": "~8.0.1",
@@ -77,11 +78,20 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
+    "@babel/eslint-parser": "^7.25.1",
+    "@eslint/compat": "^1.1.1",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.10.0",
+    "@react-native/eslint-config": "^0.75.3",
     "babel-plugin-module-resolver": "^5.0.2",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "dotenv": "^16.4.5",
-    "metro-react-native-babel-preset": "^0.77.0"
+    "eslint": "^9.10.0",
+    "eslint-plugin-ft-flow": "^3.0.11",
+    "eslint-plugin-react": "^7.36.1",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "prettier": "^3.3.3"
   },
   "private": true,
-  "packageManager": "yarn@4.3.1"
+  "packageManager": "yarn@4.5.0"
 }

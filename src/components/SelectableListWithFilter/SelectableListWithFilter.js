@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Chip } from "react-native-paper";
 import PropTypes from "prop-types";
-import debounce from "lodash.debounce";
 
 import { Arrays, Objects } from "@openforis/arena-core";
 
+import { Functions } from "utils";
 import { IconButton } from "../IconButton";
 import { LoadingIcon } from "../LoadingIcon";
 import { ScrollView } from "../ScrollView";
@@ -68,7 +68,14 @@ export const SelectableListWithFilter = (props) => {
             .toLocaleLowerCase()
             .includes(filterInputValue.toLocaleLowerCase()))
     );
-  }, [filterItems, filterVisible, items, selectedItems]);
+  }, [
+    filterItems,
+    filterVisible,
+    itemLabelExtractor,
+    items,
+    maxItemsToShow,
+    selectedItems,
+  ]);
 
   const [state, setState] = useState({
     loading: false,
@@ -92,7 +99,7 @@ export const SelectableListWithFilter = (props) => {
   }, [calculateItemsFiltered, debounceFiltering]);
 
   const updateItemsFilteredDebouced = useMemo(
-    () => debounce(updateItemsFiltered, 500),
+    () => Functions.debounce(updateItemsFiltered, 500),
     [updateItemsFiltered]
   );
 

@@ -12,7 +12,7 @@ All changes are already saved.`,
   updateStatus: {
     error: "Error retrieving application update status: {{error}}",
     networkNotAvailable:
-      "Cannot verify application udpate status: network not available",
+      "Cannot verify application update status: network not available",
     upToDate: "Application up-to-date",
   },
 };

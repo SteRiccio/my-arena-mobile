@@ -29,7 +29,7 @@ export const Dropdown = (props) => {
       value: itemKeyExtractor(item),
       label: t(itemLabelExtractor(item)),
     }),
-    [itemKeyExtractor, itemLabelExtractor]
+    [itemKeyExtractor, itemLabelExtractor, t]
   );
 
   const options = useMemo(() => items.map(itemToOption), [itemToOption, items]);

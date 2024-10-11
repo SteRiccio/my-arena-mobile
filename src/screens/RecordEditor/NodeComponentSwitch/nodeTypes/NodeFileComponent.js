@@ -1,8 +1,8 @@
-import PropTypes from "prop-types";
 import { NodeDefFileType } from "@openforis/arena-core";
 
 import { Text } from "components";
 import { NodeImageOrVideoComponent } from "./NodeImageOrVideoComponent";
+import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
 
 const supportedFileTypes = [
   NodeDefFileType.other,
@@ -26,6 +26,4 @@ export const NodeFileComponent = (props) => {
   return <Text textKey={`File type not supported (${fileType})`} />;
 };
 
-NodeFileComponent.propTypes = {
-  nodeDef: PropTypes.object.isRequired,
-};
+NodeFileComponent.propTypes = NodeComponentPropTypes;

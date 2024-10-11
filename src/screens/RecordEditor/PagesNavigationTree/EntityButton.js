@@ -1,19 +1,46 @@
+import { useCallback, useMemo } from "react";
+import { TouchableOpacity } from "react-native";
+import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
-import { Text } from "components";
+import { HView, Icon, Text } from "components";
+import { DataEntryActions } from "state";
 
 import styles from "./EntityButtonStyles";
 
-export const EntityButton = ({ treeNode, isCurrentEntity }) => {
-  const { label } = treeNode;
+export const EntityButton = (props) => {
+  const { treeNode, isCurrentEntity } = props;
+  const { label, entityPointer, hasErrors, hasWarnings } = treeNode;
+
+  const dispatch = useDispatch();
+
+  const onPress = useCallback(() => {
+    dispatch(DataEntryActions.selectCurrentPageEntity(entityPointer));
+  }, [dispatch, entityPointer]);
+
+  const alertIconColor = useMemo(() => {
+    if (hasErrors) return "red";
+    if (hasWarnings) return "orange";
+    return undefined;
+  }, [hasErrors, hasWarnings]);
+
+  const textStyle = useMemo(
+    () => [
+      styles.entityButtonText,
+      isCurrentEntity
+        ? styles.entityButtonCurrentEntityText
+        : styles.entityButtonNonCurrentEntityText,
+    ],
+    [isCurrentEntity]
+  );
 
   return (
-    <Text
-      style={
-        isCurrentEntity ? styles.entityButtonCurrentEntity : styles.entityButton
-      }
-      textKey={label}
-    />
+    <TouchableOpacity onPress={onPress} style={styles.entityButtonWrapper}>
+      <HView style={styles.entityButtonContent} transparent>
+        <Text style={textStyle} textKey={label} />
+        {alertIconColor && <Icon color={alertIconColor} source="alert" />}
+      </HView>
+    </TouchableOpacity>
   );
 };
 

@@ -21,11 +21,9 @@ export default {
     },
     nodes: {
       count: {
-        invalid: "{{nodeDefName}} nodes must be exactly {{count}}",
-        maxExceeded:
-          "{{nodeDefName}} nodes must be less than or equal to {{maxCount}}",
-        minNotReached:
-          "{{nodeDefName}} nodes must be more than or equal to {{minCount}}",
+        invalid: "Must be exactly {{count}} item(s)",
+        maxExceeded: "Must have max {{maxCount}} item(s)",
+        minNotReached: "Must have at least {{minCount}} item(s)",
       },
     },
   },

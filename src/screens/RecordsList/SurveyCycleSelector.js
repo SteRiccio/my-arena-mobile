@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -27,11 +27,11 @@ export const SurveyCycleSelector = (props) => {
 
   const selectedValue = singleCycle ? defaultCycleKey : cycle;
 
-  const onChange = useCallback((selectedCycleKey) => {
+  const onChange = (selectedCycleKey) => {
     dispatch(
       SurveyActions.setCurrentSurveyCycle({ cycleKey: selectedCycleKey })
     );
-  }, []);
+  };
 
   return (
     <HView style={[styles.formItem, style]}>

@@ -69,19 +69,19 @@ export const VersionNumberInfoButton = () => {
   const onUpdateStatusIconPress = useCallback(() => {
     switch (updateStatus) {
       case UpdateStatus.error:
-        toaster.show("app:updateStatus.error", { error: updateStatusError });
+        toaster("app:updateStatus.error", { error: updateStatusError });
         break;
       case UpdateStatus.networkNotAvailable:
-        toaster.show("app:updateStatus.networkNotAvailable");
+        toaster("app:updateStatus.networkNotAvailable");
         break;
       case UpdateStatus.upToDate:
-        toaster.show("app:updateStatus.upToDate");
+        toaster("app:updateStatus.upToDate");
         break;
       case UpdateStatus.notUpToDate:
         toggleChangelogViewDialogOpen();
         break;
     }
-  }, [updateStatus, updateStatusError]);
+  }, [toaster, toggleChangelogViewDialogOpen, updateStatus, updateStatusError]);
 
   return (
     <HView style={styles.container}>

@@ -1,6 +1,8 @@
 import { FieldSet } from "components";
 import { DataEntrySelectors } from "state";
+
 import { NodeEntityFormComponent } from "./NodeEntityFormComponent";
+import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
 
 export const NodeSingleEntityComponent = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -22,3 +24,5 @@ export const NodeSingleEntityComponent = (props) => {
     </FieldSet>
   );
 };
+
+NodeSingleEntityComponent.propTypes = NodeComponentPropTypes;

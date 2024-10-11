@@ -54,20 +54,18 @@ const getFile = async (
   serverUrl,
   uri,
   params,
-  callback,
+  _callback,
   targetFileUri = null,
   options = {}
 ) => {
   const url = getUrlWithParams({ serverUrl, uri, params });
   const actualTargetFileUri =
     targetFileUri ?? FileSystem.cacheDirectory + UUIDs.v4() + ".tmp";
-  const downloadResumable = FileSystem.createDownloadResumable(
+  const { uri: finalTargetUri } = await FileSystem.downloadAsync(
     url,
     actualTargetFileUri,
-    options,
-    callback
+    options
   );
-  const { uri: finalTargetUri } = await downloadResumable.downloadAsync();
   return finalTargetUri;
 };
 

@@ -139,7 +139,7 @@ export const RecordsDataVisualizer = (props) => {
         dateSynced: formatDateToDateTimeDisplay(recordSummary.dateSynced),
       };
     },
-    [lang, survey]
+    [lang, survey, t]
   );
 
   const recordItems = useMemo(() => {
@@ -150,11 +150,14 @@ export const RecordsDataVisualizer = (props) => {
     return items;
   }, [records, recordToItem, sort]);
 
-  const onItemPress = useCallback((recordSummary) => {
-    dispatch(
-      DataEntryActions.fetchAndEditRecord({ navigation, recordSummary })
-    );
-  }, []);
+  const onItemPress = useCallback(
+    (recordSummary) => {
+      dispatch(
+        DataEntryActions.fetchAndEditRecord({ navigation, recordSummary })
+      );
+    },
+    [dispatch, navigation]
+  );
 
   const fields = useMemo(() => {
     const result = [];
@@ -203,12 +206,7 @@ export const RecordsDataVisualizer = (props) => {
       result.push({
         key: "syncStatus",
         header: "common:status",
-        cellRenderer: ({ item }) =>
-          syncStatusLoading ? (
-            <LoadingIcon />
-          ) : (
-            <RecordSyncStatusIcon item={item} showLabel={viewAsList} />
-          ),
+        cellRenderer: syncStatusLoading ? LoadingIcon : RecordSyncStatusIcon,
       });
     }
     if (syncStatusFetched && viewAsList) {
@@ -221,10 +219,11 @@ export const RecordsDataVisualizer = (props) => {
     return result;
   }, [
     rootDefKeys,
-    screenViewMode,
     showRemoteProps,
     syncStatusLoading,
     syncStatusFetched,
+    viewAsList,
+    lang,
   ]);
 
   const onSelectionChange = useCallback((selection) => {

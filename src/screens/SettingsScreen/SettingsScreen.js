@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
-import { Objects } from "@openforis/arena-core";
+import { Numbers, Objects } from "@openforis/arena-core";
 
 import { ConnectionToRemoteServerButton } from "appComponents/ConnectionToRemoteServerButton";
 import {
@@ -17,7 +17,6 @@ import {
 } from "components";
 import { SettingsActions, SettingsSelectors } from "state";
 import { SettingsModel } from "./SettingsModel";
-import { NumberUtils } from "utils";
 
 import styles from "./styles";
 
@@ -83,7 +82,7 @@ const SettingsItem = (props) => {
         onPropValueChange({ key: settingKey })(val);
       }
     },
-    [onPropValueChange, value]
+    [onPropValueChange, settingKey, value]
   );
 
   switch (type) {
@@ -127,7 +126,7 @@ const SettingsItem = (props) => {
           />
         </SettingsFormItem>
       );
-    case SettingsModel.propertyType.slider:
+    case SettingsModel.propertyType.slider: {
       const { minValue, maxValue, step } = prop;
       return (
         <SettingsFormItem
@@ -141,11 +140,12 @@ const SettingsItem = (props) => {
             step={step}
             value={value}
             onValueChange={(values) =>
-              onValueChange(NumberUtils.roundToDecimals(values[0], 2))
+              onValueChange(Numbers.roundToPrecision(values[0], 2))
             }
           />
         </SettingsFormItem>
       );
+    }
     default:
       return null;
   }

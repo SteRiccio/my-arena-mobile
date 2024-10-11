@@ -1,15 +1,53 @@
+import PropTypes from "prop-types";
+
 import { NodeDefs } from "@openforis/arena-core";
 
-import { Tooltip, WarningIconButton } from "components";
+import { Icon, Tooltip } from "components";
 import { useTranslation } from "localization";
-import { Validations } from "model/utils/Validations";
+import { ValidationUtils } from "model/utils/ValidationUtils";
 import { DataEntrySelectors, SurveySelectors } from "state";
+
+const { getJointErrorText, getJointWarningText } = ValidationUtils;
+
+const colors = {
+  tooltipBackgroundColor: {
+    error: "red",
+    warning: "orange",
+  },
+  tooltipTextColor: {
+    error: "white",
+    warningTextColor: "black",
+  },
+};
+
+const ValidationIcon = (props) => {
+  const { severity, messageKey, messageParams } = props;
+  const tooltipBackgroundColor = colors.tooltipBackgroundColor[severity];
+  const tooltipTextColor = colors.tooltipTextColor[severity];
+  return (
+    <Tooltip
+      backgroundColor={tooltipBackgroundColor}
+      textColor={tooltipTextColor}
+      titleKey={messageKey}
+      titleParams={messageParams}
+    >
+      <Icon color={tooltipBackgroundColor} source="alert" />
+    </Tooltip>
+  );
+};
+
+ValidationIcon.propTypes = {
+  messageKey: PropTypes.string.isRequired,
+  messageParams: PropTypes.object,
+  severity: PropTypes.oneOf(["error", "warning"]),
+};
 
 export const NodeValidationIcon = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
   const { t } = useTranslation();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const customMessageLang = lang;
 
   const nodeDefUuid = nodeDef.uuid;
 
@@ -27,37 +65,30 @@ export const NodeValidationIcon = (props) => {
   if (!validation && !validationChildrenCount) return null;
 
   if (validationChildrenCount && !validationChildrenCount.valid) {
-    const message = "required field";
+    const error = validationChildrenCount.errors[0];
+    const { key: messageKey, params: messageParams } = error ?? {};
     return (
-      <Tooltip titleKey={message}>
-        <WarningIconButton />
-      </Tooltip>
+      <ValidationIcon
+        messageKey={`validation:${messageKey}`}
+        messageParams={messageParams}
+        severity="error"
+      />
     );
   }
   if (validation && !validation.valid && NodeDefs.isSingle(nodeDef)) {
-    const errorMessage = Validations.getJointErrorText({
-      validation,
-      t,
-      customMessageLang: lang,
-    });
-    const warningMessage = Validations.getJointWarningText({
-      validation,
-      t,
-      customMessageLang: lang,
-    });
-    const backgroundColor = errorMessage ? "darkred" : "orange";
-    const textColor = errorMessage ? "white" : "black";
-
+    const errMsg = getJointErrorText({ validation, t, customMessageLang });
+    const warnMsg = getJointWarningText({ validation, t, customMessageLang });
     return (
-      <Tooltip
-        backgroundColor={backgroundColor}
-        textColor={textColor}
-        titleKey={errorMessage || warningMessage}
-      >
-        <WarningIconButton iconColor={backgroundColor} />
-      </Tooltip>
+      <ValidationIcon
+        messageKey={errMsg ?? warnMsg}
+        severity={errMsg ? "error" : "warning"}
+      />
     );
   }
-
   return null;
+};
+
+NodeValidationIcon.propTypes = {
+  nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
 };

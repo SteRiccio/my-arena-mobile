@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { Dimensions, Image } from "react-native";
 import { useTheme } from "react-native-paper";
+import PropTypes from "prop-types";
 
 import { Objects, Points } from "@openforis/arena-core";
 
 import { useLocationWatch, useMagnetometerHeading } from "hooks";
 import { Button, FormItem, HView, Modal, Text, View, VView } from "components";
 import { SurveySelectors } from "state";
+import { SystemUtils } from "utils";
 
 import styles from "./locationNavigatorStyles";
 
@@ -28,6 +30,17 @@ const compassImageSize = width - 40;
 const arrowToTargetHeight = compassImageSize * 0.7;
 const targetLocationBoxWidth = compassImageSize * 0.7;
 const targetLocationMarkerHeight = height / 26;
+
+const compassWrapperStyle = {
+  height: compassImageSize,
+  width: compassImageSize,
+};
+
+const targetLocationMarkerStyle = {
+  alignSelf: "center",
+  height: targetLocationMarkerHeight,
+  resizeMode: "contain",
+};
 
 const getArrowImageByAngle = (angle) => {
   if (angle <= 20 || 360 - angle <= 20) return arrowUpGreen;
@@ -71,6 +84,9 @@ export const LocationNavigator = (props) => {
   const srsIndex = SurveySelectors.useCurrentSurveySrsIndex();
 
   const updateState = useCallback((params) => {
+    if (__DEV__) {
+      console.log("LocationNavigator: updateState");
+    }
     setState((statePrev) => ({ ...statePrev, ...params }));
   }, []);
 
@@ -92,7 +108,7 @@ export const LocationNavigator = (props) => {
         distance: distanceNew,
       });
     },
-    [updateState]
+    [srsIndex, targetPoint, updateState]
   );
 
   const { startLocationWatch, stopLocationWatch } = useLocationWatch({
@@ -129,11 +145,13 @@ export const LocationNavigator = (props) => {
 
   useEffect(() => {
     startLocationWatch();
+    SystemUtils.lockOrientationToPortrait();
 
     return () => {
       stopLocationWatch();
+      SystemUtils.unlockOrientation();
     };
-  }, []);
+  }, [startLocationWatch, stopLocationWatch]);
 
   const onUseCurrentLocationPress = useCallback(() => {
     onUseCurrentLocation(currentLocation);
@@ -162,12 +180,7 @@ export const LocationNavigator = (props) => {
         }}
       /> */}
 
-          <View
-            style={{
-              height: compassImageSize,
-              width: compassImageSize,
-            }}
-          >
+          <View style={compassWrapperStyle}>
             <Image
               source={compassBg}
               style={{
@@ -205,19 +218,12 @@ export const LocationNavigator = (props) => {
                   transform: [{ rotate: angleToTargetDifference + "deg" }],
                 }}
               >
-                <Image
-                  source={circleGreen}
-                  style={{
-                    alignSelf: "center",
-                    height: targetLocationMarkerHeight,
-                    resizeMode: "contain",
-                  }}
-                />
+                <Image source={circleGreen} style={targetLocationMarkerStyle} />
               </View>
             )}
           </View>
 
-          <HView style={{ justifyContent: "space-between" }}>
+          <HView style={styles.fieldsRow}>
             <FormItem labelKey="dataEntry:coordinate.accuracy">
               {formatNumber(accuracy, undefined, "m")}
             </FormItem>
@@ -225,9 +231,9 @@ export const LocationNavigator = (props) => {
               {formatNumber(distance, undefined, "m")}
             </FormItem>
           </HView>
-          <HView style={{ justifyContent: "space-between" }}>
+          <HView style={styles.fieldsRow}>
             <FormItem labelKey="dataEntry:coordinate.heading">
-              {formatNumber(heading, 0, Symbols.degree)}
+              {formatNumber(heading, 1, Symbols.degree)}
             </FormItem>
             <FormItem labelKey="dataEntry:coordinate.angleToTargetLocation">
               {formatNumber(angleToTarget, 0, Symbols.degree)}
@@ -249,4 +255,10 @@ export const LocationNavigator = (props) => {
       </VView>
     </Modal>
   );
+};
+
+LocationNavigator.propTypes = {
+  targetPoint: PropTypes.object.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+  onUseCurrentLocation: PropTypes.func.isRequired,
 };

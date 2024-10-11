@@ -1,9 +1,16 @@
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import { NodeDefs } from "@openforis/arena-core";
 
 import { Button, VView } from "components";
 import { DataEntryActions, SurveySelectors } from "state";
+
+import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
+
+const styles = {
+  editButton: { alignSelf: "center" },
+};
 
 export const NodeMultipleEntityPreviewComponent = (props) => {
   const { nodeDef, parentNodeUuid } = props;
@@ -14,20 +21,29 @@ export const NodeMultipleEntityPreviewComponent = (props) => {
 
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
+  const entityDefUuid = nodeDef.uuid;
+
+  const onEditPress = useCallback(
+    () =>
+      dispatch(
+        DataEntryActions.selectCurrentPageEntity({
+          parentEntityUuid: parentNodeUuid,
+          entityDefUuid,
+        })
+      ),
+    [dispatch, entityDefUuid, parentNodeUuid]
+  );
 
   return (
     <VView>
       <Button
-        textKey={`Edit ${NodeDefs.getLabelOrName(nodeDef, lang)}`}
-        onPress={() =>
-          dispatch(
-            DataEntryActions.selectCurrentPageEntity({
-              parentEntityUuid: parentNodeUuid,
-              entityDefUuid: nodeDef.uuid,
-            })
-          )
-        }
+        onPress={onEditPress}
+        style={styles.editButton}
+        textKey="dataEntry:editNodeDef"
+        textParams={{ nodeDef: NodeDefs.getLabelOrName(nodeDef, lang) }}
       />
     </VView>
   );
 };
+
+NodeMultipleEntityPreviewComponent.propTypes = NodeComponentPropTypes;

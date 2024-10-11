@@ -5,7 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.12] - TO-BE-RELEASED
+## [1.1.16] - 2024-10-07
+
+### Added
+- Navigation sidebar tree: added warning icons for entities containing errors;
+### Fixed
+- Compass navigator: lock screen to portrait mode when showing compass;
+
+## [1.1.15] - 2024-10-02
+
+### Added
+- Active survey: field manual link;
+- Coordinate attribute: clear value button;
+### Fixed
+- Layout adjustments;
+
+## [1.1.14] - 2024-09-19
+
+### Fixed
+- Fixed error loading surveys with big categories;
+
+## [1.1.12] - 2024-09-13
 
 ### Added
 - Surveys list: added "Check updates" button;

@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 
 import { Checkbox, HView } from "components";
 
@@ -23,7 +24,7 @@ export const NodeCodeMultipleCheckboxComponent = (props) => {
         onItemAdd(item.uuid);
       }
     },
-    [selectedItems]
+    [onItemAdd, onItemRemove, selectedItems]
   );
 
   return (
@@ -40,4 +41,13 @@ export const NodeCodeMultipleCheckboxComponent = (props) => {
       ))}
     </HView>
   );
+};
+
+NodeCodeMultipleCheckboxComponent.propTypes = {
+  editable: PropTypes.bool,
+  itemLabelFunction: PropTypes.func,
+  items: PropTypes.array,
+  onItemAdd: PropTypes.func,
+  onItemRemove: PropTypes.func,
+  selectedItems: PropTypes.array,
 };

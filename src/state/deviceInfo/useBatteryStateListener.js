@@ -15,5 +15,5 @@ export const useBatteryStateListener = () => {
     return () => {
       subscriptionRef?.current?.remove?.();
     };
-  }, []);
+  }, [dispatch]);
 };

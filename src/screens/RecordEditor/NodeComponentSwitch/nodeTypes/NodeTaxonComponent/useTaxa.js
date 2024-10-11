@@ -6,9 +6,21 @@ const calculateVernacularNamesCount = (taxon) =>
     0
   );
 
+const addVernacularNameObjectToItems =
+  (items, taxonItem) => (vernacularNameObj) => {
+    const { name: vernacularName, lang: vernacularNameLangCode } =
+      vernacularNameObj.props;
+    items.push({
+      ...taxonItem,
+      vernacularName,
+      vernacularNameLangCode,
+      vernacularNameUuid: vernacularNameObj.uuid,
+    });
+  };
+
 export const useTaxa = ({ survey, taxonomyUuid }) => {
   const taxa = useMemo(() => {
-    const allTaxa = Object.values(survey.refData?.taxonIndex || {});
+    const allTaxa = Object.values(survey.refData?.taxonIndex ?? {});
     return allTaxa.reduce((acc, taxon) => {
       if (taxon.taxonomyUuid !== taxonomyUuid) {
         return acc;
@@ -22,16 +34,9 @@ export const useTaxa = ({ survey, taxonomyUuid }) => {
       const vernacularNamesArray = Object.values(vernacularNamesByLang);
       if (vernacularNamesArray.length > 0) {
         vernacularNamesArray.forEach((vernacularNameObjects) => {
-          vernacularNameObjects.forEach((vernacularNameObj) => {
-            const { name: vernacularName, lang: vernacularNameLangCode } =
-              vernacularNameObj.props;
-            acc.push({
-              ...taxonItem,
-              vernacularName,
-              vernacularNameLangCode,
-              vernacularNameUuid: vernacularNameObj.uuid,
-            });
-          });
+          vernacularNameObjects.forEach(
+            addVernacularNameObjectToItems(acc, taxonItem)
+          );
         });
       }
       return acc;
