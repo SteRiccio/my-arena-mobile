@@ -143,6 +143,9 @@ const moveFile = async ({ from, to }) => FileSystem.moveAsync({ from, to });
 const del = async (fileUri, ignoreErrors = false) =>
   FileSystem.deleteAsync(fileUri, { idempotent: ignoreErrors });
 
+const download = async (uri, targetUri, options) =>
+  FileSystem.downloadAsync(uri, targetUri, options);
+
 const moveFileToDownloadFolder = async (fileUri) => {
   const permissionsResponse = await MediaLibrary.requestPermissionsAsync(true);
   if (!permissionsResponse.granted) {
@@ -230,6 +233,7 @@ export const Files = {
   copyFile,
   moveFile,
   moveFileToDownloadFolder,
+  download,
   writeJsonToFile,
   writeStringToFile,
   toHumanReadableFileSize,

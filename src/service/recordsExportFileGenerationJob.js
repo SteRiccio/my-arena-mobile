@@ -1,5 +1,3 @@
-import * as FileSystem from "expo-file-system";
-
 import {
   Dates,
   NodeDefType,
@@ -15,11 +13,9 @@ import { Environment, Files } from "utils";
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
 
-let zip;
-
-if (!Environment.isExpoGo) {
-  zip = require("react-native-zip-archive")?.zip;
-}
+let zip = Environment.isExpoGo
+  ? null
+  : require("react-native-zip-archive")?.zip;
 
 const RECORDS_FOLDER_NAME = "records";
 const RECORDS_SUMMARY_JSON_FILENAME = "records.json";
@@ -163,7 +159,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
           FILES_FOLDER_NAME,
           fileUuid
         )}.bin`;
-        await FileSystem.copyAsync({
+        await Files.copyFile({
           from: fileUri,
           to: destUri,
         });
