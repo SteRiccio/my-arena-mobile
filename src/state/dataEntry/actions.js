@@ -76,6 +76,7 @@ const createNewRecord =
     });
 
     let { record, nodes } = await RecordUpdater.createRootEntity({
+      user,
       survey,
       record: recordEmpty,
     });
@@ -90,6 +91,7 @@ const createNewRecord =
 
 const addNewEntity = async (dispatch, getState) => {
   const state = getState();
+  const user = RemoteConnectionSelectors.selectLoggedUser(state);
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = DataEntrySelectors.selectRecord(state);
   const { parentEntityUuid: currentParentNodeUuid, entityDef: nodeDef } =
@@ -101,6 +103,7 @@ const addNewEntity = async (dispatch, getState) => {
 
   const { record: recordUpdated, nodes: nodesCreated } =
     await RecordUpdater.createNodeAndDescendants({
+      user,
       survey,
       record,
       parentNode,
@@ -127,10 +130,12 @@ const addNewEntity = async (dispatch, getState) => {
 
 const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
   const state = getState();
+  const user = RemoteConnectionSelectors.selectLoggedUser(state);
   const survey = SurveySelectors.selectCurrentSurvey(state);
   const record = DataEntrySelectors.selectRecord(state);
 
   const { record: recordUpdated, nodes } = await RecordUpdater.deleteNodes({
+    user,
     survey,
     record,
     nodeUuids,
@@ -224,6 +229,7 @@ const updateAttribute =
   ({ uuid, value, fileUri = null }) =>
   async (dispatch, getState) => {
     const state = getState();
+    const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
 
@@ -235,6 +241,7 @@ const updateAttribute =
 
     let { record: recordUpdated, nodes: nodesUpdated } =
       await RecordUpdater.updateAttributeValue({
+        user,
         survey,
         record,
         attributeUuid: uuid,
@@ -343,12 +350,14 @@ const addNewAttribute =
   ({ nodeDef, parentNodeUuid, value = null }) =>
   async (dispatch, getState) => {
     const state = getState();
+    const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
     const record = DataEntrySelectors.selectRecord(state);
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
 
     const { record: recordUpdated, nodes: nodesCreated } =
       await RecordUpdater.createNodeAndDescendants({
+        user,
         survey,
         record,
         parentNode,
@@ -361,6 +370,7 @@ const addNewAttribute =
 
     const { record: recordUpdated2 } = await RecordUpdater.updateAttributeValue(
       {
+        user,
         survey,
         record: recordUpdated,
         attributeUuid: nodeCreated.uuid,
