@@ -3,7 +3,7 @@ import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 import mime from "mime";
 
-import { Promises, Strings, UUIDs } from "@openforis/arena-core";
+import { Strings, UUIDs } from "@openforis/arena-core";
 
 const PATH_SEPARATOR = "/";
 const DOWNLOAD_FOLDER = "Download";
@@ -49,7 +49,7 @@ const visitDirFilesRecursively = async ({
   while (stack.length > 0) {
     const currentDirUri = stack.pop();
     const fileUris = await listDir(currentDirUri);
-    await Promises.each(fileUris, async (fileUri) => {
+    for await (const fileUri of fileUris) {
       const info = await getInfo(fileUri);
       if (info) {
         if (!info.isDirectory || visitDirectories) {
@@ -59,7 +59,7 @@ const visitDirFilesRecursively = async ({
           stack.push(fileUri);
         }
       }
-    });
+    }
   }
 };
 

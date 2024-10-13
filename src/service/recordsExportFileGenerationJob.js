@@ -3,7 +3,6 @@ import {
   NodeDefType,
   NodeDefs,
   Objects,
-  Promises,
   Records,
 } from "@openforis/arena-core";
 
@@ -70,7 +69,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
 
       const files = [];
 
-      await Promises.each(recordsToExport, async (recordSummary) => {
+      for await (const recordSummary of recordsToExport) {
         const { id: recordId, uuid } = recordSummary;
         const record = await RecordService.fetchRecord({ survey, recordId });
         if (!record.ownerUuid && user) {
@@ -97,7 +96,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
         }
 
         this.incrementProcessedItems();
-      });
+      }
 
       if (files.length > 0) {
         const tempFilesSummaryJsonFileUri = Files.path(
@@ -146,7 +145,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       return acc;
     }, []);
 
-    await Promises.each(recordFiles, async (recordFile) => {
+    for await (const recordFile of recordFiles) {
       const { uuid: fileUuid } = recordFile;
       const fileUri = RecordFileService.getRecordFileUri({
         surveyId,
@@ -159,12 +158,9 @@ export class RecordsExportFileGenerationJob extends JobMobile {
           FILES_FOLDER_NAME,
           fileUuid
         )}.bin`;
-        await Files.copyFile({
-          from: fileUri,
-          to: destUri,
-        });
+        await Files.copyFile({ from: fileUri, to: destUri });
       }
-    });
+    }
 
     return {
       recordFiles,
