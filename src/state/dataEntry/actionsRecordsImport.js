@@ -27,21 +27,29 @@ export const importRecordsFromFile =
       overwriteExistingRecords,
     });
 
-    await importJob.start();
+    try {
+      await importJob.start();
 
-    const { status, errors, result } = importJob.summary;
+      const { status, errors, result } = importJob.summary;
 
-    if (status === JobStatus.succeeded) {
-      const { processedRecords, insertedRecords, updatedRecords } = result;
-      dispatch(
-        MessageActions.setMessage({
-          content: "dataEntry:records.importCompleteSuccessfully",
-          contentParams: { processedRecords, insertedRecords, updatedRecords },
-        })
-      );
-      await onImportComplete();
-    } else {
-      handleImportErrors({ dispatch, errors });
+      if (status === JobStatus.succeeded) {
+        const { processedRecords, insertedRecords, updatedRecords } = result;
+        dispatch(
+          MessageActions.setMessage({
+            content: "dataEntry:records.importCompleteSuccessfully",
+            contentParams: {
+              processedRecords,
+              insertedRecords,
+              updatedRecords,
+            },
+          })
+        );
+        await onImportComplete();
+      } else {
+        handleImportErrors({ dispatch, errors });
+      }
+    } catch (error) {
+      handleImportErrors({ dispatch, error });
     }
   };
 

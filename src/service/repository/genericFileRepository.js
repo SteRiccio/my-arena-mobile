@@ -1,19 +1,19 @@
-import * as FileSystem from "expo-file-system";
+import { Files } from "utils/Files";
 
-const getDirUri = (subFolder) => `${FileSystem.documentDirectory}${subFolder}`;
+const getDirUri = (subFolder) => `${Files.documentDirectory}${subFolder}`;
 
 const makeDirIfNotExists = async (dirUri) => {
-  const dirInfo = await FileSystem.getInfoAsync(dirUri);
+  const dirInfo = await Files.getInfo(dirUri);
   if (!dirInfo.exists) {
-    await FileSystem.makeDirectoryAsync(dirUri, { intermediates: true });
+    await Files.mkDir(dirUri);
   }
 };
 
-const copyFile = async ({ from, to }) => FileSystem.copyAsync({ from, to });
+const copyFile = async ({ from, to }) => Files.copyFile({ from, to });
 
-const moveFile = async ({ from, to }) => FileSystem.moveAsync({ from, to });
+const moveFile = async ({ from, to }) => Files.moveFile({ from, to });
 
-const deleteFile = async (fileUri) => FileSystem.deleteAsync(fileUri);
+const deleteFile = async (fileUri) => Files.del(fileUri);
 
 export const GenericFileRepository = {
   getDirUri,

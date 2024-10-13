@@ -1,5 +1,5 @@
 import { Strings, UUIDs } from "@openforis/arena-core";
-import * as FileSystem from "expo-file-system";
+import { Files } from "utils/Files";
 
 const defaultOptions = {
   credentials: "include",
@@ -54,20 +54,18 @@ const getFile = async (
   serverUrl,
   uri,
   params,
-  callback,
+  _callback,
   targetFileUri = null,
   options = {}
 ) => {
   const url = getUrlWithParams({ serverUrl, uri, params });
   const actualTargetFileUri =
-    targetFileUri ?? FileSystem.cacheDirectory + UUIDs.v4() + ".tmp";
-  const downloadResumable = FileSystem.createDownloadResumable(
+    targetFileUri ?? Files.cacheDirectory + UUIDs.v4() + ".tmp";
+  const { uri: finalTargetUri } = await Files.download(
     url,
     actualTargetFileUri,
-    options,
-    callback
+    options
   );
-  const { uri: finalTargetUri } = await downloadResumable.downloadAsync();
   return finalTargetUri;
 };
 
