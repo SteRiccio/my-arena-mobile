@@ -181,7 +181,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   const loadStatus = RecordLoadStatus.summary;
   const origin = RecordOrigin.remote;
   const insertedIds = [];
-  await dbClient.transaction(async (tx) => {
+  await dbClient.transaction(async () => {
     for await (const recordSummary of recordSummaries) {
       const { dateCreated, dateModified, ownerUuid, ownerName, uuid } =
         recordSummary;
@@ -189,7 +189,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
         survey,
         recordSummary,
       });
-      await tx.executeSql(
+      const { insertId } = await dbClient.executeSql(
         `INSERT INTO record (${insertColumnsJoint})
         VALUES (${getPlaceholders(insertColumns.length)})`,
         [
@@ -205,15 +205,9 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
           loadStatus,
           origin,
           ...keyColumnsValues,
-        ],
-        (t, results) => {
-          const { insertId } = results;
-          insertedIds.push(insertId);
-        },
-        (_, error) => {
-          throw error;
-        }
+        ]
       );
+      insertedIds.push(insertId);
     }
   });
   return insertedIds;
@@ -313,18 +307,18 @@ const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
 };
 
 const updateRecordsMergedInto = async ({ surveyId, mergedRecordsMap }) => {
-  for await (const [uuid, mergedIntoRecordUuid] of Object.entries(
-    mergedRecordsMap
-  ))
-    await dbClient.transaction(async (tx) => {
-      await tx.executeSql(
+  await dbClient.transaction(async () => {
+    for await (const [uuid, mergedIntoRecordUuid] of Object.entries(
+      mergedRecordsMap
+    ))
+      await dbClient.executeSql(
         `UPDATE record 
          SET merged_into_record_uuid = ? 
          WHERE survey_id =? 
            AND uuid = ?`,
         [mergedIntoRecordUuid, surveyId, uuid]
       );
-    });
+  });
 };
 
 const fixRecordCycle = async ({ survey, recordId }) => {

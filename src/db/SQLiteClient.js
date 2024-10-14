@@ -23,36 +23,22 @@ export default class SQLiteClient {
     return this.privateDb;
   }
 
-  async executeSql(sql, args) {
-    return new Promise((resolve, reject) => {
-      this.privateDb.transaction(
-        (tx) =>
-          tx.executeSql(
-            sql,
-            args,
-            (_, { rows, insertId, rowsAffected }) =>
-              resolve({ rows, insertId, rowsAffected }),
-            (_, err) => reject(err)
-          ),
-        reject
-      );
-    });
+  async executeSql(sql, params) {
+    const result = await this.privateDb.runAsync(sql, params);
+    const { lastInsertRowId: insertId, changes: rowsAffected } = result;
+    return { insertId, rowsAffected };
   }
 
   async transaction(callback) {
-    return new Promise((resolve, reject) => {
-      this.privateDb.transaction(callback, reject, resolve);
-    });
+    return this.privateDb.withTransactionAsync(callback);
   }
 
-  async one(sql, args) {
-    const { rows } = await this.executeSql(sql, args);
-    return rows.length === 1 ? rows.item(0) : null;
+  async one(sql, params) {
+    return this.privateDb.getFirstAsync(sql, params);
   }
 
-  async many(sql, args) {
-    const { rows } = await this.executeSql(sql, args);
-    return rows._array;
+  async many(sql, params) {
+    return this.privateDb.getAllAsync(sql, params);
   }
 
   async connect() {
@@ -62,26 +48,10 @@ export default class SQLiteClient {
     try {
       console.log("=== DB connection start ===");
 
-      this.privateDb = SQLite.openDatabase(this.name);
+      this.privateDb = await SQLite.openDatabaseAsync(this.name);
 
-      // MIGRATIONS
-      const { rows } = await this.executeSql("PRAGMA user_version");
-      const prevDbVersion = rows.item(0).user_version;
-      const nextDbVersion = this.migrations.length;
-      if (prevDbVersion > nextDbVersion) {
-        throw new DowngradeError();
-      }
-      console.log("==== DB migrations start ====");
-      for (let i = prevDbVersion; i < nextDbVersion; i += 1) {
-        const migration = this.migrations[i];
-        await migration(this);
-      }
-      console.log("==== DB migrations complete ====");
-
-      const dbMigrationsRun = prevDbVersion !== nextDbVersion;
-      if (dbMigrationsRun) {
-        await this.executeSql(`PRAGMA user_version = ${nextDbVersion}`);
-      }
+      const { dbMigrationsRun, prevDbVersion, nextDbVersion } =
+        await this.runMigrationsIfNecessary();
 
       this.privateConnected = true;
       console.log("=== DB connection complete ===");
@@ -95,5 +65,31 @@ export default class SQLiteClient {
         `SQLiteClient: failed to connect to database: ${this.name}`
       );
     }
+  }
+
+  async runMigrationsIfNecessary() {
+    const dbUserVersionRow = await this.one("PRAGMA user_version");
+    const prevVersion = dbUserVersionRow.user_version;
+    console.log(`==== current DB version: ${prevVersion}`);
+    const nextVersion = this.migrations.length;
+    console.log(`==== next DB version: ${nextVersion}`);
+    if (prevVersion > nextVersion) {
+      throw new DowngradeError();
+    }
+    const dbMigrationsNecessary = prevVersion !== nextVersion;
+    if (dbMigrationsNecessary) {
+      const migrationsToRun = this.migrations.slice(prevVersion, nextVersion);
+      console.log("==== DB migrations start ====");
+      for await (const migration of migrationsToRun) {
+        await migration(this);
+      }
+      console.log("==== DB migrations complete ====");
+      await this.executeSql(`PRAGMA user_version = ${nextVersion}`);
+    }
+    return {
+      dbMigrationsRun: dbMigrationsNecessary,
+      prevDbVersion: prevVersion,
+      nextDbVersion: nextVersion,
+    };
   }
 }

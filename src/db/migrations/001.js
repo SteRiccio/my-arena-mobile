@@ -1,6 +1,6 @@
-export const migration_001_base = async (client) => {
-  await client.transaction((tx) => {
-    tx.executeSql(`CREATE TABLE IF NOT EXISTS survey (
+export const migration_001_base = async (dbClient) => {
+  await dbClient.transaction(async () => {
+    await dbClient.executeSql(`CREATE TABLE IF NOT EXISTS survey (
         id          INTEGER         PRIMARY KEY AUTOINCREMENT,
         uuid        CHAR(16)        NOT NULL,
         server_url  VARCHAR(255),
@@ -12,7 +12,7 @@ export const migration_001_base = async (client) => {
         date_modified   TIMESTAMP   NOT NULL
     );`);
 
-    tx.executeSql(`CREATE TABLE IF NOT EXISTS record (
+    await dbClient.executeSql(`CREATE TABLE IF NOT EXISTS record (
         id              INTEGER       PRIMARY KEY AUTOINCREMENT,
         uuid            CHAR(16)      NOT NULL,
         survey_id       VARCHAR(255)  NOT NULL,
