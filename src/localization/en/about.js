@@ -3,4 +3,5 @@ export default {
   sendSupportEmailIntroduction: "Please send an email to:",
   support: "Support",
   version: "Version",
+  viewChangelog: "View changelog",
 };

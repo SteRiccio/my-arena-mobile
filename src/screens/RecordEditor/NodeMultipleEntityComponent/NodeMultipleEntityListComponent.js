@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import { NodeDefs, Records } from "@openforis/arena-core";
 
-import { Button, DataTable, Text, VView } from "components";
+import { DataTable, Text, VView } from "components";
 import { SurveyDefs } from "model/utils/SurveyDefs";
 import { RecordNodes } from "model/utils/RecordNodes";
 import {
@@ -14,7 +14,8 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
-import { useTranslation } from "localization";
+
+import { NewNodeButton } from "../NewNodeButton";
 
 import styles from "./styles";
 
@@ -27,7 +28,6 @@ export const NodeMultipleEntityListComponent = (props) => {
   const { entityDef, parentEntityUuid } = props;
 
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const confirm = useConfirm();
 
@@ -115,12 +115,10 @@ export const NodeMultipleEntityListComponent = (props) => {
       )}
       {rows.length > 0 && (
         <DataTable
-          fields={[
-            ...summaryDefs.map((keyDef) => ({
-              key: NodeDefs.getName(keyDef),
-              header: NodeDefs.getLabelOrName(keyDef, lang),
-            })),
-          ]}
+          fields={summaryDefs.map((keyDef) => ({
+            key: NodeDefs.getName(keyDef),
+            header: NodeDefs.getLabelOrName(keyDef, lang),
+          }))}
           items={rows}
           onItemPress={onRowPress}
           onDeleteSelectedItemIds={onDeleteSelectedNodeUuids}
@@ -128,9 +126,7 @@ export const NodeMultipleEntityListComponent = (props) => {
         />
       )}
       {canAddNew && (
-        <Button icon="plus" onPress={onNewPress}>
-          {t("common:newItemWithParam", { item: nodeDefLabel })}
-        </Button>
+        <NewNodeButton nodeDefLabel={nodeDefLabel} onPress={onNewPress} />
       )}
     </VView>
   );
