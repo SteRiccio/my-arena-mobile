@@ -40,10 +40,12 @@ export const AboutScreen = () => {
         </FormItem>
         <FormItem labelKey="about:version">
           <VersionNumberInfoButton />
+        </FormItem>
+        <FormItem labelKey="app:changelog">
           <Button
             onPress={toggleChangelogDialogOpen}
             mode="text"
-            textKey="app:changelog"
+            textKey="about:viewChangelog"
           />
           {changelogDialogOpen && (
             <ChangelogViewDialog
