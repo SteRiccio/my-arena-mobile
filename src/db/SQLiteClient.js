@@ -74,7 +74,11 @@ export default class SQLiteClient {
       console.log("==== DB migrations start ====");
       for (let i = prevDbVersion; i < nextDbVersion; i += 1) {
         const migration = this.migrations[i];
-        await migration(this);
+        try {
+          await migration(this);
+        } catch (error) {
+          throw error;
+        }
       }
       console.log("==== DB migrations complete ====");
 
@@ -86,13 +90,13 @@ export default class SQLiteClient {
       this.privateConnected = true;
       console.log("=== DB connection complete ===");
       return { dbMigrationsRun, prevDbVersion, nextDbVersion };
-    } catch (err) {
-      console.log(err);
-      if (err instanceof DowngradeError) {
-        throw err;
+    } catch (error) {
+      console.log(error);
+      if (error instanceof DowngradeError) {
+        throw error;
       }
       throw new Error(
-        `SQLiteClient: failed to connect to database: ${this.name}`
+        `SQLiteClient: failed to connect to database: ${this.name} details: ${error}`
       );
     }
   }
