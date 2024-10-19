@@ -9,7 +9,7 @@ import {
   Link,
   RadioButton,
   RadioButtonGroup,
-  ScrollView,
+  ScreenView,
   Text,
   TextInput,
   TextInputPassword,
@@ -133,7 +133,7 @@ export const SettingsRemoteConnectionScreen = () => {
   }, [dispatch, email, password, serverUrl]);
 
   return (
-    <ScrollView>
+    <ScreenView>
       <VView style={styles.container}>
         {!networkAvailable && <Text textKey="common:networkNotAvailable" />}
         <FieldSet headerKey="settingsRemoteConnection:serverUrl">
@@ -202,6 +202,6 @@ export const SettingsRemoteConnectionScreen = () => {
           url={requestAccessUrl}
         />
       </VView>
-    </ScrollView>
+    </ScreenView>
   );
 };
