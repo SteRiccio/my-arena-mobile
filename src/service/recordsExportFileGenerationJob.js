@@ -7,14 +7,10 @@ import {
 } from "@openforis/arena-core";
 
 import { JobMobile } from "model";
-import { Environment, Files } from "utils";
+import { Files } from "utils";
 
 import { RecordService } from "./recordService";
 import { RecordFileService } from "./recordFileService";
-
-let zip = Environment.isExpoGo
-  ? null
-  : require("react-native-zip-archive")?.zip;
 
 const RECORDS_FOLDER_NAME = "records";
 const RECORDS_SUMMARY_JSON_FILENAME = "records.json";
@@ -112,7 +108,7 @@ export class RecordsExportFileGenerationJob extends JobMobile {
       const outputFileName = `recordsExport-${Dates.nowFormattedForStorage()}.zip`;
       this.outputFileUri = Files.path(Files.documentDirectory, outputFileName);
 
-      await zip(tempFolderUri, this.outputFileUri);
+      await Files.zip(tempFolderUri, this.outputFileUri);
     } finally {
       await Files.del(tempFolderUri);
     }

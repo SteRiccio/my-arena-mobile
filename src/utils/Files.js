@@ -5,6 +5,12 @@ import mime from "mime";
 
 import { Strings, UUIDs } from "@openforis/arena-core";
 
+import { Environment } from "./Environment";
+
+let { unzip, zip } = Environment.isExpoGo
+  ? {}
+  : (require("react-native-zip-archive") ?? {});
+
 const PATH_SEPARATOR = "/";
 const DOWNLOAD_FOLDER = "Download";
 const TEMP_FOLDER_NAME = "mam_temp";
@@ -237,4 +243,6 @@ export const Files = {
   writeJsonToFile,
   writeStringToFile,
   toHumanReadableFileSize,
+  unzip,
+  zip,
 };
