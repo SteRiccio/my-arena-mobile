@@ -23,10 +23,14 @@ export default class SQLiteClient {
     return this.privateDb;
   }
 
-  async executeSql(sql, params) {
+  async runSql(sql, params) {
     const result = await this.privateDb.runAsync(sql, params);
     const { lastInsertRowId: insertId, changes: rowsAffected } = result;
     return { insertId, rowsAffected };
+  }
+
+  async executeSql(sql) {
+    await this.privateDb.execAsync(sql);
   }
 
   async transaction(callback) {
@@ -87,7 +91,7 @@ export default class SQLiteClient {
       for await (const migration of migrationsToRun) {
         await migration(this);
         currentDbVersion += 1;
-        await this.executeSql(`PRAGMA user_version = ${currentDbVersion}`);
+        await this.runSql(`PRAGMA user_version = ${currentDbVersion}`);
       }
       console.log("==== DB migrations complete ====");
     }

@@ -1,6 +1,5 @@
 export const migration_005 = async (dbClient) => {
-  await dbClient.transaction(async () => {
-    await dbClient.executeSql(`CREATE TABLE record_new (
+  await dbClient.executeSql(`CREATE TABLE record_new (
         id              INTEGER       PRIMARY KEY AUTOINCREMENT,
         uuid            CHAR(16)      NOT NULL,
         survey_id       INTEGER  NOT NULL,
@@ -25,7 +24,7 @@ export const migration_005 = async (dbClient) => {
           FOREIGN KEY (survey_id)
           REFERENCES survey (id)
     );
-
+    
     INSERT INTO record_new (id, uuid, survey_id, cycle, key1, key2, key3, key4, key5, 
       content, date_created, date_modified, date_modified_remote, date_synced,
       owner_uuid, owner_name, load_status, origin, merged_into_record_uuid)
@@ -33,9 +32,8 @@ export const migration_005 = async (dbClient) => {
       content, date_created, date_modified, date_modified_remote, date_synced,
       owner_uuid, owner_name, load_status, origin, merged_into_record_uuid 
     FROM record;
-
+    
     DROP TABLE record;
-
+    
     ALTER TABLE record_new RENAME TO record;`);
-  });
 };
