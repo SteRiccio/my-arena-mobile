@@ -1,5 +1,5 @@
 import { Strings, UUIDs } from "@openforis/arena-core";
-import { Files } from "utils/Files";
+import { Files } from "utils";
 
 const defaultOptions = {
   credentials: "include",
@@ -50,6 +50,21 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
   return { data };
 };
 
+const getFileAsBlob = async (serverUrl, uri, params, options) => {
+  const response = await _sendGet(serverUrl, uri, params, options);
+  return response.blob();
+};
+
+const getFileAsText = async (serverUrl, uri, params, options) => {
+  const blob = await getFileAsBlob(serverUrl, uri, params, options);
+  return new Promise(async (resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onError = () => reject(reader.error);
+    reader.readAsText(blob);
+  });
+};
+
 const getFile = async (
   serverUrl,
   uri,
@@ -58,15 +73,24 @@ const getFile = async (
   targetFileUri = null,
   options = {}
 ) => {
-  const url = getUrlWithParams({ serverUrl, uri, params });
   const actualTargetFileUri =
     targetFileUri ?? Files.cacheDirectory + UUIDs.v4() + ".tmp";
-  const { uri: finalTargetUri } = await Files.download(
-    url,
-    actualTargetFileUri,
-    options
-  );
-  return finalTargetUri;
+  const content = await getFileAsBlob(serverUrl, uri, params, options);
+
+  return new Promise(async (resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64Data = reader.result;
+      Files.writeStringToFile({
+        content: base64Data,
+        fileUri: actualTargetFileUri,
+      })
+        .then(resolve(actualTargetFileUri))
+        .catch(reject);
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(content);
+  });
 };
 
 const test = async (serverUrl, uri, params = {}) => {
@@ -96,6 +120,8 @@ const post = async (serverUrl, uri, data, options = {}) => {
 
 export const API = {
   get,
+  getFileAsBlob,
+  getFileAsText,
   getFile,
   post,
   test,
