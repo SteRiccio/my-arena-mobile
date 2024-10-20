@@ -37,6 +37,7 @@ const deleteRecordFile = async ({ surveyId, fileUuid }) => {
 };
 
 export const RecordFileRepository = {
+  getRecordFilesParentDirectoryUri,
   getRecordFilesParentDirectorySize,
   getRecordFilesDirectorySize,
   getRecordFileUri,

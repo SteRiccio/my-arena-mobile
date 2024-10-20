@@ -5,6 +5,12 @@ import mime from "mime";
 
 import { Strings, UUIDs } from "@openforis/arena-core";
 
+import { Environment } from "./Environment";
+
+let { unzip, zip } = Environment.isExpoGo
+  ? {}
+  : (require("react-native-zip-archive") ?? {});
+
 const PATH_SEPARATOR = "/";
 const DOWNLOAD_FOLDER = "Download";
 const TEMP_FOLDER_NAME = "mam_temp";
@@ -179,19 +185,15 @@ const shareFile = async ({
   await Sharing.shareAsync(url, { mimeType, dialogTitle });
 };
 
-const toHumanReadableFileSize = (
-  bytes,
-  { si = true, decimalPlaces = 1 } = {}
-) => {
-  const threshold = si ? 1000 : 1024;
+const fileSizeUnits = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+const toHumanReadableFileSize = (bytes, { decimalPlaces = 1 } = {}) => {
+  const threshold = 1024;
 
   if (Math.abs(bytes) < threshold) {
     return bytes + " B";
   }
 
-  const units = si
-    ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-    : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
   let unitIndex = -1;
   const ratio = 10 ** decimalPlaces;
 
@@ -200,10 +202,10 @@ const toHumanReadableFileSize = (
     ++unitIndex;
   } while (
     Math.round(Math.abs(bytes) * ratio) / ratio >= threshold &&
-    unitIndex < units.length - 1
+    unitIndex < fileSizeUnits.length - 1
   );
 
-  return bytes.toFixed(decimalPlaces) + " " + units[unitIndex];
+  return bytes.toFixed(decimalPlaces) + " " + fileSizeUnits[unitIndex];
 };
 
 export const Files = {
@@ -237,4 +239,6 @@ export const Files = {
   writeJsonToFile,
   writeStringToFile,
   toHumanReadableFileSize,
+  unzip,
+  zip,
 };

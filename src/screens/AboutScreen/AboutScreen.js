@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { Linking } from "react-native";
 
+import { ChangelogViewDialog } from "appComponents/ChangelogViewDialog";
 import { VersionNumberInfoButton } from "appComponents/VersionNumberInfoButton";
-import { Button, FormItem, ScrollView, Text, VView } from "components";
+import { Button, FormItem, ScreenView, Text, VView } from "components";
 import { useTranslation } from "localization";
 
 import styles from "./styles";
-import { ChangelogViewDialog } from "appComponents/ChangelogViewDialog";
 
 const developedBy = "Stefano Ricci";
 const supportEmailAddress = process.env.EXPO_PUBLIC_SUPPORT_EMAIL_ADDRESS;
@@ -29,12 +29,15 @@ export const AboutScreen = () => {
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScreenView>
       <VView style={styles.formWrapper}>
         <FormItem labelKey="about:developedBy">{developedBy}</FormItem>
         <FormItem labelKey="about:support">
           <VView>
-            <Text textKey="about:sendSupportEmailIntroduction" />
+            <Text
+              textKey="about:sendSupportEmailIntroduction"
+              variant="labelLarge"
+            />
             <Button onPress={onSupportPress}>{supportEmailAddress}</Button>
           </VView>
         </FormItem>
@@ -55,6 +58,6 @@ export const AboutScreen = () => {
           )}
         </FormItem>
       </VView>
-    </ScrollView>
+    </ScreenView>
   );
 };

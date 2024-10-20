@@ -1,3 +1,4 @@
+export { AppService } from "./appService";
 export { AuthService } from "./authService";
 export { DataMigrationService } from "./dataMigrationService";
 export { PreferencesService } from "./preferencesService";
