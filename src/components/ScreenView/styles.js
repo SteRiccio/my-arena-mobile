@@ -1,7 +1,5 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  formWrapper: {
-    gap: 20,
-  },
+  container: { flex: 1, padding: 10 },
 });

@@ -5,7 +5,7 @@ import { AppLogo } from "appComponents/AppLogo";
 import { GpsLockingEnabledWarning } from "appComponents/GpsLockingEnabledWarning";
 import { LoginInfo } from "appComponents/LoginInfo";
 import { VersionNumberInfoButton } from "appComponents/VersionNumberInfoButton";
-import { Button, ScrollView, Text, VView } from "components";
+import { Button, ScreenView, Text, VView } from "components";
 import { SurveySelectors } from "state";
 
 import { screenKeys } from "../screenKeys";
@@ -20,7 +20,7 @@ export const HomeScreen = () => {
   const surveySelected = !!survey;
 
   return (
-    <ScrollView>
+    <ScreenView>
       <VView style={styles.container}>
         <AppLogo />
         <Text
@@ -46,6 +46,6 @@ export const HomeScreen = () => {
           onPress={() => navigation.navigate(screenKeys.surveysListLocal)}
         />
       </VView>
-    </ScrollView>
+    </ScreenView>
   );
 };

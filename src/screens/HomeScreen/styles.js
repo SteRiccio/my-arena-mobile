@@ -10,7 +10,6 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    padding: 10,
     gap: 10,
   },
   manageSurveysButton: { marginTop: 20 },

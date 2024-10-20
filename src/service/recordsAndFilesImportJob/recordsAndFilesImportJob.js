@@ -1,5 +1,3 @@
-import { unzip } from "react-native-zip-archive";
-
 import { JobMobile } from "model";
 import { Files } from "utils";
 
@@ -20,7 +18,7 @@ export class RecordsAndFilesImportJob extends JobMobile {
 
     const unzippedFolderUri = await Files.createTempFolder();
 
-    await unzip(fileUri, unzippedFolderUri, "UTF-8");
+    await Files.unzip(fileUri, unzippedFolderUri, "UTF-8");
 
     this.context.unzippedFolderUri = unzippedFolderUri;
   }

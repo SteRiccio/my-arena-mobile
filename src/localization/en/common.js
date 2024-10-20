@@ -26,6 +26,8 @@ export default {
   newItemWithParam: "New {{item}}",
   no: "No",
   noItemsMatchingSearch: "There is no item matching your search",
+  notEnoughDiskSpace:
+    "Not enough free disk space ({{requiredSpace}} more is required)",
   path: "Path",
   rowsPerPage: "Rows per page",
   search: "Search",
