@@ -56,40 +56,45 @@ export default class SQLiteClient {
       this.privateConnected = true;
       console.log("=== DB connection complete ===");
       return { dbMigrationsRun, prevDbVersion, nextDbVersion };
-    } catch (err) {
-      console.log(err);
-      if (err instanceof DowngradeError) {
-        throw err;
+    } catch (error) {
+      console.log(error);
+      if (error instanceof DowngradeError) {
+        throw error;
       }
       throw new Error(
-        `SQLiteClient: failed to connect to database: ${this.name}`
+        `SQLiteClient: failed to connect to database: ${this.name} details: ${error}`
       );
     }
   }
 
   async runMigrationsIfNecessary() {
     const dbUserVersionRow = await this.one("PRAGMA user_version");
-    const prevVersion = dbUserVersionRow.user_version;
-    console.log(`==== current DB version: ${prevVersion}`);
-    const nextVersion = this.migrations.length;
-    console.log(`==== next DB version: ${nextVersion}`);
-    if (prevVersion > nextVersion) {
+    const prevDbVersion = dbUserVersionRow.user_version;
+    console.log(`==== current DB version: ${prevDbVersion}`);
+    const nextDbVersion = this.migrations.length;
+    console.log(`==== next DB version: ${nextDbVersion}`);
+    if (prevDbVersion > nextDbVersion) {
       throw new DowngradeError();
     }
-    const dbMigrationsNecessary = prevVersion !== nextVersion;
+    const dbMigrationsNecessary = prevDbVersion !== nextDbVersion;
     if (dbMigrationsNecessary) {
-      const migrationsToRun = this.migrations.slice(prevVersion, nextVersion);
+      const migrationsToRun = this.migrations.slice(
+        prevDbVersion,
+        nextDbVersion
+      );
+      let currentDbVersion = prevDbVersion;
       console.log("==== DB migrations start ====");
       for await (const migration of migrationsToRun) {
         await migration(this);
+        currentDbVersion += 1;
+        await this.executeSql(`PRAGMA user_version = ${currentDbVersion}`);
       }
       console.log("==== DB migrations complete ====");
-      await this.executeSql(`PRAGMA user_version = ${nextVersion}`);
     }
     return {
       dbMigrationsRun: dbMigrationsNecessary,
-      prevDbVersion: prevVersion,
-      nextDbVersion: nextVersion,
+      prevDbVersion,
+      nextDbVersion,
     };
   }
 }
