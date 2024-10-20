@@ -5,7 +5,7 @@ import { Objects } from "@openforis/arena-core";
 
 import { ConnectionToRemoteServerButton } from "appComponents/ConnectionToRemoteServerButton";
 import { FullBackupButton } from "appComponents/FullBackupButton";
-import { ScreenView, VView } from "components";
+import { Card, ScreenView, VView } from "components";
 import { SettingsActions, SettingsSelectors } from "state";
 
 import { SettingsModel } from "./SettingsModel";
@@ -50,7 +50,9 @@ export const SettingsScreen = () => {
             </VView>
           ))}
 
-        <FullBackupButton />
+        <Card titleKey="app:backup">
+          <FullBackupButton />
+        </Card>
       </VView>
     </ScreenView>
   );

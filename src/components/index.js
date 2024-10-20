@@ -1,4 +1,5 @@
 export { Button } from "./Button";
+export { Card } from "./Card";
 export { Checkbox } from "./Checkbox";
 export { CloseIconButton } from "./CloseIconButton";
 export { CollapsiblePanel } from "./CollapsiblePanel";

@@ -1,4 +1,5 @@
 export default {
+  backup: "Backup",
   changelog: "Change Log",
   confirmExit: {
     title: "Exit",
