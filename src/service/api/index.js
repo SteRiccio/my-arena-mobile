@@ -1,4 +1,5 @@
 import { Strings, UUIDs } from "@openforis/arena-core";
+
 import { Files } from "utils";
 
 const defaultOptions = {
@@ -44,9 +45,7 @@ const _sendGet = async (serverUrl, uri, params = {}, options = {}) => {
 
 const get = async (serverUrl, uri, params = {}, options = {}) => {
   const response = await _sendGet(serverUrl, uri, params, options);
-
   const data = await response.json();
-
   return { data };
 };
 
@@ -65,32 +64,19 @@ const getFileAsText = async (serverUrl, uri, params, options) => {
   });
 };
 
-const getFile = async (
+const getFile = async ({
   serverUrl,
   uri,
   params,
-  _callback,
+  callback: _callback,
   targetFileUri = null,
-  options = {}
-) => {
+  options = {},
+}) => {
   const actualTargetFileUri =
-    targetFileUri ?? Files.cacheDirectory + UUIDs.v4() + ".tmp";
-  const content = await getFileAsBlob(serverUrl, uri, params, options);
-
-  return new Promise(async (resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64Data = reader.result;
-      Files.writeStringToFile({
-        content: base64Data,
-        fileUri: actualTargetFileUri,
-      })
-        .then(resolve(actualTargetFileUri))
-        .catch(reject);
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(content);
-  });
+    targetFileUri ?? Files.path(Files.documentDirectory, UUIDs.v4() + ".zip");
+  const url = getUrlWithParams({ serverUrl, uri, params });
+  await Files.download(url, actualTargetFileUri, options);
+  return actualTargetFileUri;
 };
 
 const test = async (serverUrl, uri, params = {}) => {
@@ -102,8 +88,8 @@ const test = async (serverUrl, uri, params = {}) => {
   }
 };
 
-const post = async (serverUrl, uri, data, options = {}) => {
-  const formData = Object.entries(data).reduce((acc, [key, value]) => {
+const post = async (serverUrl, uri, params, options = {}) => {
+  const formData = Object.entries(params).reduce((acc, [key, value]) => {
     const formDataValue = Array.isArray(value) ? JSON.stringify(value) : value;
     acc.append(key, formDataValue);
     return acc;
@@ -114,8 +100,9 @@ const post = async (serverUrl, uri, data, options = {}) => {
     method: "POST",
     body: formData,
   });
+  const data = await response.json();
 
-  return { data: await response.json() };
+  return { data, response };
 };
 
 export const API = {
