@@ -11,6 +11,7 @@ import { OpenMapButton } from "./OpenMapButton";
 import { NodeComponentPropTypes } from "../nodeComponentPropTypes";
 
 import styles from "./styles";
+import { NodeCoordinateAverageMonitor } from "./NodeCoordinateAverageMonitor";
 
 export const NodeCoordinateComponent = (props) => {
   const { nodeDef } = props;
@@ -22,10 +23,12 @@ export const NodeCoordinateComponent = (props) => {
   const {
     accuracy,
     applicable,
+    averageLocationMonitorVisible,
     compassNavigatorVisible,
     deleteButtonVisible,
     distanceTarget,
     editable,
+    hideAverageLocationMonitor,
     hideCompassNavigator,
     includedExtraFields,
     locationAccuracyThreshold,
@@ -37,6 +40,7 @@ export const NodeCoordinateComponent = (props) => {
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
     onStopGpsPress,
+    showAverageLocationMonitor,
     showCompassNavigator,
     srs,
     srsIndex,
@@ -86,6 +90,11 @@ export const NodeCoordinateComponent = (props) => {
             {deleteButtonVisible && (
               <IconButton icon="trash-can-outline" onPress={onClearPress} />
             )}
+            <IconButton
+              icon="compass-outline"
+              onPress={showAverageLocationMonitor}
+              style={styles.showCompassButton}
+            />
           </VView>
         )}
       </HView>
@@ -129,6 +138,9 @@ export const NodeCoordinateComponent = (props) => {
           onUseCurrentLocation={onCompassNavigatorUseCurrentLocation}
           targetPoint={distanceTarget}
         />
+      )}
+      {averageLocationMonitorVisible && (
+        <NodeCoordinateAverageMonitor onDismiss={hideAverageLocationMonitor} />
       )}
     </VView>
   );

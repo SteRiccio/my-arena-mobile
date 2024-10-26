@@ -61,6 +61,11 @@ const locationToUiValue = ({ location, nodeDef, srsTo, srsIndex }) => {
 
 const nonNumericFields = ["srs"];
 
+const stateKeys = {
+  averageLocationMonitorVisible: "averageLocationMonitorVisible",
+  compassNavigatorVisible: "compassNavigatorVisible",
+};
+
 export const useNodeCoordinateComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
@@ -84,7 +89,7 @@ export const useNodeCoordinateComponent = (props) => {
     compassNavigatorVisible: false,
   });
 
-  const { compassNavigatorVisible } = state;
+  const { averageLocationMonitorVisible, compassNavigatorVisible } = state;
 
   const nodeValueToUiValue = useCallback(
     (nodeValue) => {
@@ -256,15 +261,14 @@ export const useNodeCoordinateComponent = (props) => {
     stopLocationWatch();
   }, [stopLocationWatch]);
 
-  const setCompassNavigatorVisible = useCallback(
-    (visible) =>
-      setState((statePrev) => ({
-        ...statePrev,
-        compassNavigatorVisible: visible,
-      })),
+  const setStateProp = useCallback(
+    (prop, value) => setState((statePrev) => ({ ...statePrev, [prop]: value })),
     []
   );
-
+  const setCompassNavigatorVisible = useCallback(
+    (visible) => setStateProp(stateKeys.compassNavigatorVisible, visible),
+    [setStateProp]
+  );
   const showCompassNavigator = useCallback(
     () => setCompassNavigatorVisible(true),
     [setCompassNavigatorVisible]
@@ -286,6 +290,14 @@ export const useNodeCoordinateComponent = (props) => {
     },
     [nodeDef, srs, srsIndex, onValueChange]
   );
+  const showAverageLocationMonitor = useCallback(
+    () => setStateProp(stateKeys.averageLocationMonitorVisible, true),
+    [setStateProp]
+  );
+  const hideAverageLocationMonitor = useCallback(
+    () => setStateProp(stateKeys.averageLocationMonitorVisible, false),
+    [setStateProp]
+  );
 
   const editable =
     !NodeDefs.isReadOnly(nodeDef) &&
@@ -300,10 +312,12 @@ export const useNodeCoordinateComponent = (props) => {
   return {
     accuracy,
     applicable,
+    averageLocationMonitorVisible,
     compassNavigatorVisible,
     deleteButtonVisible,
     distanceTarget,
     editable,
+    hideAverageLocationMonitor,
     hideCompassNavigator,
     includedExtraFields,
     locationAccuracyThreshold,
@@ -316,6 +330,7 @@ export const useNodeCoordinateComponent = (props) => {
     onCompassNavigatorUseCurrentLocation,
     onStartGpsPress,
     onStopGpsPress,
+    showAverageLocationMonitor,
     showCompassNavigator,
     srs,
     srsIndex,
