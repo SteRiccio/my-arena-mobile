@@ -32,6 +32,9 @@ export class RecordsAndFilesImportJob extends JobMobile {
 
   async onEnd() {
     await super.onEnd();
-    await Files.del(this.context.unzippedFolderUri, true);
+    const { unzippedFolderUri } = this.context;
+    if (unzippedFolderUri) {
+      await Files.del(unzippedFolderUri, true);
+    }
   }
 }
