@@ -56,7 +56,7 @@ const getFileAsBlob = async (serverUrl, uri, params, options) => {
 
 const getFileAsText = async (serverUrl, uri, params, options) => {
   const blob = await getFileAsBlob(serverUrl, uri, params, options);
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
     reader.onError = () => reject(reader.error);
