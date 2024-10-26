@@ -1,31 +1,26 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { Dates, Objects, Surveys } from "@openforis/arena-core";
 
 import {
   Button,
-  CollapsiblePanel,
-  FlexWrapView,
-  FormItem,
   HView,
   Loader,
   MenuButton,
   Searchbar,
-  Switch,
   Text,
   VView,
 } from "components";
 import { useIsNetworkConnected, useNavigationFocus, useToast } from "hooks";
 import { useTranslation } from "localization";
 import {
-  Cycles,
-  RecordOrigin,
-  RecordSyncStatus,
   RecordUpdateConflictResolutionStrategy as ConflictResolutionStrategy,
   RecordLoadStatus,
+  RecordOrigin,
+  RecordSyncStatus,
 } from "model";
 import { RecordService } from "service";
 import {
@@ -34,13 +29,11 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
-import { Files } from "utils/Files";
+import { Files } from "utils";
 
-import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
-import { SurveyCycleSelector } from "./SurveyCycleSelector";
+import { RecordsListOptionsPanel } from "./RecordsListOptionsPanel";
 import { RecordsUtils } from "./RecordsUtils";
-
 import styles from "./styles";
 
 const minRecordsToShowSearchBar = 5;
@@ -63,8 +56,6 @@ export const RecordsList = () => {
   const confirm = useConfirm();
 
   const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
-  const defaultCycleText = Cycles.labelFunction(defaultCycleKey);
-  const cycles = Surveys.getCycleKeys(survey);
 
   const [state, setState] = useState({
     loading: true,
@@ -445,45 +436,13 @@ export const RecordsList = () => {
   return (
     <VView style={styles.container}>
       <VView style={styles.innerContainer}>
-        <CollapsiblePanel headerKey="dataEntry:options">
-          <>
-            <SurveyLanguageSelector />
-            {cycles.length > 1 && (
-              <HView style={styles.formItem}>
-                <Text
-                  style={styles.formItemLabel}
-                  textKey="dataEntry:cycleForNewRecords"
-                />
-                <Text textKey={defaultCycleText} />
-              </HView>
-            )}
-            <FlexWrapView>
-              {cycles.length > 1 && (
-                <SurveyCycleSelector style={styles.cyclesSelector} />
-              )}
-              <FormItem
-                labelKey="dataEntry:showOnlyLocalRecords"
-                style={styles.formItem}
-              >
-                <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
-              </FormItem>
-              <Button
-                disabled={!networkAvailable}
-                icon="cloud-refresh"
-                loading={syncStatusLoading}
-                mode="outlined"
-                onPress={onRemoteSyncPress}
-                textKey="dataEntry:checkSyncStatus"
-              />
-              <Button
-                icon="file-import-outline"
-                mode="text"
-                onPress={onImportRecordsFromFilePress}
-                textKey="dataEntry:records.importRecordsFromFile.title"
-              />
-            </FlexWrapView>
-          </>
-        </CollapsiblePanel>
+        <RecordsListOptionsPanel
+          onImportRecordsFromFilePress={onImportRecordsFromFilePress}
+          onlyLocal={onlyLocal}
+          onOnlyLocalChange={onOnlyLocalChange}
+          onRemoteSyncPress={onRemoteSyncPress}
+          syncStatusLoading={syncStatusLoading}
+        />
 
         {loading ? (
           <Loader />
