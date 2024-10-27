@@ -46,12 +46,12 @@ export const useLocation = () => {
     locationWatchElapsedTime,
     locationWatchProgress,
     locationWatchTimeout,
-    startLocationWatch,
+    startLocationWatch: startLocationWatchInternal,
     stopLocationWatch,
   } = useLocationWatch({ locationCallback });
 
   useEffect(() => {
-    startLocationWatch();
+    startLocationWatchInternal();
     setState((statePrev) => ({
       ...statePrev,
       ...defaultState,
@@ -61,7 +61,12 @@ export const useLocation = () => {
     return () => {
       stopLocationWatch();
     };
-  }, [startLocationWatch, stopLocationWatch]);
+  }, [startLocationWatchInternal, stopLocationWatch]);
+
+  const startLocationWatch = useCallback(() => {
+    startLocationWatchInternal();
+    setState((statePrev) => ({ ...statePrev, locationFetched: false }));
+  }, [startLocationWatchInternal]);
 
   return {
     location,

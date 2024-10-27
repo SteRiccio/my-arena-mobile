@@ -9,6 +9,8 @@ import { Checkbox } from "../Checkbox";
 import { RadioButton } from "../RadioButton";
 
 import styles from "./styles";
+import { IconButton } from "components/IconButton";
+import { DeleteIconButton } from "components/DeleteIconButton";
 
 const ListItemIcon = (props) => {
   const { multiple, checked, editable, onItemSelect, item } = props;
@@ -39,6 +41,7 @@ export const SelectableList = (props) => {
     items,
     multiple = false,
     onChange,
+    onItemDelete,
     selectedItems = [],
     style,
   } = props;
@@ -82,6 +85,13 @@ export const SelectableList = (props) => {
           )}
           onPress={() => onItemSelect(item)}
           removeClippedSubviews
+          right={
+            onItemDelete
+              ? () => (
+                  <DeleteIconButton onPress={() => onItemDelete({ item })} />
+                )
+              : undefined
+          }
           style={styles.item}
         />
       );
@@ -91,6 +101,7 @@ export const SelectableList = (props) => {
       itemDescriptionExtractor,
       itemLabelExtractor,
       multiple,
+      onItemDelete,
       onItemSelect,
       selectedItems,
     ]
@@ -115,6 +126,7 @@ SelectableList.propTypes = {
   items: PropTypes.array.isRequired,
   multiple: PropTypes.bool,
   onChange: PropTypes.func,
+  onItemDelete: PropTypes.func,
   selectedItems: PropTypes.array,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
