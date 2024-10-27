@@ -1,16 +1,15 @@
-import React, { useCallback } from "react";
+import PropTypes from "prop-types";
+import { useCallback } from "react";
 import { FlatList } from "react-native";
 import { List as RNPList } from "react-native-paper";
-import PropTypes from "prop-types";
 
 import { Arrays } from "@openforis/arena-core";
 
+import { DeleteIconButton } from "components/DeleteIconButton";
 import { Checkbox } from "../Checkbox";
 import { RadioButton } from "../RadioButton";
 
 import styles from "./styles";
-import { IconButton } from "components/IconButton";
-import { DeleteIconButton } from "components/DeleteIconButton";
 
 const ListItemIcon = (props) => {
   const { multiple, checked, editable, onItemSelect, item } = props;
