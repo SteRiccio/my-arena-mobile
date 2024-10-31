@@ -58,8 +58,6 @@ export const RecordsList = () => {
   const confirm = useConfirm();
 
   const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
-  const defaultCycleText = Cycles.labelFunction(defaultCycleKey);
-  const cycles = Surveys.getCycleKeys(survey);
 
   const [state, setState] = useState({
     loading: true,

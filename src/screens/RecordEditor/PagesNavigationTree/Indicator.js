@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-import { Icon, Spacer, Text } from "components";
+import { Icon, Spacer } from "components";
 
 const CollapseIcon = () => <Icon source="chevron-down" />;
 
