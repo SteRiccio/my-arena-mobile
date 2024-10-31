@@ -15,17 +15,19 @@ export const useStyles = () => {
       margin: 6,
     },
     pagesNavigatorContainer: {
-      flex: 0.8,
+      flex: 0.85,
       backgroundColor: theme.colors.surfaceVariant,
       padding: 10,
       borderWidth: 1,
-      gap: 10
+      gap: 10,
     },
     closeButton: {},
     buttonBar: {
-      width: "100%",
       alignItems: "center",
+      borderTopWidth: 1,
       justifyContent: "space-between",
+      paddingTop: 4,
+      width: "100%",
     },
   });
 };

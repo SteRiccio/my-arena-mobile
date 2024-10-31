@@ -1,26 +1,19 @@
 import PropTypes from "prop-types";
 
-import { Text } from "components";
+import { Icon, Spacer } from "components";
+
+const CollapseIcon = () => <Icon source="chevron-down" />;
+
+const ExpandIcon = () => <Icon source="chevron-up" />;
+
+const LeafNodeIcon = () => <Spacer width={22} />;
 
 export const Indicator = (props) => {
   const { isExpanded, hasChildrenNodes } = props;
 
-  const getIndicatorText = () => {
-    if (!hasChildrenNodes) {
-      return " ";
-    }
-    if (isExpanded) {
-      return "-";
-    }
-    return "+";
-  };
-
-  return (
-    <Text
-      style={{ fontSize: 32, width: 22, lineHeight: 34 }}
-      textKey={getIndicatorText()}
-    />
-  );
+  if (!hasChildrenNodes) return <LeafNodeIcon />;
+  if (isExpanded) return <CollapseIcon />;
+  return <ExpandIcon />;
 };
 
 Indicator.propTypes = {
