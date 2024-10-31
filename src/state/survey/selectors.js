@@ -4,6 +4,8 @@ import { Objects, Surveys } from "@openforis/arena-core";
 
 import { SurveyDefs } from "model";
 
+import { determinePreferredSurveyLanguage } from "./surveyStateUtils";
+
 const getSurveyState = (state) => state.survey;
 
 const selectCurrentSurvey = (state) => getSurveyState(state).currentSurvey;
@@ -33,8 +35,12 @@ const selectIsNodeDefRootKey = (nodeDef) => (state) => {
 
 const selectSurveysLocal = (state) => getSurveyState(state).surveysLocal;
 
-const selectCurrentSurveyPreferredLang = (state) =>
-  getSurveyState(state).currentSurveyPreferredLanguage;
+const selectCurrentSurveyPreferredLang = (state) => {
+  const preferredLang = getSurveyState(state).currentSurveyPreferredLanguage;
+  if (preferredLang) return preferredLang;
+  const survey = selectCurrentSurvey(state);
+  return determinePreferredSurveyLanguage(survey);
+};
 
 const selectCurrentSurveyCycle = (state) =>
   getSurveyState(state).currentSurveyCycle;

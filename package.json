@@ -42,6 +42,7 @@
     "expo-status-bar": "~1.11.1",
     "expo-web-browser": "~12.8.2",
     "i18next": "^23.11.5",
+    "i18next-browser-languagedetector": "^8.0.0",
     "lz-string": "^1.5.0",
     "mime": "^4.0.3",
     "prop-types": "^15.8.1",
