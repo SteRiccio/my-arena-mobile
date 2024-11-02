@@ -2882,6 +2882,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@os-team/i18next-react-native-language-detector@npm:^1.0.34":
+  version: 1.0.34
+  resolution: "@os-team/i18next-react-native-language-detector@npm:1.0.34"
+  peerDependencies:
+    i18next: "*"
+    react-native: "*"
+  checksum: 10c0/76d044e0b406368cc8d3ac80b0ee94a925b9319629009c1802ec1bed8fdf9cdbbd70360f0c6c9778fe4faf41ff53f4f498242f956c4a21b851f4f11536eab94f
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -4585,6 +4595,7 @@ __metadata:
     "@expo/webpack-config": "npm:~19.0.1"
     "@miblanchard/react-native-slider": "npm:^2.6.0"
     "@openforis/arena-core": "npm:^0.0.209"
+    "@os-team/i18next-react-native-language-detector": "npm:^1.0.34"
     "@react-native-async-storage/async-storage": "npm:1.21.0"
     "@react-native-clipboard/clipboard": "npm:^1.14.1"
     "@react-native-community/datetimepicker": "npm:7.7.0"

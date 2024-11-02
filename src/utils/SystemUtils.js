@@ -1,3 +1,4 @@
+import { NativeModules } from "react-native";
 import * as Application from "expo-application";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import * as ExpoScreenOrientation from "expo-screen-orientation";
@@ -91,6 +92,16 @@ const unlockOrientation = async () => {
   await ExpoScreenOrientation.unlockAsync();
 };
 
+const getLocale = () =>
+  Environment.isIOS
+    ? NativeModules.SettingsManager.settings.AppleLocale
+    : NativeModules.I18nManager.localeIdentifier;
+
+const getLanguageCode = () => {
+  const locale = getLocale();
+  return locale?.substring(0, 2);
+};
+
 export const SystemUtils = {
   addOrientationChangeListener,
   copyValueToClipboard,
@@ -101,4 +112,6 @@ export const SystemUtils = {
   setKeepScreenAwake,
   lockOrientationToPortrait,
   unlockOrientation,
+  getLocale,
+  getLanguageCode,
 };
