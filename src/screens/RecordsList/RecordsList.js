@@ -29,6 +29,7 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
+import { RemoteConnectionUtils } from "state/remoteConnection/remoteConnectionUtils";
 import { Files } from "utils";
 
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
@@ -36,6 +37,8 @@ import { RecordsUtils } from "./RecordsUtils";
 import { RecordsListOptions } from "./RecordsListOptions";
 
 import styles from "./styles";
+
+const { checkLoggedInUser } = RemoteConnectionUtils;
 
 const minRecordsToShowSearchBar = 5;
 const noRecordsToExportTextKey =
@@ -109,6 +112,10 @@ export const RecordsList = () => {
       syncStatusFetched: false,
     }));
     try {
+      if (!(await checkLoggedInUser({ dispatch, navigation }))) {
+        setState((statePrev) => ({ ...statePrev, syncStatusLoading: false }));
+        return;
+      }
       const _records = await RecordService.syncRecordSummaries({
         survey,
         cycle,
@@ -122,10 +129,7 @@ export const RecordsList = () => {
         syncStatusFetched: true,
       }));
     } catch (error) {
-      setState((statePrev) => ({
-        ...statePrev,
-        syncStatusLoading: false,
-      }));
+      setState((statePrev) => ({ ...statePrev, syncStatusLoading: false }));
       dispatch(
         MessageActions.setMessage({
           content: "dataEntry:errorFetchingRecordsSyncStatus",
@@ -133,7 +137,7 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [survey, cycle, onlyLocal, dispatch]);
+  }, [dispatch, navigation, survey, cycle, onlyLocal]);
 
   const onOnlyLocalChange = useCallback(
     (onlyLocalUpdated) =>
