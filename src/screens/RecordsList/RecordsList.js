@@ -111,25 +111,21 @@ export const RecordsList = () => {
       syncStatusLoading: true,
       syncStatusFetched: false,
     }));
+    const stateNext = { syncStatusLoading: false };
     try {
       if (!(await checkLoggedInUser({ dispatch, navigation }))) {
-        setState((statePrev) => ({ ...statePrev, syncStatusLoading: false }));
-        return;
+        const _records = await RecordService.syncRecordSummaries({
+          survey,
+          cycle,
+          onlyLocal,
+        });
+        Object.assign(stateNext, {
+          loading: false,
+          records: _records,
+          syncStatusFetched: true,
+        });
       }
-      const _records = await RecordService.syncRecordSummaries({
-        survey,
-        cycle,
-        onlyLocal,
-      });
-      setState((statePrev) => ({
-        ...statePrev,
-        records: _records,
-        loading: false,
-        syncStatusLoading: false,
-        syncStatusFetched: true,
-      }));
     } catch (error) {
-      setState((statePrev) => ({ ...statePrev, syncStatusLoading: false }));
       dispatch(
         MessageActions.setMessage({
           content: "dataEntry:errorFetchingRecordsSyncStatus",
@@ -137,6 +133,7 @@ export const RecordsList = () => {
         })
       );
     }
+    setState((statePrev) => ({ ...statePrev, ...stateNext }));
   }, [dispatch, navigation, survey, cycle, onlyLocal]);
 
   const onOnlyLocalChange = useCallback(
