@@ -1,6 +1,7 @@
-import { AuthService, SettingsService } from "service";
 import { i18n } from "localization";
+import { AppService, AuthService, SettingsService } from "service";
 
+import { screenKeys } from "screens/screenKeys";
 import { ConfirmActions } from "../confirm";
 import { MessageActions } from "../message";
 import { SettingsActions } from "../settings";
@@ -8,26 +9,31 @@ import { SettingsActions } from "../settings";
 const LOGGED_OUT = "LOGGED_OUT";
 const USER_SET = "USER_SET";
 
-const checkLoggedIn = () => async (dispatch) => {
-  const settings = await SettingsService.fetchSettings();
-  const { serverUrl, email, password } = settings;
-  if (!serverUrl || !email || !password) return;
+const confirmGoToConnectionToRemoteServer =
+  ({ navigation }) =>
+  (dispatch) => {
+    dispatch(
+      ConfirmActions.show({
+        confirmButtonTextKey: "settings:connectionToRemoteServer",
+        messageKey: "settingsRemoteConnection:errorConnectingWithServer",
+        titleKey: "authService:loginRequired",
+        onConfirm: () =>
+          navigation.navigate(screenKeys.settingsRemoteConnection),
+      })
+    );
+  };
 
-  try {
-    const user = await AuthService.fetchUser();
-    dispatch({ type: RemoteConnectionActions.USER_SET, user });
-  } catch (error) {
-    // session expired
-    const { user } = await AuthService.login({
-      serverUrl,
-      email,
-      password,
-    });
+const checkLoggedIn =
+  ({ warnIfNotLoggedIn = false, navigation = null } = {}) =>
+  async (dispatch) => {
+    const user = await AppService.checkLoggedInUser();
     if (user) {
       dispatch({ type: USER_SET, user });
+    } else if (warnIfNotLoggedIn && navigation) {
+      dispatch(confirmGoToConnectionToRemoteServer({ navigation }));
     }
-  }
-};
+    return user;
+  };
 
 const login =
   ({ serverUrl, email, password }) =>
@@ -68,7 +74,15 @@ const login =
 
 const _doLogout = async (dispatch) => {
   await AuthService.logout();
-  dispatch({ type: RemoteConnectionActions.USER_SET, user: null });
+  const settings = await SettingsService.fetchSettings();
+  const settingsUpdated = {
+    ...settings,
+    email: null,
+    password: null,
+  };
+  dispatch(SettingsActions.updateSettings(settingsUpdated));
+
+  dispatch({ type: USER_SET, user: null });
 };
 
 const logout = () => (dispatch) => {
@@ -76,7 +90,7 @@ const logout = () => (dispatch) => {
     ConfirmActions.show({
       confirmButtonTextKey: "authService:logout",
       messageKey: "authService:logoutConfirmMessage",
-      titleKey: "authService:Logout",
+      titleKey: "authService:logout",
       onConfirm: () => dispatch(_doLogout),
     })
   );
@@ -85,6 +99,7 @@ const logout = () => (dispatch) => {
 export const RemoteConnectionActions = {
   LOGGED_OUT,
   USER_SET,
+  confirmGoToConnectionToRemoteServer,
   checkLoggedIn,
   login,
   logout,

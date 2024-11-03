@@ -1,5 +1,6 @@
 export default {
   email: "Email",
+  errorConnectingWithServer: "Error connecting with server",
   forgotPassword: "Forgot password?",
   login: "Login",
   password: "Password",
