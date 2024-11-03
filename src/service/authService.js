@@ -6,6 +6,9 @@ const fetchUser = async () => {
   return data.user;
 };
 
+const fetchUserPicture = async (userUuid) =>
+  RemoteService.getFile(`/api/user/${userUuid}/profilePicture`);
+
 const login = async ({ serverUrl: serverUrlParam, email, password }) => {
   const serverUrl = serverUrlParam ?? (await RemoteService.getServerUrl());
   try {
@@ -26,9 +29,8 @@ const login = async ({ serverUrl: serverUrlParam, email, password }) => {
 };
 
 const logout = async () => {
-  const serverUrl = await RemoteService.getServerUrl();
   try {
-    const res = await API.post(serverUrl, "/auth/logout");
+    const res = await RemoteService.post("/auth/logout");
     return res?.data;
   } catch (err) {
     if (!err.response) {
@@ -40,6 +42,7 @@ const logout = async () => {
 
 export const AuthService = {
   fetchUser,
+  fetchUserPicture,
   login,
   logout,
 };
