@@ -1,5 +1,6 @@
-import { Objects } from "@openforis/arena-core";
 import { useSelector } from "react-redux";
+
+import { Objects } from "@openforis/arena-core";
 
 const getRemoteConnectionState = (state) => state.remoteConnection;
 
