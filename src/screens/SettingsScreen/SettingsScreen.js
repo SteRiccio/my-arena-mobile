@@ -35,7 +35,7 @@ export const SettingsScreen = () => {
   return (
     <ScreenView>
       <VView style={styles.settingsWrapper}>
-        <ConnectionToRemoteServerButton />
+        <ConnectionToRemoteServerButton style={styles.button} />
 
         {settingsPropertiesEntries
           .filter(([, prop]) => !prop.isDisabled?.())

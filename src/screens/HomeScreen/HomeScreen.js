@@ -9,7 +9,7 @@ import { Button, ScreenView, Text, VView } from "components";
 import { SurveySelectors } from "state";
 
 import { screenKeys } from "../screenKeys";
-import { SelectedSurveyFieldset } from "./SelectedSurveyFieldet";
+import { SelectedSurveyContainer } from "./SelectedSurveyContainer";
 
 import styles from "./styles";
 
@@ -35,7 +35,7 @@ export const HomeScreen = () => {
 
         <GpsLockingEnabledWarning />
 
-        {surveySelected && <SelectedSurveyFieldset />}
+        {surveySelected && <SelectedSurveyContainer />}
 
         <Button
           mode={surveySelected ? "contained-tonal" : "contained"}

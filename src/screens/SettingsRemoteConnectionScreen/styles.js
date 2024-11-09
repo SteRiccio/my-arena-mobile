@@ -16,4 +16,7 @@ export default StyleSheet.create({
   loginButtonLabel: {
     fontSize: 18,
   },
+  logoutButton: {
+    alignSelf: "flex-start",
+  },
 });
