@@ -17,7 +17,11 @@ import {
 } from "components";
 import { useTranslation } from "localization";
 import { SettingsService } from "service";
-import { MessageActions, RemoteConnectionActions } from "state";
+import {
+  MessageActions,
+  RemoteConnectionActions,
+  RemoteConnectionSelectors,
+} from "state";
 import { useIsNetworkConnected } from "hooks";
 import styles from "./styles";
 
@@ -34,6 +38,7 @@ export const SettingsRemoteConnectionScreen = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const networkAvailable = useIsNetworkConnected();
+  const user = RemoteConnectionSelectors.useLoggedInUser();
 
   const [state, setState] = useState({
     serverUrl: SettingsService.defaultServerUrl,
@@ -46,29 +51,30 @@ export const SettingsRemoteConnectionScreen = () => {
   const { email, password, serverUrl, serverUrlType, serverUrlVerified } =
     state;
 
-  useEffect(() => {
-    const initialize = async () => {
-      const settings = await SettingsService.fetchSettings();
+  const initialize = useCallback(async () => {
+    const settings = await SettingsService.fetchSettings();
+    const serverUrlNext = settings.serverUrl
+      ? settings.serverUrl
+      : SettingsService.defaultServerUrl;
 
-      const serverUrlNext = settings.serverUrl
-        ? settings.serverUrl
-        : SettingsService.defaultServerUrl;
+    const serverUrlTypeNext =
+      serverUrlNext === SettingsService.defaultServerUrl
+        ? serverUrlTypes.default
+        : serverUrlTypes.custom;
 
-      const serverUrlTypeNext =
-        serverUrlNext === SettingsService.defaultServerUrl
-          ? serverUrlTypes.default
-          : serverUrlTypes.custom;
-
-      setState((statePrev) => ({
-        ...statePrev,
-        serverUrl: serverUrlNext,
-        serverUrlType: serverUrlTypeNext,
-        email: settings.email || "",
-        password: settings.password || "",
-      }));
-    };
-    initialize();
+    setState((statePrev) => ({
+      ...statePrev,
+      serverUrl: serverUrlNext,
+      serverUrlType: serverUrlTypeNext,
+      email: settings.email || "",
+      password: settings.password || "",
+    }));
   }, []);
+
+  // initialize form on load and reset form on logout
+  useEffect(() => {
+    initialize();
+  }, [initialize, user]);
 
   const onServerUrlTypeChange = useCallback(
     async (type) =>
@@ -132,6 +138,14 @@ export const SettingsRemoteConnectionScreen = () => {
     );
   }, [dispatch, email, password, serverUrl]);
 
+  const onLogout = useCallback(async () => {
+    if (networkAvailable) {
+      dispatch(RemoteConnectionActions.logout());
+    } else {
+      dispatch(RemoteConnectionActions.clearUserCredentials());
+    }
+  }, [dispatch, networkAvailable]);
+
   return (
     <ScreenView>
       <VView style={styles.container}>
@@ -188,11 +202,23 @@ export const SettingsRemoteConnectionScreen = () => {
         />
         <Button
           disabled={!networkAvailable}
+          labelStyle={styles.loginButtonLabel}
           onPress={onLogin}
           style={styles.loginButton}
-          labelStyle={styles.loginButtonLabel}
           textKey="settingsRemoteConnection:login"
         />
+        {user && (
+          <Button
+            mode="text"
+            onPress={onLogout}
+            style={styles.logoutButton}
+            textKey={
+              networkAvailable
+                ? "settingsRemoteConnection:logout"
+                : "settingsRemoteConnection:clearCredentials"
+            }
+          />
+        )}
         <Link
           labelKey="settingsRemoteConnection:forgotPassword"
           url={forgotPasswordUrl}

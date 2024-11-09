@@ -25,6 +25,7 @@ import { screenKeys } from "./screenKeys";
 const screenDefaults = {
   hasBack: true,
   hasDrawer: true,
+  hasOptionsMenuVisible: true,
   surveyNameAsTitle: false,
 };
 
@@ -61,11 +62,13 @@ export const screens = {
   },
   [screenKeys.settings]: {
     ...screenDefaults,
+    hasOptionsMenuVisible: false,
     title: "settings:title",
     component: SettingsScreen,
   },
   [screenKeys.settingsRemoteConnection]: {
     ...screenDefaults,
+    hasOptionsMenuVisible: false,
     title: "settingsRemoteConnection:title",
     component: SettingsRemoteConnectionScreen,
   },

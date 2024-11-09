@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  fieldset: {
+  container: {
     width: "90%",
   },
   internalContainer: {
     gap: 10,
-    alignItems: "center",
+    // alignItems: "center",
   },
   surveyTitleContainer: {
     width: "100%",
@@ -17,7 +17,7 @@ export default StyleSheet.create({
     flex: 1,
   },
   goToDataEntryButton: {
-    // alignSelf: "center",
+    alignSelf: "center",
   },
   updateStatusIconButton: {
     alignSelf: "flex-end",

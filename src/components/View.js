@@ -5,8 +5,10 @@ import PropTypes from "prop-types";
 
 const styles = StyleSheet.create({
   fullWidth: {
-    flex: 1,
     width: "100%",
+  },
+  fullFlex: {
+    flex: 1,
   },
 });
 

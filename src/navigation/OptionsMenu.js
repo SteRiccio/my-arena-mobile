@@ -5,6 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import * as WebBrowser from "expo-web-browser";
 import PropTypes from "prop-types";
 
+import { Surveys } from "@openforis/arena-core";
+
 import { useScreenKey } from "hooks";
 import { useTranslation } from "localization";
 import { screenKeys } from "screens";
@@ -15,15 +17,15 @@ import {
   SurveySelectors,
 } from "state";
 import { Environment } from "utils";
-import { Surveys } from "@openforis/arena-core";
+
+import { UserSummary } from "./UserSummary";
 
 export const OptionsMenu = (props) => {
   const { toggleMenu, visible } = props;
 
   const dispatch = useDispatch();
-  const { t } = useTranslation();
   const navigation = useNavigation();
-
+  const { t } = useTranslation();
   const screenKey = useScreenKey();
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
@@ -36,10 +38,19 @@ export const OptionsMenu = (props) => {
 
   return (
     <Menu
-      visible={visible}
-      onDismiss={toggleMenu}
       anchor={<RNPAppbar.Action icon="dots-vertical" onPress={toggleMenu} />}
+      onDismiss={toggleMenu}
+      visible={visible}
     >
+      <UserSummary
+        navigation={navigation}
+        onButtonPress={() => toggleMenu()}
+        profileIconSize={40}
+        showLogoutButton={false}
+      />
+
+      <Divider />
+
       {!editingRecord && (
         <Menu.Item
           leadingIcon="view-list"

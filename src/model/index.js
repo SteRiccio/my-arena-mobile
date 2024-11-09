@@ -13,6 +13,7 @@ export { SortDirection } from "./Sort";
 export { Taxa } from "./Taxa";
 export { Themes, ThemesSettings } from "./Themes";
 export { UpdateStatus } from "./UpdateStatus";
+export { UserLogoutOptions } from "./UserLogoutOptions";
 
 export { RecordNodes } from "./utils/RecordNodes";
 export { RecordSummaries } from "./utils/RecordSummaries";

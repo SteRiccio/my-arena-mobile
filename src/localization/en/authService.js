@@ -8,4 +8,7 @@ export default {
   loginSuccessful: "Login successful!",
   logout: "Logout",
   logoutConfirmMessage: "Are you sure you want to logout?",
+  logoutOptions: {
+    keepEmailAddress: "Keep email address",
+  },
 };

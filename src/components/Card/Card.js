@@ -11,7 +11,7 @@ export const Card = (props) => {
   const title = titleKey ? t(titleKey) : null;
   return (
     <RNPCard>
-      {title && <RNPCard.Title title={title} />}
+      {title && <RNPCard.Title title={title} titleVariant="titleMedium" />}
       <RNPCard.Content>{children}</RNPCard.Content>
     </RNPCard>
   );
