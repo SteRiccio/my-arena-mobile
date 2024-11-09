@@ -104,7 +104,18 @@ const getSize = async (fileUri) =>
     );
   });
 
+const isValid = async (fileUri) => {
+  try {
+    const size = await getSize(fileUri);
+    return !!size;
+  } catch (error) {
+    console.log("==error", error);
+    return false;
+  }
+};
+
 export const ImageUtils = {
   getSize,
+  isValid,
   resizeToFitMaxSize,
 };

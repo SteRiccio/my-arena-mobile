@@ -1,6 +1,4 @@
 export default {
-  cannotVerifyLoginInformation:
-    "Network not available: cannot verify login information",
   loggedInAs: "Logged in as {{name}}",
   notLoggedIn: "Not logged in",
   login: "Login",
@@ -8,4 +6,6 @@ export default {
   name: "Name",
   email: "Email",
   serverUrl: "Server URL",
+  sessionExpired: "Session expired: please login again.",
+  welcomeMessage: "Hi, {{name}}!",
 };

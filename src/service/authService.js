@@ -1,3 +1,4 @@
+import { ImageUtils } from "utils/ImageUtils";
 import { API } from "./api";
 import { RemoteService } from "./remoteService";
 
@@ -6,8 +7,12 @@ const fetchUser = async () => {
   return data.user;
 };
 
-const fetchUserPicture = async (userUuid) =>
-  RemoteService.getFile(`/api/user/${userUuid}/profilePicture`);
+const fetchUserPicture = async (userUuid) => {
+  const fileUri = await RemoteService.getFile(
+    `/api/user/${userUuid}/profilePicture`
+  );
+  return (await ImageUtils.isValid(fileUri)) ? fileUri : null;
+};
 
 const login = async ({ serverUrl: serverUrlParam, email, password }) => {
   const serverUrl = serverUrlParam ?? (await RemoteService.getServerUrl());

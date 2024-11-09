@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Appbar as RNPAppbar, Divider, Menu, Avatar } from "react-native-paper";
+import { Appbar as RNPAppbar, Divider, Menu } from "react-native-paper";
 import { BackHandler } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as WebBrowser from "expo-web-browser";
@@ -11,36 +10,15 @@ import { Surveys } from "@openforis/arena-core";
 import { useScreenKey } from "hooks";
 import { useTranslation } from "localization";
 import { screenKeys } from "screens";
-import { AuthService } from "service/authService";
 import {
   ConfirmActions,
   DataEntryActions,
   DataEntrySelectors,
-  RemoteConnectionSelectors,
   SurveySelectors,
 } from "state";
 import { Environment } from "utils";
 
-const UserProfileIcon = (props) => {
-  const { onPress } = props;
-  const user = RemoteConnectionSelectors.useLoggedInUser();
-  const userUuid = user?.uuid;
-
-  const [iconUri, setIconUri] = useState(null);
-
-  useEffect(() => {
-    AuthService.fetchUserPicture(userUuid).then(setIconUri);
-  }, [userUuid]);
-
-  const iconSource = iconUri ? { uri: iconUri } : "loading";
-  return (
-    <RNPAppbar.Action
-      icon={iconSource}
-      onPress={onPress}
-      style={{ borderWidth: 1 }}
-    />
-  );
-};
+import { UserSummary } from "./UserSummary";
 
 export const OptionsMenu = (props) => {
   const { toggleMenu, visible } = props;
@@ -48,7 +26,6 @@ export const OptionsMenu = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const user = RemoteConnectionSelectors.useLoggedInUser();
   const screenKey = useScreenKey();
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
@@ -61,16 +38,19 @@ export const OptionsMenu = (props) => {
 
   return (
     <Menu
-      visible={visible}
+      anchor={<RNPAppbar.Action icon="dots-vertical" onPress={toggleMenu} />}
       onDismiss={toggleMenu}
-      anchor={
-        user ? (
-          <UserProfileIcon onPress={toggleMenu} />
-        ) : (
-          <RNPAppbar.Action icon="account-off" onPress={toggleMenu} />
-        )
-      }
+      visible={visible}
     >
+      <UserSummary
+        navigation={navigation}
+        onButtonPress={() => toggleMenu()}
+        profileIconSize={40}
+        showLogoutButton={false}
+      />
+
+      <Divider />
+
       {!editingRecord && (
         <Menu.Item
           leadingIcon="view-list"

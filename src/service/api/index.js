@@ -61,12 +61,17 @@ const getFile = async (
   const url = getUrlWithParams({ serverUrl, uri, params });
   const actualTargetFileUri =
     targetFileUri ?? Files.cacheDirectory + UUIDs.v4() + ".tmp";
-  const { uri: finalTargetUri } = await Files.download(
-    url,
-    actualTargetFileUri,
-    options
-  );
-  return finalTargetUri;
+  try {
+    const { uri: finalTargetUri } = await Files.download(
+      url,
+      actualTargetFileUri,
+      options
+    );
+    return finalTargetUri;
+  } catch (error) {
+    // ignore errors
+    return null;
+  }
 };
 
 const test = async (serverUrl, uri, params = {}) => {

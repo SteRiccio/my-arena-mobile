@@ -32,6 +32,7 @@ export const AppBar = (props) => {
 
   const {
     hasBack,
+    hasOptionsMenuVisible,
     hasToggleScreenView,
     surveyNameAsTitle,
     title: titleOption,
@@ -171,7 +172,7 @@ export const AppBar = (props) => {
           />
         )}
 
-        {screenKey !== screenKeys.settings && (
+        {hasOptionsMenuVisible && (
           <OptionsMenu toggleMenu={toggleMenu} visible={menuVisible} />
         )}
       </HView>
