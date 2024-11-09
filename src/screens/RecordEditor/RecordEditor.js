@@ -21,6 +21,7 @@ import { RecordNodesCarousel } from "./RecordNodesCarousel";
 import { StatusBar } from "./StatusBar";
 
 import styles from "./styles.js";
+import { TouchableOpacity } from "react-native";
 
 export const RecordEditor = () => {
   if (__DEV__) {
@@ -41,16 +42,33 @@ export const RecordEditor = () => {
 
   const isPhone = DeviceInfoSelectors.useIsPhone();
 
+  const onInternalContainerPress = useCallback(() => {
+    if (pageSelectorOpen) {
+      dispatch(DataEntryActions.toggleRecordPageMenuOpen);
+    }
+  }, [dispatch, pageSelectorOpen]);
+
   const internalContainer = (
-    <VView style={styles.internalContainer}>
-      {viewMode === RecordEditViewMode.form ? (
-        <RecordPageForm />
-      ) : (
-        <RecordNodesCarousel />
-      )}
-      {showStatusBar && <StatusBar />}
-      <BottomNavigationBar />
-    </VView>
+    <TouchableOpacity
+      onPress={onInternalContainerPress}
+      style={styles.internalContainer}
+    >
+      <VView
+        fullFlex
+        pointerEvents={
+          // prevent user interaction with internal container when drawer is open
+          pageSelectorOpen ? "none" : undefined
+        }
+      >
+        {viewMode === RecordEditViewMode.form ? (
+          <RecordPageForm />
+        ) : (
+          <RecordNodesCarousel />
+        )}
+        {showStatusBar && <StatusBar />}
+        <BottomNavigationBar />
+      </VView>
+    </TouchableOpacity>
   );
 
   if (isPhone) {

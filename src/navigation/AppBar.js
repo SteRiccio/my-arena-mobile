@@ -131,7 +131,7 @@ export const AppBar = (props) => {
 
         {editingRecord && (
           <>
-            <Spacer />
+            <Spacer fullFlex fullWidth={false} />
             {recordEditLockAvailable && (
               <RNPAppbar.Action
                 icon={
