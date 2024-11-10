@@ -46,14 +46,14 @@ export const RecordEditor = () => {
   const isPhone = DeviceInfoSelectors.useIsPhone();
 
   const onInternalContainerPress = useCallback(() => {
-    if (pageSelectorOpen) {
-      dispatch(DataEntryActions.toggleRecordPageMenuOpen);
-    }
-  }, [dispatch, pageSelectorOpen]);
+    dispatch(DataEntryActions.toggleRecordPageMenuOpen);
+  }, [dispatch]);
 
   const internalContainer = (
     <Pressable
+      disabled={!pageSelectorOpen}
       onPress={onInternalContainerPress}
+      pointerEvents={pageSelectorOpen ? undefined : "auto"}
       style={styles.internalContainer}
     >
       <VView
@@ -77,13 +77,13 @@ export const RecordEditor = () => {
   if (isPhone) {
     return (
       <MenuDrawer
-        open={pageSelectorOpen}
-        position="left"
+        animationTime={250}
         drawerContent={<RecordEditorDrawer />}
         drawerPercentage={75}
-        animationTime={250}
-        overlay
         opacity={0.4}
+        open={pageSelectorOpen}
+        overlay
+        position="left"
       >
         {internalContainer}
       </MenuDrawer>
