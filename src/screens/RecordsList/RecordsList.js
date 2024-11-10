@@ -103,7 +103,7 @@ export const RecordsList = () => {
   }, [cycle, loadRecords, onlyLocal]);
 
   // refresh records list on navigation focus (e.g. going back to records list screen)
-  useNavigationFocus({ onFocus: loadRecords });
+  useNavigationFocus(loadRecords);
 
   const loadRecordsWithSyncStatus = useCallback(async () => {
     setState((statePrev) => ({

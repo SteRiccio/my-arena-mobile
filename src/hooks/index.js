@@ -9,6 +9,7 @@ export { useLocation } from "./useLocation";
 export { useLocationWatch } from "./useLocationWatch";
 export { useMagnetometerHeading } from "./useMagnetometerHeading";
 export { useNavigationFocus } from "./useNavigationFocus";
+export { useNavigationIsFocused } from "./useNavigationIsFocused";
 export { useRequestCameraPermission } from "./useRequestCameraPermission";
 export { useRequestMediaLibraryPermission } from "./useRequestMediaLibraryPermission";
 export { useScreenKey } from "./useScreenKey";

@@ -142,7 +142,7 @@ export const SurveysListRemote = () => {
     }));
   };
 
-  useNavigationFocus({ onFocus: loadSurveys });
+  useNavigationFocus(loadSurveys);
 
   const { onSearchValueChange, searchValue, surveysFiltered } =
     useSurveysSearch({ surveys });
