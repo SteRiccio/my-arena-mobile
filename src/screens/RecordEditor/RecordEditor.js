@@ -46,7 +46,6 @@ export const RecordEditor = () => {
   const isPhone = DeviceInfoSelectors.useIsPhone();
 
   const onInternalContainerPress = useCallback(() => {
-    console.log("===here");
     if (pageSelectorOpen) {
       dispatch(DataEntryActions.toggleRecordPageMenuOpen);
     }
