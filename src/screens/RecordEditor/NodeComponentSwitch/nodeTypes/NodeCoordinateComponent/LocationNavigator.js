@@ -248,6 +248,7 @@ export const LocationNavigator = (props) => {
         </VView>
         <HView style={styles.bottomBar}>
           <Button
+            disabled={!currentLocation}
             onPress={onUseCurrentLocationPress}
             textKey="dataEntry:coordinate.useCurrentLocation"
           />
