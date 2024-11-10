@@ -4,7 +4,6 @@ import { TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
 import PropTypes from "prop-types";
 
-import { Icon } from "components/Icon";
 import {
   RemoteConnectionActions,
   RemoteConnectionSelectors,
@@ -12,13 +11,13 @@ import {
 
 const UserProfileAvatar = (props) => {
   const { loading, size, uri, user } = props;
-  if (loading) return <Icon source="loading" size={size} />;
-  if (uri) return <Avatar.Image source={uri} size={size} />;
+  if (loading) return <Avatar.Icon icon="loading" size={size} />;
+  if (uri) return <Avatar.Image source={{ uri }} size={size} />;
   if (user) {
     const userFirstLetter = user?.name.substring(0, 1).toLocaleUpperCase();
     return <Avatar.Text label={userFirstLetter} size={size} />;
   }
-  return <Icon source="account-off" size={size} />;
+  return <Avatar.Icon icon="account-off" size={size} />;
 };
 
 UserProfileAvatar.propTypes = {

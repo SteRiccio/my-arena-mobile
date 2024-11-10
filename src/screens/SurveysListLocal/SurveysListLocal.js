@@ -96,7 +96,7 @@ export const SurveysListLocal = () => {
     }));
   }, []);
 
-  useNavigationFocus({ onFocus: loadSurveys });
+  useNavigationFocus(loadSurveys);
 
   const { onSearchValueChange, searchValue, surveysFiltered } =
     useSurveysSearch({ surveys });

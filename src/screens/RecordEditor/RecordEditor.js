@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
+import { Pressable } from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import MenuDrawer from "react-native-side-drawer";
 
 import { HView, VView, View } from "components";
 import { RecordEditViewMode } from "model";
-import { useBackHandler } from "hooks";
+import { useBackHandler, useNavigationIsFocused } from "hooks";
 import {
   DataEntryActions,
   DataEntrySelectors,
@@ -21,7 +22,6 @@ import { RecordNodesCarousel } from "./RecordNodesCarousel";
 import { StatusBar } from "./StatusBar";
 
 import styles from "./styles.js";
-import { TouchableOpacity } from "react-native";
 
 export const RecordEditor = () => {
   if (__DEV__) {
@@ -32,11 +32,14 @@ export const RecordEditor = () => {
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const { showStatusBar } = SettingsSelectors.useSettings();
   const navigation = useNavigation();
+  const isNavigationFocused = useNavigationIsFocused();
 
   const onBack = useCallback(() => {
-    dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
-    return true; // the event will not be bubbled up & no other back action will execute
-  }, [dispatch, navigation]);
+    if (isNavigationFocused) {
+      dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
+      return true; // the event will not be bubbled up & no other back action will execute
+    }
+  }, [dispatch, isNavigationFocused, navigation]);
 
   useBackHandler(onBack);
 
@@ -49,7 +52,7 @@ export const RecordEditor = () => {
   }, [dispatch, pageSelectorOpen]);
 
   const internalContainer = (
-    <TouchableOpacity
+    <Pressable
       onPress={onInternalContainerPress}
       style={styles.internalContainer}
     >
@@ -68,7 +71,7 @@ export const RecordEditor = () => {
         {showStatusBar && <StatusBar />}
         <BottomNavigationBar />
       </VView>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   if (isPhone) {
