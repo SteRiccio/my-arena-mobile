@@ -129,9 +129,8 @@ const addNewEntity = async (dispatch, getState) => {
     (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
   );
 
-  await RecordService.updateRecord({ survey, record: recordUpdated });
+  await _updateRecord({ dispatch, survey, record: recordUpdated });
 
-  dispatch({ type: RECORD_SET, record: recordUpdated });
   dispatch(
     selectCurrentPageEntity({
       parentEntityUuid: parentNode.uuid,
@@ -156,9 +155,7 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
 
   removeNodesFlags(nodes);
 
-  await RecordService.updateRecord({ survey, record: recordUpdated });
-
-  dispatch({ type: RECORD_SET, record: recordUpdated });
+  await _updateRecord({ dispatch, survey, record: recordUpdated });
 };
 
 const deleteRecords = (recordUuids) => async (dispatch, getState) => {
@@ -415,9 +412,7 @@ const addNewAttribute =
       }
     );
 
-    await RecordService.updateRecord({ survey, record: recordUpdated2 });
-
-    dispatch({ type: RECORD_SET, record: recordUpdated2 });
+    await _updateRecord({ dispatch, survey, record: recordUpdated2 });
   };
 
 const selectCurrentPageEntity =
