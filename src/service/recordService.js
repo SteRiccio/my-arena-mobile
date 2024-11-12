@@ -123,8 +123,6 @@ const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
     cycle,
   });
 
-  console.log("===recordsSummariesRemote", recordsSummariesRemote);
-
   const recordsSummariesLocalToDelete = allRecordsSummariesInDevice.filter(
     (recordSummaryLocal) =>
       // record summary is not locally modified and is no more in server
