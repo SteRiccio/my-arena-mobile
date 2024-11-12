@@ -1,4 +1,4 @@
-import { Objects, Records } from "@openforis/arena-core";
+import { Objects } from "@openforis/arena-core";
 
 import { Cycles, RecordLoadStatus, RecordNodes, RecordOrigin } from "model";
 import { RecordService } from "service";
@@ -51,28 +51,20 @@ const _fetchRecordFromPreviousCycleAndLinkIt = async ({
 }) => {
   dispatch({ type: RECORD_PREVIOUS_CYCLE_LOAD, loading: true });
 
-  const rootEntity = Records.getRoot(record);
-  const { cycle } = record;
   const prevCycleString = Cycles.labelFunction(prevCycle);
-  const keyValues = Records.getEntityKeyValues({
-    survey,
-    cycle,
-    record,
-    entity: rootEntity,
-  });
-  const keyValuesFormatted = RecordNodes.getRootEntityKeysFormatted({
+
+  const keyValuesString = RecordNodes.getRootEntityKeysFormatted({
     survey,
     record,
     lang,
-  });
-  const keyValuesString = keyValuesFormatted.join(", ");
+  }).join(", ");
 
   const prevCycleRecordSummaries =
-    await RecordService.findRecordSummariesByKeys({
+    await RecordService.findRecordSummariesWithSameKeys({
       survey,
+      record,
+      lang,
       cycle: prevCycle,
-      keyValues,
-      keyValuesFormatted,
     });
 
   if (prevCycleRecordSummaries.length === 0) {

@@ -28,6 +28,7 @@ export default {
   noItemsMatchingSearch: "There is no item matching your search",
   notEnoughDiskSpace:
     "Not enough free disk space ({{requiredSpace}} more is required)",
+  ok: "Ok",
   path: "Path",
   rowsPerPage: "Rows per page",
   search: "Search",

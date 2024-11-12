@@ -13,7 +13,7 @@ import {
   Surveys,
 } from "@openforis/arena-core";
 
-import { RecordOrigin, RecordLoadStatus } from "model";
+import { RecordOrigin, RecordLoadStatus, SurveyDefs, RecordNodes } from "model";
 import { RecordService } from "service/recordService";
 import { RecordFileService } from "service/recordFileService";
 
@@ -23,6 +23,7 @@ import { SystemUtils } from "utils";
 
 import { ConfirmActions } from "../confirm";
 import { DeviceInfoActions } from "../deviceInfo";
+import { MessageActions } from "../message";
 import { SurveySelectors } from "../survey";
 
 import { RemoteConnectionSelectors } from "../remoteConnection";
@@ -57,6 +58,18 @@ const removeNodesFlags = (nodes) => {
     delete node["deleted"];
     delete node["updated"];
   });
+};
+
+const _isRootKeyDuplicate = async ({ survey, record, lang }) => {
+  const recordSummaries = await RecordService.findRecordSummariesWithSameKeys({
+    survey,
+    record,
+    lang,
+  });
+  return (
+    recordSummaries.length > 1 ||
+    (recordSummaries.length === 1 && recordSummaries[0].uuid !== record.uuid)
+  );
 };
 
 const createNewRecord =
@@ -116,9 +129,8 @@ const addNewEntity = async (dispatch, getState) => {
     (nodeCreated) => nodeCreated.nodeDefUuid === nodeDef.uuid
   );
 
-  await RecordService.updateRecord({ survey, record: recordUpdated });
+  await _updateRecord({ dispatch, survey, record: recordUpdated });
 
-  dispatch({ type: RECORD_SET, record: recordUpdated });
   dispatch(
     selectCurrentPageEntity({
       parentEntityUuid: parentNode.uuid,
@@ -143,9 +155,7 @@ const deleteNodes = (nodeUuids) => async (dispatch, getState) => {
 
   removeNodesFlags(nodes);
 
-  await RecordService.updateRecord({ survey, record: recordUpdated });
-
-  dispatch({ type: RECORD_SET, record: recordUpdated });
+  await _updateRecord({ dispatch, survey, record: recordUpdated });
 };
 
 const deleteRecords = (recordUuids) => async (dispatch, getState) => {
@@ -225,14 +235,22 @@ const fetchAndEditRecord =
     }
   };
 
+const _updateRecord = async ({ dispatch, survey, record }) => {
+  const recordStored = await RecordService.updateRecord({ survey, record });
+  await dispatch({ type: RECORD_SET, record: recordStored });
+  return recordStored;
+};
+
 const updateAttribute =
   ({ uuid, value, fileUri = null }) =>
   async (dispatch, getState) => {
     const state = getState();
     const user = RemoteConnectionSelectors.selectLoggedUser(state);
     const survey = SurveySelectors.selectCurrentSurvey(state);
+    const lang = SurveySelectors.selectCurrentSurveyPreferredLang(state);
     const record = DataEntrySelectors.selectRecord(state);
 
+    const cycle = Records.getCycle(record);
     const node = Records.getNodeByUuid(uuid)(record);
     const nodeDef = Surveys.getNodeDefByUuid({
       survey,
@@ -273,18 +291,34 @@ const updateAttribute =
       }
       dispatch(DeviceInfoActions.updateFreeDiskStorage());
     }
-    recordUpdated = await RecordService.updateRecord({
-      survey,
-      record: recordUpdated,
-    });
 
-    await dispatch({ type: RECORD_SET, record: recordUpdated });
+    const isRootKeyDef = SurveyDefs.isRootKeyDef({ survey, cycle, nodeDef });
 
+    await _updateRecord({ dispatch, survey, record: recordUpdated });
     if (
       DataEntrySelectors.selectIsLinkedToPreviousCycleRecord(state) &&
-      NodeDefs.isKey(nodeDef)
+      isRootKeyDef
     ) {
       dispatch(unlinkFromRecordInPreviousCycle());
+    }
+
+    if (
+      isRootKeyDef &&
+      (await _isRootKeyDuplicate({ survey, record: recordUpdated, lang }))
+    ) {
+      const keyValues = RecordNodes.getRootEntityKeysFormatted({
+        survey,
+        record: recordUpdated,
+        lang,
+      }).join(", ");
+
+      dispatch(
+        MessageActions.setMessage({
+          content: "dataEntry:records.duplicateKey.message",
+          contentParams: { keyValues },
+          title: "dataEntry:records.duplicateKey.title",
+        })
+      );
     }
   };
 
@@ -378,9 +412,7 @@ const addNewAttribute =
       }
     );
 
-    await RecordService.updateRecord({ survey, record: recordUpdated2 });
-
-    dispatch({ type: RECORD_SET, record: recordUpdated2 });
+    await _updateRecord({ dispatch, survey, record: recordUpdated2 });
   };
 
 const selectCurrentPageEntity =

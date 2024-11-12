@@ -28,6 +28,7 @@ export const AppMessageDialog = () => {
       contentParams={contentParams}
       details={details}
       detailsParams={detailsParams}
+      doneButtonLabel="common:close"
       onDismiss={onDismiss}
       onDone={onDismiss}
       title={title}
