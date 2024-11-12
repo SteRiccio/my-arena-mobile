@@ -1,4 +1,4 @@
-import { Objects, Records } from "@openforis/arena-core";
+import { Objects } from "@openforis/arena-core";
 
 import { Cycles, RecordLoadStatus, RecordNodes, RecordOrigin } from "model";
 import { RecordService } from "service";

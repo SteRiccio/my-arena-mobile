@@ -7,7 +7,6 @@ import {
 } from "@openforis/arena-core";
 
 import {
-  Cycles,
   RecordLoadStatus,
   RecordNodes,
   RecordOrigin,
