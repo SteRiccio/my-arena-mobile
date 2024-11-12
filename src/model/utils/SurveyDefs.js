@@ -12,6 +12,12 @@ const getRootKeyDefs = ({ survey, cycle }) => {
   return Surveys.getNodeDefKeys({ survey, nodeDef: rootDef, cycle });
 };
 
+const isRootKeyDef = ({ survey, cycle, nodeDef }) => {
+  if (!NodeDefs.isKey(nodeDef)) return false;
+  const rootKeyDefs = getRootKeyDefs({ survey, cycle });
+  return rootKeyDefs.includes(nodeDef);
+};
+
 const getChildrenDefs = ({ survey, nodeDef, cycle }) =>
   Surveys.getNodeDefChildrenSorted({
     survey,
@@ -96,6 +102,7 @@ const isCodeAttributeFromSamplingPointData = ({ survey, nodeDef }) => {
 
 export const SurveyDefs = {
   getRootKeyDefs,
+  isRootKeyDef,
   getChildrenDefs,
   getEntitySummaryDefs,
   hasSamplingPointDataLocation,

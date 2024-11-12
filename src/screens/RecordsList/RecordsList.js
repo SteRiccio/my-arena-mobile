@@ -113,7 +113,7 @@ export const RecordsList = () => {
     }));
     const stateNext = { syncStatusLoading: false };
     try {
-      if (!(await checkLoggedInUser({ dispatch, navigation }))) {
+      if (await checkLoggedInUser({ dispatch, navigation })) {
         const _records = await RecordService.syncRecordSummaries({
           survey,
           cycle,

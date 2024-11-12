@@ -1,7 +1,15 @@
-import { Dates, Objects, RecordCloner, Surveys } from "@openforis/arena-core";
+import {
+  Dates,
+  Objects,
+  RecordCloner,
+  Records,
+  Surveys,
+} from "@openforis/arena-core";
 
 import {
+  Cycles,
   RecordLoadStatus,
+  RecordNodes,
   RecordOrigin,
   RecordSummaries,
   RecordSyncStatus,
@@ -116,6 +124,8 @@ const syncRecordSummaries = async ({ survey, cycle, onlyLocal }) => {
     cycle,
   });
 
+  console.log("===recordsSummariesRemote", recordsSummariesRemote);
+
   const recordsSummariesLocalToDelete = allRecordsSummariesInDevice.filter(
     (recordSummaryLocal) =>
       // record summary is not locally modified and is no more in server
@@ -214,6 +224,31 @@ const findRecordSummariesByKeys = async ({
   return recordSummaries;
 };
 
+const findRecordSummariesWithSameKeys = async ({
+  survey,
+  record,
+  lang,
+  cycle = null,
+}) => {
+  const rootEntity = Records.getRoot(record);
+  const keyValues = Records.getEntityKeyValues({
+    survey,
+    record,
+    entity: rootEntity,
+  });
+  const keyValuesFormatted = RecordNodes.getRootEntityKeysFormatted({
+    survey,
+    record,
+    lang,
+  });
+  return findRecordSummariesByKeys({
+    survey,
+    cycle: cycle ?? Records.getCycle(record),
+    keyValues,
+    keyValuesFormatted,
+  });
+};
+
 const cloneRecordsIntoDefaultCycle = async ({ survey, recordSummaries }) => {
   const surveyId = survey.id;
   const defaultCycle = Surveys.getDefaultCycleKey(survey);
@@ -258,6 +293,7 @@ export const RecordService = {
   syncRecordSummaries,
   fetchRecordsWithEmptyCycle,
   findRecordSummariesByKeys,
+  findRecordSummariesWithSameKeys,
   insertRecord,
   updateRecord,
   updateRecordWithContentFetchedRemotely,
