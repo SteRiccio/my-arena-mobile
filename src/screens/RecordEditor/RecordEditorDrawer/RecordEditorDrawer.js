@@ -15,6 +15,7 @@ import {
   SurveyOptionsSelectors,
   SurveySelectors,
 } from "state";
+
 import { PagesNavigationTree } from "../PagesNavigationTree";
 import { PageNodesList } from "../PageNodesList";
 
@@ -36,13 +37,13 @@ export const RecordEditorDrawer = () => {
   if (!pageSelectorOpen) return null;
 
   return (
-    <View style={styles.pagesNavigatorContainer}>
+    <View style={styles.container}>
       <HView style={styles.titleContainer}>
         <Text
           numberOfLines={1}
           variant="headlineMedium"
           style={styles.titleText}
-          textKey={Surveys.getLabel(lang)(survey) || Surveys.getName(survey)}
+          textKey={Surveys.getLabel(lang)(survey) ?? Surveys.getName(survey)}
         />
         <CloseIconButton
           onPress={() => dispatch(DataEntryActions.toggleRecordPageMenuOpen)}

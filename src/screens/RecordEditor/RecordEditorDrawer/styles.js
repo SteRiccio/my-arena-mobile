@@ -1,10 +1,19 @@
 import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 
+import { Environment } from "utils/Environment";
+
 export const useStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
+    container: {
+      flex: Environment.isIOS ? 0.8 : 0.85,
+      backgroundColor: theme.colors.surfaceVariant,
+      padding: 10,
+      borderWidth: 1,
+      gap: 10,
+    },
     titleContainer: {
       backgroundColor: "transparent",
       alignItems: "flex-start",
@@ -13,13 +22,6 @@ export const useStyles = () => {
     titleText: {
       flex: 1,
       margin: 6,
-    },
-    pagesNavigatorContainer: {
-      flex: 0.85,
-      backgroundColor: theme.colors.surfaceVariant,
-      padding: 10,
-      borderWidth: 1,
-      gap: 10,
     },
     closeButton: {},
     buttonBar: {
