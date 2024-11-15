@@ -172,7 +172,6 @@ export const SettingsRemoteConnectionScreen = () => {
                 serverUrlType === serverUrlTypes.default || !networkAvailable
               }
               onChange={onServerUrlChange}
-              style={{ width: "90%" }}
               value={serverUrl}
             />
             {serverUrlVerified && <Icon source="check" size={30} />}
