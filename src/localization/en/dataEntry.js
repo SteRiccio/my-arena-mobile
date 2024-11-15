@@ -92,7 +92,7 @@ export default {
     },
     duplicateKey: {
       title: "Duplicate key",
-      message: `Another record with the same key ({{keyValues}}) exists.`,
+      message: `Another record with the same key ({{keyValues}}) already exists.`,
     },
     exportRecords: {
       title: "Export",
