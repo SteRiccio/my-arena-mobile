@@ -421,6 +421,7 @@ const selectCurrentPageEntity =
     const state = getState();
     const { entityDef: prevEntityDef, entityUuid: prevEntityUuid } =
       DataEntrySelectors.selectCurrentPageEntity(state);
+    const isPhone = DeviceInfoSelectors.selectIsPhone(state);
 
     const nextEntityUuid =
       entityDefUuid === prevEntityDef.uuid &&
@@ -446,7 +447,9 @@ const selectCurrentPageEntity =
       dispatch(updatePreviousCyclePageEntity);
     }
 
-    dispatch(closeRecordPageMenu);
+    if (isPhone) {
+      dispatch(closeRecordPageMenu);
+    }
   };
 
 const selectCurrentPageEntityActiveChildIndex =
