@@ -46,32 +46,40 @@ export const RecordEditor = () => {
   const isPhone = DeviceInfoSelectors.useIsPhone();
 
   const onInternalContainerPress = useCallback(() => {
-    dispatch(DataEntryActions.toggleRecordPageMenuOpen);
-  }, [dispatch]);
+    if (isPhone) {
+      dispatch(DataEntryActions.toggleRecordPageMenuOpen);
+    }
+  }, [dispatch, isPhone]);
 
-  const internalContainer = (
+  const veryInternalContainer = (
+    <VView
+      fullFlex
+      pointerEvents={
+        // prevent user interaction with internal container when drawer is open
+        isPhone && pageSelectorOpen ? "none" : undefined
+      }
+    >
+      {viewMode === RecordEditViewMode.form ? (
+        <RecordPageForm />
+      ) : (
+        <RecordNodesCarousel />
+      )}
+      {showStatusBar && <StatusBar />}
+      <BottomNavigationBar />
+    </VView>
+  );
+
+  const internalContainer = isPhone ? (
     <Pressable
       disabled={!pageSelectorOpen}
       onPress={onInternalContainerPress}
       pointerEvents={pageSelectorOpen ? undefined : "auto"}
       style={styles.internalContainer}
     >
-      <VView
-        fullFlex
-        pointerEvents={
-          // prevent user interaction with internal container when drawer is open
-          pageSelectorOpen ? "none" : undefined
-        }
-      >
-        {viewMode === RecordEditViewMode.form ? (
-          <RecordPageForm />
-        ) : (
-          <RecordNodesCarousel />
-        )}
-        {showStatusBar && <StatusBar />}
-        <BottomNavigationBar />
-      </VView>
+      {veryInternalContainer}
     </Pressable>
+  ) : (
+    veryInternalContainer
   );
 
   if (isPhone) {
