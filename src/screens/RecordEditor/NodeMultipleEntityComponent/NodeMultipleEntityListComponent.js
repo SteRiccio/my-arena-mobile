@@ -120,9 +120,9 @@ export const NodeMultipleEntityListComponent = (props) => {
       )}
       {rows.length > 0 && (
         <DataTable
-          fields={visibleSummaryDefs.map((keyDef) => ({
-            key: NodeDefs.getName(keyDef),
-            header: NodeDefs.getLabelOrName(keyDef, lang),
+          fields={visibleSummaryDefs.map((summaryDef) => ({
+            key: NodeDefs.getName(summaryDef),
+            header: NodeDefs.getLabelOrName(summaryDef, lang),
           }))}
           items={rows}
           onItemPress={onRowPress}

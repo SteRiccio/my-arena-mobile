@@ -83,6 +83,7 @@ const getEntitySummaryValuesByNameFormatted = ({
   onlyKeys = true,
   lang,
   summaryDefs: summaryDefsParam = null,
+  emptyValue = EMPTY_VALUE,
 }) => {
   const { cycle } = record;
   const entityDef = Surveys.getNodeDefByUuid({
@@ -119,7 +120,7 @@ const getEntitySummaryValuesByNameFormatted = ({
       formattedValue = JSON.stringify(formattedValue);
     }
     if (Objects.isEmpty(formattedValue)) {
-      formattedValue = EMPTY_VALUE;
+      formattedValue = emptyValue;
     }
     acc[NodeDefs.getName(summaryDef)] = formattedValue;
 
