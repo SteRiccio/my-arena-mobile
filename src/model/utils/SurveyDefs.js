@@ -34,11 +34,10 @@ const getChildrenDefs = ({ survey, nodeDef, cycle }) =>
 const getEntitySummaryDefs = ({
   survey,
   entityDef,
-  record,
+  cycle,
   onlyKeys = true,
   maxSummaryDefs = 3,
 }) => {
-  const { cycle } = record;
   const keyDefs = Surveys.getNodeDefKeys({ survey, cycle, nodeDef: entityDef });
 
   if (onlyKeys) {
