@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import PropTypes from "prop-types";
 
-import { Dates, Objects } from "@openforis/arena-core";
+import { DateFormats, Dates, Objects } from "@openforis/arena-core";
 
 import { DateTimePicker } from "components";
 
@@ -9,11 +9,16 @@ import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
 
 export const NodeDateTimeComponent = (props) => {
-  const { formatDisplay, formatStorage, mode, nodeDef, nodeUuid } = props;
+  const { mode, nodeDef, nodeUuid } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeDateTimeComponent for ${nodeDef.props.name}`);
   }
+  const formatDisplay =
+    mode === "date" ? DateFormats.dateDisplay : DateFormats.timeStorage;
+  const formatStorage =
+    mode === "date" ? DateFormats.dateStorage : DateFormats.timeStorage;
+
   const { value, updateNodeValue } = useNodeComponentLocalState({ nodeUuid });
 
   const onChange = useCallback(
@@ -43,7 +48,5 @@ export const NodeDateTimeComponent = (props) => {
 
 NodeDateTimeComponent.propTypes = {
   ...NodeComponentPropTypes,
-  formatDisplay: PropTypes.string.isRequired,
-  formatStorage: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(["date", "time"]),
 };
