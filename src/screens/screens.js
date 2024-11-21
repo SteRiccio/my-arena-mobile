@@ -26,7 +26,7 @@ const screenDefaults = {
   hasBack: true,
   hasDrawer: true,
   hasOptionsMenuVisible: true,
-  surveyNameAsTitle: false,
+  surveyLabelAsTitle: false,
 };
 
 export const screens = {
@@ -48,9 +48,9 @@ export const screens = {
   },
   [screenKeys.recordEditor]: {
     ...screenDefaults,
-    title: "dataEntry:recordEditor",
     hasBack: false,
     hasDrawer: true,
+    surveyLabelAsTitle: true,
     component: RecordEditor,
   },
 

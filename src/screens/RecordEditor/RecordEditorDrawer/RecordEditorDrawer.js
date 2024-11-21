@@ -41,7 +41,7 @@ export const RecordEditorDrawer = () => {
       <HView style={styles.titleContainer}>
         <Text
           numberOfLines={1}
-          variant="headlineMedium"
+          variant="titleMedium"
           style={styles.titleText}
           textKey={Surveys.getLabel(lang)(survey) ?? Surveys.getName(survey)}
         />

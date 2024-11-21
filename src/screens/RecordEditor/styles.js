@@ -11,14 +11,14 @@ export default StyleSheet.create({
   },
   drawerWrapperInTablet: {
     ...BaseStyles.fullHeight,
-    width: "40%",
+    width: "45%",
   },
   internalContainerWrapperInTablet: {
     flex: 1,
   },
   internalContainerWrapperInTabletPageSelectorOpen: {
     ...internalContainerWrapperInTablet,
-    width: "60%",
+    width: "55%",
   },
   internalContainer: {
     flex: 1,

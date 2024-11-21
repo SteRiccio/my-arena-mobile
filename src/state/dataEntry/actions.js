@@ -22,7 +22,7 @@ import { screenKeys } from "screens/screenKeys";
 import { SystemUtils } from "utils";
 
 import { ConfirmActions } from "../confirm";
-import { DeviceInfoActions } from "../deviceInfo";
+import { DeviceInfoActions, DeviceInfoSelectors } from "../deviceInfo";
 import { MessageActions } from "../message";
 import { SurveySelectors } from "../survey";
 
@@ -175,6 +175,7 @@ const editRecord =
       record,
       recordEditLockAvailable: locked,
       recordEditLocked: locked,
+      recordPageSelectorMenuOpen: false,
     });
     navigation.navigate(screenKeys.recordEditor);
   };
@@ -421,6 +422,7 @@ const selectCurrentPageEntity =
     const state = getState();
     const { entityDef: prevEntityDef, entityUuid: prevEntityUuid } =
       DataEntrySelectors.selectCurrentPageEntity(state);
+    const isPhone = DeviceInfoSelectors.selectIsPhone(state);
 
     const nextEntityUuid =
       entityDefUuid === prevEntityDef.uuid &&
@@ -446,13 +448,20 @@ const selectCurrentPageEntity =
       dispatch(updatePreviousCyclePageEntity);
     }
 
-    dispatch(closeRecordPageMenu);
+    if (isPhone) {
+      dispatch(closeRecordPageMenu);
+    }
   };
 
-const selectCurrentPageEntityActiveChildIndex = (index) => (dispatch) => {
-  dispatch({ type: PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET, index });
-  dispatch(closeRecordPageMenu);
-};
+const selectCurrentPageEntityActiveChildIndex =
+  (index) => (dispatch, getState) => {
+    dispatch({ type: PAGE_ENTITY_ACTIVE_CHILD_INDEX_SET, index });
+    const state = getState();
+    const isPhone = DeviceInfoSelectors.selectIsPhone(state);
+    if (isPhone) {
+      dispatch(closeRecordPageMenu);
+    }
+  };
 
 const toggleRecordPageMenuOpen = (dispatch, getState) => {
   Keyboard.dismiss();

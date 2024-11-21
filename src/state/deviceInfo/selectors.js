@@ -19,6 +19,8 @@ const selectOrientation = (state) => selectDeviceInfo(state).orientation;
 
 export const DeviceInfoSelectors = {
   selectDeviceInfo,
+  selectIsTablet,
+  selectIsPhone,
 
   useDeviceInfo: () => useSelector(selectDeviceInfo),
   useIsTablet: () => useSelector(selectIsTablet),

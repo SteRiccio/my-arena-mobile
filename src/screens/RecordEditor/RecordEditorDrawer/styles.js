@@ -1,14 +1,16 @@
 import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
+import { DeviceInfoSelectors } from "state/deviceInfo";
 
 import { Environment } from "utils/Environment";
 
 export const useStyles = () => {
   const theme = useTheme();
+  const isPhone = DeviceInfoSelectors.useIsPhone();
 
   return StyleSheet.create({
     container: {
-      flex: Environment.isIOS ? 0.8 : 0.85,
+      flex: determineContainerFlex({ isPhone }),
       backgroundColor: theme.colors.surfaceVariant,
       padding: 10,
       borderWidth: 1,
@@ -32,4 +34,10 @@ export const useStyles = () => {
       width: "100%",
     },
   });
+};
+const determineContainerFlex = ({ isPhone = true }) => {
+  if (isPhone) {
+    return Environment.isIOS ? 0.8 : 0.85;
+  }
+  return 1;
 };
