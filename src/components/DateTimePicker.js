@@ -86,6 +86,5 @@ DateTimePicker.propTypes = {
   format: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(["date", "time"]),
   onChange: PropTypes.func.isRequired,
-  textInputStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   value: PropTypes.any,
 };
