@@ -3,7 +3,7 @@
     "name": "Arena Mobile Experiments",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "1.1.18",
+    "version": "1.1.19",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -21,10 +21,10 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 82
+      "versionCode": 83
     },
     "ios": {
-      "buildNumber": "82",
+      "buildNumber": "83",
       "bundleIdentifier": "org.stericcio.myarenamobile",
       "infoPlist": {
         "LSMinimumSystemVersion": "13.0",
