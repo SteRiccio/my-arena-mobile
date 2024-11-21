@@ -83,8 +83,9 @@ const getEntitySummaryValuesByNameFormatted = ({
   onlyKeys = true,
   lang,
   summaryDefs: summaryDefsParam = null,
+  emptyValue = EMPTY_VALUE,
 }) => {
-  const cycle = record.cycle;
+  const { cycle } = record;
   const entityDef = Surveys.getNodeDefByUuid({
     survey,
     uuid: entity.nodeDefUuid,
@@ -93,7 +94,7 @@ const getEntitySummaryValuesByNameFormatted = ({
     summaryDefsParam ??
     SurveyDefs.getEntitySummaryDefs({
       survey,
-      record,
+      cycle,
       entityDef,
       onlyKeys,
     });
@@ -119,7 +120,7 @@ const getEntitySummaryValuesByNameFormatted = ({
       formattedValue = JSON.stringify(formattedValue);
     }
     if (Objects.isEmpty(formattedValue)) {
-      formattedValue = EMPTY_VALUE;
+      formattedValue = emptyValue;
     }
     acc[NodeDefs.getName(summaryDef)] = formattedValue;
 
@@ -210,10 +211,9 @@ const findAncestor = ({ record, node, predicate }) => {
     }
   })(record);
   return result;
-}
+};
 
-
-  const cleanupAttributeValue = ({ value, attributeDef }) => {
+const cleanupAttributeValue = ({ value, attributeDef }) => {
   if (NodeDefs.getType(attributeDef) === NodeDefType.coordinate) {
     const additionalFields =
       NodeDefs.getCoordinateAdditionalFields(attributeDef);
@@ -235,6 +235,38 @@ const findAncestor = ({ record, node, predicate }) => {
   return value;
 };
 
+const hasDescendantApplicableNodes = ({ record, parentEntity, nodeDef }) => {
+  const descendants = Records.getDescendantsOrSelf({
+    record,
+    node: parentEntity,
+    nodeDefDescendant: nodeDef,
+  });
+  return descendants.some((node) => Records.isNodeApplicable({ record, node }));
+};
+
+const getApplicableSummaryDefs = ({
+  survey,
+  entityDef,
+  record,
+  parentEntity,
+  onlyKeys = false,
+  maxSummaryDefs = undefined,
+}) => {
+  const { cycle } = record;
+  const summaryDefs = SurveyDefs.getEntitySummaryDefs({
+    survey,
+    cycle,
+    entityDef,
+    onlyKeys,
+    maxSummaryDefs,
+  });
+  return summaryDefs.filter(
+    (nodeDef) =>
+      Objects.isEmpty(NodeDefs.getApplicable(nodeDef)) ||
+      hasDescendantApplicableNodes({ record, parentEntity, nodeDef })
+  );
+};
+
 export const RecordNodes = {
   getNodeName,
   getEntityKeysFormatted,
@@ -245,4 +277,6 @@ export const RecordNodes = {
   getCoordinateDistanceTarget,
   findAncestor,
   cleanupAttributeValue,
+  hasDescendantApplicableNodes,
+  getApplicableSummaryDefs,
 };

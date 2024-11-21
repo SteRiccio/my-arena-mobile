@@ -28,8 +28,13 @@ export const useBreadcrumbItems = () => {
             record,
             entity,
             lang,
+            emptyValue: null,
           });
-        return nodeDefLabel + `[${Object.values(keyValuesByName)}]`;
+        const keyValuesText =
+          Object.values(keyValuesByName)
+            .filter(Objects.isNotEmpty)
+            .join(", ") || "---";
+        return nodeDefLabel + `[${keyValuesText}]`;
       }
       return nodeDefLabel;
     },
