@@ -3,6 +3,8 @@ import { Appbar as RNPAppbar } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
+import { Surveys } from "@openforis/arena-core";
+
 import { HView, Spacer, Text } from "components";
 import { useScreenKey } from "hooks";
 import { RecordEditViewMode, ScreenViewMode } from "model";
@@ -10,6 +12,7 @@ import { useTranslation } from "localization";
 import {
   DataEntryActions,
   DataEntrySelectors,
+  DeviceInfoSelectors,
   ScreenOptionsActions,
   ScreenOptionsSelectors,
   SurveyOptionsActions,
@@ -34,7 +37,7 @@ export const AppBar = (props) => {
     hasBack,
     hasOptionsMenuVisible,
     hasToggleScreenView,
-    surveyNameAsTitle,
+    surveyLabelAsTitle,
     title: titleOption,
   } = options;
 
@@ -43,6 +46,7 @@ export const AppBar = (props) => {
 
   const dispatch = useDispatch();
   const survey = SurveySelectors.useCurrentSurvey();
+  const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
@@ -58,14 +62,15 @@ export const AppBar = (props) => {
     DataEntrySelectors.useIsLinkedToPreviousCycleRecord();
   const isLoadingPreviousCycleRecord =
     DataEntrySelectors.usePreviousCycleRecordLoading();
+  const isTablet = DeviceInfoSelectors.useIsTablet();
 
   const [state, setState] = useState({ menuVisible: false });
 
   const { menuVisible } = state;
 
   const title =
-    surveyNameAsTitle && editingRecord && survey
-      ? survey.props.name
+    surveyLabelAsTitle && survey
+      ? Surveys.getLabelOrName(lang)(survey)
       : t(titleOption);
 
   const onToggleDrawerPress = useCallback(
@@ -123,15 +128,19 @@ export const AppBar = (props) => {
           <RNPAppbar.BackAction onPress={navigation.goBack} />
         )}
 
-        {!editingRecord && (
-          <Text style={styles.title} variant="titleLarge">
+        {(!editingRecord || isTablet) && (
+          <Text
+            numberOfLines={editingRecord ? 1 : undefined}
+            style={styles.title}
+            variant="titleLarge"
+          >
             {title}
           </Text>
         )}
 
         {editingRecord && (
           <>
-            <Spacer fullFlex fullWidth={false} />
+            {!isTablet && <Spacer fullFlex fullWidth={false} />}
             {recordEditLockAvailable && (
               <RNPAppbar.Action
                 icon={
