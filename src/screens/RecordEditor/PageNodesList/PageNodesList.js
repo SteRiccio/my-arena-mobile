@@ -3,15 +3,21 @@ import { FlatList } from "react-native";
 import { useDispatch } from "react-redux";
 import { List } from "react-native-paper";
 
-import { NodeDefType, NodeDefs } from "@openforis/arena-core";
+import {
+  NodeDefType,
+  NodeDefs,
+  Records,
+  Validations,
+} from "@openforis/arena-core";
 
-import { VView } from "components";
+import { AlertIcon, VView } from "components";
 import { RecordPageNavigator } from "model";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 
 import { NodePageNavigationButton } from "../BottomNavigationBar/NodePageNavigationButton";
 
 import styles from "./styles";
+import { ValidationUtils } from "model/utils/ValidationUtils";
 
 const iconByNodeDefType = {
   [NodeDefType.boolean]: () => "checkbox-marked-outline",
@@ -44,6 +50,10 @@ export const PageNodesList = () => {
 
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
+  const parentEntity = entityUuid
+    ? Records.getNodeByUuid(entityUuid)(record)
+    : null;
+  const validation = Validations.getValidation(record);
 
   const prevEntityPointer = useMemo(
     () =>
@@ -78,6 +88,45 @@ export const PageNodesList = () => {
     []
   );
 
+  const renderItemRightIcon = useCallback(
+    ({ item }) => {
+      const nodeDefUuid = item.uuid;
+      const node = Records.getChild(parentEntity, nodeDefUuid)(record);
+      const fieldValidation = node
+        ? Validations.getFieldValidation(node.uuid)(validation)
+        : null;
+      if (!fieldValidation || fieldValidation.valid) return null;
+      const hasErrors = ValidationUtils.hasNestedErrors(fieldValidation);
+      const hasWarnings = !hasErrors;
+      return <AlertIcon hasErrors={hasErrors} hasWarnings={hasWarnings} />;
+    },
+    [parentEntity, record, validation]
+  );
+
+  const renderItem = useCallback(
+    ({ index, item }) => {
+      const isActiveItem = index === activeChildIndex;
+
+      return (
+        <List.Item
+          title={NodeDefs.getLabelOrName(item, lang)}
+          onPress={onItemPress(index)}
+          left={(iconProps) => renderItemLeftIcon({ ...iconProps, item })}
+          right={(iconProps) => renderItemRightIcon({ ...iconProps, item })}
+          style={isActiveItem ? styles.activeItem : undefined}
+          titleStyle={isActiveItem ? styles.activeItemText : undefined}
+        />
+      );
+    },
+    [
+      activeChildIndex,
+      lang,
+      onItemPress,
+      renderItemLeftIcon,
+      renderItemRightIcon,
+    ]
+  );
+
   return (
     <VView style={{ flex: 1, backgroundColor: "transparent" }}>
       {!NodeDefs.isRoot(entityDef) && prevEntityPointer && (
@@ -88,23 +137,12 @@ export const PageNodesList = () => {
       )}
       {(NodeDefs.isSingleEntity(entityDef) || entityUuid) && (
         <FlatList
-          scrollEnabled
-          style={{ flex: 1 }}
           data={childDefs}
-          renderItem={({ index, item }) => {
-            const isActiveItem = index === activeChildIndex;
-
-            return (
-              <List.Item
-                title={NodeDefs.getLabelOrName(item, lang)}
-                onPress={onItemPress(index)}
-                left={(iconProps) => renderItemLeftIcon({ ...iconProps, item })}
-                style={isActiveItem ? styles.activeItem : undefined}
-                titleStyle={isActiveItem ? styles.activeItemText : undefined}
-              />
-            );
-          }}
           keyExtractor={(item) => item.uuid}
+          renderItem={renderItem}
+          scrollEnabled
+          persistentScrollbar
+          style={{ flex: 1 }}
         />
       )}
       {nextEntityPointer && (
