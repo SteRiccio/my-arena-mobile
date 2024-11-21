@@ -1,14 +1,17 @@
 import { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { useDispatch } from "react-redux";
-import { List, useTheme } from "react-native-paper";
+import { List } from "react-native-paper";
 
 import { NodeDefType, NodeDefs } from "@openforis/arena-core";
 
 import { VView } from "components";
 import { RecordPageNavigator } from "model";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
+
 import { NodePageNavigationButton } from "../BottomNavigationBar/NodePageNavigationButton";
+
+import styles from "./styles";
 
 const iconByNodeDefType = {
   [NodeDefType.boolean]: () => "checkbox-marked-outline",
@@ -30,7 +33,6 @@ const getNodeDefIcon = (nodeDef) =>
 
 export const PageNodesList = () => {
   const dispatch = useDispatch();
-  const theme = useTheme();
 
   const childDefs = DataEntrySelectors.useCurrentPageEntityRelevantChildDefs();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -63,12 +65,6 @@ export const PageNodesList = () => {
     [survey, record, currentEntityPointer]
   );
 
-  const activeChildTextStyle = { color: theme.colors.onPrimary };
-  const activeChildItemStyle = {
-    backgroundColor: theme.colors.primary,
-  };
-  const activeItemIconColor = theme.colors.onPrimary;
-
   const onItemPress = useCallback(
     (index) => () =>
       dispatch(DataEntryActions.selectCurrentPageEntityActiveChildIndex(index)),
@@ -76,14 +72,10 @@ export const PageNodesList = () => {
   );
 
   const renderItemLeftIcon = useCallback(
-    ({ item, isActiveItem, ...otherProps }) => (
-      <List.Icon
-        {...otherProps}
-        color={isActiveItem ? activeItemIconColor : undefined}
-        icon={getNodeDefIcon(item)}
-      />
+    ({ item, ...otherProps }) => (
+      <List.Icon {...otherProps} icon={getNodeDefIcon(item)} />
     ),
-    [activeItemIconColor]
+    []
   );
 
   return (
@@ -106,11 +98,9 @@ export const PageNodesList = () => {
               <List.Item
                 title={NodeDefs.getLabelOrName(item, lang)}
                 onPress={onItemPress(index)}
-                left={(iconProps) =>
-                  renderItemLeftIcon({ ...iconProps, item, isActiveItem })
-                }
-                style={isActiveItem ? activeChildItemStyle : undefined}
-                titleStyle={isActiveItem ? activeChildTextStyle : undefined}
+                left={(iconProps) => renderItemLeftIcon({ ...iconProps, item })}
+                style={isActiveItem ? styles.activeItem : undefined}
+                titleStyle={isActiveItem ? styles.activeItemText : undefined}
               />
             );
           }}
