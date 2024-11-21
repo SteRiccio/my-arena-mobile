@@ -175,6 +175,7 @@ const editRecord =
       record,
       recordEditLockAvailable: locked,
       recordEditLocked: locked,
+      recordPageSelectorMenuOpen: false,
     });
     navigation.navigate(screenKeys.recordEditor);
   };

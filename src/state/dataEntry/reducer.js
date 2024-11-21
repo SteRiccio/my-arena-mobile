@@ -25,7 +25,8 @@ const actionHandlers = {
     recordEditLockAvailable:
       action.recordEditLockAvailable ?? state.recordEditLockAvailable,
     recordEditLocked: action.recordEditLocked ?? state.recordEditLocked,
-    recordPageSelectorMenuOpen: false,
+    recordPageSelectorMenuOpen:
+      action.recordPageSelectorMenuOpen ?? state.recordPageSelectorMenuOpen,
   }),
   [DataEntryActionTypes.RECORD_EDIT_LOCKED]: ({ state, action }) => ({
     ...state,
