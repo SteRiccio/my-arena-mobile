@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.20] - 2024-11-21
+### Added
+- Entities summary screen: hide non-applicable keys;
+- Layout adjustments (using tablets);
+
 ## [1.1.19] - 2024-11-18
 ### Added
 - Date/time editor: added clear button;

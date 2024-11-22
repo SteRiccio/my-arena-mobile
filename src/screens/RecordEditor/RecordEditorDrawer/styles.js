@@ -12,18 +12,18 @@ export const useStyles = () => {
     container: {
       flex: determineContainerFlex({ isPhone }),
       backgroundColor: theme.colors.surfaceVariant,
-      padding: 10,
+      paddingVertical: 4,
+      paddingHorizontal: 10,
       borderWidth: 1,
       gap: 10,
     },
     titleContainer: {
       backgroundColor: "transparent",
-      alignItems: "flex-start",
+      alignItems: "center",
       borderBottomWidth: 2,
     },
     titleText: {
       flex: 1,
-      margin: 6,
     },
     closeButton: {},
     buttonBar: {

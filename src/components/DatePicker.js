@@ -1,49 +1,11 @@
-import React, { useState } from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import PropTypes from "prop-types";
+import React from "react";
 
-import { DateFormats, Dates } from "@openforis/arena-core";
+import { DateFormats } from "@openforis/arena-core";
 
-import { HView } from "./HView";
-import { IconButton } from "./IconButton";
-import { TextInput } from "./TextInput";
+import { DateTimePicker } from "./DateTimePicker";
 
-export const DatePicker = (props) => {
-  const { value, onChange: onChangeProp } = props;
+export const DatePicker = (props) => (
+  <DateTimePicker {...props} format={DateFormats.dateDisplay} mode="date" />
+);
 
-  const [show, setShow] = useState(false);
-
-  const onChange = (_event, selectedDate) => {
-    setShow(false);
-    onChangeProp(selectedDate);
-  };
-
-  const showDatePicker = () => {
-    setShow(true);
-  };
-
-  return (
-    <HView>
-      <TextInput
-        editable={false}
-        nonEditableStyleVisible={false}
-        onPressIn={showDatePicker}
-        style={{ width: 140 }}
-        value={Dates.format(value, DateFormats.dateDisplay)}
-      />
-      <IconButton icon="calendar" onPress={showDatePicker} />
-      {show && (
-        <DateTimePicker
-          mode="date"
-          onChange={onChange}
-          value={value || new Date()}
-        />
-      )}
-    </HView>
-  );
-};
-
-DatePicker.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  value: PropTypes.any,
-};
+DatePicker.propTypes = DateTimePicker.propTypes;
