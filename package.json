@@ -57,6 +57,7 @@
     "react-native-final-tree-view": "^3.0.0",
     "react-native-keychain": "^8.2.0",
     "react-native-markdown-display": "^7.0.2",
+    "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-open-maps": "^0.4.3",
     "react-native-pager-view": "6.2.3",
     "react-native-paper": "^5.12.3",
