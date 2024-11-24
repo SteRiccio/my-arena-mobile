@@ -1,3 +1,4 @@
+import { ImageUtils } from "utils/ImageUtils";
 import { API } from "./api";
 import { RemoteService } from "./remoteService";
 import { SecureStoreService } from "./SecureStoreService";
@@ -15,6 +16,13 @@ const extractConnectSID = (headers) => {
 const fetchUser = async () => {
   const { data } = await RemoteService.get("/auth/user");
   return data.user;
+};
+
+const fetchUserPicture = async (userUuid) => {
+  const fileUri = await RemoteService.getFile(
+    `/api/user/${userUuid}/profilePicture`
+  );
+  return (await ImageUtils.isValid(fileUri)) ? fileUri : null;
 };
 
 const login = async ({ serverUrl: serverUrlParam, email, password }) => {
@@ -44,9 +52,8 @@ const login = async ({ serverUrl: serverUrlParam, email, password }) => {
 };
 
 const logout = async () => {
-  const serverUrl = await RemoteService.getServerUrl();
   try {
-    const res = await API.post(serverUrl, "/auth/logout");
+    const res = await RemoteService.post("/auth/logout");
     return res?.data;
   } catch (err) {
     if (!err.response) {
@@ -58,6 +65,7 @@ const logout = async () => {
 
 export const AuthService = {
   fetchUser,
+  fetchUserPicture,
   login,
   logout,
 };

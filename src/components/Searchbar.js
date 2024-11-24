@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
+const baseStyle = { margin: 5 };
+
 export const Searchbar = (props) => {
   const {
     placeholder: placeholderProp = "common:search",
@@ -17,6 +19,7 @@ export const Searchbar = (props) => {
     <RNPSearchbar
       placeholder={t(placeholderProp)}
       onChangeText={onChange}
+      style={baseStyle}
       value={value}
     />
   );

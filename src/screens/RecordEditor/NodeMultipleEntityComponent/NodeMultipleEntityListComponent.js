@@ -1,11 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
 import { NodeDefs, Records } from "@openforis/arena-core";
 
 import { DataTable, Text, VView } from "components";
-import { SurveyDefs } from "model/utils/SurveyDefs";
 import { RecordNodes } from "model/utils/RecordNodes";
 import {
   DataEntryActions,
@@ -46,17 +45,23 @@ export const NodeMultipleEntityListComponent = (props) => {
   const canEditRecord = DataEntrySelectors.useCanEditRecord();
   const maxSummaryDefs = determineMaxSummaryDefs({ isTablet, isLandscape });
 
-  const summaryDefs = SurveyDefs.getEntitySummaryDefs({
-    survey,
-    record,
-    entityDef,
-    onlyKeys: false,
-    maxSummaryDefs,
-  });
-  const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
-  const entities = Records.getChildren(parentEntity, entityDefUuid)(record);
-
   const nodeDefLabel = NodeDefs.getLabelOrName(entityDef, lang);
+  const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
+
+  const visibleSummaryDefs = useMemo(
+    () =>
+      RecordNodes.getApplicableSummaryDefs({
+        survey,
+        entityDef,
+        record,
+        parentEntity,
+        onlyKeys: false,
+        maxSummaryDefs,
+      }),
+    [entityDef, maxSummaryDefs, parentEntity, record, survey]
+  );
+
+  const entities = Records.getChildren(parentEntity, entityDefUuid)(record);
 
   const onNewPress = () => {
     dispatch(DataEntryActions.addNewEntity);
@@ -98,10 +103,10 @@ export const NodeMultipleEntityListComponent = (props) => {
         entity,
         onlyKeys: false,
         lang,
-        summaryDefs,
+        summaryDefs: visibleSummaryDefs,
       }),
     }),
-    [survey, record, lang, summaryDefs]
+    [survey, record, lang, visibleSummaryDefs]
   );
 
   const rows = entities.map(entityToRow);
@@ -115,9 +120,9 @@ export const NodeMultipleEntityListComponent = (props) => {
       )}
       {rows.length > 0 && (
         <DataTable
-          fields={summaryDefs.map((keyDef) => ({
-            key: NodeDefs.getName(keyDef),
-            header: NodeDefs.getLabelOrName(keyDef, lang),
+          fields={visibleSummaryDefs.map((summaryDef) => ({
+            key: NodeDefs.getName(summaryDef),
+            header: NodeDefs.getLabelOrName(summaryDef, lang),
           }))}
           items={rows}
           onItemPress={onRowPress}

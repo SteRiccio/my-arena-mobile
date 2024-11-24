@@ -1,66 +1,46 @@
-import { useDispatch } from "react-redux";
-
-import {
-  Button,
-  CollapsiblePanel,
-  FieldSet,
-  FormItem,
-  Text,
-  VView,
-} from "components";
+import { FieldSet, HView, Icon, Text, VView } from "components";
 import { useIsNetworkConnected } from "hooks";
-import {
-  RemoteConnectionActions,
-  RemoteConnectionSelectors,
-  SettingsSelectors,
-} from "state";
-import { SettingsService } from "service/settingsService";
+import { UserSummary } from "navigation/UserSummary";
+import { RemoteConnectionSelectors, SettingsSelectors } from "state";
 
 import { ConnectionToRemoteServerButton } from "../ConnectionToRemoteServerButton";
 
 import styles from "./styles";
 
-export const LoginInfo = () => {
-  const dispatch = useDispatch();
+const determineErrorKey = ({ networkAvailable, credentialsSpecified }) => {
+  if (!credentialsSpecified) return null;
+  if (!networkAvailable) return "common:networkNotAvailable";
+  return "loginInfo:sessionExpired";
+};
 
+export const LoginInfo = () => {
   const networkAvailable = useIsNetworkConnected();
   const user = RemoteConnectionSelectors.useLoggedInUser();
   const settings = SettingsSelectors.useSettings();
-  const { email, serverUrl } = settings;
+  const { email, password } = settings;
 
   if (user) {
-    return (
-      <CollapsiblePanel
-        containerStyle={{ width: "90%" }}
-        headerKey="loginInfo:loggedInAs"
-        headerParams={{ name: user.name }}
-      >
-        <>
-          <FormItem labelKey="loginInfo:name">{user.name}</FormItem>
-          <FormItem labelKey="loginInfo:email">{user.email}</FormItem>
-          {serverUrl != SettingsService.defaultServerUrl && (
-            <FormItem labelKey="loginInfo:serverUrl">{serverUrl}</FormItem>
-          )}
-          <Button
-            mode="contained-tonal"
-            style={styles.logoutButton}
-            textKey="loginInfo:logout"
-            onPress={() => dispatch(RemoteConnectionActions.logout())}
-          />
-        </>
-      </CollapsiblePanel>
-    );
+    return <UserSummary style={styles.userSummary} />;
   }
+  const credentialsSpecified = email && password;
+  const errorKey = determineErrorKey({
+    networkAvailable,
+    credentialsSpecified,
+  });
+
   return (
-    <FieldSet headerKey="loginInfo:notLoggedIn">
-      <VView>
-        {email && !networkAvailable && (
-          <Text
-            numberOfLines={3}
-            textKey="loginInfo:cannotVerifyLoginInformation"
-          />
+    <FieldSet
+      headerKey="loginInfo:notLoggedIn"
+      style={styles.notLoggedInContainer}
+    >
+      <VView style={styles.notLoggedInInnerContainer}>
+        {errorKey && (
+          <HView style={styles.notLoggedInfoContainer}>
+            <Icon source="alert" />
+            <Text textKey={errorKey} />
+          </HView>
         )}
-        <ConnectionToRemoteServerButton />
+        {networkAvailable && <ConnectionToRemoteServerButton />}
       </VView>
     </FieldSet>
   );

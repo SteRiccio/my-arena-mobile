@@ -1,30 +1,32 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import PropTypes from "prop-types";
 
 import { Dates, Surveys } from "@openforis/arena-core";
 
 import {
   Button,
-  FieldSet,
+  Card,
   HView,
   Link,
   Text,
+  UpdateStatusIcon,
   ViewMoreText,
   VView,
 } from "components";
-import { UpdateStatusIcon } from "components/UpdateStatusIcon";
-import { RemoteConnectionSelectors } from "state/remoteConnection";
-import { SurveyActions, SurveySelectors } from "state/survey";
-import { SurveyService } from "service/surveyService";
-import { useIsNetworkConnected } from "hooks/useIsNetworkConnected";
-import { useToast } from "hooks/useToast";
-import { UpdateStatus } from "model/UpdateStatus";
+import { useIsNetworkConnected, useToast } from "hooks";
+import { UpdateStatus } from "model";
+import { SurveyService } from "service";
+import {
+  RemoteConnectionSelectors,
+  SurveyActions,
+  SurveySelectors,
+} from "state";
 
 import { screenKeys } from "../screenKeys";
 
-import styles from "./selectedSurveyFieldsetStyles";
+import styles from "./selectedSurveyContainerStyles";
 
 const SurveyUpdateStatusIcon = ({ updateStatus }) => {
   const dispatch = useDispatch();
@@ -73,7 +75,7 @@ SurveyUpdateStatusIcon.propTypes = {
   updateStatus: PropTypes.string.isRequired,
 };
 
-export const SelectedSurveyFieldset = () => {
+export const SelectedSurveyContainer = () => {
   const navigation = useNavigation();
   const networkAvailable = useIsNetworkConnected();
   const user = RemoteConnectionSelectors.useLoggedInUser();
@@ -124,9 +126,9 @@ export const SelectedSurveyFieldset = () => {
   if (!survey) return null;
 
   return (
-    <FieldSet headerKey="surveys:currentSurvey" style={styles.fieldset}>
-      <VView style={styles.internalContainer}>
-        <HView style={styles.surveyTitleContainer}>
+    <Card style={styles.container}>
+      <VView style={styles.internalContainer} transparent>
+        <HView style={styles.surveyTitleContainer} transparent>
           <Text style={styles.surveyTitle} variant="titleMedium">
             {surveyTitle}
           </Text>
@@ -134,9 +136,7 @@ export const SelectedSurveyFieldset = () => {
         </HView>
         {surveyDescription && (
           <ViewMoreText numberOfLines={1}>
-            <Text style={styles.surveyTitle} variant="titleSmall">
-              {surveyDescription}
-            </Text>
+            <Text variant="titleSmall">{surveyDescription}</Text>
           </ViewMoreText>
         )}
         {fieldManualUrl && (
@@ -148,6 +148,6 @@ export const SelectedSurveyFieldset = () => {
           onPress={() => navigation.navigate(screenKeys.recordsList)}
         />
       </VView>
-    </FieldSet>
+    </Card>
   );
 };

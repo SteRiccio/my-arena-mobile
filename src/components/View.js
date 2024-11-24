@@ -5,14 +5,17 @@ import PropTypes from "prop-types";
 
 const styles = StyleSheet.create({
   fullWidth: {
-    flex: 1,
     width: "100%",
+  },
+  fullFlex: {
+    flex: 1,
   },
 });
 
 export const View = (props) => {
   const {
     children,
+    fullFlex = false,
     fullWidth = false,
     style: styleProp,
     transparent = false,
@@ -28,10 +31,11 @@ export const View = (props) => {
 
   const style = useMemo(() => {
     const parts = [{ backgroundColor }];
+    if (fullFlex) parts.push(styles.fullFlex);
     if (fullWidth) parts.push(styles.fullWidth);
     if (styleProp) parts.push(styleProp);
     return StyleSheet.compose(parts);
-  }, [backgroundColor, fullWidth, styleProp]);
+  }, [backgroundColor, fullFlex, fullWidth, styleProp]);
 
   return (
     <RNView style={style} {...otherProps}>
@@ -42,6 +46,7 @@ export const View = (props) => {
 
 View.propTypes = {
   children: PropTypes.node,
+  fullFlex: PropTypes.bool,
   fullWidth: PropTypes.bool,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   transparent: PropTypes.bool,

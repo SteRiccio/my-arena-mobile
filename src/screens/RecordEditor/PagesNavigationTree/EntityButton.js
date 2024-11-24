@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
-import { HView, Icon, Text } from "components";
+import { AlertIcon, HView, Text } from "components";
 import { DataEntryActions } from "state";
 
 import styles from "./EntityButtonStyles";
@@ -17,12 +17,6 @@ export const EntityButton = (props) => {
   const onPress = useCallback(() => {
     dispatch(DataEntryActions.selectCurrentPageEntity(entityPointer));
   }, [dispatch, entityPointer]);
-
-  const alertIconColor = useMemo(() => {
-    if (hasErrors) return "red";
-    if (hasWarnings) return "orange";
-    return undefined;
-  }, [hasErrors, hasWarnings]);
 
   const textStyle = useMemo(
     () => [
@@ -38,7 +32,7 @@ export const EntityButton = (props) => {
     <TouchableOpacity onPress={onPress} style={styles.entityButtonWrapper}>
       <HView style={styles.entityButtonContent} transparent>
         <Text style={textStyle} textKey={label} />
-        {alertIconColor && <Icon color={alertIconColor} source="alert" />}
+        <AlertIcon hasErrors={hasErrors} hasWarnings={hasWarnings} />
       </HView>
     </TouchableOpacity>
   );

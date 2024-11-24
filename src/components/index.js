@@ -1,3 +1,4 @@
+export { AlertIcon } from "./AlertIcon";
 export { Button } from "./Button";
 export { Card } from "./Card";
 export { Checkbox } from "./Checkbox";
@@ -6,6 +7,8 @@ export { CollapsiblePanel } from "./CollapsiblePanel";
 export { DataTable } from "./DataTable";
 export { DataVisualizer, DataVisualizerCellPropTypes } from "./DataVisualizer";
 export { DatePicker } from "./DatePicker";
+export { DateTimePicker } from "./DateTimePicker";
+export { DeleteIconButton } from "./DeleteIconButton";
 export { Dialog } from "./Dialog";
 export { Divider } from "./Divider";
 export { Dropdown } from "./Dropdown";

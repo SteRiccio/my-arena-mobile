@@ -1,4 +1,5 @@
 import * as React from "react";
+import { StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
@@ -6,6 +7,10 @@ import { useTranslation } from "localization";
 import { Button, Modal } from "components";
 
 import { NodeDefFormItemHeader } from "screens/RecordEditor/NodeDefFormItem/NodeDefFormItemHeader";
+
+const styles = StyleSheet.create({
+  doneButton: { alignSelf: "center" },
+});
 
 export const NodeEditDialogInternal = (props) => {
   const {
@@ -26,7 +31,9 @@ export const NodeEditDialogInternal = (props) => {
         parentNodeUuid={parentNodeUuid}
       />
       {children}
-      <Button onPress={onDone ?? onDismiss}>{t(doneButtonLabel)}</Button>
+      <Button onPress={onDone ?? onDismiss} style={styles.doneButton}>
+        {t(doneButtonLabel)}
+      </Button>
     </Modal>
   );
 };

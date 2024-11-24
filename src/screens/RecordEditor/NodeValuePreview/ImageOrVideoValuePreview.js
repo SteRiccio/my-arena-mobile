@@ -20,7 +20,9 @@ export const ImageOrVideoValuePreview = (props) => {
   const [imagePreviewOpen, setImagePreviewOpen] = useState(false);
   const [fileUri, setFileUri] = useState(null);
 
-  const { fileName, fileUuid } = value || {};
+  const { fileName: valueFileName, fileNameCalculated, fileUuid } = value || {};
+
+  const fileName = fileNameCalculated ?? valueFileName;
 
   useEffect(() => {
     const fileUri = fileUuid

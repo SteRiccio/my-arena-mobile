@@ -1,7 +1,12 @@
 export default {
+  clearCredentials: "Clear credentials",
+  clearCredentialsConfirmMessage: "Clear user credentials?",
   email: "Email",
+  errorConnectingWithServer: "Error connecting with server",
   forgotPassword: "Forgot password?",
   login: "Login",
+  logout: "Logout",
+  logoutConfirmMessage: "Logout and clear user credentials?",
   password: "Password",
   requestAccess: "New to Arena? Request access",
   serverUrl: "Server URL",

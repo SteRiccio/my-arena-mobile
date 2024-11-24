@@ -7,21 +7,16 @@ import { Dates, Objects, Surveys } from "@openforis/arena-core";
 
 import {
   Button,
-  CollapsiblePanel,
-  FlexWrapView,
-  FormItem,
   HView,
   Loader,
   MenuButton,
   Searchbar,
-  Switch,
   Text,
   VView,
 } from "components";
 import { useIsNetworkConnected, useNavigationFocus, useToast } from "hooks";
 import { useTranslation } from "localization";
 import {
-  Cycles,
   RecordOrigin,
   RecordSyncStatus,
   RecordUpdateConflictResolutionStrategy as ConflictResolutionStrategy,
@@ -34,14 +29,16 @@ import {
   SurveySelectors,
   useConfirm,
 } from "state";
-import { Files } from "utils/Files";
+import { RemoteConnectionUtils } from "state/remoteConnection/remoteConnectionUtils";
+import { Files } from "utils";
 
-import { SurveyLanguageSelector } from "./SurveyLanguageSelector";
 import { RecordsDataVisualizer } from "./RecordsDataVisualizer";
-import { SurveyCycleSelector } from "./SurveyCycleSelector";
 import { RecordsUtils } from "./RecordsUtils";
+import { RecordsListOptions } from "./RecordsListOptions";
 
 import styles from "./styles";
+
+const { checkLoggedInUser } = RemoteConnectionUtils;
 
 const minRecordsToShowSearchBar = 5;
 const noRecordsToExportTextKey =
@@ -63,8 +60,6 @@ export const RecordsList = () => {
   const confirm = useConfirm();
 
   const defaultCycleKey = Surveys.getDefaultCycleKey(survey);
-  const defaultCycleText = Cycles.labelFunction(defaultCycleKey);
-  const cycles = Surveys.getCycleKeys(survey);
 
   const [state, setState] = useState({
     loading: true,
@@ -108,7 +103,7 @@ export const RecordsList = () => {
   }, [cycle, loadRecords, onlyLocal]);
 
   // refresh records list on navigation focus (e.g. going back to records list screen)
-  useNavigationFocus({ onFocus: loadRecords });
+  useNavigationFocus(loadRecords);
 
   const loadRecordsWithSyncStatus = useCallback(async () => {
     setState((statePrev) => ({
@@ -116,24 +111,21 @@ export const RecordsList = () => {
       syncStatusLoading: true,
       syncStatusFetched: false,
     }));
+    const stateNext = { syncStatusLoading: false };
     try {
-      const _records = await RecordService.syncRecordSummaries({
-        survey,
-        cycle,
-        onlyLocal,
-      });
-      setState((statePrev) => ({
-        ...statePrev,
-        records: _records,
-        loading: false,
-        syncStatusLoading: false,
-        syncStatusFetched: true,
-      }));
+      if (await checkLoggedInUser({ dispatch, navigation })) {
+        const _records = await RecordService.syncRecordSummaries({
+          survey,
+          cycle,
+          onlyLocal,
+        });
+        Object.assign(stateNext, {
+          loading: false,
+          records: _records,
+          syncStatusFetched: true,
+        });
+      }
     } catch (error) {
-      setState((statePrev) => ({
-        ...statePrev,
-        syncStatusLoading: false,
-      }));
       dispatch(
         MessageActions.setMessage({
           content: "dataEntry:errorFetchingRecordsSyncStatus",
@@ -141,7 +133,8 @@ export const RecordsList = () => {
         })
       );
     }
-  }, [survey, cycle, onlyLocal, dispatch]);
+    setState((statePrev) => ({ ...statePrev, ...stateNext }));
+  }, [dispatch, navigation, survey, cycle, onlyLocal]);
 
   const onOnlyLocalChange = useCallback(
     (onlyLocalUpdated) =>
@@ -445,46 +438,13 @@ export const RecordsList = () => {
   return (
     <VView style={styles.container}>
       <VView style={styles.innerContainer}>
-        <CollapsiblePanel headerKey="dataEntry:options">
-          <>
-            <SurveyLanguageSelector />
-            {cycles.length > 1 && (
-              <HView style={styles.formItem}>
-                <Text
-                  style={styles.formItemLabel}
-                  textKey="dataEntry:cycleForNewRecords"
-                />
-                <Text textKey={defaultCycleText} />
-              </HView>
-            )}
-            <FlexWrapView>
-              {cycles.length > 1 && (
-                <SurveyCycleSelector style={styles.cyclesSelector} />
-              )}
-              <FormItem
-                labelKey="dataEntry:showOnlyLocalRecords"
-                style={styles.formItem}
-              >
-                <Switch value={onlyLocal} onChange={onOnlyLocalChange} />
-              </FormItem>
-              <Button
-                disabled={!networkAvailable}
-                icon="cloud-refresh"
-                loading={syncStatusLoading}
-                mode="outlined"
-                onPress={onRemoteSyncPress}
-                textKey="dataEntry:checkSyncStatus"
-              />
-              <Button
-                icon="file-import-outline"
-                mode="text"
-                onPress={onImportRecordsFromFilePress}
-                textKey="dataEntry:records.importRecordsFromFile.title"
-              />
-            </FlexWrapView>
-          </>
-        </CollapsiblePanel>
-
+        <RecordsListOptions
+          onImportRecordsFromFilePress={onImportRecordsFromFilePress}
+          onlyLocal={onlyLocal}
+          onOnlyLocalChange={onOnlyLocalChange}
+          onRemoteSyncPress={onRemoteSyncPress}
+          syncStatusLoading={syncStatusLoading}
+        />
         {loading ? (
           <Loader />
         ) : (

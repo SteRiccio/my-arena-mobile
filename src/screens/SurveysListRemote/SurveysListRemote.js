@@ -26,8 +26,6 @@ import {
 import { screenKeys } from "../screenKeys";
 import { useSurveysSearch } from "../SurveysList/useSurveysSearch";
 
-import styles from "./styles";
-
 const INITIAL_STATE = {
   surveys: [],
   loading: true,
@@ -142,7 +140,7 @@ export const SurveysListRemote = () => {
     }));
   };
 
-  useNavigationFocus({ onFocus: loadSurveys });
+  useNavigationFocus(loadSurveys);
 
   const { onSearchValueChange, searchValue, surveysFiltered } =
     useSurveysSearch({ surveys });
@@ -198,7 +196,7 @@ export const SurveysListRemote = () => {
     );
 
   return (
-    <VView style={styles.container}>
+    <VView fullFlex>
       {surveys.length > 5 && (
         <Searchbar value={searchValue} onChange={onSearchValueChange} />
       )}

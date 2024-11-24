@@ -14,11 +14,12 @@ const TreeNode = ({ node: treeNode, level, isExpanded, hasChildrenNodes }) => {
   const { isCurrentEntity, isRoot } = treeNode;
   const style = useMemo(
     () => ({
-      marginLeft: isRoot ? 0 : 20 * (level - 1),
+      alignItems: "center",
+      backgroundColor: "transparent",
       fontSize: 18,
       gap: 2,
-      backgroundColor: "transparent",
-      alignItems: "center",
+      marginLeft: isRoot ? 0 : 20 * (level - 1),
+      marginBottom: 6,
     }),
     [isRoot, level]
   );

@@ -25,7 +25,8 @@ import { screenKeys } from "./screenKeys";
 const screenDefaults = {
   hasBack: true,
   hasDrawer: true,
-  surveyNameAsTitle: false,
+  hasOptionsMenuVisible: true,
+  surveyLabelAsTitle: false,
 };
 
 export const screens = {
@@ -47,9 +48,9 @@ export const screens = {
   },
   [screenKeys.recordEditor]: {
     ...screenDefaults,
-    title: "dataEntry:recordEditor",
     hasBack: false,
     hasDrawer: true,
+    surveyLabelAsTitle: true,
     component: RecordEditor,
   },
 
@@ -61,11 +62,13 @@ export const screens = {
   },
   [screenKeys.settings]: {
     ...screenDefaults,
+    hasOptionsMenuVisible: false,
     title: "settings:title",
     component: SettingsScreen,
   },
   [screenKeys.settingsRemoteConnection]: {
     ...screenDefaults,
+    hasOptionsMenuVisible: false,
     title: "settingsRemoteConnection:title",
     component: SettingsRemoteConnectionScreen,
   },

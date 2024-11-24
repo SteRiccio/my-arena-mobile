@@ -1,18 +1,25 @@
 import i18n from "i18next";
+import LanguageDetector from "@os-team/i18next-react-native-language-detector";
 import { initReactI18next, useTranslation } from "react-i18next";
+
+import { SystemUtils } from "utils/SystemUtils";
+
 import en from "./en";
 
-const resources = {
-  en,
-};
+const resources = { en };
+const supportedLanguageCodes = Object.keys(resources);
+const fallbackLng = supportedLanguageCodes[0];
+const sysLng = SystemUtils.getLanguageCode();
+const lng = supportedLanguageCodes.includes(sysLng) ? sysLng : fallbackLng;
 
 i18n
+  .use(LanguageDetector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     compatibilityJSON: "v3", // to make it work for Android devices
     resources,
-    lng: "en", // default language to use.
-    // if you're using a language detector, do not define the lng option
+    lng,
+    fallbackLng,
     interpolation: {
       escapeValue: false,
     },

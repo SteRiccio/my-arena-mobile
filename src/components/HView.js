@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { View } from "./View";
 
 const baseStyle = {
@@ -14,7 +15,7 @@ export const HView = (props) => {
     ...otherProps
   } = props;
 
-  const style = [baseStyle, styleProp];
+  const style = useMemo(() => [baseStyle, styleProp], [styleProp]);
 
   return (
     <View fullWidth={fullWidth} style={style} {...otherProps}>

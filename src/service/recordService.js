@@ -1,7 +1,14 @@
-import { Dates, Objects, RecordCloner, Surveys } from "@openforis/arena-core";
+import {
+  Dates,
+  Objects,
+  RecordCloner,
+  Records,
+  Surveys,
+} from "@openforis/arena-core";
 
 import {
   RecordLoadStatus,
+  RecordNodes,
   RecordOrigin,
   RecordSummaries,
   RecordSyncStatus,
@@ -198,20 +205,56 @@ const findRecordSummariesByKeys = async ({
   keyValues,
   keyValuesFormatted,
 }) => {
-  let recordSummaries = await RecordRepository.findRecordSummariesByKeys({
-    survey,
-    cycle,
-    keyValues,
-  });
-  if (recordSummaries.length === 0) {
-    // try to fetch records using formatted keys
-    recordSummaries = await RecordRepository.findRecordSummariesByKeys({
+  const recordSummariesForKeyValues =
+    await RecordRepository.findRecordSummariesByKeys({
+      survey,
+      cycle,
+      keyValues,
+    });
+  const recordSummariesForKeyValuesByUuid = ArrayUtils.indexByUuid(
+    recordSummariesForKeyValues
+  );
+  // try to fetch records using formatted keys
+  const recordSummariesForKeyValuesFormatted =
+    await RecordRepository.findRecordSummariesByKeys({
       survey,
       cycle,
       keyValues: keyValuesFormatted,
     });
-  }
+  const recordSummaries = [...recordSummariesForKeyValues];
+  recordSummariesForKeyValuesFormatted.forEach((recordSummary) => {
+    if (!recordSummariesForKeyValuesByUuid[recordSummary.uuid]) {
+      recordSummaries.push(recordSummary);
+    }
+  });
   return recordSummaries;
+};
+
+const findRecordSummariesWithSameKeys = async ({
+  survey,
+  record,
+  lang,
+  cycle: cycleParam = null,
+}) => {
+  const cycle = cycleParam ?? Records.getCycle(record);
+  const rootEntity = Records.getRoot(record);
+  const keyValues = Records.getEntityKeyValues({
+    survey,
+    record,
+    cycle,
+    entity: rootEntity,
+  });
+  const keyValuesFormatted = RecordNodes.getRootEntityKeysFormatted({
+    survey,
+    record,
+    lang,
+  });
+  return findRecordSummariesByKeys({
+    survey,
+    cycle,
+    keyValues,
+    keyValuesFormatted,
+  });
 };
 
 const cloneRecordsIntoDefaultCycle = async ({ survey, recordSummaries }) => {
@@ -258,6 +301,7 @@ export const RecordService = {
   syncRecordSummaries,
   fetchRecordsWithEmptyCycle,
   findRecordSummariesByKeys,
+  findRecordSummariesWithSameKeys,
   insertRecord,
   updateRecord,
   updateRecordWithContentFetchedRemotely,

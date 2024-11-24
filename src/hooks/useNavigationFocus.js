@@ -1,11 +1,4 @@
-import { useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigationEvent } from "./useNavigationEvent";
 
-export const useNavigationFocus = ({ onFocus }) => {
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    const focusHandler = navigation.addListener("focus", onFocus);
-    return focusHandler;
-  }, [navigation, onFocus]);
-};
+export const useNavigationFocus = (onFocus) =>
+  useNavigationEvent("focus", onFocus);

@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
+import { Pressable } from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import MenuDrawer from "react-native-side-drawer";
 
 import { HView, VView, View } from "components";
 import { RecordEditViewMode } from "model";
-import { useBackHandler } from "hooks";
+import { useBackHandler, useNavigationIsFocused } from "hooks";
 import {
   DataEntryActions,
   DataEntrySelectors,
@@ -31,18 +32,33 @@ export const RecordEditor = () => {
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
   const { showStatusBar } = SettingsSelectors.useSettings();
   const navigation = useNavigation();
+  const isNavigationFocused = useNavigationIsFocused();
 
   const onBack = useCallback(() => {
-    dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
-    return true; // the event will not be bubbled up & no other back action will execute
-  }, [dispatch, navigation]);
+    if (isNavigationFocused) {
+      dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
+      return true; // the event will not be bubbled up & no other back action will execute
+    }
+  }, [dispatch, isNavigationFocused, navigation]);
 
   useBackHandler(onBack);
 
   const isPhone = DeviceInfoSelectors.useIsPhone();
 
-  const internalContainer = (
-    <VView style={styles.internalContainer}>
+  const onInternalContainerPress = useCallback(() => {
+    if (isPhone) {
+      dispatch(DataEntryActions.toggleRecordPageMenuOpen);
+    }
+  }, [dispatch, isPhone]);
+
+  const veryInternalContainer = (
+    <VView
+      fullFlex
+      pointerEvents={
+        // prevent user interaction with internal container when drawer is open
+        isPhone && pageSelectorOpen ? "none" : undefined
+      }
+    >
       {viewMode === RecordEditViewMode.form ? (
         <RecordPageForm />
       ) : (
@@ -53,16 +69,29 @@ export const RecordEditor = () => {
     </VView>
   );
 
+  const internalContainer = isPhone ? (
+    <Pressable
+      disabled={!pageSelectorOpen}
+      onPress={onInternalContainerPress}
+      pointerEvents={pageSelectorOpen ? undefined : "auto"}
+      style={styles.internalContainer}
+    >
+      {veryInternalContainer}
+    </Pressable>
+  ) : (
+    veryInternalContainer
+  );
+
   if (isPhone) {
     return (
       <MenuDrawer
-        open={pageSelectorOpen}
-        position="left"
+        animationTime={250}
         drawerContent={<RecordEditorDrawer />}
         drawerPercentage={75}
-        animationTime={250}
-        overlay
         opacity={0.4}
+        open={pageSelectorOpen}
+        overlay
+        position="left"
       >
         {internalContainer}
       </MenuDrawer>

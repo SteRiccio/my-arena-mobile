@@ -21,7 +21,7 @@ The size will be around {{size}}.`,
   updateStatus: {
     error: "Error retrieving application update status: {{error}}",
     networkNotAvailable:
-      "Cannot verify application update status: network not available",
+      "Cannot verify application update status: $t(networkNotAvailable)",
     upToDate: "Application up-to-date",
   },
 };
