@@ -22,6 +22,7 @@ export {
   RemoteConnectionActions,
   RemoteConnectionReducer,
   RemoteConnectionSelectors,
+  RemoteConnectionUtils,
 } from "./remoteConnection";
 
 export {
