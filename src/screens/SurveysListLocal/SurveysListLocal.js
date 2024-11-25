@@ -17,13 +17,20 @@ import { UpdateStatus } from "model";
 import { SurveyService } from "service";
 import { useIsNetworkConnected, useNavigationFocus } from "hooks";
 import { useSurveysSearch } from "screens/SurveysList/useSurveysSearch";
-import { SurveyActions, ScreenOptionsSelectors, useConfirm } from "state";
+import {
+  RemoteConnectionUtils,
+  SurveyActions,
+  ScreenOptionsSelectors,
+  useConfirm,
+} from "state";
 import { ArrayUtils } from "utils";
 
 import { screenKeys } from "../screenKeys";
 import { SurveyStatusCell } from "./SurveyStatusCell";
 
 import styles from "./styles";
+
+const { checkLoggedInUser } = RemoteConnectionUtils;
 
 const dataFields = [
   {
@@ -181,6 +188,12 @@ export const SurveysListLocal = () => {
     }));
   }, [surveys]);
 
+  const onImportFromCloudPress = useCallback(async () => {
+    if (await checkLoggedInUser({ dispatch, navigation })) {
+      navigation.navigate(screenKeys.surveysListRemote);
+    }
+  }, [dispatch, navigation]);
+
   const fields = useMemo(() => {
     if (updateStatusChecked) return dataFieldsWithUpdateStatus;
     if (updateStatusLoading) return dataFieldsWithUpdateStatusLoading;
@@ -228,7 +241,7 @@ export const SurveysListLocal = () => {
         <Button
           disabled={!networkAvailable}
           icon="cloud-download-outline"
-          onPress={() => navigation.navigate(screenKeys.surveysListRemote)}
+          onPress={onImportFromCloudPress}
           style={styles.importButton}
           textKey="surveys:importFromCloud"
         />
