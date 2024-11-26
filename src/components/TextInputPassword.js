@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { TextInput as RNPTextInput } from "react-native-paper";
 
 import { TextInput } from "./TextInput";
@@ -6,18 +6,20 @@ import { TextInput } from "./TextInput";
 export const TextInputPassword = (props) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
+  const toggleSecureTextEntry = useCallback(() => {
+    setSecureTextEntry(!secureTextEntry);
+  }, [secureTextEntry]);
+
   return (
     <TextInput
       autoCapitalize="none"
-      secureTextEntry={secureTextEntry}
       right={
         <RNPTextInput.Icon
-          icon="eye"
-          onPress={() => {
-            setSecureTextEntry(!secureTextEntry);
-          }}
+          icon={secureTextEntry ? "eye-off" : "eye"}
+          onPress={toggleSecureTextEntry}
         />
       }
+      secureTextEntry={secureTextEntry}
       {...props}
     />
   );
