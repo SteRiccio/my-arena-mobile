@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Pressable } from "react-native";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { TextInput as RNPTextInput } from "react-native-paper";
 import PropTypes from "prop-types";
 
@@ -23,31 +23,33 @@ export const DateTimePicker = (props) => {
 
   const confirm = useConfirm();
 
-  const [show, setShow] = useState(false);
+  const [pickerShown, setPickerShown] = useState(false);
 
-  const showDatePicker = useCallback(() => {
-    setShow(true);
+  const showPicker = useCallback(() => {
+    setPickerShown(true);
   }, []);
 
-  const onDatePickerChange = useCallback(
-    (event, selectedDate) => {
-      setShow(false);
-      if (event.type === "set") {
-        onChangeProp(selectedDate);
-      }
+  const hidePicker = useCallback(() => {
+    setPickerShown(false);
+  }, []);
+
+  const onConfirm = useCallback(
+    (selectedDate) => {
+      hidePicker();
+      onChangeProp(selectedDate);
     },
-    [onChangeProp]
+    [hidePicker, onChangeProp]
   );
 
   const onClear = useCallback(
     async (event) => {
       event.stopPropagation();
       if (await confirm({ messageKey: "common:confirmClearSelectedValue" })) {
-        setShow(false);
+        hidePicker();
         onChangeProp(null);
       }
     },
-    [confirm, onChangeProp]
+    [confirm, hidePicker, onChangeProp]
   );
 
   const icon = mode === "date" ? "calendar" : "clock";
@@ -55,11 +57,11 @@ export const DateTimePicker = (props) => {
 
   return (
     <HView>
-      <Pressable onPress={editable ? showDatePicker : undefined}>
+      <Pressable onPress={editable ? showPicker : undefined}>
         <TextInput
           editable={false}
           nonEditableStyleVisible={false}
-          onPressIn={showDatePicker}
+          onPressIn={showPicker}
           right={
             editable && value ? (
               <RNPTextInput.Icon icon="close" onPress={onClear} />
@@ -69,14 +71,15 @@ export const DateTimePicker = (props) => {
           value={Dates.format(value, format)}
         />
       </Pressable>
-      <IconButton disabled={!editable} icon={icon} onPress={showDatePicker} />
-      {show && (
-        <RNDateTimePicker
-          mode={mode}
-          onChange={onDatePickerChange}
-          value={value || new Date()}
-        />
-      )}
+      <IconButton disabled={!editable} icon={icon} onPress={showPicker} />
+      <DateTimePickerModal
+        is24Hour={true}
+        isVisible={pickerShown}
+        mode={mode}
+        onConfirm={onConfirm}
+        onCancel={hidePicker}
+        date={value || new Date()}
+      />
     </HView>
   );
 };
