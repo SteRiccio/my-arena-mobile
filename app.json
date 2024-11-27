@@ -26,6 +26,9 @@
     "ios": {
       "buildNumber": "86",
       "bundleIdentifier": "org.stericcio.myarenamobile",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "infoPlist": {
         "LSMinimumSystemVersion": "13.0",
         "NSCameraUsageDescription": "Camera is used only when collecting images in file attributes (if defined in your survey).",
@@ -61,7 +64,9 @@
             "android:largeHeap": "true"
           }
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-secure-store"
     ]
   }
 }
