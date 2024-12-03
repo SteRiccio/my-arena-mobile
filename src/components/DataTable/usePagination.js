@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const itemsPerPageOptions = [10, 20, 50, 100];
 
@@ -11,7 +11,10 @@ export const usePagination = ({ items }) => {
   const { itemsPerPage, page } = state;
   const itemFrom = page * itemsPerPage;
   const itemTo = Math.min((page + 1) * itemsPerPage, items.length);
-  const visibleItems = items.slice(itemFrom, itemTo);
+  const visibleItems = useMemo(
+    () => items.slice(itemFrom, itemTo),
+    [itemFrom, itemTo, items]
+  );
   const numberOfPages = Math.ceil(items.length / itemsPerPage);
 
   const onItemsPerPageChange = useCallback((itemsPerPageNext) => {
