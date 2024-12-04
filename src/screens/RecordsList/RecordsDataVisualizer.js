@@ -165,7 +165,9 @@ export const RecordsDataVisualizer = (props) => {
       ...rootDefKeys.map((keyDef) => ({
         key: Objects.camelize(NodeDefs.getName(keyDef)),
         header: NodeDefs.getLabelOrName(keyDef, lang),
+        headerLabelVariant: "titleMedium",
         sortable: true,
+        textVariant: "titleLarge",
       })),
       {
         key: "dateModified",
@@ -175,6 +177,13 @@ export const RecordsDataVisualizer = (props) => {
         style: { minWidth: 50 },
       }
     );
+    if (viewAsList) {
+      result.push({
+        key: "dateCreated",
+        header: "common:createdOn",
+        optional: true,
+      });
+    }
     if (showRemoteProps) {
       result.push({
         key: "origin",
@@ -213,6 +222,7 @@ export const RecordsDataVisualizer = (props) => {
       result.push({
         key: "dateSynced",
         header: "dataEntry:syncedOn",
+        headerWidth: 80,
         style: { minWidth: 50 },
       });
     }

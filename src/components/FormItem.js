@@ -8,6 +8,8 @@ import { Text } from "./Text";
 export const FormItem = ({
   children,
   labelKey,
+  labelNumberOfLines = undefined,
+  labelStyle = undefined,
   labelVariant = "labelLarge",
   style,
   textVariant = "bodyLarge",
@@ -19,7 +21,13 @@ export const FormItem = ({
 
   return (
     <HView style={[{ alignItems: "baseline" }, style]}>
-      <Text variant={labelVariant}>{label}</Text>
+      <Text
+        numberOfLines={labelNumberOfLines}
+        style={labelStyle}
+        variant={labelVariant}
+      >
+        {label}
+      </Text>
       {hasTextContent ? (
         <Text variant={textVariant}>{children}</Text>
       ) : (
@@ -32,6 +40,8 @@ export const FormItem = ({
 FormItem.propTypes = {
   children: PropTypes.node,
   labelKey: PropTypes.string.isRequired,
+  labelNumberOfLines: PropTypes.number,
+  labelStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   labelVariant: PropTypes.string,
   style: PropTypes.object,
   textVariant: PropTypes.string,
