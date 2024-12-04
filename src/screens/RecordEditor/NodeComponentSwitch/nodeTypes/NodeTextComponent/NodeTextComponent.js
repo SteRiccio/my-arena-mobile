@@ -53,8 +53,6 @@ export const NodeTextComponent = (props) => {
       uiValueToNodeValue,
     });
 
-  console.log("===uivalue", uiValue);
-
   const onChange = useCallback(
     (value) => {
       updateNodeValue({ value });
