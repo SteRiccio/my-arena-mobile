@@ -18,8 +18,8 @@ import { NewNodeButton } from "../NewNodeButton";
 
 import styles from "./styles";
 
-const determineMaxSummaryDefs = ({ isTablet, isLandscape }) => {
-  const result = isTablet ? 5 : 3;
+const determineMaxSummaryDefs = ({ isDrawerOpen, isTablet, isLandscape }) => {
+  const result = isTablet && !isDrawerOpen ? 5 : 3;
   return isLandscape ? result + 2 : result;
 };
 
@@ -41,9 +41,14 @@ export const NodeMultipleEntityListComponent = (props) => {
   const survey = SurveySelectors.useCurrentSurvey();
   const record = DataEntrySelectors.useRecord();
   const isTablet = DeviceInfoSelectors.useIsTablet();
+  const isDrawerOpen = DataEntrySelectors.useIsRecordPageSelectorMenuOpen();
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
   const canEditRecord = DataEntrySelectors.useCanEditRecord();
-  const maxSummaryDefs = determineMaxSummaryDefs({ isTablet, isLandscape });
+  const maxSummaryDefs = determineMaxSummaryDefs({
+    isDrawerOpen,
+    isTablet,
+    isLandscape,
+  });
 
   const nodeDefLabel = NodeDefs.getLabelOrName(entityDef, lang);
   const parentEntity = Records.getNodeByUuid(parentEntityUuid)(record);
