@@ -139,8 +139,8 @@ export const AppInitializer = (props) => {
     return (
       <VView style={styles.container}>
         <AppLogo style={styles.logo} />
-        <Text textKey={`app:initializationStep:${step}`} />
-        <Text textKey="app:pleaseWaitMessage" />
+        <Text textKey={`app:initializationStep:${step}`} variant="labelSmall" />
+        <Text textKey="app:pleaseWaitMessage" variant="labelLarge" />
       </VView>
     );
   }
