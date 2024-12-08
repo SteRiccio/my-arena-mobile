@@ -477,6 +477,7 @@ export const RecordsList = () => {
             icon="plus"
             onPress={onNewRecordPress}
             style={styles.newRecordButton}
+            labelVariant="bodyLarge"
             textKey="dataEntry:newRecord"
           />
         )}

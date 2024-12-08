@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button as RNButton } from "react-native-paper";
 
+import { useEffectiveTheme } from "hooks/useEffectiveTheme";
 import { useTranslation } from "localization";
 import { useButtonOnPress } from "./useButtonPress";
 
@@ -9,6 +10,7 @@ export const Button = (props) => {
   const {
     avoidMultiplePress = true,
     children,
+    labelVariant = undefined,
     loading,
     mode = "contained",
     onPress: onPressProp,
@@ -17,8 +19,11 @@ export const Button = (props) => {
     ...otherProps
   } = props;
 
+  const theme = useEffectiveTheme();
   const { t } = useTranslation();
   const text = t(textKey, textParams);
+
+  const labelStyle = labelVariant ? theme.fonts[labelVariant] : undefined;
 
   const { actualLoading, onPress } = useButtonOnPress({
     avoidMultiplePress,
@@ -28,6 +33,7 @@ export const Button = (props) => {
 
   return (
     <RNButton
+      labelStyle={labelStyle}
       loading={actualLoading}
       mode={mode}
       onPress={onPress}
