@@ -17,7 +17,6 @@ export const Searchbar = (props) => {
 
   return (
     <RNPSearchbar
-      loading={false} // to show clear/close icon
       placeholder={t(placeholderProp)}
       onChangeText={onChange}
       style={baseStyle}
