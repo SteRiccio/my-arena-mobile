@@ -25,10 +25,10 @@ export const ImageOrVideoValuePreview = (props) => {
   const fileName = fileNameCalculated ?? valueFileName;
 
   useEffect(() => {
-    const fileUri = fileUuid
+    const fileUriUpdated = fileUuid
       ? RecordFileService.getRecordFileUri({ surveyId, fileUuid })
       : null;
-    setFileUri(fileUri);
+    setFileUri(fileUriUpdated);
   }, [fileUuid, surveyId]);
 
   const onFileOpenPress = useCallback(async () => {

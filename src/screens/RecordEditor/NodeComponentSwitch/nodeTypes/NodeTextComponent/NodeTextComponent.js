@@ -37,7 +37,9 @@ export const NodeTextComponent = (props) => {
   const uiValueToNodeValue = useCallback(
     (uiValue) => {
       if (Objects.isEmpty(uiValue)) return null;
-      if (isNumeric) return Number(uiValue);
+      if (isNumeric) {
+        return Number(String(uiValue).replaceAll(",", "."));
+      }
       return uiValue;
     },
     [isNumeric]
@@ -52,7 +54,9 @@ export const NodeTextComponent = (props) => {
     });
 
   const onChange = useCallback(
-    (value) => updateNodeValue({ value }),
+    (value) => {
+      updateNodeValue({ value });
+    },
     [updateNodeValue]
   );
 
