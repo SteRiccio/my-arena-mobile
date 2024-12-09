@@ -43,7 +43,6 @@ export default {
     onlyRecordsInRemoteServerCanBeImported:
       "Only records already in remote server or records that have been updated remotely can be imported",
   },
-  exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
   noEntitiesDefined: "No entities defined",
@@ -51,6 +50,7 @@ export default {
   goToListOfRecords: "Go to list of records",
   gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
   listOfRecords: "List of records",
+  localBackup: "Local backup",
   newRecord: "New record",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",

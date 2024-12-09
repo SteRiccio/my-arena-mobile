@@ -511,6 +511,7 @@ export const RecordsList = () => {
                 ? [
                     {
                       key: "checkSyncStatus",
+                      icon: "cloud-refresh",
                       keepMenuOpenOnPress: true,
                       label: "dataEntry:checkSyncStatus",
                       disabled: !networkAvailable,
@@ -520,13 +521,15 @@ export const RecordsList = () => {
                 : []),
               {
                 key: "exportNewOrUpdatedRecords",
+                icon: "upload",
                 label: "dataEntry:exportNewOrUpdatedRecords",
                 disabled: !syncStatusFetched,
                 onPress: onExportNewOrUpdatedRecordsPress,
               },
               {
                 key: "exportAllRecords",
-                label: "dataEntry:exportAllRecordsLocally",
+                icon: "download",
+                label: "dataEntry:localBackup",
                 onPress: onExportAllRecordsPress,
               },
             ]}
