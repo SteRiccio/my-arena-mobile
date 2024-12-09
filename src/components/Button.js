@@ -21,7 +21,7 @@ export const Button = (props) => {
 
   const theme = useEffectiveTheme();
   const { t } = useTranslation();
-  const text = t(textKey, textParams);
+  const text = textKey?.length > 0 ? t(textKey, textParams) : undefined;
 
   const labelStyle = labelVariant ? theme.fonts[labelVariant] : undefined;
 
@@ -48,6 +48,7 @@ export const Button = (props) => {
 Button.propTypes = {
   avoidMultiplePress: PropTypes.bool,
   children: PropTypes.node,
+  labelVariant: PropTypes.string,
   loading: PropTypes.bool,
   mode: PropTypes.oneOf([
     "text",
