@@ -200,10 +200,10 @@ export const RecordsList = () => {
     }
   }, [confirm, dispatch, loadRecords, toaster]);
 
-  const onNewRecordPress = () => {
+  const onNewRecordPress = useCallback(() => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
     dispatch(DataEntryActions.createNewRecord({ navigation }));
-  };
+  }, [dispatch, navigation]);
 
   const confirmExportRecords = useCallback(
     async ({ records }) => {
@@ -435,6 +435,20 @@ export const RecordsList = () => {
     });
   }, [searchValue, records, survey, lang, t]);
 
+  const newRecordButton = useMemo(
+    () =>
+      defaultCycleKey === cycle ? (
+        <Button
+          icon="plus"
+          onPress={onNewRecordPress}
+          style={styles.newRecordButton}
+          labelVariant="bodyLarge"
+          textKey="dataEntry:newRecord"
+        />
+      ) : null,
+    [cycle, defaultCycleKey, onNewRecordPress]
+  );
+
   return (
     <VView style={styles.container}>
       <VView style={styles.innerContainer}>
@@ -453,7 +467,13 @@ export const RecordsList = () => {
               <Searchbar value={searchValue} onChange={onSearchValueChange} />
             )}
             {records.length === 0 && (
-              <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
+              <>
+                <Text
+                  textKey="dataEntry:noRecordsFound"
+                  variant="titleMedium"
+                />
+                {newRecordButton}
+              </>
             )}
             {records.length > 0 && (
               <RecordsDataVisualizer
@@ -472,26 +492,32 @@ export const RecordsList = () => {
         )}
       </VView>
       <HView style={styles.bottomActionBar}>
-        {defaultCycleKey === cycle && (
-          <Button
-            icon="plus"
-            onPress={onNewRecordPress}
-            style={styles.newRecordButton}
-            labelVariant="bodyLarge"
-            textKey="dataEntry:newRecord"
-          />
-        )}
+        {records.length > 0 && newRecordButton}
         {records.length > 0 && (
           <MenuButton
             icon="download"
             items={[
-              {
-                key: "checkSyncStatus",
-                keepMenuOpenOnPress: true,
-                label: "dataEntry:checkSyncStatus",
-                disabled: !networkAvailable,
-                onPress: loadRecordsWithSyncStatus,
-              },
+              ...(!networkAvailable
+                ? [
+                    {
+                      key: "networkNotAvailable",
+                      keepMenuOpenOnPress: false,
+                      label: "common:networkNotAvailable",
+                      disabled: true,
+                    },
+                  ]
+                : []),
+              ...(networkAvailable
+                ? [
+                    {
+                      key: "checkSyncStatus",
+                      keepMenuOpenOnPress: true,
+                      label: "dataEntry:checkSyncStatus",
+                      disabled: !networkAvailable,
+                      onPress: loadRecordsWithSyncStatus,
+                    },
+                  ]
+                : []),
               {
                 key: "exportNewOrUpdatedRecords",
                 label: "dataEntry:exportNewOrUpdatedRecords",
