@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.23] - 2024-12-08
+### Fixed
+- Fixed cannot enter commas in numeric attributes (iOS);
+### Added
+- Show progress step during initialization;
+
+## [1.1.22] - 2024-11-25
+### Added
+- Use latest arena-core version (improved performance);
+
 ## [1.1.21] - 2024-11-24
 ### Fixed
 - Date/time picker layout (iOS);
