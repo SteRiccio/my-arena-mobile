@@ -2,7 +2,7 @@ import { Objects } from "@openforis/arena-core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { DataEntryActions, DataEntrySelectors, StoreUtils } from "state";
+import { DataEntryActions, DataEntrySelectors, StoreUtils, useConfirm } from "state";
 import { Functions } from "utils";
 
 const getNodeUpdateActionKey = ({ nodeUuid }) => `node_update_${nodeUuid}`;
@@ -22,6 +22,7 @@ export const useNodeComponentLocalState = ({
   const dispatch = useDispatch();
   const dirtyRef = useRef(false);
   const debouncedUpdateRef = useRef(null);
+  const confirm = useConfirm()
 
   const {
     applicable,
@@ -122,6 +123,16 @@ export const useNodeComponentLocalState = ({
     [uiValueToNodeValue, updateDelay, nodeUuid, dispatch]
   );
 
+  const onClearPress = useCallback(async () => {
+    if (
+      await confirm({
+        messageKey: "dataEntry:confirmDeleteValue.message",
+      })
+    ) {
+      updateNodeValue({ value: null, ignoreDelay: true });
+    }
+  }, [confirm, updateNodeValue]);
+
   return {
     applicable,
     invalidValue,
@@ -129,5 +140,6 @@ export const useNodeComponentLocalState = ({
     uiValue,
     validation: updateDelay ? validation : nodeValidation,
     updateNodeValue,
+    onClearPress,
   };
 };

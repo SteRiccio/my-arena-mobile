@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
-import { Button, Text, VView, View } from "components";
+import { Button, CloseIconButton, HView, Text, VView, View } from "components";
 import { RecordEditViewMode } from "model";
-import { SurveyOptionsSelectors } from "state";
+import { SurveyOptionsSelectors, useConfirm } from "state";
 
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
@@ -23,6 +23,7 @@ export const NodeTaxonComponent = (props) => {
       `rendering NodeTaxonComponent for ${NodeDefs.getName(nodeDef)}`
     );
   }
+  const confirm = useConfirm();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -30,7 +31,7 @@ export const NodeTaxonComponent = (props) => {
   const openEditDialog = () => setEditDialogOpen(true);
   const closeEditDialog = () => setEditDialogOpen(false);
 
-  const { value, updateNodeValue } = useNodeComponentLocalState({
+  const { value, updateNodeValue, onClearPress } = useNodeComponentLocalState({
     nodeUuid,
   });
 
@@ -38,15 +39,25 @@ export const NodeTaxonComponent = (props) => {
   const selectedTaxonVernacularName = selectedTaxon?.vernacularName;
 
   const selectedTaxonContainerStyle = useMemo(
-    () => ({ height: selectedTaxonVernacularName ? 60 : 30 }),
+    () => [
+      styles.selectedTaxonContainer,
+      { height: selectedTaxonVernacularName ? 70 : 40 },
+    ],
     [selectedTaxonVernacularName]
   );
 
   return (
     <VView>
-      <View style={selectedTaxonContainerStyle}>
+      <View style={styles.selectedTaxonWrapper}>
         {selectedTaxon ? (
-          <TaxonValuePreview nodeDef={nodeDef} value={value} />
+          <HView style={selectedTaxonContainerStyle}>
+            <TaxonValuePreview
+              nodeDef={nodeDef}
+              style={styles.selectedTaxonText}
+              value={value}
+            />
+            <CloseIconButton mode="text" onPress={onClearPress} />
+          </HView>
         ) : (
           <Text textKey="dataEntry:taxon.taxonNotSelected" />
         )}

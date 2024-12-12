@@ -1,48 +1,29 @@
 import React from "react";
 
-import { NodeDefs } from "@openforis/arena-core";
-
-import { Text } from "components";
+import { Text, VView } from "components";
+import { Taxa } from "model/Taxa";
 import { NodeValuePreviewPropTypes } from "./NodeValuePreviewPropTypes";
 import { useTaxonByNodeValue } from "./useTaxonByNodeValue";
 
 export const TaxonValuePreview = (props) => {
-  const { nodeDef, value } = props;
+  const { nodeDef, style, value } = props;
 
   const taxon = useTaxonByNodeValue({ value });
 
   if (!taxon) return null;
 
-  const { code, scientificName } = taxon.props;
-  const {
-    scientificName: scientificNameUnlisted,
-    vernacularName,
-    vernacularNameLangCode,
-  } = taxon;
-
-  const visibleFields = NodeDefs.getVisibleFields(nodeDef);
-  const codeVisible = !visibleFields || visibleFields.includes("code");
-  const vernacularNameVisible =
-    !visibleFields || visibleFields.includes("vernacularName");
-
-  const scientificNameShown = scientificNameUnlisted ?? scientificName;
-
-  const vernacularNamePart =
-    !vernacularName || !vernacularNameVisible
-      ? ""
-      : `
-${vernacularName} (${vernacularNameLangCode})`;
-
-  const codePart = codeVisible ? `(${code})` : "";
+  const { scientificNameAndCode, vernacularNamePart } = Taxa.taxonToString({
+    nodeDef,
+    taxon,
+  });
 
   return (
-    <Text
-      numberOfLines={vernacularNamePart ? 2 : 1}
-      style={{ flex: 1 }}
-      variant="bodyLarge"
-    >
-      {`${scientificNameShown} ${codePart}${vernacularNamePart}`}
-    </Text>
+    <VView fullFlex style={style} transparent>
+      <Text variant="bodyLarge">{scientificNameAndCode}</Text>
+      {vernacularNamePart && (
+        <Text variant="bodyMedium">{vernacularNamePart}</Text>
+      )}
+    </VView>
   );
 };
 
