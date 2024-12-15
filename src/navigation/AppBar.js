@@ -51,7 +51,7 @@ export const AppBar = (props) => {
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
   const recordEditLockAvailable =
-    DataEntrySelectors.useRecordEditLockAvailable() && editingRecord;
+    DataEntrySelectors.useRecordEditLockAvailable();
   const recordEditLocked =
     DataEntrySelectors.useRecordEditLocked() && editingRecord;
   const recordEditViewMode = SurveyOptionsSelectors.useRecordEditViewMode();
