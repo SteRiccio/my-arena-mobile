@@ -119,15 +119,7 @@ const selectRecordAttributeInfo =
     if (!attribute) {
       return { applicable: false, value: null, validation: null };
     }
-    let value = attribute.value;
-    if (value) {
-      const survey = SurveySelectors.selectCurrentSurvey(state);
-      const attributeDef = Surveys.getNodeDefByUuid({
-        survey,
-        uuid: attribute.nodeDefUuid,
-      });
-      value = RecordNodes.cleanupAttributeValue({ value, attributeDef });
-    }
+    const value = extractAttibuteValue({ state, attribute });
     const validation = RecordValidations.getValidationNode({ nodeUuid })(
       record.validation
     );
@@ -268,6 +260,14 @@ const selectPreviousCycleRecordPageEntity = (state) => {
   }
 };
 
+const extractAttibuteValue = ({ state, attribute }) => {
+  const { nodeDefUuid, value } = attribute ?? {};
+  if (!value) return value;
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const attributeDef = Surveys.getNodeDefByUuid({ survey, uuid: nodeDefUuid });
+  return RecordNodes.cleanupAttributeValue({ value, attributeDef });
+};
+
 const selectPreviousCycleRecordAttributeValue =
   ({ nodeDef, parentNodeUuid }) =>
   (state) => {
@@ -278,16 +278,7 @@ const selectPreviousCycleRecordAttributeValue =
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
     const attributes = Records.getChildren(parentNode, nodeDef.uuid)(record);
     const attribute = attributes[0];
-    let value = attribute?.value;
-    if (value) {
-      const survey = SurveySelectors.selectCurrentSurvey(state);
-      const attributeDef = Surveys.getNodeDefByUuid({
-        survey,
-        uuid: attribute.nodeDefUuid,
-      });
-      value = _cleanupAttributeValue({ value, attributeDef });
-    }
-    return value;
+    return extractAttibuteValue({ state, attribute });
   };
 
 const selectPreviousCycleEntityWithSameKeys =
