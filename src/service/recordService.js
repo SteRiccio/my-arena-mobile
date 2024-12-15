@@ -248,6 +248,7 @@ const findRecordSummariesWithSameKeys = async ({
     survey,
     record,
     lang,
+    showLabel: false,
   });
   return findRecordSummariesByKeys({
     survey,
