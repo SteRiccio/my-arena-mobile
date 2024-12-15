@@ -38,7 +38,6 @@ export const SettingsRemoteConnectionScreen = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const networkAvailable = useIsNetworkConnected();
-
   const user = RemoteConnectionSelectors.useLoggedInUser();
 
   const [state, setState] = useState({
