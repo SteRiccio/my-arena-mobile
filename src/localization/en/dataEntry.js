@@ -24,8 +24,11 @@ export default {
   cycleForNewRecords: "Cycle for new records:",
   options: "Options",
   editNodeDef: "Edit {{nodeDef}}",
-  errorFetchingRecordsSyncStatus:
-    "Error fetching records sync status: {{details}}",
+  errorFetchingRecordsSyncStatus: `Error fetching records from server.
+
+Check connection settings.
+
+Details: {{details}}`,
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
   exportData: {
@@ -123,6 +126,7 @@ export default {
     origin: { title: "Origin", L: "Local", R: "Remote" },
     owner: "Owner",
   },
+  sendData: "Send data",
   showOnlyLocalRecords: "Show only local records",
   syncedOn: "Synced on",
   syncStatusHeader: "Status",

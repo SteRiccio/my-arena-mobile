@@ -134,6 +134,7 @@ export const RecordsList = () => {
       );
     }
     setState((statePrev) => ({ ...statePrev, ...stateNext }));
+    return stateNext;
   }, [dispatch, navigation, survey, cycle, onlyLocal]);
 
   const onOnlyLocalChange = useCallback(
@@ -260,7 +261,7 @@ export const RecordsList = () => {
   );
 
   const exportSelectedRecords = useCallback(
-    async (selectedRecords) => {
+    async ({ selectedRecords, onlyRemote = false }) => {
       const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
         await confirmExportRecords({ records: selectedRecords });
       if (confirmResult) {
@@ -286,6 +287,7 @@ export const RecordsList = () => {
             recordUuids,
             conflictResolutionStrategy,
             onJobComplete: loadRecordsWithSyncStatus,
+            onlyRemote,
           })
         );
       }
@@ -294,7 +296,7 @@ export const RecordsList = () => {
   );
 
   const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
-    await exportSelectedRecords(records);
+    await exportSelectedRecords({ selectedRecords: records });
   }, [exportSelectedRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
@@ -316,7 +318,7 @@ export const RecordsList = () => {
       const selectedRecords = records.filter((record) =>
         recordUuids.includes(record.uuid)
       );
-      await exportSelectedRecords(selectedRecords);
+      await exportSelectedRecords({ selectedRecords });
     },
     [exportSelectedRecords, records]
   );
@@ -416,6 +418,17 @@ export const RecordsList = () => {
     [checkRecordsCanBeCloned, dispatch, loadRecords, records]
   );
 
+  const onSendDataPress = useCallback(async () => {
+    const { syncStatusFetched: syncStatusFetchedNext, records: recordsNext } =
+      await loadRecordsWithSyncStatus();
+    if (syncStatusFetchedNext) {
+      await exportSelectedRecords({
+        selectedRecords: recordsNext,
+        onlyRemote: true,
+      });
+    }
+  }, [exportSelectedRecords, loadRecordsWithSyncStatus]);
+
   const recordsFiltered = useMemo(() => {
     if (Objects.isEmpty(searchValue)) return records;
 
@@ -493,6 +506,11 @@ export const RecordsList = () => {
       </VView>
       <HView style={styles.bottomActionBar}>
         {records.length > 0 && newRecordButton}
+        <Button
+          icon="cloud-refresh"
+          onPress={onSendDataPress}
+          textKey="dataEntry:sendData"
+        />
         {records.length > 0 && (
           <MenuButton
             icon="download"
@@ -533,7 +551,6 @@ export const RecordsList = () => {
                 onPress: onExportAllRecordsPress,
               },
             ]}
-            label="common:export"
             style={styles.exportDataMenuButton}
           />
         )}

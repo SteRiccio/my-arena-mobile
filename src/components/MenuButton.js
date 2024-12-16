@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 import { Button } from "./Button";
+import { IconButton } from "./IconButton";
 
 export const MenuButton = (props) => {
   const { icon, items, label, style } = props;
@@ -20,12 +21,20 @@ export const MenuButton = (props) => {
       visible={visible}
       onDismiss={closeMenu}
       anchor={
-        <Button
-          avoidMultiplePress={false}
-          icon={icon}
-          onPress={openMenu}
-          textKey={label}
-        />
+        label ? (
+          <Button
+            avoidMultiplePress={false}
+            icon={icon}
+            onPress={openMenu}
+            textKey={label}
+          />
+        ) : (
+          <IconButton
+            avoidMultiplePress={false}
+            icon={icon}
+            onPress={openMenu}
+          />
+        )
       }
     >
       {items.map(
