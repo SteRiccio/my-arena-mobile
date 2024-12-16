@@ -2882,16 +2882,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@os-team/i18next-react-native-language-detector@npm:^1.0.34":
-  version: 1.0.34
-  resolution: "@os-team/i18next-react-native-language-detector@npm:1.0.34"
-  peerDependencies:
-    i18next: "*"
-    react-native: "*"
-  checksum: 10c0/76d044e0b406368cc8d3ac80b0ee94a925b9319629009c1802ec1bed8fdf9cdbbd70360f0c6c9778fe4faf41ff53f4f498242f956c4a21b851f4f11536eab94f
-  languageName: node
-  linkType: hard
-
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -4595,7 +4585,6 @@ __metadata:
     "@expo/webpack-config": "npm:~19.0.1"
     "@miblanchard/react-native-slider": "npm:^2.6.0"
     "@openforis/arena-core": "npm:^1.0.6"
-    "@os-team/i18next-react-native-language-detector": "npm:^1.0.34"
     "@react-native-async-storage/async-storage": "npm:1.21.0"
     "@react-native-clipboard/clipboard": "npm:^1.14.1"
     "@react-native-community/datetimepicker": "npm:7.7.0"
@@ -4623,6 +4612,7 @@ __metadata:
     expo-file-system: "npm:~16.0.9"
     expo-image-manipulator: "npm:~11.8.0"
     expo-image-picker: "npm:~14.7.1"
+    expo-localization: "npm:~14.8.4"
     expo-location: "npm:~16.5.5"
     expo-media-library: "npm:~15.9.2"
     expo-screen-orientation: "npm:~6.4.1"
@@ -7409,6 +7399,17 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10c0/d3699129ae1d536787f0e84f0e9e4cf5c1c99a6f8396057db6319de6485f8a832b98902aa13d71973c75fb9067b36290b1e9947a3fae79e6bf46348cf72c2ee5
+  languageName: node
+  linkType: hard
+
+"expo-localization@npm:~14.8.4":
+  version: 14.8.4
+  resolution: "expo-localization@npm:14.8.4"
+  dependencies:
+    rtl-detect: "npm:^1.0.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/0916ddf40480e02a682eb087b1e478e0a0a5904958604a3740806184ae2e6d3c7ab67454fa6293778eca6215867f9dde6c017e7221c735b36058598ce2e0fdf0
   languageName: node
   linkType: hard
 
@@ -13293,6 +13294,13 @@ __metadata:
     react: ">=16.8.6"
     react-native: ">=0.60.5"
   checksum: 10c0/e5d3a0befd46f16d157957e0b35684d6c083b3ae736355dcf2df3403016ae9eacbf30ab6c479cb59ed7ca6befd0cbf849febc2027f60292be5d52a27c9f881c5
+  languageName: node
+  linkType: hard
+
+"rtl-detect@npm:^1.0.2":
+  version: 1.1.2
+  resolution: "rtl-detect@npm:1.1.2"
+  checksum: 10c0/1b92888aafca1593314f837e83fdf02eb208faae3e713ab87c176804728efd3b1980d53b64f65f1fa593348087e852c5cd729b7b9372950f6e9b7be489afc0ca
   languageName: node
   linkType: hard
 
