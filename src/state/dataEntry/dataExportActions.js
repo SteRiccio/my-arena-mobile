@@ -128,13 +128,18 @@ const _onExportFileGenerationSucceeded = async ({
   if (!onlyRemote && (await Files.isSharingAvailable())) {
     availableExportTypes.push(exportType.share);
   }
+  const onConfirm = ({ selectedSingleChoiceValue }) => {
+    dispatch(
+      onExportConfirmed({
+        selectedSingleChoiceValue,
+        conflictResolutionStrategy,
+        outputFileUri,
+        onJobComplete,
+      })
+    );
+  };
   if (availableExportTypes.length === 1) {
-    onExportConfirmed({
-      selectedSingleChoiceValue: availableExportTypes[0],
-      conflictResolutionStrategy,
-      outputFileUri,
-      onJobComplete,
-    });
+    onConfirm({ selectedSingleChoiceValue: availableExportTypes[0] });
   } else {
     dispatch(
       ConfirmActions.show({
@@ -143,16 +148,7 @@ const _onExportFileGenerationSucceeded = async ({
         // messageParams: {
         //   fileSize: Files.toHumanReadableFileSize(fileSize),
         // },
-        onConfirm: ({ selectedSingleChoiceValue }) => {
-          dispatch(
-            onExportConfirmed({
-              selectedSingleChoiceValue,
-              conflictResolutionStrategy,
-              outputFileUri,
-              onJobComplete,
-            })
-          );
-        },
+        onConfirm,
         singleChoiceOptions: availableExportTypes.map((type) => ({
           value: type,
           label: `dataEntry:dataExport.target.${type}`,
