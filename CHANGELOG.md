@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.25] - 2024-12-18
+### Added
+- Records list: added "Send data" button to submit data with one click;
+
 ## [1.1.24] - 2024-12-15
 ### Fixed
 - Ignore geospatial attribute definitions;
