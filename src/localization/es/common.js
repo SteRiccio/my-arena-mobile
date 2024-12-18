@@ -18,6 +18,7 @@ export default {
   false: "Falso",
   filter: "Filtrar",
   fromToOf: "{{from}}-{{to}} de {{of}}",
+  goBack: "Volver",
   info: "Información",
   label: "Etiqueta",
   modifiedOn: "Modificado el",
