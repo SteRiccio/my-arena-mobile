@@ -4,15 +4,15 @@ export default {
   confirmExit: {
     title: "Quitter",
     message:
-      "Quitter l'application ?\nToutes les modifications sont déjà enregistrées.",
+      "Quitter l'application?\nToutes les modifications sont déjà enregistrées.",
   },
   currentVersion: "Version actuelle",
   fullBackup: {
     confirmMessage:
-      "Générer une sauvegarde complète ?\nLa taille sera d'environ {{size}}.",
+      "Générer une sauvegarde complète?\nLa taille sera d'environ {{size}}.",
     confirmTitle: "Générer une sauvegarde",
     error:
-      "Erreur lors de la génération de la sauvegarde complète : {{details}}",
+      "Erreur lors de la génération de la sauvegarde complète: {{details}}",
     shareTitle: "Partager la sauvegarde complète AME",
     title: "Sauvegarde complète",
   },
@@ -39,9 +39,9 @@ export default {
   updateAvailable: "Mise à jour disponible",
   updateStatus: {
     error:
-      "Erreur lors de la récupération de l'état de la mise à jour de l'application : {{error}}",
+      "Erreur lors de la récupération de l'état de la mise à jour de l'application: {{error}}",
     networkNotAvailable:
-      "Impossible de vérifier l'état de la mise à jour de l'application : $t(networkNotAvailable)",
+      "Impossible de vérifier l'état de la mise à jour de l'application: $t(networkNotAvailable)",
     upToDate: "Application à jour",
   },
 };

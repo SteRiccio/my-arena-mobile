@@ -1,40 +1,40 @@
 export default {
   confirmGoToListOfRecords:
-    "Aller à la liste des enregistrements ?\n\n(toutes les modifications sont déjà enregistrées)",
+    "Aller à la liste des enregistrements?\n\n(toutes les modifications sont déjà enregistrées)",
   checkSyncStatus: "Vérifier l'état de la synchronisation",
   closestSamplingPoint: {
     findClosestSamplingPoint:
       "Trouver le point d'échantillonnage le plus proche",
     findingClosestSamplingPoint:
       "Recherche du point d'échantillonnage le plus proche",
-    minDistanceItemFound: "Élément trouvé à une distance de {{minDistance}} m",
+    minDistanceItemFound: "Élément trouvé à une distance de {{minDistance}}m",
     minDistanceItemFound_plural:
-      "Éléments trouvés à une distance de {{minDistance}} m",
+      "Éléments trouvés à une distance de {{minDistance}}m",
     useSelectedItem: "Utiliser l'élément sélectionné",
   },
   confirmDeleteSelectedItems: {
-    message: "Supprimer les éléments sélectionnés ?",
+    message: "Supprimer les éléments sélectionnés?",
   },
   confirmDeleteValue: {
-    message: "Supprimer cette valeur ?",
+    message: "Supprimer cette valeur?",
   },
   confirmOverwriteValue: {
-    message: "Remplacer la valeur existante ?",
+    message: "Remplacer la valeur existante?",
   },
   cycle: "Cycle",
-  cycleForNewRecords: "Cycle pour les nouveaux enregistrements :",
+  cycleForNewRecords: "Cycle pour les nouveaux enregistrements:",
   options: "Options",
   editNodeDef: "Modifier {{nodeDef}}",
   errorFetchingRecordsSyncStatus:
-    "Erreur lors de la récupération des enregistrements depuis le serveur.\n\nVérifier les paramètres de connexion.\n\nDétails : {{details}}",
+    "Erreur lors de la récupération des enregistrements depuis le serveur.\n\nVérifier les paramètres de connexion.\n\nDétails: {{details}}",
   errorGeneratingRecordsExportFile:
-    "Erreur lors de la génération du fichier d'exportation des enregistrements : {{details}}",
+    "Erreur lors de la génération du fichier d'exportation des enregistrements: {{details}}",
   exportData: {
     title: "Exporter les données",
     confirm: {
       title: "Confirmer l'exportation des données",
       message:
-        "Enregistrements à exporter :\n- {{newRecordsCount}} nouveaux enregistrements ;\n- {{updatedRecordsCount}} enregistrements mis à jour\n- {{conflictingRecordsCount}} enregistrements conflictuels",
+        "Enregistrements à exporter:\n- {{newRecordsCount}} nouveaux enregistrements;\n- {{updatedRecordsCount}} enregistrements mis à jour\n- {{conflictingRecordsCount}} enregistrements conflictuels",
     },
     noRecordsInDeviceToExport: "Aucun enregistrement à exporter sur l'appareil",
     onlyNewOrUpdatedRecords:
@@ -46,11 +46,11 @@ export default {
   },
   exportNewOrUpdatedRecords:
     "Exporter les nouveaux enregistrements ou les enregistrements mis à jour",
-  formLanguage: "Langue du formulaire :",
+  formLanguage: "Langue du formulaire:",
   noEntitiesDefined: "Aucune entité définie",
   goToDataEntry: "Aller à la saisie de données",
   goToListOfRecords: "Aller à la liste des enregistrements",
-  gpsLockingEnabledWarning: "Avertissement : Verrouillage GPS activé !",
+  gpsLockingEnabledWarning: "Avertissement: Verrouillage GPS activé!",
   listOfRecords: "Liste des enregistrements",
   localBackup: "Sauvegarde locale",
   newRecord: "Nouvel enregistrement",
@@ -59,18 +59,18 @@ export default {
   recordInPreviousCycle: {
     confirmShowValuesPreviousCycle: {
       title: "Afficher les valeurs du cycle précédent",
-      message: "Sélectionner le cycle précédent :",
+      message: "Sélectionner le cycle précédent:",
       cycleItem: "Cycle {{cycleLabel}}",
     },
-    foundMessage: "Enregistrement trouvé dans le cycle précédent !",
+    foundMessage: "Enregistrement trouvé dans le cycle précédent!",
     notFoundMessage:
       "Enregistrement introuvable dans le cycle {{cycle}} avec les clés {{keyValues}}",
     confirmFetchRecordInCycle:
-      "L'enregistrement du cycle {{cycle}} avec les clés {{keyValues}} n'est pas entièrement chargé ; le télécharger depuis le serveur ?",
+      "L'enregistrement du cycle {{cycle}} avec les clés {{keyValues}} n'est pas entièrement chargé; le télécharger depuis le serveur?",
     confirmSyncRecordsSummaryAndTryAgain:
-      "$t(dataEntry:recordInPreviousCycle.notFoundMessage) : récupérer la liste des enregistrements depuis le serveur et réessayer ?",
+      "$t(dataEntry:recordInPreviousCycle.notFoundMessage): récupérer la liste des enregistrements depuis le serveur et réessayer?",
     fetchError:
-      "Erreur lors de la récupération de l'enregistrement du cycle précédent : {{details}}",
+      "Erreur lors de la récupération de l'enregistrement du cycle précédent: {{details}}",
     multipleRecordsFound:
       "Plusieurs enregistrements avec les clés {{keyValues}} trouvés dans le cycle {{cycle}}",
     valuePanelHeader: "Valeur dans le cycle {{prevCycle}}",
@@ -80,19 +80,19 @@ export default {
       title: "Cloner",
       confirm: {
         message:
-          "Cloner les {{recordsCount}} enregistrements sélectionnés dans le cycle {{cycle}} ?",
+          "Cloner les {{recordsCount}} enregistrements sélectionnés dans le cycle {{cycle}}?",
       },
       onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned:
         "Seuls les enregistrements importés sur l'appareil ou modifiés localement peuvent être clonés dans le cycle suivant",
       completeSuccessfully:
-        "Enregistrements clonés avec succès dans le cycle {{cycle}} !",
+        "Enregistrements clonés avec succès dans le cycle {{cycle}}!",
     },
     confirmImportRecordFromServer:
-      "Importer l'enregistrement depuis le serveur ?",
+      "Importer l'enregistrement depuis le serveur?",
     dateModifiedRemotely: "Date de modification à distance",
     deleteRecordsConfirm: {
       title: "Supprimer les enregistrements",
-      message: "Supprimer les enregistrements sélectionnés ?",
+      message: "Supprimer les enregistrements sélectionnés?",
     },
     duplicateKey: {
       title: "Clé dupliquée",
@@ -109,14 +109,14 @@ export default {
     importRecordsFromFile: {
       title: "Importer",
       confirmMessage:
-        "Importer les enregistrements depuis le fichier sélectionné\n{{fileName}} ?",
-      invalidFileType: "Type de fichier non valide (attendu : .zip)",
+        "Importer les enregistrements depuis le fichier sélectionné\n{{fileName}}?",
+      invalidFileType: "Type de fichier non valide (attendu: .zip)",
       overwriteExistingRecords: "Remplacer les enregistrements existants",
       selectFile: "Sélectionner un fichier",
     },
     importCompleteSuccessfully:
-      "Importation des enregistrements terminée avec succès !\n- {{processedRecords}} enregistrements traités\n- {{insertedRecords}} enregistrements insérés\n- {{updatedRecords}} enregistrements mis à jour",
-    importFailed: "Échec de l'importation des enregistrements : {{details}}",
+      "Importation des enregistrements terminée avec succès!\n- {{processedRecords}} enregistrements traités\n- {{insertedRecords}} enregistrements insérés\n- {{updatedRecords}} enregistrements mis à jour",
+    importFailed: "Échec de l'importation des enregistrements: {{details}}",
     loadStatus: {
       title: "Chargé",
       C: "Complet",
@@ -146,7 +146,7 @@ export default {
   },
   validationReport: {
     title: "Rapport de validation",
-    noErrorsFound: "Bravo, aucune erreur trouvée !",
+    noErrorsFound: "Bravo, aucune erreur trouvée!",
   },
   viewModeLabel: "Mode d'affichage",
   viewMode: {
@@ -163,14 +163,14 @@ export default {
     altitudeAccuracy: "Précision de l'altitude (m)",
     angleToTargetLocation: "Angle par rapport à la cible",
     confirmConvertCoordinate:
-      "Convertir la coordonnée du SRS {{srsFrom}} vers le SRS {{srsTo}} ?",
+      "Convertir la coordonnée du SRS {{srsFrom}} vers le SRS {{srsTo}}?",
     convert: "Convertir",
     currentLocation: "Position actuelle",
     distance: "Distance (m)",
     getLocation: "Obtenir la position",
     heading: "Cap (deg)",
     keepXAndY: "Conserver X et Y",
-    magnetometerNotAvailable: "Magnétomètre non disponible !",
+    magnetometerNotAvailable: "Magnétomètre non disponible!",
     navigateToTarget: "Naviguer vers la cible",
     srs: "$t(common:srs)",
     useCurrentLocation: "Utiliser la position actuelle",
@@ -186,7 +186,7 @@ export default {
     chooseFile: "Choisir un fichier",
     choosePicture: "Choisir une image",
     chooseVideo: "Choisir une vidéo",
-    deleteConfirmMessage: "Supprimer le fichier existant ?",
+    deleteConfirmMessage: "Supprimer le fichier existant?",
   },
   fileAttributeImage: {
     imagePreview: "Aperçu de l'image",
@@ -194,9 +194,9 @@ export default {
     resolution: "Résolution",
   },
   dataExport: {
-    error: "Erreur lors de l'exportation des données. Détails : {{details}}",
+    error: "Erreur lors de l'exportation des données. Détails: {{details}}",
     selectTarget: "Sélectionner la cible d'exportation",
-    selectTargetMessage: "Sélectionner la cible de l'exportation :",
+    selectTargetMessage: "Sélectionner la cible de l'exportation:",
     target: {
       remote: "Serveur distant",
       local: "Dossier local (Téléchargement)",
@@ -211,7 +211,7 @@ export default {
   unlock: {
     label: "Déverrouiller",
     confirmMessage:
-      "La modification de l'enregistrement est verrouillée ; la déverrouiller ?",
+      "La modification de l'enregistrement est verrouillée; la déverrouiller?",
     confirmTitle: "Modification verrouillée",
   },
 };
