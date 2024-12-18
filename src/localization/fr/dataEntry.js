@@ -1,7 +1,7 @@
 export default {
   confirmGoToListOfRecords:
     "Aller à la liste des enregistrements?\n\n(toutes les modifications sont déjà enregistrées)",
-  checkSyncStatus: "Vérifier l'état de la synchronisation",
+  checkSyncStatus: "Vérifier synchronisation",
   closestSamplingPoint: {
     findClosestSamplingPoint:
       "Trouver le point d'échantillonnage le plus proche",
@@ -53,7 +53,7 @@ export default {
   gpsLockingEnabledWarning: "Avertissement: Verrouillage GPS activé!",
   listOfRecords: "Liste des enregistrements",
   localBackup: "Sauvegarde locale",
-  newRecord: "Nouvel enregistrement",
+  newRecord: "Nouvel",
   noRecordsFound: "Aucun enregistrement trouvé",
   recordEditor: "Éditeur d'enregistrements",
   recordInPreviousCycle: {
@@ -130,7 +130,7 @@ export default {
     },
     owner: "Propriétaire",
   },
-  sendData: "Envoyer les données",
+  sendData: "Envoyer données",
   showOnlyLocalRecords: "Afficher uniquement les enregistrements locaux",
   syncedOn: "Synchronisé le",
   syncStatusHeader: "État",

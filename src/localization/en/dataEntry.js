@@ -54,7 +54,7 @@ Details: {{details}}`,
   gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
   listOfRecords: "List of records",
   localBackup: "Local backup",
-  newRecord: "New record",
+  newRecord: "New",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
   recordInPreviousCycle: {

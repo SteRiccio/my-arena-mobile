@@ -1,7 +1,7 @@
 export default {
   confirmGoToListOfRecords:
     "¿Ir a la lista de registros?\n\n(todos los cambios ya están guardados)",
-  checkSyncStatus: "Comprobar estado de sincronización",
+  checkSyncStatus: "Comprobar sincronización",
   closestSamplingPoint: {
     findClosestSamplingPoint: "Buscar punto de muestreo más cercano",
     findingClosestSamplingPoint: "Buscando punto de muestreo más cercano",
@@ -50,7 +50,7 @@ export default {
   gpsLockingEnabledWarning: "Advertencia: ¡Bloqueo de GPS activado!",
   listOfRecords: "Lista de registros",
   localBackup: "Copia de seguridad local",
-  newRecord: "Nuevo registro",
+  newRecord: "Nuevo",
   noRecordsFound: "No se encontraron registros",
   recordEditor: "Editor de registros",
   recordInPreviousCycle: {
