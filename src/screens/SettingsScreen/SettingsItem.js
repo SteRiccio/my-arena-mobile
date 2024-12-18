@@ -3,9 +3,15 @@ import PropTypes from "prop-types";
 
 import { Numbers, Objects } from "@openforis/arena-core";
 
-import { SegmentedButtons, Slider, Switch, TextInput } from "components";
+import {
+  Dropdown,
+  SegmentedButtons,
+  Slider,
+  Switch,
+  TextInput,
+} from "components";
 
-import { SettingsModel } from "./SettingsModel";
+import { SettingsModel } from "model";
 import { SettingsFormItem } from "./SettingsFormItem";
 
 const numberToString = (value) => (Objects.isEmpty(value) ? "" : String(value));
@@ -39,6 +45,16 @@ export const SettingsItem = (props) => {
         >
           <Switch value={value} onChange={onValueChange} />
         </SettingsFormItem>
+      );
+    case SettingsModel.propertyType.dropdown:
+      return (
+        <Dropdown
+          items={options}
+          itemKeyExtractor={(item) => item.key}
+          label={labelKey}
+          onChange={(val) => onPropValueChange({ key: settingKey })(val)(val)}
+          value={value}
+        />
       );
     case SettingsModel.propertyType.numeric:
       return (
