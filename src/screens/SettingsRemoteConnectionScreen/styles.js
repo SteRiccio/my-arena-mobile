@@ -5,14 +5,14 @@ export default StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  serverUrlTextInput: { flex: 1 },
   testUrlButton: {
     alignSelf: "center",
     margin: 10,
   },
-  loginButton: {
-    alignSelf: "center",
-    margin: 20,
-  },
+  loginButtonBar: { justifyContent: "space-between" },
+  goBackButton: { margin: 20 },
+  loginButton: { margin: 20 },
   loginButtonLabel: {
     fontSize: 18,
   },
