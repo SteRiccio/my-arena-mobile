@@ -44,7 +44,9 @@ export const MessageDialog = (props) => {
           )}
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={onDone}>{t(doneButtonLabel)}</Button>
+          <Button labelVariant="bodyLarge" onPress={onDone}>
+            {t(doneButtonLabel)}
+          </Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>

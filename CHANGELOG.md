@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.25] - 2024-12-18
+## [1.1.26] - 2024-12-18
+### Added
+- Check logged in: show 'Go back' button after successful login;
+
+## [1.1.25] - 2024-12-17
 ### Added
 - Records list: added "Send data" button to submit data with one click;
 
