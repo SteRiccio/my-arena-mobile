@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 import {
   Button,
@@ -34,8 +35,11 @@ const serverUrlTypes = {
   custom: "custom",
 };
 
-export const SettingsRemoteConnectionScreen = () => {
+export const SettingsRemoteConnectionScreen = ({ route }) => {
+  const { params } = route ?? {};
+  const { showBack } = params ?? {};
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const { t } = useTranslation();
   const networkAvailable = useIsNetworkConnected();
   const user = RemoteConnectionSelectors.useLoggedInUser();
@@ -134,9 +138,15 @@ export const SettingsRemoteConnectionScreen = () => {
       email: emailNew,
     }));
     dispatch(
-      RemoteConnectionActions.login({ serverUrl, email: emailNew, password })
+      RemoteConnectionActions.login({
+        serverUrl,
+        email: emailNew,
+        password,
+        navigation,
+        showBack,
+      })
     );
-  }, [dispatch, email, password, serverUrl]);
+  }, [dispatch, email, navigation, password, serverUrl, showBack]);
 
   const onLogout = useCallback(async () => {
     if (networkAvailable) {
