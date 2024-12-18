@@ -10,10 +10,9 @@ export default StyleSheet.create({
     alignSelf: "center",
     margin: 10,
   },
-  loginButton: {
-    alignSelf: "center",
-    margin: 20,
-  },
+  loginButtonBar: { justifyContent: "space-between" },
+  goBackButton: { margin: 20 },
+  loginButton: { margin: 20 },
   loginButtonLabel: {
     fontSize: 18,
   },

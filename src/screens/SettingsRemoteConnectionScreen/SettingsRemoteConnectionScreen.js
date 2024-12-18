@@ -11,6 +11,7 @@ import {
   RadioButton,
   RadioButtonGroup,
   ScreenView,
+  Spacer,
   Text,
   TextInput,
   TextInputPassword,
@@ -35,9 +36,7 @@ const serverUrlTypes = {
   custom: "custom",
 };
 
-export const SettingsRemoteConnectionScreen = ({ route }) => {
-  const { params } = route ?? {};
-  const { showBack } = params ?? {};
+export const SettingsRemoteConnectionScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -143,10 +142,9 @@ export const SettingsRemoteConnectionScreen = ({ route }) => {
         email: emailNew,
         password,
         navigation,
-        showBack,
       })
     );
-  }, [dispatch, email, navigation, password, serverUrl, showBack]);
+  }, [dispatch, email, navigation, password, serverUrl]);
 
   const onLogout = useCallback(async () => {
     if (networkAvailable) {
@@ -210,13 +208,24 @@ export const SettingsRemoteConnectionScreen = ({ route }) => {
           onChange={onPasswordChange}
           value={password}
         />
-        <Button
-          disabled={!networkAvailable}
-          labelStyle={styles.loginButtonLabel}
-          onPress={onLogin}
-          style={styles.loginButton}
-          textKey="settingsRemoteConnection:login"
-        />
+        <HView fullWidth style={styles.loginButtonBar}>
+          <HView fullFlex>
+            <Button
+              mode="outlined"
+              onPress={navigation.goBack}
+              style={styles.goBackButton}
+              textKey="common:goBack"
+            />
+          </HView>
+          <Button
+            disabled={!networkAvailable}
+            labelStyle={styles.loginButtonLabel}
+            onPress={onLogin}
+            style={styles.loginButton}
+            textKey="settingsRemoteConnection:login"
+          />
+          <Spacer />
+        </HView>
         {user && (
           <Button
             mode="text"

@@ -21,9 +21,7 @@ const confirmGoToConnectionToRemoteServer =
         messageKey: "settingsRemoteConnection:errorConnectingWithServer",
         titleKey: "authService:loginRequired",
         onConfirm: () =>
-          navigation.navigate(screenKeys.settingsRemoteConnection, {
-            showBack: true,
-          }),
+          navigation.navigate(screenKeys.settingsRemoteConnection),
       })
     );
   };
@@ -53,20 +51,14 @@ const login =
       const settings = await SettingsService.fetchSettings();
       const settingsUpdated = { ...settings, serverUrl, email, password };
       await dispatch(SettingsActions.updateSettings(settingsUpdated));
-      if (showBack) {
-        dispatch(
-          ConfirmActions.show({
-            titleKey: "authService:loginSuccessful",
-            confirmButtonTextKey: "common:goBack",
-            cancelButtonTextKey: "common:close",
-            onConfirm: () => navigation.goBack(),
-          })
-        );
-      } else {
-        dispatch(
-          MessageActions.setMessage({ content: "authService:loginSuccessful" })
-        );
-      }
+      dispatch(
+        ConfirmActions.show({
+          titleKey: "authService:loginSuccessful",
+          confirmButtonTextKey: "common:goBack",
+          cancelButtonTextKey: "common:close",
+          onConfirm: navigation.goBack,
+        })
+      );
       dispatch({ type: USER_SET, user });
     } else if (message || error) {
       const errorKeySuffix = [
