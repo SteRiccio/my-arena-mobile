@@ -5,6 +5,7 @@ export default StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  serverUrlTextInput: { flex: 1 },
   testUrlButton: {
     alignSelf: "center",
     margin: 10,
