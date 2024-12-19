@@ -40,6 +40,15 @@ const toKeyColValue = (value) => {
   return JSON.stringify(value);
 };
 
+const extractKeyColValue = ({ row, keyCol }) => {
+  const colValue = row[keyCol];
+  try {
+    return JSON.parse(colValue);
+  } catch (error) {
+    return colValue;
+  }
+};
+
 const extractKeyColumnsValues = ({ survey, record }) => {
   const keyValues = Records.getEntityKeyValues({
     survey,
@@ -400,7 +409,7 @@ const rowToRecord =
     }
     // camelize key attribute columns
     keyColumnNames.forEach((keyCol, index) => {
-      const keyValue = JSON.parse(row[keyCol]);
+      const keyValue = extractKeyColValue({ row, keyCol });
       const keyDef = keyDefs[index];
       if (keyDef) {
         result[Objects.camelize(keyDef.props.name)] = keyValue;
