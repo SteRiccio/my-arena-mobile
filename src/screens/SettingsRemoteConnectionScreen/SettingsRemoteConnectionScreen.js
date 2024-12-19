@@ -215,6 +215,7 @@ export const SettingsRemoteConnectionScreen = () => {
               onPress={navigation.goBack}
               style={styles.goBackButton}
               textKey="common:goBack"
+              labelVariant="bodySmall"
             />
           </HView>
           <Button
