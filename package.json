@@ -92,5 +92,5 @@
     "prettier": "^3.3.3"
   },
   "private": true,
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "yarn@4.5.3"
 }
