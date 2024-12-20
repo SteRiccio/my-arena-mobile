@@ -79,23 +79,31 @@ export const RecordsList = () => {
   } = state;
 
   const loadRecords = useCallback(async () => {
-    setState((statePrev) => ({ ...statePrev, loading: true }));
-
-    const _records = await RecordService.fetchRecords({
-      survey,
-      cycle,
-      onlyLocal,
-    });
-
     setState((statePrev) => ({
       ...statePrev,
+      loading: true,
       searchValue: "",
-      records: _records,
       syncStatusFetched: false,
       syncStatusLoading: false,
-      loading: false,
     }));
-  }, [survey, cycle, onlyLocal]);
+
+    try {
+      const _records = await RecordService.fetchRecords({
+        survey,
+        cycle,
+        onlyLocal,
+      });
+
+      setState((statePrev) => ({
+        ...statePrev,
+        records: _records,
+        loading: false,
+      }));
+    } catch (error) {
+      setState((statePrev) => ({ ...statePrev, records: [], loading: false }));
+      toaster("dataEntry:errorLoadingRecords", { details: String(error) });
+    }
+  }, [survey, cycle, onlyLocal, toaster]);
 
   // refresh records list on cycle and "only local" change
   useEffect(() => {
@@ -504,14 +512,14 @@ export const RecordsList = () => {
           </>
         )}
       </VView>
-      <HView style={styles.bottomActionBar}>
-        {records.length > 0 && newRecordButton}
-        <Button
-          icon="cloud-refresh"
-          onPress={onSendDataPress}
-          textKey="dataEntry:sendData"
-        />
-        {records.length > 0 && (
+      {records.length > 0 && (
+        <HView style={styles.bottomActionBar}>
+          {newRecordButton}
+          <Button
+            icon="cloud-refresh"
+            onPress={onSendDataPress}
+            textKey="dataEntry:sendData"
+          />
           <MenuButton
             icon="download"
             items={[
@@ -553,8 +561,8 @@ export const RecordsList = () => {
             ]}
             style={styles.exportDataMenuButton}
           />
-        )}
-      </HView>
+        </HView>
+      )}
     </VView>
   );
 };

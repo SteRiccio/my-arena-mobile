@@ -31,6 +31,7 @@ Check connection settings.
 Details: {{details}}`,
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
+  errorLoadingRecords: "Error loading records: {{details}}",
   exportData: {
     title: "Export data",
     confirm: {
