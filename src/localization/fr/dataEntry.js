@@ -29,6 +29,8 @@ export default {
     "Erreur lors de la récupération des enregistrements depuis le serveur.\n\nVérifier les paramètres de connexion.\n\nDétails: {{details}}",
   errorGeneratingRecordsExportFile:
     "Erreur lors de la génération du fichier d'exportation des enregistrements: {{details}}",
+  errorLoadingRecords:
+    "Erreur lors du chargement des enregistrements: {{details}}",
   exportData: {
     title: "Exporter les données",
     confirm: {

@@ -28,6 +28,7 @@ export default {
     "Error al obtener registros del servidor.\n\nComprobar configuración de conexión.\n\nDetalles: {{details}}",
   errorGeneratingRecordsExportFile:
     "Error al generar archivo de exportación de registros: {{details}}",
+  errorLoadingRecords: "Error al cargar registros: {{details}}",
   exportData: {
     title: "Exportar datos",
     confirm: {
