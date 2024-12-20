@@ -3,10 +3,12 @@ export const LanguageConstants = {
 };
 
 export const Languages = [
+  { key: "am", label: "Amharic" },
   { key: "en", label: "English" },
   { key: "es", label: "Spanish" },
   { key: "fr", label: "French" },
   { key: "pt", label: "Portuguese" },
+  { key: "ru", label: "Russian" },
 ];
 
 export const LanguagesSettings = [
