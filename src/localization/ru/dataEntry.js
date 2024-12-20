@@ -1,7 +1,7 @@
 export default {
   confirmGoToListOfRecords:
     "Перейти к списку записей?\n\n(все изменения уже сохранены)",
-  checkSyncStatus: "Проверить статус синхронизации",
+  checkSyncStatus: "Проверить синхронизацию",
   closestSamplingPoint: {
     findClosestSamplingPoint: "Найти ближайшую точку отбора проб",
     findingClosestSamplingPoint: "Поиск ближайшей точки отбора проб",
