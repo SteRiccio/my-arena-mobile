@@ -49,14 +49,24 @@ export const DataList = (props) => {
         <HView style={styles.item}>
           <VView style={{ flex: 1 }}>
             {fields.map((field) => {
-              const { cellRenderer: CellRenderer, header, key, style } = field;
+              const {
+                cellRenderer: CellRenderer,
+                header,
+                headerLabelVariant = "titleSmall",
+                headerWidth = undefined,
+                key,
+                style,
+                textVariant = "titleMedium",
+              } = field;
               return (
                 <FormItem
                   key={key}
                   labelKey={header}
-                  labelVariant="titleSmall"
+                  labelNumberOfLines={1}
+                  labelStyle={headerWidth ? { width: headerWidth } : null}
+                  labelVariant={headerLabelVariant}
                   style={style}
-                  textVariant="titleMedium"
+                  textVariant={textVariant}
                 >
                   {CellRenderer ? <CellRenderer item={item} /> : item[key]}
                 </FormItem>

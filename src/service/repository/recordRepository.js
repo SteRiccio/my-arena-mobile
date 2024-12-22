@@ -34,6 +34,21 @@ const insertColumnsJoint = insertColumns.join(", ");
 const keyColumnNamesJoint = keyColumnNames.join(", ");
 const summarySelectFieldsJoint = `id, uuid, date_created, date_modified, date_modified_remote, date_synced, cycle, owner_uuid, owner_name, load_status, origin, ${keyColumnNamesJoint}`;
 
+const toKeyColValue = (value) => {
+  if (Objects.isEmpty(value)) return null;
+  if (typeof value === "string") return value;
+  return JSON.stringify(value);
+};
+
+const extractKeyColValue = ({ row, keyCol }) => {
+  const colValue = row[keyCol];
+  try {
+    return JSON.parse(colValue);
+  } catch (error) {
+    return colValue;
+  }
+};
+
 const extractKeyColumnsValues = ({ survey, record }) => {
   const keyValues = Records.getEntityKeyValues({
     survey,
@@ -43,7 +58,7 @@ const extractKeyColumnsValues = ({ survey, record }) => {
   });
   const keyColumnsValues = keyColumnNames.map((_keyCol, idx) => {
     const value = keyValues[idx];
-    return value === undefined ? null : JSON.stringify(value);
+    return toKeyColValue(value);
   });
   return keyColumnsValues;
 };
@@ -57,7 +72,7 @@ const extractRemoteRecordSummaryKeyColumnsValues = ({
   const keyColumnsValues = keyDefs.map((keyDef) => {
     const keyColName = Objects.camelize(NodeDefs.getName(keyDef));
     const value = recordSummary[keyColName];
-    return Objects.isEmpty(value) ? null : JSON.stringify(value);
+    return toKeyColValue(value);
   });
   return keyColumnsValues;
 };
@@ -94,40 +109,34 @@ const fetchRecords = async ({ survey, cycle = null, onlyLocal = true }) => {
     whereConditions.push("origin = ?");
     queryParams.push(RecordOrigin.local);
   }
-  const whereClause = `WHERE ${whereConditions.join(" AND ")}`;
-
-  const rows = await dbClient.many(
-    `SELECT ${summarySelectFieldsJoint}
+  const query = `SELECT ${summarySelectFieldsJoint}
     FROM record
-    ${whereClause}
-    ORDER BY date_modified DESC`,
-    queryParams
-  );
+    WHERE ${whereConditions.join(" AND ")}
+    ORDER BY date_modified DESC`;
+  const rows = await dbClient.many(query, queryParams);
   return rows.map(rowToRecord({ survey }));
 };
 
 const findRecordSummariesByKeys = async ({ survey, cycle, keyValues }) => {
   const { id: surveyId } = survey;
-  const keyColumnsConditions = keyColumnNames
+  const keyColsConditions = keyColumnNames
     .map((keyCol, index) => {
       const val = keyValues[index];
       return Objects.isNil(val) ? `${keyCol} IS NULL` : `${keyCol} = ?`;
     })
     .join(" AND ");
-  const keyColumnsParams = keyColumnNames.reduce((acc, _keyCol, index) => {
+  const keyColsParams = keyColumnNames.reduce((acc, _keyCol, index) => {
     const val = keyValues[index];
     if (!Objects.isNil(val)) {
-      acc.push(JSON.stringify(val));
+      acc.push(toKeyColValue(val));
     }
     return acc;
   }, []);
 
-  const rows = await dbClient.many(
-    `SELECT ${summarySelectFieldsJoint}
+  const query = `SELECT ${summarySelectFieldsJoint}
     FROM record
-    WHERE survey_id = ? AND cycle = ? AND ${keyColumnsConditions}`,
-    [surveyId, cycle, ...keyColumnsParams]
-  );
+    WHERE survey_id = ? AND cycle = ? AND ${keyColsConditions}`;
+  const rows = await dbClient.many(query, [surveyId, cycle, ...keyColsParams]);
   return rows.map(rowToRecord({ survey }));
 };
 
@@ -394,7 +403,7 @@ const rowToRecord =
     }
     // camelize key attribute columns
     keyColumnNames.forEach((keyCol, index) => {
-      const keyValue = JSON.parse(row[keyCol]);
+      const keyValue = extractKeyColValue({ row, keyCol });
       const keyDef = keyDefs[index];
       if (keyDef) {
         result[Objects.camelize(keyDef.props.name)] = keyValue;

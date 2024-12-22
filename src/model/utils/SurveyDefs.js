@@ -26,6 +26,7 @@ const getChildrenDefs = ({ survey, nodeDef, cycle }) =>
     includeAnalysis: false,
   }).filter(
     (childDef) =>
+      childDef.type !== NodeDefType.geo && // geo type not supported
       !NodeDefs.isHidden(childDef) &&
       !NodeDefs.isHiddenInMobile(cycle)(childDef) &&
       NodeDefs.isInCycle(cycle)(childDef)

@@ -103,6 +103,7 @@ const createNewRecord =
   };
 
 const addNewEntity = async (dispatch, getState) => {
+  Keyboard.dismiss();
   const state = getState();
   const user = RemoteConnectionSelectors.selectLoggedUser(state);
   const survey = SurveySelectors.selectCurrentSurvey(state);

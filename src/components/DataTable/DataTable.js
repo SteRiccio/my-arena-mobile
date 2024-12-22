@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { DataTable as RNPDataTable } from "react-native-paper";
 import PropTypes from "prop-types";
 
@@ -58,6 +59,8 @@ export const DataTable = (props) => {
     onPageChange,
   } = usePagination({ items: items });
 
+  const rowsScrollViewRef = useRef(null);
+
   const isTablet = DeviceInfoSelectors.useIsTablet();
   const isLandscape = DeviceInfoSelectors.useOrientationIsLandscape();
 
@@ -78,6 +81,10 @@ export const DataTable = (props) => {
     }
     onSortChange(sortNext);
   };
+
+  useEffect(() => {
+    rowsScrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+  }, [visibleRows]);
 
   return (
     <VView style={{ flex: 1 }}>
@@ -106,7 +113,7 @@ export const DataTable = (props) => {
             <RNPDataTable.Title style={{ maxWidth: 40, minWidth: 40 }} />
           )}
         </RNPDataTable.Header>
-        <ScrollView persistentScrollbar>
+        <ScrollView persistentScrollbar ref={rowsScrollViewRef}>
           {visibleRows.map((item) => (
             <RNPDataTable.Row
               key={item.key}

@@ -98,6 +98,7 @@ export const AppConfirmDialog = () => {
         </Dialog.Content>
         <Dialog.Actions>
           <Button
+            labelVariant="bodyLarge"
             mode="outlined"
             onPress={cancel}
             style={cancelButtonStyle}
@@ -106,6 +107,7 @@ export const AppConfirmDialog = () => {
           <Button
             disabled={swipeToConfirm && !swipeConfirmed}
             onPress={confirm}
+            labelVariant="bodyLarge"
             textKey={confirmButtonTextKey}
             style={confirmButtonStyle}
           />

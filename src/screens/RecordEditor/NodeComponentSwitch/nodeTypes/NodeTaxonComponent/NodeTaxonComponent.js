@@ -5,12 +5,9 @@ import { NodeDefs } from "@openforis/arena-core";
 
 import { Button, Text, VView, View } from "components";
 import { RecordEditViewMode } from "model";
-import { Taxa } from "model/Taxa";
-import { SurveyOptionsSelectors, SurveySelectors } from "state";
+import { SurveyOptionsSelectors } from "state";
 
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
-import { useItemsFilter } from "../useItemsFilter";
-import { useTaxa } from "./useTaxa";
 import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
 import { TaxonValuePreview } from "../../../NodeValuePreview/TaxonValuePreview";
@@ -37,19 +34,6 @@ export const NodeTaxonComponent = (props) => {
     nodeUuid,
   });
 
-  const survey = SurveySelectors.useCurrentSurvey();
-
-  const taxonomyUuid = NodeDefs.getTaxonomyUuid(nodeDef);
-
-  const _taxa = useTaxa({ survey, taxonomyUuid });
-  const taxa = useItemsFilter({
-    nodeDef,
-    parentNodeUuid,
-    items: _taxa,
-    alwaysIncludeItemFunction: (item) =>
-      [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
-  });
-
   const selectedTaxon = useTaxonByNodeValue({ value });
   const selectedTaxonVernacularName = selectedTaxon?.vernacularName;
 
@@ -70,7 +54,7 @@ export const NodeTaxonComponent = (props) => {
       {viewMode === RecordEditViewMode.oneNode && (
         <NodeTaxonAutocomplete
           nodeDef={nodeDef}
-          taxa={taxa}
+          parentNodeUuid={parentNodeUuid}
           updateNodeValue={updateNodeValue}
         />
       )}
@@ -88,7 +72,6 @@ export const NodeTaxonComponent = (props) => {
               nodeDef={nodeDef}
               parentNodeUuid={parentNodeUuid}
               selectedTaxon={selectedTaxon}
-              taxa={taxa}
               updateNodeValue={updateNodeValue}
             />
           )}

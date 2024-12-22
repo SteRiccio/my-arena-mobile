@@ -6,6 +6,12 @@ const defaultOptions = {
   credentials: "include",
 };
 
+const errorMessageByCode = {
+  401: "User not authorized",
+  403: "Forbidden",
+  500: "Internal server error",
+};
+
 const getUrl = ({ serverUrl, uri }) => {
   const parts = [];
   parts.push(Strings.removeSuffix("/")(serverUrl));
@@ -45,8 +51,14 @@ const _sendGet = async (serverUrl, uri, params = {}, options = {}) => {
 
 const get = async (serverUrl, uri, params = {}, options = {}) => {
   const response = await _sendGet(serverUrl, uri, params, options);
-  const data = await response.json();
-  return { data };
+  if (response.status === 200) {
+    const data = await response.json();
+    return { data };
+  } else {
+    const errorMessage =
+      errorMessageByCode[response.status] ?? errorMessageByCode[500];
+    throw new Error(errorMessage);
+  }
 };
 
 const getFileAsBlob = async (serverUrl, uri, params, options) => {

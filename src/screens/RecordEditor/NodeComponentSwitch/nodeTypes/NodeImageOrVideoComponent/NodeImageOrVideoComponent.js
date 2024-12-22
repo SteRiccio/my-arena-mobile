@@ -2,7 +2,15 @@ import PropTypes from "prop-types";
 
 import { NodeDefFileType, NodeDefs } from "@openforis/arena-core";
 
-import { Button, HView, IconButton, Loader, VView, View } from "components";
+import {
+  Button,
+  DeleteIconButton,
+  HView,
+  IconButton,
+  Loader,
+  VView,
+  View,
+} from "components";
 import { ImageOrVideoValuePreview } from "screens/RecordEditor/NodeValuePreview/ImageOrVideoValuePreview";
 import { useNodeFileComponent } from "./useNodeFileComponent";
 
@@ -13,6 +21,11 @@ const fileChooseTextKeySuffixByFileType = {
   [NodeDefFileType.image]: "Picture",
   [NodeDefFileType.video]: "Video",
   [NodeDefFileType.other]: "File",
+};
+
+const cameraButtonAvailableByFileType = {
+  [NodeDefFileType.image]: true,
+  [NodeDefFileType.video]: true,
 };
 
 export const NodeImageOrVideoComponent = (props) => {
@@ -46,13 +59,11 @@ export const NodeImageOrVideoComponent = (props) => {
 
       <VView style={styles.buttonsContainer}>
         {nodeValue && NodeDefs.isSingle(nodeDef) && (
-          <IconButton icon="trash-can-outline" onPress={onDeletePress} />
+          <DeleteIconButton onPress={onDeletePress} />
         )}
         {!nodeValue && (
           <>
-            {[NodeDefFileType.image, NodeDefFileType.video].includes(
-              fileType
-            ) && (
+            {cameraButtonAvailableByFileType[fileType] && (
               <IconButton
                 icon="camera"
                 onPress={onOpenCameraPress}

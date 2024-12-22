@@ -1,6 +1,8 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 
+import { NodeDefs } from "@openforis/arena-core";
+
 import { NodeEditDialogInternal } from "../NodeEditDialogInternal";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
 
@@ -10,14 +12,17 @@ export const NodeTaxonEditDialog = (props) => {
     onDismiss,
     parentNodeUuid,
     selectedTaxon,
-    taxa,
     updateNodeValue: updateNodeValueProp,
   } = props;
-
+  if (__DEV__) {
+    console.log(
+      `rendering NodeTaxonEditDialog for ${NodeDefs.getName(nodeDef)}`
+    );
+  }
   const updateNodeValue = useCallback(
     ({ value: valueNext }) => {
-      updateNodeValueProp({ value: valueNext });
       onDismiss();
+      updateNodeValueProp({ value: valueNext });
     },
     [onDismiss, updateNodeValueProp]
   );
@@ -30,8 +35,8 @@ export const NodeTaxonEditDialog = (props) => {
     >
       <NodeTaxonAutocomplete
         nodeDef={nodeDef}
+        parentNodeUuid={parentNodeUuid}
         selectedTaxon={selectedTaxon}
-        taxa={taxa}
         updateNodeValue={updateNodeValue}
       />
     </NodeEditDialogInternal>
@@ -43,6 +48,5 @@ NodeTaxonEditDialog.propTypes = {
   onDismiss: PropTypes.func.isRequired,
   parentNodeUuid: PropTypes.string,
   selectedTaxon: PropTypes.object,
-  taxa: PropTypes.array.isRequired,
   updateNodeValue: PropTypes.func.isRequired,
 };

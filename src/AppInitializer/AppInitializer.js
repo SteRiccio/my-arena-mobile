@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -27,6 +27,24 @@ if (!global.crypto) {
   global.crypto = Crypto;
 }
 
+const steps = {
+  starting: "starting",
+  fetchingDeviceInfo: "fetchingDeviceInfo",
+  fetchingSettings: "fetchingSettings",
+  storingSettings: "storingSettings",
+  settingFullScreen: "settingFullScreen",
+  settingKeepScreenAwake: "settingKeepScreenAwake",
+  startingGpsLocking: "startingGpsLocking",
+  initializingDb: "initializingDb",
+  startingDbMigrations: "startingDbMigrations",
+  fetchingSurveys: "fetchingSurveys",
+  importingDemoSurvey: "importingDemoSurvey",
+  fetchingAndSettingLocalSurveys: "fetchingAndSettingLocalSurveys",
+  fetchingAndSettingSurvey: "fetchingAndSettingSurvey",
+  checkingLoggedIn: "checkingLoggedIn",
+  complete: "complete",
+};
+
 export const AppInitializer = (props) => {
   const { children } = props;
 
@@ -35,56 +53,72 @@ export const AppInitializer = (props) => {
   const [state, setState] = useState({
     loading: true,
     errorMessage: null,
+    step: steps.starting,
   });
-  const { loading, errorMessage } = state;
+  const { loading, errorMessage, step } = state;
+
+  const setStep = (stepNew) =>
+    setState((statePrev) => ({ ...statePrev, step: stepNew }));
+
+  const initialize = useCallback(async () => {
+    if (__DEV__) {
+      console.log("Initializing app");
+    }
+    setStep(steps.fetchingDeviceInfo);
+    await dispatch(DeviceInfoActions.initDeviceInfo());
+
+    setStep(steps.fetchingSettings);
+    const settings = await SettingsService.fetchSettings();
+
+    setStep(steps.storingSettings);
+    await dispatch(SettingsActions.updateSettings(settings));
+
+    if (settings.fullScreen) {
+      setStep(steps.settingFullScreen);
+      await SystemUtils.setFullScreen(settings.fullScreen);
+    }
+    if (settings.keepScreenAwake) {
+      setStep(steps.settingKeepScreenAwake);
+      await SystemUtils.setKeepScreenAwake(settings.keepScreenAwake);
+    }
+    if (settings.locationGpsLocked) {
+      setStep(steps.startingGpsLocking);
+      await dispatch(SettingsActions.startGpsLocking());
+    }
+    setStep(steps.initializingDb);
+    const { dbMigrationsRun, prevDbVersion } = await initializeDb();
+
+    if (dbMigrationsRun) {
+      setStep(steps.startingDbMigrations);
+      await DataMigrationService.migrateData({ prevDbVersion });
+    }
+    // initialize local surveys
+    setStep(steps.fetchingSurveys);
+    const surveySummaries = await SurveyService.fetchSurveySummariesLocal();
+    if (surveySummaries.length === 0) {
+      setStep(steps.importingDemoSurvey);
+      await SurveyService.importDemoSurvey();
+    }
+    setStep(steps.fetchingAndSettingLocalSurveys);
+    await dispatch(SurveyActions.fetchAndSetLocalSurveys());
+
+    const currentSurveyId = await PreferencesService.getCurrentSurveyId();
+    if (currentSurveyId) {
+      setStep(steps.fetchingAndSettingSurvey);
+      dispatch(
+        SurveyActions.fetchAndSetCurrentSurvey({ surveyId: currentSurveyId })
+      );
+    }
+    setStep(steps.checkingLoggedIn);
+    dispatch(RemoteConnectionActions.checkLoggedIn());
+
+    setStep(steps.complete);
+    if (__DEV__) {
+      console.log("App initialized");
+    }
+  }, [dispatch]);
 
   useEffect(() => {
-    const initialize = async () => {
-      if (__DEV__) {
-        console.log("Initializing app");
-      }
-      await dispatch(DeviceInfoActions.initDeviceInfo());
-
-      const settings = await SettingsService.fetchSettings();
-      await dispatch(SettingsActions.updateSettings(settings));
-
-      if (settings.fullScreen) {
-        await SystemUtils.setFullScreen(settings.fullScreen);
-      }
-      if (settings.keepScreenAwake) {
-        await SystemUtils.setKeepScreenAwake(settings.keepScreenAwake);
-      }
-      if (settings.locationGpsLocked) {
-        await dispatch(SettingsActions.startGpsLocking());
-      }
-
-      const { dbMigrationsRun, prevDbVersion } = await initializeDb();
-
-      if (dbMigrationsRun) {
-        await DataMigrationService.migrateData({ prevDbVersion });
-      }
-
-      // initialize local surveys
-      const surveySummaries = await SurveyService.fetchSurveySummariesLocal();
-      if (surveySummaries.length === 0) {
-        await SurveyService.importDemoSurvey();
-      }
-
-      await dispatch(SurveyActions.fetchAndSetLocalSurveys());
-
-      const currentSurveyId = await PreferencesService.getCurrentSurveyId();
-      if (currentSurveyId) {
-        dispatch(
-          SurveyActions.fetchAndSetCurrentSurvey({ surveyId: currentSurveyId })
-        );
-      }
-
-      dispatch(RemoteConnectionActions.checkLoggedIn());
-
-      if (__DEV__) {
-        console.log("App initialized");
-      }
-    };
     initialize()
       .then(() => {
         setState((statePrev) => ({ ...statePrev, loading: false }));
@@ -103,13 +137,14 @@ export const AppInitializer = (props) => {
           errorMessage,
         }));
       });
-  }, [dispatch]);
+  }, [dispatch, initialize]);
 
   if (loading) {
     return (
       <VView style={styles.container}>
         <AppLogo style={styles.logo} />
-        <Text textKey="app:pleaseWaitMessage" />
+        <Text textKey={`app:initializationStep:${step}`} variant="labelSmall" />
+        <Text textKey="app:pleaseWaitMessage" variant="labelLarge" />
       </VView>
     );
   }

@@ -79,23 +79,31 @@ export const RecordsList = () => {
   } = state;
 
   const loadRecords = useCallback(async () => {
-    setState((statePrev) => ({ ...statePrev, loading: true }));
-
-    const _records = await RecordService.fetchRecords({
-      survey,
-      cycle,
-      onlyLocal,
-    });
-
     setState((statePrev) => ({
       ...statePrev,
+      loading: true,
       searchValue: "",
-      records: _records,
       syncStatusFetched: false,
       syncStatusLoading: false,
-      loading: false,
     }));
-  }, [survey, cycle, onlyLocal]);
+
+    try {
+      const _records = await RecordService.fetchRecords({
+        survey,
+        cycle,
+        onlyLocal,
+      });
+
+      setState((statePrev) => ({
+        ...statePrev,
+        records: _records,
+        loading: false,
+      }));
+    } catch (error) {
+      setState((statePrev) => ({ ...statePrev, records: [], loading: false }));
+      toaster("dataEntry:errorLoadingRecords", { details: String(error) });
+    }
+  }, [survey, cycle, onlyLocal, toaster]);
 
   // refresh records list on cycle and "only local" change
   useEffect(() => {
@@ -134,6 +142,7 @@ export const RecordsList = () => {
       );
     }
     setState((statePrev) => ({ ...statePrev, ...stateNext }));
+    return stateNext;
   }, [dispatch, navigation, survey, cycle, onlyLocal]);
 
   const onOnlyLocalChange = useCallback(
@@ -200,10 +209,10 @@ export const RecordsList = () => {
     }
   }, [confirm, dispatch, loadRecords, toaster]);
 
-  const onNewRecordPress = () => {
+  const onNewRecordPress = useCallback(() => {
     setState((statePrev) => ({ ...statePrev, loading: true }));
     dispatch(DataEntryActions.createNewRecord({ navigation }));
-  };
+  }, [dispatch, navigation]);
 
   const confirmExportRecords = useCallback(
     async ({ records }) => {
@@ -260,7 +269,7 @@ export const RecordsList = () => {
   );
 
   const exportSelectedRecords = useCallback(
-    async (selectedRecords) => {
+    async ({ selectedRecords, onlyRemote = false }) => {
       const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
         await confirmExportRecords({ records: selectedRecords });
       if (confirmResult) {
@@ -286,6 +295,7 @@ export const RecordsList = () => {
             recordUuids,
             conflictResolutionStrategy,
             onJobComplete: loadRecordsWithSyncStatus,
+            onlyRemote,
           })
         );
       }
@@ -294,7 +304,7 @@ export const RecordsList = () => {
   );
 
   const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
-    await exportSelectedRecords(records);
+    await exportSelectedRecords({ selectedRecords: records });
   }, [exportSelectedRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
@@ -316,7 +326,7 @@ export const RecordsList = () => {
       const selectedRecords = records.filter((record) =>
         recordUuids.includes(record.uuid)
       );
-      await exportSelectedRecords(selectedRecords);
+      await exportSelectedRecords({ selectedRecords });
     },
     [exportSelectedRecords, records]
   );
@@ -416,6 +426,17 @@ export const RecordsList = () => {
     [checkRecordsCanBeCloned, dispatch, loadRecords, records]
   );
 
+  const onSendDataPress = useCallback(async () => {
+    const { syncStatusFetched: syncStatusFetchedNext, records: recordsNext } =
+      await loadRecordsWithSyncStatus();
+    if (syncStatusFetchedNext) {
+      await exportSelectedRecords({
+        selectedRecords: recordsNext,
+        onlyRemote: true,
+      });
+    }
+  }, [exportSelectedRecords, loadRecordsWithSyncStatus]);
+
   const recordsFiltered = useMemo(() => {
     if (Objects.isEmpty(searchValue)) return records;
 
@@ -435,6 +456,20 @@ export const RecordsList = () => {
     });
   }, [searchValue, records, survey, lang, t]);
 
+  const newRecordButton = useMemo(
+    () =>
+      defaultCycleKey === cycle ? (
+        <Button
+          icon="plus"
+          onPress={onNewRecordPress}
+          style={styles.newRecordButton}
+          labelVariant="bodyLarge"
+          textKey="dataEntry:newRecord"
+        />
+      ) : null,
+    [cycle, defaultCycleKey, onNewRecordPress]
+  );
+
   return (
     <VView style={styles.container}>
       <VView style={styles.innerContainer}>
@@ -453,7 +488,13 @@ export const RecordsList = () => {
               <Searchbar value={searchValue} onChange={onSearchValueChange} />
             )}
             {records.length === 0 && (
-              <Text textKey="dataEntry:noRecordsFound" variant="titleMedium" />
+              <>
+                <Text
+                  textKey="dataEntry:noRecordsFound"
+                  variant="titleMedium"
+                />
+                {newRecordButton}
+              </>
             )}
             {records.length > 0 && (
               <RecordsDataVisualizer
@@ -471,43 +512,57 @@ export const RecordsList = () => {
           </>
         )}
       </VView>
-      <HView style={styles.bottomActionBar}>
-        {defaultCycleKey === cycle && (
+      {records.length > 0 && (
+        <HView style={styles.bottomActionBar}>
+          {newRecordButton}
           <Button
-            icon="plus"
-            onPress={onNewRecordPress}
-            style={styles.newRecordButton}
-            textKey="dataEntry:newRecord"
+            icon="cloud-refresh"
+            onPress={onSendDataPress}
+            textKey="dataEntry:sendData"
           />
-        )}
-        {records.length > 0 && (
           <MenuButton
             icon="download"
             items={[
-              {
-                key: "checkSyncStatus",
-                keepMenuOpenOnPress: true,
-                label: "dataEntry:checkSyncStatus",
-                disabled: !networkAvailable,
-                onPress: loadRecordsWithSyncStatus,
-              },
+              ...(!networkAvailable
+                ? [
+                    {
+                      key: "networkNotAvailable",
+                      keepMenuOpenOnPress: false,
+                      label: "common:networkNotAvailable",
+                      disabled: true,
+                    },
+                  ]
+                : []),
+              ...(networkAvailable
+                ? [
+                    {
+                      key: "checkSyncStatus",
+                      icon: "cloud-refresh",
+                      keepMenuOpenOnPress: true,
+                      label: "dataEntry:checkSyncStatus",
+                      disabled: !networkAvailable,
+                      onPress: loadRecordsWithSyncStatus,
+                    },
+                  ]
+                : []),
               {
                 key: "exportNewOrUpdatedRecords",
+                icon: "upload",
                 label: "dataEntry:exportNewOrUpdatedRecords",
                 disabled: !syncStatusFetched,
                 onPress: onExportNewOrUpdatedRecordsPress,
               },
               {
                 key: "exportAllRecords",
-                label: "dataEntry:exportAllRecordsLocally",
+                icon: "download",
+                label: "dataEntry:localBackup",
                 onPress: onExportAllRecordsPress,
               },
             ]}
-            label="common:export"
             style={styles.exportDataMenuButton}
           />
-        )}
-      </HView>
+        </HView>
+      )}
     </VView>
   );
 };

@@ -24,10 +24,14 @@ export default {
   cycleForNewRecords: "Cycle for new records:",
   options: "Options",
   editNodeDef: "Edit {{nodeDef}}",
-  errorFetchingRecordsSyncStatus:
-    "Error fetching records sync status: {{details}}",
+  errorFetchingRecordsSyncStatus: `Error fetching records from server.
+
+Check connection settings.
+
+Details: {{details}}`,
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
+  errorLoadingRecords: "Error loading records: {{details}}",
   exportData: {
     title: "Export data",
     confirm: {
@@ -43,7 +47,6 @@ export default {
     onlyRecordsInRemoteServerCanBeImported:
       "Only records already in remote server or records that have been updated remotely can be imported",
   },
-  exportAllRecordsLocally: "Export all records locally",
   exportNewOrUpdatedRecords: "Export new or updated records",
   formLanguage: "Form language:",
   noEntitiesDefined: "No entities defined",
@@ -51,6 +54,7 @@ export default {
   goToListOfRecords: "Go to list of records",
   gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
   listOfRecords: "List of records",
+  localBackup: "Local backup",
   newRecord: "New record",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
@@ -123,6 +127,7 @@ export default {
     origin: { title: "Origin", L: "Local", R: "Remote" },
     owner: "Owner",
   },
+  sendData: "Send data",
   showOnlyLocalRecords: "Show only local records",
   syncedOn: "Synced on",
   syncStatusHeader: "Status",

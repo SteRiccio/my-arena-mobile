@@ -23,15 +23,22 @@ const selectIsEditingRecord = (state) => !!selectRecord(state);
 const selectRecordEditLocked = (state) =>
   !!getDataEntryState(state).recordEditLocked;
 
+const selectIsRecordInDefaultCycle = (state) => {
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const defaultCycle = survey ? Surveys.getDefaultCycleKey(survey) : null;
+  const record = selectRecord(state);
+  return String(defaultCycle) === String(record?.cycle);
+};
+
 const selectRecordEditLockAvailable = (state) =>
-  !!getDataEntryState(state).recordEditLockAvailable;
+  !!getDataEntryState(state).recordEditLockAvailable &&
+  selectIsEditingRecord(state) &&
+  selectIsRecordInDefaultCycle(state);
 
 const selectCanEditRecord = (state) => {
   const editLocked = selectRecordEditLocked(state);
-  const survey = SurveySelectors.selectCurrentSurvey(state);
-  const defaultCycle = Surveys.getDefaultCycleKey(survey);
-  const record = selectRecord(state);
-  return !editLocked && String(defaultCycle) === String(record?.cycle);
+  const recordInDefaultCycle = selectIsRecordInDefaultCycle(state);
+  return !editLocked && recordInDefaultCycle;
 };
 
 const selectRecordRootNodeUuid = (state) => {
@@ -119,15 +126,7 @@ const selectRecordAttributeInfo =
     if (!attribute) {
       return { applicable: false, value: null, validation: null };
     }
-    let value = attribute.value;
-    if (value) {
-      const survey = SurveySelectors.selectCurrentSurvey(state);
-      const attributeDef = Surveys.getNodeDefByUuid({
-        survey,
-        uuid: attribute.nodeDefUuid,
-      });
-      value = RecordNodes.cleanupAttributeValue({ value, attributeDef });
-    }
+    const value = extractAttibuteValue({ state, attribute });
     const validation = RecordValidations.getValidationNode({ nodeUuid })(
       record.validation
     );
@@ -268,6 +267,14 @@ const selectPreviousCycleRecordPageEntity = (state) => {
   }
 };
 
+const extractAttibuteValue = ({ state, attribute }) => {
+  const { nodeDefUuid, value } = attribute ?? {};
+  if (!value) return value;
+  const survey = SurveySelectors.selectCurrentSurvey(state);
+  const attributeDef = Surveys.getNodeDefByUuid({ survey, uuid: nodeDefUuid });
+  return RecordNodes.cleanupAttributeValue({ value, attributeDef });
+};
+
 const selectPreviousCycleRecordAttributeValue =
   ({ nodeDef, parentNodeUuid }) =>
   (state) => {
@@ -278,16 +285,7 @@ const selectPreviousCycleRecordAttributeValue =
     const parentNode = Records.getNodeByUuid(parentNodeUuid)(record);
     const attributes = Records.getChildren(parentNode, nodeDef.uuid)(record);
     const attribute = attributes[0];
-    let value = attribute?.value;
-    if (value) {
-      const survey = SurveySelectors.selectCurrentSurvey(state);
-      const attributeDef = Surveys.getNodeDefByUuid({
-        survey,
-        uuid: attribute.nodeDefUuid,
-      });
-      value = _cleanupAttributeValue({ value, attributeDef });
-    }
-    return value;
+    return extractAttibuteValue({ state, attribute });
   };
 
 const selectPreviousCycleEntityWithSameKeys =
