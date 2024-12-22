@@ -4242,7 +4242,7 @@ __metadata:
     expo-file-system: "npm:~17.0.1"
     expo-image-manipulator: "npm:~12.0.5"
     expo-image-picker: "npm:~15.0.7"
-    expo-localization: "npm:~14.8.4"
+    expo-localization: "npm:~15.0.3"
     expo-location: "npm:~17.0.1"
     expo-media-library: "npm:~16.0.5"
     expo-screen-orientation: "npm:~7.0.5"
@@ -7026,14 +7026,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-localization@npm:~14.8.4":
-  version: 14.8.4
-  resolution: "expo-localization@npm:14.8.4"
+"expo-localization@npm:~15.0.3":
+  version: 15.0.3
+  resolution: "expo-localization@npm:15.0.3"
   dependencies:
     rtl-detect: "npm:^1.0.2"
   peerDependencies:
     expo: "*"
-  checksum: 10c0/0916ddf40480e02a682eb087b1e478e0a0a5904958604a3740806184ae2e6d3c7ab67454fa6293778eca6215867f9dde6c017e7221c735b36058598ce2e0fdf0
+  checksum: 10c0/caa6f68a0f22a067b6940d7f7e64a68eb5f17a767d172aa5793bff24baa2d804b4f827027ea071d1e23f4d8b41f693cfb2790db095f95dadc1d41a3b07072398
   languageName: node
   linkType: hard
 
