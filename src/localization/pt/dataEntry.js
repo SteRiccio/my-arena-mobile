@@ -105,7 +105,7 @@ export default {
     altitudeAccuracy: "Precisão da altitude (m)",
     angleToTargetLocation: "Ângulo para o alvo",
     confirmConvertCoordinate:
-      "Converter coordenada de SRS {{srsFrom}} para SRS {{srsTo}}?",
+      "Converter coordenada de SRC {{srsFrom}} para SRC {{srsTo}}?",
     convert: "Converter",
     currentLocation: "Localização atual",
     distance: "Distância (m)",
