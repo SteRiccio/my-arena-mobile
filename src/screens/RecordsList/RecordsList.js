@@ -174,7 +174,7 @@ export const RecordsList = () => {
 
     const { name: fileName, uri } = asset;
 
-    const messagePrefix = "dataEntry:records.importRecordsFromFile.";
+    const messagePrefix = "recordsList:importRecordsFromFile.";
 
     if (Files.getExtension(fileName) !== "zip") {
       toaster(`${messagePrefix}invalidFileType`);
@@ -335,8 +335,8 @@ export const RecordsList = () => {
     async (recordUuids) => {
       if (
         await confirm({
-          titleKey: "dataEntry:records.deleteRecordsConfirm.title",
-          messageKey: "dataEntry:records.deleteRecordsConfirm.message",
+          titleKey: "recordsList:deleteRecordsConfirm.title",
+          messageKey: "recordsList:deleteRecordsConfirm.message",
           swipeToConfirm: true,
         })
       ) {
@@ -399,7 +399,7 @@ export const RecordsList = () => {
         )
       ) {
         toaster(
-          "dataEntry:records.cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
+          "recordsList:cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
         );
         return false;
       }

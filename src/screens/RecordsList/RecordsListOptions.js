@@ -70,7 +70,7 @@ export const RecordsListOptions = (props) => {
           icon="file-import-outline"
           mode="text"
           onPress={onImportRecordsFromFilePress}
-          textKey="dataEntry:records.importRecordsFromFile.title"
+          textKey="recordsList:importRecordsFromFile.title"
         />
       </FlexWrapView>
     </CollapsiblePanel>

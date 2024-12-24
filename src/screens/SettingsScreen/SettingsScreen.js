@@ -6,9 +6,9 @@ import { Objects } from "@openforis/arena-core";
 import { ConnectionToRemoteServerButton } from "appComponents/ConnectionToRemoteServerButton";
 import { FullBackupButton } from "appComponents/FullBackupButton";
 import { Card, ScreenView, VView } from "components";
+import { SettingsModel } from "model";
 import { SettingsActions, SettingsSelectors } from "state";
 
-import { SettingsModel } from "./SettingsModel";
 import { SettingsItem } from "./SettingsItem";
 import styles from "./styles";
 
