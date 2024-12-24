@@ -4,7 +4,5 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
-  },
-  "i18n-ally.localesPaths": ["src/localization"],
-  "i18n-ally.dirStructure": "dir"
+  }
 }
