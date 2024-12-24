@@ -5,14 +5,15 @@ import { LanguageConstants } from "model/LanguageSettings";
 import { SettingsService } from "service/settingsService";
 import { SystemUtils } from "utils/SystemUtils";
 
-import am from "./am";
+// import am from "./am";
 import en from "./en";
-import es from "./es";
-import fr from "./fr";
+// import es from "./es";
+// import fr from "./fr";
 import pt from "./pt";
-import ru from "./ru";
+// import ru from "./ru";
 
-const resources = { am, en, es, fr, pt, ru };
+// const resources = { am, en, es, fr, pt, ru };
+const resources = { en, pt };
 const supportedLanguageCodes = Object.keys(resources);
 const fallbackLng = "en";
 const sysLng = SystemUtils.getLanguageCode();
