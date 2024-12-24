@@ -52,7 +52,7 @@ export const SettingsItem = (props) => {
           items={options}
           itemKeyExtractor={(item) => item.key}
           label={labelKey}
-          onChange={(val) => onPropValueChange({ key: settingKey })(val)(val)}
+          onChange={onPropValueChange({ key: settingKey })}
           value={value}
         />
       );
