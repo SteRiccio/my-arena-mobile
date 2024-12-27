@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import i18n from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
 
@@ -12,18 +13,27 @@ import en from "./en";
 import pt from "./pt";
 // import ru from "./ru";
 
+const textDirections = {
+  rtl: "rtl",
+  ltr: "ltr",
+};
+
+const isRtlByLang = {
+  fa: true,
+};
+
 // const resources = { am, en, es, fr, pt, ru };
-const resources = { en, pt };
-const supportedLanguageCodes = Object.keys(resources);
+const resources = { en, fa, pt };
+const supportedLngs = Object.keys(resources);
 const fallbackLng = "en";
 const sysLng = SystemUtils.getLanguageCode();
 
 const toSupportedLanguage = (lang) =>
-  supportedLanguageCodes.includes(lang) ? lang : fallbackLng;
+  supportedLngs.includes(lang) ? lang : fallbackLng;
 
 const systemLanguageOrDefault = toSupportedLanguage(sysLng);
 
-const toTargetLanguage = (lang) =>
+const toFinalSuppotedLang = (lang) =>
   lang === LanguageConstants.system
     ? systemLanguageOrDefault
     : toSupportedLanguage(lang);
@@ -35,7 +45,7 @@ const languageDetector = {
     SettingsService.fetchSettings()
       .then((settings) => {
         const { language: langInSettings } = settings;
-        const targetLanguage = toTargetLanguage(langInSettings);
+        const targetLanguage = toFinalSuppotedLang(langInSettings);
         callback(targetLanguage);
       })
       .catch(() => {
@@ -57,11 +67,32 @@ i18n
     react: {
       useSuspense: false,
     },
+    supportedLngs,
   });
 
 const changeLanguage = (lang) => {
-  const targetLanguage = toTargetLanguage(lang);
-  i18n.changeLanguage(targetLanguage);
+  const supportedLang = toFinalSuppotedLang(lang);
+  i18n.changeLanguage(supportedLang);
 };
 
-export { changeLanguage, i18n, useTranslation };
+const useTextDirection = () => {
+  const [textDirection, setTextDirection] = useState(textDirections.rtl);
+  const lang = i18n.language;
+
+  useEffect(() => {
+    const rtl = !!isRtlByLang[lang];
+    setTextDirection(rtl ? textDirections.rtl : textDirections.ltr);
+  }, [lang]);
+
+  console.log("====textDirection", textDirection);
+
+  return textDirection;
+};
+
+export {
+  changeLanguage,
+  i18n,
+  textDirections,
+  useTextDirection,
+  useTranslation,
+};

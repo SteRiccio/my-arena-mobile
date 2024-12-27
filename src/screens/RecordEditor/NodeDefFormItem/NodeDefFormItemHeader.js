@@ -4,8 +4,8 @@ import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { SurveySelectors } from "state/survey";
 
+import { HViewTextDirectionAware } from "components/HViewTextDirectionAware";
 import { Text } from "components/Text";
-import { View } from "components/View";
 import { ViewMoreText } from "components/ViewMoreText";
 
 import { NodeValidationIcon } from "../NodeValidationIcon";
@@ -22,12 +22,12 @@ export const NodeDefFormItemHeader = (props) => {
 
   return (
     <>
-      <View style={styles.nodeDefLabelContainer}>
+      <HViewTextDirectionAware style={styles.nodeDefLabelContainer}>
         <Text style={styles.nodeDefLabel} variant="titleLarge">
           {labelOrName}
         </Text>
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
-      </View>
+      </HViewTextDirectionAware>
       {!Objects.isEmpty(description) && (
         <ViewMoreText textStyle={styles.nodeDefDescriptionViewMoreText}>
           <Text style={styles.nodeDefDescriptionText}>{description}</Text>

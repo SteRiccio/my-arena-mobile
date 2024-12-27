@@ -17,9 +17,7 @@ export const useStyles = () => {
       borderBottomWidth: 0,
     },
     nodeDefLabelContainer: {
-      flexDirection: "row",
       alignItems: "center",
-      width: "100%",
     },
     nodeDefLabel: {
       flex: 1,

@@ -38,7 +38,7 @@ export const View = (props) => {
   }, [backgroundColor, fullFlex, fullWidth, styleProp]);
 
   return (
-    <RNView style={style} {...otherProps}>
+    <RNView  style={style} {...otherProps}>
       {children}
     </RNView>
   );
