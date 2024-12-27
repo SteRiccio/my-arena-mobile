@@ -4,10 +4,10 @@ import { NodeDefs } from "@openforis/arena-core";
 
 import { Icon, Tooltip } from "components";
 import { useTranslation } from "localization";
-import { ValidationUtils } from "model/utils/ValidationUtils";
+import { ValidationUtils } from "model";
 import { DataEntrySelectors, SurveySelectors } from "state";
 
-const { getJointErrorText, getJointWarningText } = ValidationUtils;
+const { getJointErrorText, getJointWarningText, isNotValid } = ValidationUtils;
 
 const colors = {
   tooltipBackgroundColor: {
@@ -75,7 +75,7 @@ export const NodeValidationIcon = (props) => {
       />
     );
   }
-  if (validation && !validation.valid && NodeDefs.isSingle(nodeDef)) {
+  if (isNotValid(validation) && NodeDefs.isSingle(nodeDef)) {
     const errMsg = getJointErrorText({ validation, t, customMessageLang });
     const warnMsg = getJointWarningText({ validation, t, customMessageLang });
     return (
