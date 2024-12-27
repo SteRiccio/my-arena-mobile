@@ -8,12 +8,13 @@ import { SystemUtils } from "utils/SystemUtils";
 // import am from "./am";
 import en from "./en";
 // import es from "./es";
+import fa from "./fa";
 // import fr from "./fr";
 import pt from "./pt";
 // import ru from "./ru";
 
 // const resources = { am, en, es, fr, pt, ru };
-const resources = { en, pt };
+const resources = { en, fa, pt };
 const supportedLanguageCodes = Object.keys(resources);
 const fallbackLng = "en";
 const sysLng = SystemUtils.getLanguageCode();
