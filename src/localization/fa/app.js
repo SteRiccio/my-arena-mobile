@@ -3,12 +3,12 @@ export default {
   changelog: "تغییرات",
   confirmExit: {
     title: "خروج",
-    message: `از برنامه خارج شوید؟
+    message: `می خواهید از برنامه خارج شوید؟
   همه تغییرات قبلاً ذخیره شده اند.`,
   },
   currentVersion: "نسخه فعلی",
   fullBackup: {
-    confirmMessage: `پشتیبان گیری کامل ایجاد کنید؟
+    confirmMessage: `می‌خواهید پشتیبان گیری کامل ایجاد کنید؟
   اندازه تقریبی {{size}} خواهد بود.`,
     confirmTitle: "ایجاد پشتیبان گیری",
     error: "خطا در ایجاد پشتیبان گیری کامل: {{details}}",
@@ -23,14 +23,15 @@ export default {
     settingFullScreen: "تنظیم صفحه تمام صفحه",
     settingKeepScreenAwake: "تنظیم نگه داشتن صفحه روشن",
     startingGpsLocking: "شروع قفل GPS",
-    initializingDb: "در حال مقداردهی اولیه DB",
-    startingDbMigrations: "شروع مهاجرت های DB",
-    fetchingSurveys: "در حال دریافت نظرسنجی ها",
-    importingDemoSurvey: "در حال وارد کردن نظرسنجی آزمایشی",
-    fetchingAndSettingLocalSurveys: "در حال دریافت و تنظیم نظرسنجی های محلی",
-    fetchingAndSettingSurvey: "در حال دریافت و تنظیم نظرسنجی",
+    initializingDb: "در حال مقداردهی اولیه دیتابیس",
+    startingDbMigrations: "شروع مهاجرت های دیتابیس",
+    fetchingSurveys: "در حال دریافت فرم‌های آماربرداری",
+    importingDemoSurvey: "در حال وارد کردن اطلاعات فرم آماربرداری آزمایشی",
+    fetchingAndSettingLocalSurveys:
+      "در حال دریافت و تنظیم اطلاعات فرم آماربرداری محلی",
+    fetchingAndSettingSurvey: "در حال دریافت و تنظیم فرم آماربرداری",
     checkingLoggedIn: "در حال بررسی ورود",
-    complete: "کامل",
+    complete: "تکمیل شد",
   },
   pleaseWaitMessage: "لطفا صبر کنید...",
   update: "به روز رسانی",

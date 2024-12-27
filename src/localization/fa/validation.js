@@ -3,13 +3,13 @@ export default {
     generic: "خطای غیرمنتظره: {{text}}",
   },
   record: {
-    ancestorNotFound: "گره اجدادی در رکورد یافت نشد",
+    ancestorNotFound: "'گره اجدادی در رکورد یافت نشد",
     keyDuplicate: "کلید رکورد تکراری است",
     oneOrMoreInvalidValues: "یکی یا چند مقدار نامعتبر است",
     uniqueAttributeDuplicate: "مقدار تکراری است",
 
     attribute: {
-      customValidation: "مقدار نامعتبر است",
+      customValidation: "اعتبار سفارشی",
       uniqueDuplicate: "مقدار تکراری است",
       valueInvalid: "مقدار نامعتبر است",
       valueRequired: "مقدار ضروری است",

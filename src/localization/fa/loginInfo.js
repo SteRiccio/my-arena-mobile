@@ -6,6 +6,6 @@ export default {
   name: "نام",
   email: "ایمیل",
   serverUrl: "آدرس سرور",
-  sessionExpired: "زمان جلسه به پایان رسیده است: لطفا مجددا وارد شوید.",
-  welcomeMessage: "سلام، {{name}}!",
+  sessionExpired: "زمان مجاز به پایان رسیده است: لطفا مجددا وارد شوید.",
+  welcomeMessage: "درود، {{name}}!",
 };

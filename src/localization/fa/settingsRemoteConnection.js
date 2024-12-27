@@ -9,7 +9,7 @@ export default {
   logout: "خروج",
   logoutConfirmMessage: "خروج و پاک کردن اعتبارنامه های کاربر؟",
   password: "رمز عبور",
-  requestAccess: "جدید در Arena هستید؟ درخواست دسترسی",
+  requestAccess: "در Arena جدید هستید؟ درخواست دسترسی",
   serverUrl: "آدرس سرور",
   serverUrlNotValid: "آدرس سرور معتبر نیست",
   serverUrlType: {
@@ -17,5 +17,5 @@ export default {
     custom: "سفارشی",
   },
   testUrl: "آزمایش آدرس",
-  title: "اتصال به سرور از راه دور",
+  title: "اتصال به سرور",
 };

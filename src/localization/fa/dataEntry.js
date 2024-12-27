@@ -29,27 +29,27 @@ export default {
   
   جزئیات: {{details}}`,
   errorGeneratingRecordsExportFile:
-    "خطا در ایجاد فایل صادرات رکوردها: {{details}}",
+    "خطا در ایجاد فایل اکسپورت رکوردها: {{details}}",
   errorLoadingRecords: "خطا در بارگذاری رکوردها: {{details}}",
   exportData: {
-    title: "صادرات داده ها",
+    title: "اکسپورت داده ها",
     confirm: {
-      title: "تایید صادرات داده ها",
-      message: `رکوردهای قابل صادرات:
+      title: "تایید اکسپورت داده ها",
+      message: `رکوردهای قابل اکسپورت:
   - {{newRecordsCount}} رکورد جدید؛
   - {{updatedRecordsCount}} رکورد به روز شده
   - {{conflictingRecordsCount}} رکورد متناقض`,
     },
-    noRecordsInDeviceToExport: "هیچ رکوردی در دستگاه برای صادرات وجود ندارد",
-    onlyNewOrUpdatedRecords: "فقط رکوردهای جدید یا به روز شده را صادر کنید",
+    noRecordsInDeviceToExport: "هیچ رکوردی در دستگاه برای اکسپورت وجود ندارد",
+    onlyNewOrUpdatedRecords: "فقط رکوردهای جدید یا به روز شده را اکسپورت کنید",
     mergeConflictingRecords: "ادغام رکوردهای متناقض (کلیدهای یکسان)",
     onlyRecordsInRemoteServerCanBeImported:
       "فقط رکوردهایی که قبلاً در سرور از راه دور وجود دارند یا رکوردهایی که از راه دور به روز شده اند قابل وارد کردن هستند",
   },
-  exportNewOrUpdatedRecords: "صادرات رکوردهای جدید یا به روز شده",
+  exportNewOrUpdatedRecords: "اکسپورت رکوردهای جدید یا به روز شده",
   formLanguage: "زبان فرم:",
   noEntitiesDefined: "هیچ موجودیتی تعریف نشده است",
-  goToDataEntry: "رفتن به ورود داده",
+  goToDataEntry: "رفتن به وارد کردن داده",
   goToListOfRecords: "رفتن به لیست رکوردها",
   gpsLockingEnabledWarning: "هشدار: قفل GPS فعال است!",
   listOfRecords: "لیست رکوردها",
@@ -67,7 +67,7 @@ export default {
     notFoundMessage:
       "رکوردی در چرخه {{cycle}} با کلیدهای {{keyValues}} یافت نشد",
     confirmFetchRecordInCycle:
-      "رکورد در چرخه {{cycle}} با کلیدهای {{keyValues}} به طور کامل بارگیری نشده است؛ آیا آن را از سرور دانلود کنید؟",
+      "رکورد در چرخه {{cycle}} با کلیدهای {{keyValues}} به طور کامل بارگیری نشده است؛ می خواهید از سرور دانلود کنید؟",
     confirmSyncRecordsSummaryAndTryAgain:
       "$t(dataEntry:recordInPreviousCycle.notFoundMessage): لیست رکوردها را از سرور دریافت کرده و دوباره امتحان کنید؟",
     fetchError: "خطا در دریافت رکورد در چرخه قبلی: {{details}}",
@@ -85,8 +85,8 @@ export default {
     keysNotSpecified: `کلید(ها) مشخص نشده اند`,
     new: "جدید (هنوز آپلود نشده)",
     notModified: "تغییر نکرده (هیچ تغییری برای آپلود وجود ندارد)",
-    modifiedLocally: "در محلی تغییر کرده است",
-    modifiedRemotely: "در سرور از راه دور تغییر کرده است",
+    modifiedLocally: "در دستگاه تغییر کرده است",
+    modifiedRemotely: "در سرور تغییر کرده است",
     notInEntryStepAnymore:
       "دیگر در مرحله ورود نیست (در مرحله پاکسازی یا تجزیه و تحلیل است)",
   },
@@ -110,7 +110,7 @@ export default {
     accuracy: "دقت (متر)",
     altitude: "ارتفاع (متر)",
     altitudeAccuracy: "دقت ارتفاع (متر)",
-    angleToTargetLocation: "زاویه به هدف",
+    angleToTargetLocation: "زاویه دید روی",
     confirmConvertCoordinate:
       "آیا از تبدیل مختصات از SRS {{srsFrom}} به SRS {{srsTo}} مطمئن هستید؟",
     convert: "تبدیل",
@@ -143,15 +143,15 @@ export default {
     resolution: "رزولوشن",
   },
   dataExport: {
-    error: "خطا در صادرات داده ها. جزئیات: {{details}}",
-    selectTarget: "انتخاب هدف صادرات",
-    selectTargetMessage: `هدف صادرات را انتخاب کنید:`,
+    error: "خطا در اکسپورت داده ها. جزئیات: {{details}}",
+    selectTarget: "انتخاب  روش اکسپورت",
+    selectTargetMessage: `روش اکسپورت را انتخاب کنید:`,
     target: {
-      remote: "سرور از راه دور",
+      remote: "سرور راه دور",
       local: "پوشه محلی (دانلود)",
       share: "اشتراک گذاری فایل",
     },
-    shareExportedFile: "اشتراک گذاری فایل صادر شده",
+    shareExportedFile: "اشتراک گذاری فایل اکسپورت شده",
   },
   location: {
     gettingCurrentLocation: "در حال دریافت موقعیت فعلی",
@@ -159,7 +159,7 @@ export default {
   },
   unlock: {
     label: "باز کردن قفل",
-    confirmMessage: "ویرایش رکورد قفل شده است؛ آیا آن را باز کنید؟",
+    confirmMessage: "ویرایش رکورد قفل شده است؛ می‌خواهید آن را باز کنید؟",
     confirmTitle: "ویرایش قفل شده است",
   },
 };

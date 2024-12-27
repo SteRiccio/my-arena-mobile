@@ -5,7 +5,7 @@ export default {
     statusLabel: "وضعیت باتری",
     status: {
       charging: "در حال شارژ",
-      unplugged: "از برق جدا شده",
+      unplugged: "از شارژر جدا شده",
     },
     timeLeftToDischarge: "زمان باقی مانده تا تخلیه",
     timeLeftToFullCharge: "زمان باقی مانده تا شارژ کامل",
