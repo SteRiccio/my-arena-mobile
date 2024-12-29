@@ -27,12 +27,9 @@ export const Text = (props) => {
     if (textDirection === textDirections.ltr) {
       return styleProp;
     }
-    const res = styleToObject(styleProp);
-    const { textAlign } = res;
-    if (!textAlign) {
-      res.textAlign = "right";
-    }
-    return res;
+    const _style = styleToObject(styleProp);
+    const { textAlign } = _style;
+    return !textAlign ? [_style, { textAlign: "right" }] : _style;
   }, [styleProp, textDirection]);
 
   return (

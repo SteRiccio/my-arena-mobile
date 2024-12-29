@@ -18,16 +18,6 @@ const getLanguageTextDirection = (lang) => {
 
 export const useTextDirection = () => {
   const lang = i18n.language;
-  const [textDirection, setTextDirection] = useState(
-    getLanguageTextDirection(lang)
-  );
-
-  useEffect(() => {
-    const direction = getLanguageTextDirection(lang);
-    if (direction !== textDirection) {
-      setTextDirection(direction);
-    }
-  }, [lang, textDirection]);
-
+  const textDirection = getLanguageTextDirection(lang);
   return textDirection;
 };
