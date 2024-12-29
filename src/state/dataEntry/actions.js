@@ -103,6 +103,7 @@ const createNewRecord =
   };
 
 const addNewEntity = async (dispatch, getState) => {
+  Keyboard.dismiss();
   const state = getState();
   const user = RemoteConnectionSelectors.selectLoggedUser(state);
   const survey = SurveySelectors.selectCurrentSurvey(state);
@@ -207,8 +208,8 @@ const fetchAndEditRecord =
     ) {
       dispatch(
         ConfirmActions.show({
-          confirmButtonTextKey: "dataEntry:records.importRecord",
-          messageKey: "dataEntry:records.confirmImportRecordFromServer",
+          confirmButtonTextKey: "recordsList:importRecord",
+          messageKey: "recordsList:confirmImportRecordFromServer",
           onConfirm: () => {
             dispatch(
               importRecordsFromServer({
@@ -315,9 +316,9 @@ const updateAttribute =
 
       dispatch(
         MessageActions.setMessage({
-          content: "dataEntry:records.duplicateKey.message",
+          content: "recordsList:duplicateKey.message",
           contentParams: { keyValues },
-          title: "dataEntry:records.duplicateKey.title",
+          title: "recordsList:duplicateKey.title",
         })
       );
     }

@@ -1,6 +1,6 @@
-import { NativeModules } from "react-native";
 import * as Application from "expo-application";
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import * as Localization from "expo-localization";
 import * as ExpoScreenOrientation from "expo-screen-orientation";
 
 import { Dates } from "@openforis/arena-core";
@@ -92,14 +92,11 @@ const unlockOrientation = async () => {
   await ExpoScreenOrientation.unlockAsync();
 };
 
-const getLocale = () =>
-  Environment.isIOS
-    ? NativeModules.SettingsManager.settings.AppleLocale
-    : NativeModules.I18nManager.localeIdentifier;
+const getLocale = () => Localization.getLocales()[0];
 
 const getLanguageCode = () => {
   const locale = getLocale();
-  return locale?.substring(0, 2);
+  return locale?.languageCode;
 };
 
 export const SystemUtils = {

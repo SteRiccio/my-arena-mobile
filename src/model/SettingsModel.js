@@ -1,14 +1,26 @@
-import { ThemesSettings } from "model";
 import { Environment } from "utils/Environment";
+import { ThemesSettings } from "./Themes";
+import { LanguagesSettings } from "./LanguageSettings";
 
 const propertyType = {
   boolean: "boolean",
   numeric: "numeric",
   options: "options",
+  dropdown: "dropdown",
   slider: "slider",
 };
 
+const keys = {
+  language: "language",
+  locationGpsLocked: "locationGpsLocked",
+};
+
 const properties = {
+  [keys.language]: {
+    type: propertyType.dropdown,
+    labelKey: "settings:language.label",
+    options: LanguagesSettings,
+  },
   theme: {
     type: propertyType.options,
     labelKey: "settings:theme.label",
@@ -20,7 +32,7 @@ const properties = {
   fullScreen: {
     type: propertyType.boolean,
     labelKey: "settings:fullScreen",
-    isDisabled: () => Environment.isIOS
+    isDisabled: () => Environment.isIOS,
   },
   keepScreenAwake: {
     type: propertyType.boolean,
@@ -52,7 +64,7 @@ const properties = {
     maxValue: 300,
     step: 30,
   },
-  locationGpsLocked: {
+  [keys.locationGpsLocked]: {
     type: propertyType.boolean,
     labelKey: "settings:locationGpsLocked.label",
     descriptionKey: "settings:locationGpsLocked.description",
@@ -60,6 +72,7 @@ const properties = {
 };
 
 export const SettingsModel = {
+  keys,
   propertyType,
   properties,
 };

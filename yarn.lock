@@ -2760,12 +2760,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsep-plugin/regex@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@jsep-plugin/regex@npm:1.0.3"
+"@jsep-plugin/regex@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@jsep-plugin/regex@npm:1.0.4"
   peerDependencies:
     jsep: ^0.4.0||^1.0.0
-  checksum: 10c0/1e69028ae4a269c912936f6408206c34c4bd582a593a7cda0ba1434ea8d3c32e5fd708fa79d1f94bda293f94b51ea880ff7f976da00f18e39aae45b9971d9bd3
+  checksum: 10c0/bec7eb7ea6ab453a2672edc808644c5be3dc06b2a9d77182e18cd595b37deba6dcdb3760849d8684afc5779a86b7d2604dd525cb612a548f9ed9f31a8032ec24
   languageName: node
   linkType: hard
 
@@ -2864,31 +2864,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openforis/arena-core@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@openforis/arena-core@npm:1.0.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40openforis%2Farena-core%2F1.0.2%2F2226a763d2cbe2f30735aaa449f3f796ccf08ba2"
+"@openforis/arena-core@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "@openforis/arena-core@npm:1.0.8::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40openforis%2Farena-core%2F1.0.8%2Fe683aa24fff471d2428741ca5eac9e4a7a695712"
   dependencies:
-    "@jsep-plugin/regex": "npm:^1.0.3"
+    "@jsep-plugin/regex": "npm:^1.0.4"
     bignumber.js: "npm:^9.1.2"
-    jsep: "npm:^1.3.8"
+    jsep: "npm:^1.4.0"
     lodash.differencewith: "npm:^4.5.0"
     lodash.frompairs: "npm:^4.0.1"
     lodash.isequal: "npm:^4.5.0"
     lodash.topairs: "npm:^4.3.0"
     moment: "npm:^2.30.1"
-    proj4: "npm:^2.11.0"
-    uuid: "npm:^10.0.0"
-  checksum: 10c0/be5708cc961f897f05b45ccba26e0351bf6cf79c02fd912f8c66a3904f314142f24362ba100f11240d523e9b42954d58e242b21ea1fbe458bc4c9e63093bf47f
-  languageName: node
-  linkType: hard
-
-"@os-team/i18next-react-native-language-detector@npm:^1.0.34":
-  version: 1.0.34
-  resolution: "@os-team/i18next-react-native-language-detector@npm:1.0.34"
-  peerDependencies:
-    i18next: "*"
-    react-native: "*"
-  checksum: 10c0/76d044e0b406368cc8d3ac80b0ee94a925b9319629009c1802ec1bed8fdf9cdbbd70360f0c6c9778fe4faf41ff53f4f498242f956c4a21b851f4f11536eab94f
+    proj4: "npm:^2.15.0"
+    uuid: "npm:^11.0.3"
+  checksum: 10c0/a31ab62f8a3f74c4d38ee45d56053739251c70e152895f8e95215db624c2a65db3a3d99141a05e3c5bb86ba57f8b90f24f922cca3851c744e4ebef90dd341161
   languageName: node
   linkType: hard
 
@@ -4594,8 +4584,7 @@ __metadata:
     "@eslint/js": "npm:^9.10.0"
     "@expo/webpack-config": "npm:~19.0.1"
     "@miblanchard/react-native-slider": "npm:^2.6.0"
-    "@openforis/arena-core": "npm:^1.0.2"
-    "@os-team/i18next-react-native-language-detector": "npm:^1.0.34"
+    "@openforis/arena-core": "npm:^1.0.8"
     "@react-native-async-storage/async-storage": "npm:1.21.0"
     "@react-native-clipboard/clipboard": "npm:^1.14.1"
     "@react-native-community/datetimepicker": "npm:7.7.0"
@@ -4623,6 +4612,7 @@ __metadata:
     expo-file-system: "npm:~16.0.9"
     expo-image-manipulator: "npm:~11.8.0"
     expo-image-picker: "npm:~14.7.1"
+    expo-localization: "npm:~14.8.4"
     expo-location: "npm:~16.5.5"
     expo-media-library: "npm:~15.9.2"
     expo-screen-orientation: "npm:~6.4.1"
@@ -4660,7 +4650,7 @@ __metadata:
     react-native-version-number: "npm:^0.3.6"
     react-native-view-more-text: "npm:^2.2.0"
     react-native-web: "npm:~0.19.12"
-    react-native-zip-archive: "npm:^7.0.0"
+    react-native-zip-archive: "npm:^7.0.1"
     react-redux: "npm:^9.1.2"
     redux: "npm:^5.0.1"
     rn-swipe-button: "npm:^1.3.8"
@@ -7412,6 +7402,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-localization@npm:~14.8.4":
+  version: 14.8.4
+  resolution: "expo-localization@npm:14.8.4"
+  dependencies:
+    rtl-detect: "npm:^1.0.2"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/0916ddf40480e02a682eb087b1e478e0a0a5904958604a3740806184ae2e6d3c7ab67454fa6293778eca6215867f9dde6c017e7221c735b36058598ce2e0fdf0
+  languageName: node
+  linkType: hard
+
 "expo-location@npm:~16.5.5":
   version: 16.5.5
   resolution: "expo-location@npm:16.5.5"
@@ -9624,10 +9625,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsep@npm:^1.3.8":
-  version: 1.3.8
-  resolution: "jsep@npm:1.3.8"
-  checksum: 10c0/f63af75900dd484b0d4c609dd06ae0963fcd96387f53eacc77952e1506bc20d9ebb625bd662e21272bc71aa94433edc6366e2edf753ab98dbc1191cdcc737955
+"jsep@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "jsep@npm:1.4.0"
+  checksum: 10c0/fe60adf47e050e22eadced42514a51a15a3cf0e2d147896584486acd8ee670fc16641101b9aeb81f4aaba382043d29744b7aac41171e8106515b14f27e0c7116
   languageName: node
   linkType: hard
 
@@ -12220,13 +12221,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proj4@npm:^2.11.0":
-  version: 2.11.0
-  resolution: "proj4@npm:2.11.0"
+"proj4@npm:^2.15.0":
+  version: 2.15.0
+  resolution: "proj4@npm:2.15.0"
   dependencies:
     mgrs: "npm:1.0.0"
-    wkt-parser: "npm:^1.3.3"
-  checksum: 10c0/d3856090b99b5c8f45d78e0f0ba4ef85025e53b4b3bc1b0279ffa70990af6ae856c8330957879d553069e408412d93521f27440dd1d1f72d272ae030cc664774
+    wkt-parser: "npm:^1.4.0"
+  checksum: 10c0/01c0ef831247e08f4e0fce3193033913ca07be0301522bdefddabe1bb783b947bf731425f0aa6b14a01ee546f90cd6301a3eefed859afad3345884d1d01ec8f4
   languageName: node
   linkType: hard
 
@@ -12729,13 +12730,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-zip-archive@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "react-native-zip-archive@npm:7.0.0"
+"react-native-zip-archive@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "react-native-zip-archive@npm:7.0.1"
   peerDependencies:
     react: ">=16.8.6"
     react-native: ">=0.60.0"
-  checksum: 10c0/426c2176eb4e443871ac6fe76884e8fffb51754a0ba1855682414470e8fa42eac2227ad7bf2b30b2c5414119eae966e7fe20432f78e906a43fff7f3309d88158
+  checksum: 10c0/806f817a8d0bcd3130306f94cd5c1e60e21359fb4c23dd538596570b34b4e5e1dc8f24d6a264a63871936afd62c50571798283bd277b9378eb692bcac765c578
   languageName: node
   linkType: hard
 
@@ -13293,6 +13294,13 @@ __metadata:
     react: ">=16.8.6"
     react-native: ">=0.60.5"
   checksum: 10c0/e5d3a0befd46f16d157957e0b35684d6c083b3ae736355dcf2df3403016ae9eacbf30ab6c479cb59ed7ca6befd0cbf849febc2027f60292be5d52a27c9f881c5
+  languageName: node
+  linkType: hard
+
+"rtl-detect@npm:^1.0.2":
+  version: 1.1.2
+  resolution: "rtl-detect@npm:1.1.2"
+  checksum: 10c0/1b92888aafca1593314f837e83fdf02eb208faae3e713ab87c176804728efd3b1980d53b64f65f1fa593348087e852c5cd729b7b9372950f6e9b7be489afc0ca
   languageName: node
   linkType: hard
 
@@ -14955,12 +14963,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "uuid@npm:10.0.0"
+"uuid@npm:^11.0.3":
+  version: 11.0.3
+  resolution: "uuid@npm:11.0.3"
   bin:
-    uuid: dist/bin/uuid
-  checksum: 10c0/eab18c27fe4ab9fb9709a5d5f40119b45f2ec8314f8d4cf12ce27e4c6f4ffa4a6321dc7db6c515068fa373c075b49691ba969f0010bf37f44c37ca40cd6bf7fe
+    uuid: dist/esm/bin/uuid
+  checksum: 10c0/cee762fc76d949a2ff9205770334699e0043d52bb766472593a25f150077c9deed821230251ea3d6ab3943a5ea137d2826678797f1d5f6754c7ce5ce27e9f7a6
   languageName: node
   linkType: hard
 
@@ -15349,10 +15357,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wkt-parser@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "wkt-parser@npm:1.3.3"
-  checksum: 10c0/900fcdaea02828407742c4ea370b46a04c48ed95f63cde3db8e5b90c5a1b80da9827b43eb58940dd8cf790a971f9b8c42022b1548bce29a11153e699eef5bcb4
+"wkt-parser@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "wkt-parser@npm:1.4.0"
+  checksum: 10c0/4046fd355ddc626e6ea71f5a05e670bd3d6dc65dc0f8b10f2e9381ea6bd61cb90379389b0fb52337de9330788405dd0590b57e01b2c85f6f471acc794713243b
   languageName: node
   linkType: hard
 

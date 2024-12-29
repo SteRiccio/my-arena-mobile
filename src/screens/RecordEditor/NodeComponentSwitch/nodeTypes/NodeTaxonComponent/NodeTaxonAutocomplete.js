@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
 import { SelectableListWithFilter } from "components";
 import { Taxa } from "model";
+import { useTaxaFiltered } from "./useTaxaFiltered";
 
 const alwaysIncludeVernacularNames = false;
 const alwaysIncludeSingleVernacularName = true;
@@ -14,14 +15,15 @@ const itemKeyExtractor = (item) => `${item?.uuid}_${item?.vernacularNameUuid}`;
 const itemLabelExtractor =
   ({ nodeDef }) =>
   (taxon) => {
-    const { code, scientificName } = taxon.props;
+    const { props, scientificName } = taxon;
+    const { code, scientificName: scientificNameProp } = props;
     const visibleFields = NodeDefs.getVisibleFields(nodeDef);
     const codeVisible = !visibleFields || visibleFields.includes("code");
     const parts = [];
     if (codeVisible) {
       parts.push(`(${code})`);
     }
-    parts.push(scientificName);
+    parts.push(scientificName ?? scientificNameProp);
     return parts.join(" ");
   };
 
@@ -112,23 +114,17 @@ const filterItems =
   };
 
 export const NodeTaxonAutocomplete = (props) => {
-  const { nodeDef, selectedTaxon, taxa, updateNodeValue } = props;
+  const { nodeDef, parentNodeUuid, selectedTaxon, updateNodeValue } = props;
 
-  const { unlistedTaxon, unknownTaxon } = useMemo(() => {
-    let _unlistedTaxon = null;
-    let _unknownTaxon = null;
-
-    taxa.some((taxon) => {
-      const taxonCode = taxon.props.code;
-      if (!_unlistedTaxon && taxonCode === Taxa.unlistedCode) {
-        _unlistedTaxon = taxon;
-      } else if (!_unknownTaxon && taxonCode === Taxa.unknownCode) {
-        _unknownTaxon = taxon;
-      }
-      return !!_unlistedTaxon && !!_unknownTaxon;
-    });
-    return { unknownTaxon: _unknownTaxon, unlistedTaxon: _unlistedTaxon };
-  }, [taxa]);
+  if (__DEV__) {
+    console.log(
+      `rendering NodeTaxonAutocomplete for ${NodeDefs.getName(nodeDef)}`
+    );
+  }
+  const { taxa, unlistedTaxon, unknownTaxon } = useTaxaFiltered({
+    nodeDef,
+    parentNodeUuid,
+  });
 
   const onSelectedItemsChange = useCallback(
     (selection, inputValue) => {
@@ -154,7 +150,7 @@ export const NodeTaxonAutocomplete = (props) => {
 
 NodeTaxonAutocomplete.propTypes = {
   nodeDef: PropTypes.object.isRequired,
+  parentNodeUuid: PropTypes.string,
   selectedTaxon: PropTypes.object,
-  taxa: PropTypes.array.isRequired,
   updateNodeValue: PropTypes.func.isRequired,
 };

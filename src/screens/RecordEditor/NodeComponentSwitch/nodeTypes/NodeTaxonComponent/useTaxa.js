@@ -1,3 +1,4 @@
+import { Taxa } from "model/Taxa";
 import { useMemo } from "react";
 
 const calculateVernacularNamesCount = (taxon) =>
@@ -19,12 +20,16 @@ const addVernacularNameObjectToItems =
   };
 
 export const useTaxa = ({ survey, taxonomyUuid }) => {
-  const taxa = useMemo(() => {
+  const { taxa, unknownTaxon, unlistedTaxon } = useMemo(() => {
+    const taxaByCode = {};
     const allTaxa = Object.values(survey.refData?.taxonIndex ?? {});
-    return allTaxa.reduce((acc, taxon) => {
+    const taxaReduced = allTaxa.reduce((acc, taxon) => {
       if (taxon.taxonomyUuid !== taxonomyUuid) {
         return acc;
       }
+      const taxonCode = taxon.props.code;
+      taxaByCode[taxonCode] = taxon;
+
       const taxonItem = {
         ...taxon,
         vernacularNamesCount: calculateVernacularNamesCount(taxon),
@@ -41,7 +46,14 @@ export const useTaxa = ({ survey, taxonomyUuid }) => {
       }
       return acc;
     }, []);
+    const _unlistedTaxon = taxaByCode[Taxa.unlistedCode];
+    const _unknownTaxon = taxaByCode[Taxa.unknownCode];
+    return {
+      taxa: taxaReduced,
+      unknownTaxon: _unknownTaxon,
+      unlistedTaxon: _unlistedTaxon,
+    };
   }, [survey, taxonomyUuid]);
 
-  return taxa;
+  return { taxa, unknownTaxon, unlistedTaxon };
 };

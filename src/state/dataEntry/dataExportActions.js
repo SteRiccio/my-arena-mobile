@@ -114,43 +114,50 @@ const _onExportFileGenerationError = ({ errors, dispatch }) => {
 const _onExportFileGenerationSucceeded = async ({
   result,
   onlyLocally,
+  onlyRemote = false,
   conflictResolutionStrategy,
   onJobComplete,
   dispatch,
 }) => {
   const { outputFileUri } = result || {};
   // const { size: fileSize } = await Files.getInfo(outputFileUri);
-  const availableExportTypes = [
-    ...(onlyLocally ? [] : [exportType.remote]),
-    // exportType.local,
-    ...((await Files.isSharingAvailable()) ? [exportType.share] : []),
-  ];
-
-  dispatch(
-    ConfirmActions.show({
-      titleKey: "dataEntry:dataExport.selectTarget",
-      messageKey: "dataEntry:dataExport.selectTargetMessage",
-      // messageParams: {
-      //   fileSize: Files.toHumanReadableFileSize(fileSize),
-      // },
-      onConfirm: ({ selectedSingleChoiceValue }) => {
-        dispatch(
-          onExportConfirmed({
-            selectedSingleChoiceValue,
-            conflictResolutionStrategy,
-            outputFileUri,
-            onJobComplete,
-          })
-        );
-      },
-      singleChoiceOptions: availableExportTypes.map((type) => ({
-        value: type,
-        label: `dataEntry:dataExport.target.${type}`,
-      })),
-      defaultSingleChoiceValue: availableExportTypes[0],
-      confirmButtonTextKey: "common:export",
-    })
-  );
+  const availableExportTypes = [];
+  if (!onlyLocally) {
+    availableExportTypes.push(exportType.remote);
+  }
+  if (!onlyRemote && (await Files.isSharingAvailable())) {
+    availableExportTypes.push(exportType.share);
+  }
+  const onConfirm = ({ selectedSingleChoiceValue }) => {
+    dispatch(
+      onExportConfirmed({
+        selectedSingleChoiceValue,
+        conflictResolutionStrategy,
+        outputFileUri,
+        onJobComplete,
+      })
+    );
+  };
+  if (availableExportTypes.length === 1) {
+    onConfirm({ selectedSingleChoiceValue: availableExportTypes[0] });
+  } else {
+    dispatch(
+      ConfirmActions.show({
+        titleKey: "dataEntry:dataExport.selectTarget",
+        messageKey: "dataEntry:dataExport.selectTargetMessage",
+        // messageParams: {
+        //   fileSize: Files.toHumanReadableFileSize(fileSize),
+        // },
+        onConfirm,
+        singleChoiceOptions: availableExportTypes.map((type) => ({
+          value: type,
+          label: `dataEntry:dataExport.target.${type}`,
+        })),
+        defaultSingleChoiceValue: availableExportTypes[0],
+        confirmButtonTextKey: "common:export",
+      })
+    );
+  }
 };
 
 export const exportRecords =
@@ -159,6 +166,7 @@ export const exportRecords =
     recordUuids,
     conflictResolutionStrategy = "overwriteIfUpdated",
     onlyLocally = false,
+    onlyRemote = false,
     onJobComplete: onJobCompleteParam = null,
   }) =>
   async (dispatch, getState) => {
@@ -202,6 +210,7 @@ export const exportRecords =
         await _onExportFileGenerationSucceeded({
           result,
           onlyLocally,
+          onlyRemote,
           conflictResolutionStrategy,
           onJobComplete,
           dispatch,

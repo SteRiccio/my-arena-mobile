@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2024-12-28
+### Added
+- Persian translation;
+### Fixed
+- Validation report icon shown when validation is empty;
+
+## [1.2.0] - 2024-12-25
+### Added
+- Portuguese translation;
+
+## [1.1.27] - 2024-12-20
+### Fixed
+- Fixed error showing records list when survey has a "text" key attribute;
+
+## [1.1.26] - 2024-12-18
+### Added
+- Check logged in: show 'Go back' button after successful login;
+
+## [1.1.25] - 2024-12-17
+### Added
+- Records list: added "Send data" button to submit data with one click;
+
+## [1.1.24] - 2024-12-15
+### Fixed
+- Ignore geospatial attribute definitions;
+- Fixed loading records in previous cycle with myltiple keys;
+
+## [1.1.23] - 2024-12-08
+### Fixed
+- Fixed cannot enter commas in numeric attributes (iOS);
+### Added
+- Show progress step during initialization;
+
+## [1.1.22] - 2024-11-25
+### Added
+- Use latest arena-core version (improved performance);
+
 ## [1.1.21] - 2024-11-24
 ### Fixed
 - Date/time picker layout (iOS);

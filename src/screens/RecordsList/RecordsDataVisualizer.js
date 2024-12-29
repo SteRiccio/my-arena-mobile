@@ -63,7 +63,7 @@ const RecordOriginTableCellRenderer = ({ item }) => (
 RecordOriginTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const RecordOriginListCellRenderer = ({ item }) => (
-  <Text textKey={`dataEntry:records.origin.${item.origin}`} />
+  <Text textKey={`recordsList:origin.${item.origin}`} />
 );
 
 RecordOriginListCellRenderer.propTypes = DataVisualizerCellPropTypes;
@@ -74,7 +74,7 @@ const RecordLoadStatusTableCellRenderer = ({ item }) => (
 RecordLoadStatusTableCellRenderer.propTypes = DataVisualizerCellPropTypes;
 
 const RecordLoadStatusListCellRenderer = ({ item }) => (
-  <Text textKey={`dataEntry:records.loadStatus.${item.loadStatus}`} />
+  <Text textKey={`recordsList:loadStatus.${item.loadStatus}`} />
 );
 
 RecordLoadStatusListCellRenderer.propTypes = DataVisualizerCellPropTypes;
@@ -165,7 +165,9 @@ export const RecordsDataVisualizer = (props) => {
       ...rootDefKeys.map((keyDef) => ({
         key: Objects.camelize(NodeDefs.getName(keyDef)),
         header: NodeDefs.getLabelOrName(keyDef, lang),
+        headerLabelVariant: "titleMedium",
         sortable: true,
+        textVariant: "titleLarge",
       })),
       {
         key: "dateModified",
@@ -175,10 +177,17 @@ export const RecordsDataVisualizer = (props) => {
         style: { minWidth: 50 },
       }
     );
+    if (viewAsList) {
+      result.push({
+        key: "dateCreated",
+        header: "common:createdOn",
+        optional: true,
+      });
+    }
     if (showRemoteProps) {
       result.push({
         key: "origin",
-        header: "dataEntry:records.origin.title",
+        header: "recordsList:origin.title",
         style: { minWidth: 10 },
         cellRenderer: viewAsList
           ? RecordOriginListCellRenderer
@@ -188,14 +197,14 @@ export const RecordsDataVisualizer = (props) => {
         result.push(
           {
             key: "dateModifiedRemote",
-            header: "dataEntry:records.dateModifiedRemotely",
+            header: "recordsList:dateModifiedRemotely",
           },
-          { key: "ownerName", header: "dataEntry:records.owner" }
+          { key: "ownerName", header: "recordsList:owner" }
         );
       }
       result.push({
         key: "loadStatus",
-        header: "dataEntry:records.loadStatus.title",
+        header: "recordsList:loadStatus.title",
         style: { minWidth: 10 },
         cellRenderer: viewAsList
           ? RecordLoadStatusListCellRenderer
@@ -213,6 +222,7 @@ export const RecordsDataVisualizer = (props) => {
       result.push({
         key: "dateSynced",
         header: "dataEntry:syncedOn",
+        headerWidth: 80,
         style: { minWidth: 50 },
       });
     }
@@ -252,21 +262,21 @@ export const RecordsDataVisualizer = (props) => {
       actions.push({
         key: "cloneSelectedItems",
         icon: "content-copy",
-        labelKey: "dataEntry:records.cloneRecords.title",
+        labelKey: "recordsList:cloneRecords.title",
         onPress: onCloneSelectedItems,
       });
     }
     actions.push({
       key: "importSelectedItems",
       icon: "import",
-      labelKey: "dataEntry:records.importRecords.title",
+      labelKey: "recordsList:importRecords.title",
       onPress: onImportSelectedItems,
     });
     if (syncStatusFetched) {
       actions.push({
         key: "exportSelectedItems",
         icon: "download-outline",
-        labelKey: "dataEntry:records.exportRecords.title",
+        labelKey: "recordsList:exportRecords.title",
         onPress: onExportSelectedItems,
       });
     }

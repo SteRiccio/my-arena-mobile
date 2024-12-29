@@ -3,14 +3,11 @@ import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
-import { Button, Text, VView, View } from "components";
+import { Button, CloseIconButton, HView, Text, VView, View } from "components";
 import { RecordEditViewMode } from "model";
-import { Taxa } from "model/Taxa";
-import { SurveyOptionsSelectors, SurveySelectors } from "state";
+import { SurveyOptionsSelectors } from "state";
 
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
-import { useItemsFilter } from "../useItemsFilter";
-import { useTaxa } from "./useTaxa";
 import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
 import { TaxonValuePreview } from "../../../NodeValuePreview/TaxonValuePreview";
@@ -33,36 +30,33 @@ export const NodeTaxonComponent = (props) => {
   const openEditDialog = () => setEditDialogOpen(true);
   const closeEditDialog = () => setEditDialogOpen(false);
 
-  const { value, updateNodeValue } = useNodeComponentLocalState({
+  const { value, updateNodeValue, onClearPress } = useNodeComponentLocalState({
     nodeUuid,
-  });
-
-  const survey = SurveySelectors.useCurrentSurvey();
-
-  const taxonomyUuid = NodeDefs.getTaxonomyUuid(nodeDef);
-
-  const _taxa = useTaxa({ survey, taxonomyUuid });
-  const taxa = useItemsFilter({
-    nodeDef,
-    parentNodeUuid,
-    items: _taxa,
-    alwaysIncludeItemFunction: (item) =>
-      [Taxa.unlistedCode, Taxa.unknownCode].includes(item.props.code),
   });
 
   const selectedTaxon = useTaxonByNodeValue({ value });
   const selectedTaxonVernacularName = selectedTaxon?.vernacularName;
 
   const selectedTaxonContainerStyle = useMemo(
-    () => ({ height: selectedTaxonVernacularName ? 60 : 30 }),
+    () => [
+      styles.selectedTaxonContainer,
+      { height: selectedTaxonVernacularName ? 70 : 40 },
+    ],
     [selectedTaxonVernacularName]
   );
 
   return (
     <VView>
-      <View style={selectedTaxonContainerStyle}>
+      <View style={styles.selectedTaxonWrapper}>
         {selectedTaxon ? (
-          <TaxonValuePreview nodeDef={nodeDef} value={value} />
+          <HView style={selectedTaxonContainerStyle}>
+            <TaxonValuePreview
+              nodeDef={nodeDef}
+              style={styles.selectedTaxonText}
+              value={value}
+            />
+            <CloseIconButton mode="text" onPress={onClearPress} />
+          </HView>
         ) : (
           <Text textKey="dataEntry:taxon.taxonNotSelected" />
         )}
@@ -70,7 +64,7 @@ export const NodeTaxonComponent = (props) => {
       {viewMode === RecordEditViewMode.oneNode && (
         <NodeTaxonAutocomplete
           nodeDef={nodeDef}
-          taxa={taxa}
+          parentNodeUuid={parentNodeUuid}
           updateNodeValue={updateNodeValue}
         />
       )}
@@ -88,7 +82,6 @@ export const NodeTaxonComponent = (props) => {
               nodeDef={nodeDef}
               parentNodeUuid={parentNodeUuid}
               selectedTaxon={selectedTaxon}
-              taxa={taxa}
               updateNodeValue={updateNodeValue}
             />
           )}
