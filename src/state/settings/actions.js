@@ -1,7 +1,10 @@
 import * as Location from "expo-location";
 
+import { changeLanguage } from "localization";
+import { SettingsModel } from "model";
 import { SettingsService } from "service";
 import { Permissions } from "utils";
+
 import { ToastActions } from "../toast";
 
 const SETTINGS_SET = "SETTINGS_SET";
@@ -20,12 +23,14 @@ const updateSetting =
   async (dispatch) => {
     let canPersist = true;
 
-    if (key === "locationGpsLocked") {
+    if (key === SettingsModel.keys.locationGpsLocked) {
       if (value) {
         canPersist = await dispatch(startGpsLocking());
       } else {
         _stopGpsLocking();
       }
+    } else if (key === SettingsModel.keys.language) {
+      changeLanguage(value);
     }
     if (canPersist) {
       const settingsUpdated = await SettingsService.updateSetting({

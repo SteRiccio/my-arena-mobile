@@ -45,6 +45,7 @@ const getEntityKeysFormatted = ({
   record,
   entity,
   lang,
+  showLabel = true,
   emptyValue = "",
 }) => {
   const { cycle } = record;
@@ -62,18 +63,24 @@ const getEntityKeysFormatted = ({
       nodeDef: keyDef,
       node: keyNode,
       value: keyNode.value,
-      showLabel: true,
+      showLabel,
       lang,
     });
   });
 };
 
-const getRootEntityKeysFormatted = ({ survey, record, lang }) =>
+const getRootEntityKeysFormatted = ({
+  survey,
+  record,
+  lang,
+  showLabel = true,
+}) =>
   getEntityKeysFormatted({
     survey,
     record,
     entity: Records.getRoot(record),
     lang,
+    showLabel,
   });
 
 const getEntitySummaryValuesByNameFormatted = ({

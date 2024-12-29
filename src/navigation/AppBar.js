@@ -51,7 +51,7 @@ export const AppBar = (props) => {
     DataEntrySelectors.useIsEditingRecord() &&
     screenKey === screenKeys.recordEditor;
   const recordEditLockAvailable =
-    DataEntrySelectors.useRecordEditLockAvailable() && editingRecord;
+    DataEntrySelectors.useRecordEditLockAvailable();
   const recordEditLocked =
     DataEntrySelectors.useRecordEditLocked() && editingRecord;
   const recordEditViewMode = SurveyOptionsSelectors.useRecordEditViewMode();
@@ -121,11 +121,15 @@ export const AppBar = (props) => {
     <RNPAppbar.Header elevated mode={editingRecord ? "medium" : "small"}>
       <HView style={styles.topBarContainer} fullWidth transparent>
         {editingRecord && (
-          <RNPAppbar.Action icon="menu" onPress={onToggleDrawerPress} />
+          <RNPAppbar.Action
+            icon="menu"
+            onPress={onToggleDrawerPress}
+            size={36}
+          />
         )}
 
         {hasBack && back && (
-          <RNPAppbar.BackAction onPress={navigation.goBack} />
+          <RNPAppbar.BackAction onPress={navigation.goBack} size={36} />
         )}
 
         {(!editingRecord || isTablet) && (

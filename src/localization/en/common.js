@@ -19,6 +19,7 @@ export default {
   false: "False",
   filter: "Filter",
   fromToOf: `{{from}}-{{to}} of {{of}}`,
+  goBack: "Go back",
   info: "Info",
   label: "Label",
   modifiedOn: "Modified on",

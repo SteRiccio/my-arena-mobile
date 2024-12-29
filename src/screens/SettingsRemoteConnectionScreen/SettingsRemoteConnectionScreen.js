@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 import {
   Button,
@@ -10,6 +11,7 @@ import {
   RadioButton,
   RadioButtonGroup,
   ScreenView,
+  Spacer,
   Text,
   TextInput,
   TextInputPassword,
@@ -36,6 +38,7 @@ const serverUrlTypes = {
 
 export const SettingsRemoteConnectionScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const { t } = useTranslation();
   const networkAvailable = useIsNetworkConnected();
   const user = RemoteConnectionSelectors.useLoggedInUser();
@@ -134,9 +137,14 @@ export const SettingsRemoteConnectionScreen = () => {
       email: emailNew,
     }));
     dispatch(
-      RemoteConnectionActions.login({ serverUrl, email: emailNew, password })
+      RemoteConnectionActions.login({
+        serverUrl,
+        email: emailNew,
+        password,
+        navigation,
+      })
     );
-  }, [dispatch, email, password, serverUrl]);
+  }, [dispatch, email, navigation, password, serverUrl]);
 
   const onLogout = useCallback(async () => {
     if (networkAvailable) {
@@ -172,6 +180,7 @@ export const SettingsRemoteConnectionScreen = () => {
                 serverUrlType === serverUrlTypes.default || !networkAvailable
               }
               onChange={onServerUrlChange}
+              style={styles.serverUrlTextInput}
               value={serverUrl}
             />
             {serverUrlVerified && <Icon source="check" size={30} />}
@@ -199,13 +208,25 @@ export const SettingsRemoteConnectionScreen = () => {
           onChange={onPasswordChange}
           value={password}
         />
-        <Button
-          disabled={!networkAvailable}
-          labelStyle={styles.loginButtonLabel}
-          onPress={onLogin}
-          style={styles.loginButton}
-          textKey="settingsRemoteConnection:login"
-        />
+        <HView fullWidth style={styles.loginButtonBar}>
+          <HView fullFlex>
+            <Button
+              mode="outlined"
+              onPress={navigation.goBack}
+              style={styles.goBackButton}
+              textKey="common:goBack"
+              labelVariant="bodySmall"
+            />
+          </HView>
+          <Button
+            disabled={!networkAvailable}
+            labelStyle={styles.loginButtonLabel}
+            onPress={onLogin}
+            style={styles.loginButton}
+            textKey="settingsRemoteConnection:login"
+          />
+          <Spacer />
+        </HView>
         {user && (
           <Button
             mode="text"

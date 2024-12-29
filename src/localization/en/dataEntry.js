@@ -24,10 +24,14 @@ export default {
   cycleForNewRecords: "Cycle for new records:",
   options: "Options",
   editNodeDef: "Edit {{nodeDef}}",
-  errorFetchingRecordsSyncStatus:
-    "Error fetching records sync status: {{details}}",
+  errorFetchingRecordsSyncStatus: `Error fetching records from server.
+
+Check connection settings.
+
+Details: {{details}}`,
   errorGeneratingRecordsExportFile:
     "Error generating records export file: {{details}}",
+  errorLoadingRecords: "Error loading records: {{details}}",
   exportData: {
     title: "Export data",
     confirm: {
@@ -51,7 +55,7 @@ export default {
   gpsLockingEnabledWarning: "Warning: GPS locking enabled!",
   listOfRecords: "List of records",
   localBackup: "Local backup",
-  newRecord: "New record",
+  newRecord: "New",
   noRecordsFound: "No records found",
   recordEditor: "Record editor",
   recordInPreviousCycle: {
@@ -73,56 +77,7 @@ export default {
 
     valuePanelHeader: "Value in cycle {{prevCycle}}",
   },
-  records: {
-    cloneRecords: {
-      title: "Clone",
-      confirm: {
-        message:
-          "Clone the selected {{recordsCount}} records into cycle {{cycle}}?",
-      },
-      onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned:
-        "Only records imported in device or modified locally can be cloned into next cycle",
-      completeSuccessfully: "Records cloned successfully into cycle {{cycle}}!",
-    },
-    confirmImportRecordFromServer: "Import record from server?",
-    dateModifiedRemotely: "Date modified remotely",
-    deleteRecordsConfirm: {
-      title: "Delete records",
-      message: "Delete the selected records?",
-    },
-    duplicateKey: {
-      title: "Duplicate key",
-      message: `Another record with the same key ({{keyValues}}) already exists.`,
-    },
-    exportRecords: {
-      title: "Export",
-    },
-    importRecord: "Import record",
-    importRecords: {
-      title: "Import from server",
-    },
-    importRecordsFromFile: {
-      title: "Import",
-      confirmMessage: `Import records from selected file
-{{fileName}}?`,
-      invalidFileType: "Invalid file type (expected .zip)",
-      overwriteExistingRecords: "Overwrite existing records",
-      selectFile: "Select file",
-    },
-    importCompleteSuccessfully: `Records import complete successfully!
-- {{processedRecords}} records processed
-- {{insertedRecords}} records inserted
-- {{updatedRecords}} records updated`,
-    importFailed: "Records import failed: {{details}}",
-    loadStatus: {
-      title: "Loaded",
-      C: "Complete",
-      P: "Partial (without files)",
-      S: "Only summary",
-    },
-    origin: { title: "Origin", L: "Local", R: "Remote" },
-    owner: "Owner",
-  },
+  sendData: "Send data",
   showOnlyLocalRecords: "Show only local records",
   syncedOn: "Synced on",
   syncStatusHeader: "Status",

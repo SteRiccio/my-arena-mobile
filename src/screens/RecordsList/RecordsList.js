@@ -79,23 +79,31 @@ export const RecordsList = () => {
   } = state;
 
   const loadRecords = useCallback(async () => {
-    setState((statePrev) => ({ ...statePrev, loading: true }));
-
-    const _records = await RecordService.fetchRecords({
-      survey,
-      cycle,
-      onlyLocal,
-    });
-
     setState((statePrev) => ({
       ...statePrev,
+      loading: true,
       searchValue: "",
-      records: _records,
       syncStatusFetched: false,
       syncStatusLoading: false,
-      loading: false,
     }));
-  }, [survey, cycle, onlyLocal]);
+
+    try {
+      const _records = await RecordService.fetchRecords({
+        survey,
+        cycle,
+        onlyLocal,
+      });
+
+      setState((statePrev) => ({
+        ...statePrev,
+        records: _records,
+        loading: false,
+      }));
+    } catch (error) {
+      setState((statePrev) => ({ ...statePrev, records: [], loading: false }));
+      toaster("dataEntry:errorLoadingRecords", { details: String(error) });
+    }
+  }, [survey, cycle, onlyLocal, toaster]);
 
   // refresh records list on cycle and "only local" change
   useEffect(() => {
@@ -134,6 +142,7 @@ export const RecordsList = () => {
       );
     }
     setState((statePrev) => ({ ...statePrev, ...stateNext }));
+    return stateNext;
   }, [dispatch, navigation, survey, cycle, onlyLocal]);
 
   const onOnlyLocalChange = useCallback(
@@ -165,7 +174,7 @@ export const RecordsList = () => {
 
     const { name: fileName, uri } = asset;
 
-    const messagePrefix = "dataEntry:records.importRecordsFromFile.";
+    const messagePrefix = "recordsList:importRecordsFromFile.";
 
     if (Files.getExtension(fileName) !== "zip") {
       toaster(`${messagePrefix}invalidFileType`);
@@ -260,7 +269,7 @@ export const RecordsList = () => {
   );
 
   const exportSelectedRecords = useCallback(
-    async (selectedRecords) => {
+    async ({ selectedRecords, onlyRemote = false }) => {
       const { newRecords, updatedRecords, conflictingRecords, confirmResult } =
         await confirmExportRecords({ records: selectedRecords });
       if (confirmResult) {
@@ -286,6 +295,7 @@ export const RecordsList = () => {
             recordUuids,
             conflictResolutionStrategy,
             onJobComplete: loadRecordsWithSyncStatus,
+            onlyRemote,
           })
         );
       }
@@ -294,7 +304,7 @@ export const RecordsList = () => {
   );
 
   const onExportNewOrUpdatedRecordsPress = useCallback(async () => {
-    await exportSelectedRecords(records);
+    await exportSelectedRecords({ selectedRecords: records });
   }, [exportSelectedRecords, records]);
 
   const onExportAllRecordsPress = useCallback(() => {
@@ -316,7 +326,7 @@ export const RecordsList = () => {
       const selectedRecords = records.filter((record) =>
         recordUuids.includes(record.uuid)
       );
-      await exportSelectedRecords(selectedRecords);
+      await exportSelectedRecords({ selectedRecords });
     },
     [exportSelectedRecords, records]
   );
@@ -325,8 +335,8 @@ export const RecordsList = () => {
     async (recordUuids) => {
       if (
         await confirm({
-          titleKey: "dataEntry:records.deleteRecordsConfirm.title",
-          messageKey: "dataEntry:records.deleteRecordsConfirm.message",
+          titleKey: "recordsList:deleteRecordsConfirm.title",
+          messageKey: "recordsList:deleteRecordsConfirm.message",
           swipeToConfirm: true,
         })
       ) {
@@ -389,7 +399,7 @@ export const RecordsList = () => {
         )
       ) {
         toaster(
-          "dataEntry:records.cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
+          "recordsList:cloneRecords.onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned"
         );
         return false;
       }
@@ -415,6 +425,17 @@ export const RecordsList = () => {
     },
     [checkRecordsCanBeCloned, dispatch, loadRecords, records]
   );
+
+  const onSendDataPress = useCallback(async () => {
+    const { syncStatusFetched: syncStatusFetchedNext, records: recordsNext } =
+      await loadRecordsWithSyncStatus();
+    if (syncStatusFetchedNext) {
+      await exportSelectedRecords({
+        selectedRecords: recordsNext,
+        onlyRemote: true,
+      });
+    }
+  }, [exportSelectedRecords, loadRecordsWithSyncStatus]);
 
   const recordsFiltered = useMemo(() => {
     if (Objects.isEmpty(searchValue)) return records;
@@ -491,9 +512,14 @@ export const RecordsList = () => {
           </>
         )}
       </VView>
-      <HView style={styles.bottomActionBar}>
-        {records.length > 0 && newRecordButton}
-        {records.length > 0 && (
+      {records.length > 0 && (
+        <HView style={styles.bottomActionBar}>
+          {newRecordButton}
+          <Button
+            icon="cloud-refresh"
+            onPress={onSendDataPress}
+            textKey="dataEntry:sendData"
+          />
           <MenuButton
             icon="download"
             items={[
@@ -533,11 +559,10 @@ export const RecordsList = () => {
                 onPress: onExportAllRecordsPress,
               },
             ]}
-            label="common:export"
             style={styles.exportDataMenuButton}
           />
-        )}
-      </HView>
+        </HView>
+      )}
     </VView>
   );
 };
