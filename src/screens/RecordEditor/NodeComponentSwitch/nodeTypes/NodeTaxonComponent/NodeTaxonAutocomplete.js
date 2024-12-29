@@ -135,8 +135,6 @@ export const NodeTaxonAutocomplete = (props) => {
     [updateNodeValue]
   );
 
-  console.log("===selectedTaxon", selectedTaxon);
-
   return (
     <SelectableListWithFilter
       filterItems={filterItems({ nodeDef, unlistedTaxon, unknownTaxon })}
