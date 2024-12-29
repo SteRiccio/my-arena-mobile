@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
 import { Button, CloseIconButton, HView, Text, VView, View } from "components";
 import { RecordEditViewMode } from "model";
-import { SurveyOptionsSelectors, useConfirm } from "state";
+import { SurveyOptionsSelectors } from "state";
 
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
@@ -23,7 +23,6 @@ export const NodeTaxonComponent = (props) => {
       `rendering NodeTaxonComponent for ${NodeDefs.getName(nodeDef)}`
     );
   }
-  const confirm = useConfirm();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
