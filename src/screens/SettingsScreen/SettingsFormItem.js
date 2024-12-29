@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import PropTypes from "prop-types";
 
 import { Text, VView, View } from "components";
+import { textDirections, useTextDirection } from "localization";
 
 import styles from "./styles";
 
@@ -15,10 +17,20 @@ export const SettingsFormItem = (props) => {
     children,
   } = props;
 
-  const style =
-    direction === "vertical"
-      ? styles.settingsFormItemVertical
-      : styles.settingsFormItemHorizontal;
+  const textDirection = useTextDirection();
+
+  const style = useMemo(
+    () =>
+      direction === "vertical"
+        ? styles.settingsFormItemVertical
+        : [
+            styles.settingsFormItemHorizontal,
+            textDirection === textDirections.rtl
+              ? { flexDirection: "row-reverse" }
+              : undefined,
+          ],
+    [direction, textDirection]
+  );
 
   return (
     <View key={settingKey} style={style}>

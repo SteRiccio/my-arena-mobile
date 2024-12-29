@@ -1,20 +1,39 @@
+import { useMemo } from "react";
 import { Text as RNText } from "react-native-paper";
 import PropTypes from "prop-types";
 
-import { useTranslation } from "localization";
+import { textDirections, useTextDirection, useTranslation } from "localization";
+
+const styleToObject = (style) =>
+  Array.isArray(style)
+    ? Object.assign({}, ...style.map(styleToObject))
+    : (style ?? {});
 
 export const Text = (props) => {
   const {
     children,
     numberOfLines,
     selectable,
-    style,
+    style: styleProp,
     textKey,
     textParams,
     variant,
   } = props;
 
+  const textDirection = useTextDirection();
   const { t } = useTranslation();
+
+  const style = useMemo(() => {
+    if (textDirection === textDirections.ltr) {
+      return styleProp;
+    }
+    const res = styleToObject(styleProp);
+    const { textAlign } = res;
+    if (!textAlign) {
+      res.textAlign = "right";
+    }
+    return res;
+  }, [styleProp, textDirection]);
 
   return (
     <RNText
