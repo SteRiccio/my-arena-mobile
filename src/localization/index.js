@@ -10,6 +10,7 @@ import { textDirections, useTextDirection } from "./useTextDirection";
 // import am from "./am";
 import en from "./en";
 // import es from "./es";
+import fa from "./fa";
 // import fr from "./fr";
 import pt from "./pt";
 // import ru from "./ru";

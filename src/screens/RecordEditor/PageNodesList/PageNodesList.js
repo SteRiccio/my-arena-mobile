@@ -11,13 +11,12 @@ import {
 } from "@openforis/arena-core";
 
 import { AlertIcon, VView } from "components";
-import { RecordPageNavigator } from "model";
+import { RecordPageNavigator, ValidationUtils } from "model";
 import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 
 import { NodePageNavigationButton } from "../BottomNavigationBar/NodePageNavigationButton";
 
 import styles from "./styles";
-import { ValidationUtils } from "model/utils/ValidationUtils";
 
 const iconByNodeDefType = {
   [NodeDefType.boolean]: () => "checkbox-marked-outline",
@@ -95,7 +94,7 @@ export const PageNodesList = () => {
       const fieldValidation = node
         ? Validations.getFieldValidation(node.uuid)(validation)
         : null;
-      if (!fieldValidation || fieldValidation.valid) return null;
+      if (ValidationUtils.isValid(fieldValidation)) return null;
       const hasErrors = ValidationUtils.hasNestedErrors(fieldValidation);
       const hasWarnings = !hasErrors;
       return <AlertIcon hasErrors={hasErrors} hasWarnings={hasWarnings} />;
