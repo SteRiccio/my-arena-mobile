@@ -17,7 +17,6 @@ export { FieldSet } from "./FieldSet";
 export { FlexWrapView } from "./FlexWrapView";
 export { FormItem } from "./FormItem";
 export { HView } from "./HView";
-export { HViewTextDirectionAware } from "./HViewTextDirectionAware";
 export { Icon } from "./Icon";
 export { Image } from "./Image";
 export { ImagePreviewDialog } from "./ImagePreviewDialog";

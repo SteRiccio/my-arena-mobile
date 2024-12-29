@@ -2,8 +2,8 @@ import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
 
+import { HView } from "./HView";
 import { Text } from "./Text";
-import { HViewTextDirectionAware } from "./HViewTextDirectionAware";
 
 export const FormItem = ({
   children,
@@ -20,7 +20,7 @@ export const FormItem = ({
     typeof children === "string" || typeof children === "number";
 
   return (
-    <HViewTextDirectionAware style={[{ alignItems: "baseline" }, style]}>
+    <HView style={[{ alignItems: "baseline" }, style]}>
       <Text
         numberOfLines={labelNumberOfLines}
         style={labelStyle}
@@ -33,7 +33,7 @@ export const FormItem = ({
       ) : (
         children
       )}
-    </HViewTextDirectionAware>
+    </HView>
   );
 };
 
