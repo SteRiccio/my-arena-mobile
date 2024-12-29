@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import i18n from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
 
@@ -6,21 +5,14 @@ import { LanguageConstants } from "model/LanguageSettings";
 import { SettingsService } from "service/settingsService";
 import { SystemUtils } from "utils/SystemUtils";
 
+import { textDirections, useTextDirection } from "./useTextDirection";
+
 // import am from "./am";
 import en from "./en";
 // import es from "./es";
 // import fr from "./fr";
 import pt from "./pt";
 // import ru from "./ru";
-
-const textDirections = {
-  rtl: "rtl",
-  ltr: "ltr",
-};
-
-const isRtlByLang = {
-  fa: true,
-};
 
 // const resources = { am, en, es, fr, pt, ru };
 const resources = { en, fa, pt };
@@ -73,20 +65,6 @@ i18n
 const changeLanguage = (lang) => {
   const supportedLang = toFinalSuppotedLang(lang);
   i18n.changeLanguage(supportedLang);
-};
-
-const useTextDirection = () => {
-  const [textDirection, setTextDirection] = useState(textDirections.rtl);
-  const lang = i18n.language;
-
-  useEffect(() => {
-    const rtl = !!isRtlByLang[lang];
-    setTextDirection(rtl ? textDirections.rtl : textDirections.ltr);
-  }, [lang]);
-
-  console.log("====textDirection", textDirection);
-
-  return textDirection;
 };
 
 export {
