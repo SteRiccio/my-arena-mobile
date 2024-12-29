@@ -149,13 +149,14 @@ export const useNodeCoordinateComponent = (props) => {
     [defaultSrsCode, includedFields]
   );
 
-  const { applicable, uiValue, updateNodeValue } = useNodeComponentLocalState({
-    nodeUuid,
-    updateDelay: 500,
-    nodeValueToUiValue,
-    uiValueToNodeValue,
-    isNodeValueEqual,
-  });
+  const { applicable, uiValue, updateNodeValue, onClearPress } =
+    useNodeComponentLocalState({
+      nodeUuid,
+      updateDelay: 500,
+      nodeValueToUiValue,
+      uiValueToNodeValue,
+      isNodeValueEqual,
+    });
 
   const {
     accuracy,
@@ -182,16 +183,6 @@ export const useNodeCoordinateComponent = (props) => {
     },
     [onValueChange, uiValue]
   );
-
-  const onClearPress = useCallback(async () => {
-    if (
-      await confirm({
-        messageKey: "dataEntry:confirmDeleteValue.message",
-      })
-    ) {
-      updateNodeValue({ value: null, ignoreDelay: true });
-    }
-  }, [confirm, updateNodeValue]);
 
   const locationCallback = useCallback(
     ({ location }) => {
