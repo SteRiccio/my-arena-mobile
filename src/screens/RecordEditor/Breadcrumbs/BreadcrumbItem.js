@@ -4,8 +4,17 @@ import PropTypes from "prop-types";
 import { Button, HView, Icon } from "components";
 
 import styles from "./styles";
+import {
+  textDirections,
+  useTextDirection,
+} from "localization/useTextDirection";
 
-const Separator = () => <Icon source="greater-than" />;
+const Separator = () => {
+  const textDirection = useTextDirection();
+  const iconSource =
+    textDirection === textDirections.ltr ? "greater-than" : "less-than";
+  return <Icon source={iconSource} />;
+};
 
 export const BreadcrumbItem = (props) => {
   const { isLastItem = false, item, onItemPress: onItemPressProp } = props;

@@ -36,19 +36,22 @@ export const Breadcrumbs = () => {
   );
 
   return (
-    <HView style={styles.externalContainer} transparent>
-      <ScrollView horizontal ref={scrollViewRef}>
-        <HView style={styles.internalContainer} transparent>
-          {items.map((item, index) => (
-            <BreadcrumbItem
-              key={item.entityDefUuid}
-              isLastItem={index === items.length - 1}
-              item={item}
-              onItemPress={onItemPress}
-            />
-          ))}
-        </HView>
-      </ScrollView>
-    </HView>
+    <ScrollView
+      contentContainerStyle={styles.externalContainerContent}
+      horizontal
+      ref={scrollViewRef}
+      style={styles.externalContainer}
+    >
+      <HView style={styles.internalContainer} transparent>
+        {items.map((item, index) => (
+          <BreadcrumbItem
+            key={item.entityDefUuid}
+            isLastItem={index === items.length - 1}
+            item={item}
+            onItemPress={onItemPress}
+          />
+        ))}
+      </HView>
+    </ScrollView>
   );
 };
