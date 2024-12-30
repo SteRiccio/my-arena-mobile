@@ -10,7 +10,7 @@ import { DataEntryActions, DataEntrySelectors, SurveySelectors } from "state";
 import buttonStyles from "./buttonStyles";
 
 export const SingleNodeNavigationButton = (props) => {
-  const { childDefIndex, icon, style: styleProp } = props;
+  const { childDefIndex, icon, iconPosition, style: styleProp } = props;
 
   const dispatch = useDispatch();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
@@ -30,6 +30,7 @@ export const SingleNodeNavigationButton = (props) => {
   return (
     <Button
       icon={icon}
+      iconPosition={iconPosition}
       style={style}
       textKey={NodeDefs.getLabelOrName(childDef, lang)}
       onPress={onPress}
@@ -40,5 +41,6 @@ export const SingleNodeNavigationButton = (props) => {
 SingleNodeNavigationButton.propTypes = {
   childDefIndex: PropTypes.number,
   icon: PropTypes.string,
+  iconPosition: PropTypes.string,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

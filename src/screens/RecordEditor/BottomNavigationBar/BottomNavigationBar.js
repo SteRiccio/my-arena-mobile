@@ -5,6 +5,7 @@ import { NodeDefs } from "@openforis/arena-core";
 
 import { NavigateToRecordsListButton } from "appComponents/NavigateToRecordsListButton";
 import { HView, IconButton, View } from "components";
+import { textDirections, useTextDirection } from "localization";
 import { DataEntryActions, DataEntrySelectors } from "state";
 
 import { NodePageNavigationButton } from "./NodePageNavigationButton";
@@ -13,9 +14,42 @@ import { useBottomNavigationBar } from "./useBottomNavigationBar";
 
 import { useStyles } from "./styles";
 
+const { ltr, rtl } = textDirections;
+
+const prevIconByTextDirection = {
+  [ltr]: "chevron-left",
+  [rtl]: "chevron-right",
+};
+
+const prevButtonIconPositionByTextDirection = {
+  [ltr]: "left",
+  [rtl]: "right",
+};
+
+const nextIconByTextDirection = {
+  [ltr]: "chevron-right",
+  [rtl]: "chevron-left",
+};
+
+const nextButtonIconPositionByTextDirection = {
+  [ltr]: "right",
+  [rtl]: "left",
+};
+
 export const BottomNavigationBar = () => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  const textDirection = useTextDirection();
+  const prevButtonIcon = prevIconByTextDirection[textDirection];
+  const prevButtonIconPosition =
+    prevButtonIconPositionByTextDirection[textDirection];
+  const prevButtonStyle =
+    textDirection === ltr ? styles.leftButton : styles.rightButton;
+  const nextButtonIcon = nextIconByTextDirection[textDirection];
+  const nextButtonIconPosition =
+    nextButtonIconPositionByTextDirection[textDirection];
+  const nextButtonStyle =
+    textDirection === ltr ? styles.rightButton : styles.leftButton;
 
   const currentEntityPointer = DataEntrySelectors.useCurrentPageEntity();
   const { entityDef } = currentEntityPointer;
@@ -47,16 +81,18 @@ export const BottomNavigationBar = () => {
         {listOfRecordsButtonVisible && <NavigateToRecordsListButton />}
         {prevPageButtonVisible && (
           <NodePageNavigationButton
-            icon="chevron-left"
+            icon={prevButtonIcon}
+            iconPosition={prevButtonIconPosition}
             entityPointer={prevEntityPointer}
-            style={styles.leftButton}
+            style={prevButtonStyle}
           />
         )}
         {prevSingleNodeButtonVisible && (
           <SingleNodeNavigationButton
-            icon="chevron-left"
+            icon={prevButtonIcon}
+            iconPosition={prevButtonIconPosition}
             childDefIndex={activeChildIndex - 1}
-            style={styles.leftButton}
+            style={prevButtonStyle}
           />
         )}
       </View>
@@ -74,16 +110,18 @@ export const BottomNavigationBar = () => {
       <View style={styles.buttonContainer} transparent>
         {nextPageButtonVisible && (
           <NodePageNavigationButton
-            icon="chevron-right"
+            icon={nextButtonIcon}
+            iconPosition={nextButtonIconPosition}
             entityPointer={nextEntityPointer}
-            style={styles.rightButton}
+            style={nextButtonStyle}
           />
         )}
         {nextSingleNodeButtonVisible && (
           <SingleNodeNavigationButton
-            icon="chevron-right"
+            icon={nextButtonIcon}
+            iconPosition={nextButtonIconPosition}
             childDefIndex={activeChildIndex + 1}
-            style={styles.rightButton}
+            style={nextButtonStyle}
           />
         )}
       </View>

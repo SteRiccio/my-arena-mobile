@@ -1,18 +1,15 @@
 import { StyleSheet } from "react-native";
 
-const flexOne = {
-  flex: 1,
-};
+const flexDirectionRowReverse = { flexDirection: "row-reverse" };
 
-const fullWidth = {
-  width: "100%",
-};
+const flexOne = { flex: 1 };
 
-const fullHeight = {
-  height: "100%",
-};
+const fullWidth = { width: "100%" };
+
+const fullHeight = { height: "100%" };
 
 export const BaseStyles = StyleSheet.create({
+  flexDirectionRowReverse,
   flexOne,
   fullWidth,
   fullHeight,
