@@ -15,14 +15,15 @@ const itemKeyExtractor = (item) => `${item?.uuid}_${item?.vernacularNameUuid}`;
 const itemLabelExtractor =
   ({ nodeDef }) =>
   (taxon) => {
-    const { code, scientificName } = taxon.props;
+    const { props, scientificName } = taxon;
+    const { code, scientificName: scientificNameProp } = props;
     const visibleFields = NodeDefs.getVisibleFields(nodeDef);
     const codeVisible = !visibleFields || visibleFields.includes("code");
     const parts = [];
     if (codeVisible) {
       parts.push(`(${code})`);
     }
-    parts.push(scientificName);
+    parts.push(scientificName ?? scientificNameProp);
     return parts.join(" ");
   };
 
