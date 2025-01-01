@@ -25,8 +25,12 @@ export const HView = (props) => {
   const isRtl = useIsTextDirectionRtl();
 
   const style = useMemo(
-    () => [baseStyle, isRtl ? rtlStyle : undefined, styleProp],
-    [isRtl, styleProp]
+    () => [
+      baseStyle,
+      textDirectionAware && isRtl ? rtlStyle : undefined,
+      styleProp,
+    ],
+    [isRtl, styleProp, textDirectionAware]
   );
 
   return (
