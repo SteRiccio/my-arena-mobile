@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 
-import { DataEntrySelectors } from "../../../state/dataEntry/selectors";
-import { HView } from "../../../components";
-import { DataEntryActions } from "../../../state/dataEntry/actions";
+import { useIsTextDirectionRtl } from "localization";
+import { DataEntryActions } from "state/dataEntry/actions";
+import { DataEntrySelectors } from "state/dataEntry/selectors";
+
 import { BreadcrumbItem } from "./BreadcrumbItem";
 import { useBreadcrumbItems } from "./useBreadcrumbItems";
 
@@ -15,6 +16,7 @@ export const Breadcrumbs = () => {
     console.log(`rendering Breadcrumbs`);
   }
   const dispatch = useDispatch();
+  const isRtl = useIsTextDirectionRtl();
   const scrollViewRef = useRef(null);
 
   const currentPageEntity = DataEntrySelectors.useCurrentPageEntity();
@@ -35,23 +37,26 @@ export const Breadcrumbs = () => {
     [dispatch]
   );
 
+  const scrollViewStyle = useMemo(
+    () => [styles.scrollView, isRtl ? styles.scrollViewRtl : undefined],
+    [isRtl]
+  );
+
   return (
     <ScrollView
-      contentContainerStyle={styles.externalContainerContent}
+      contentContainerStyle={styles.scrollViewContent}
       horizontal
       ref={scrollViewRef}
-      style={styles.externalContainer}
+      style={scrollViewStyle}
     >
-      <HView style={styles.internalContainer} transparent>
-        {items.map((item, index) => (
-          <BreadcrumbItem
-            key={item.entityDefUuid}
-            isLastItem={index === items.length - 1}
-            item={item}
-            onItemPress={onItemPress}
-          />
-        ))}
-      </HView>
+      {items.map((item, index) => (
+        <BreadcrumbItem
+          key={item.entityDefUuid}
+          isLastItem={index === items.length - 1}
+          item={item}
+          onItemPress={onItemPress}
+        />
+      ))}
     </ScrollView>
   );
 };

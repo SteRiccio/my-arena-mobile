@@ -21,3 +21,8 @@ export const useTextDirection = () => {
   const textDirection = getLanguageTextDirection(lang);
   return textDirection;
 };
+
+export const useIsTextDirectionRtl = () => {
+  const textDirection = useTextDirection();
+  return textDirection === textDirections.rtl;
+};

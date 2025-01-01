@@ -2,22 +2,20 @@ import { useCallback } from "react";
 import PropTypes from "prop-types";
 
 import { Button, HView, Icon } from "components";
+import { useIsTextDirectionRtl } from "localization";
 
 import styles from "./styles";
-import {
-  textDirections,
-  useTextDirection,
-} from "localization/useTextDirection";
 
 const Separator = () => {
-  const textDirection = useTextDirection();
-  const iconSource =
-    textDirection === textDirections.ltr ? "greater-than" : "less-than";
+  const irRtl = useIsTextDirectionRtl();
+  const iconSource = irRtl ? "less-than" : "greater-than";
   return <Icon source={iconSource} />;
 };
 
 export const BreadcrumbItem = (props) => {
   const { isLastItem = false, item, onItemPress: onItemPressProp } = props;
+
+  const irRtl = useIsTextDirectionRtl();
 
   const onItemPress = useCallback(
     () => onItemPressProp(item),
@@ -25,7 +23,11 @@ export const BreadcrumbItem = (props) => {
   );
 
   return (
-    <HView style={styles.item} transparent>
+    <HView
+      style={[styles.item, irRtl ? styles.itemRtl : undefined]}
+      textDirectionAware={false}
+      transparent
+    >
       <Button
         compact
         labelStyle={styles.itemButtonLabel}

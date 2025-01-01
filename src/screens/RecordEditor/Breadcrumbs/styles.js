@@ -1,17 +1,19 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  externalContainer: {
+  scrollView: {
     flex: 1,
+    display: "flex",
     width: "100%",
   },
-  externalContainerContent: {},
-  internalContainer: {
-    flex: 1,
-    alignItems: "center",
-    width: "100%",
+  scrollViewRtl: {
+    transform: [{ scaleX: -1 }],
+  },
+  scrollViewContent: {
+    flexDirection: "row",
   },
   item: { alignItems: "center", width: "auto" },
+  itemRtl: { transform: [{ scaleX: -1 }] },
   itemButton: {},
   itemButtonLabel: { fontSize: 20 },
 });
