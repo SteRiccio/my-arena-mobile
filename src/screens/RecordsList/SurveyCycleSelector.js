@@ -40,7 +40,7 @@ export const SurveyCycleSelector = (props) => {
         <SegmentedButtons
           buttons={items}
           onChange={onChange}
-          style={{ width: items.length * 30 }}
+          style={{ width: items.length * 80 }}
           value={selectedValue}
         />
       ) : (
