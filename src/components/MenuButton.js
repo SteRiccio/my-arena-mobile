@@ -2,21 +2,13 @@ import { useState } from "react";
 import { Menu } from "react-native-paper";
 import PropTypes from "prop-types";
 
-import { textDirections, useTextDirection, useTranslation } from "localization";
 import { Button } from "./Button";
 import { IconButton } from "./IconButton";
-
-const { ltr, rtl } = textDirections;
-
-const itemStyleByTextDirection = {
-  [rtl]: { alignSelf: "flex-end" },
-};
+import { MenuItem } from "./MenuItem";
 
 export const MenuButton = (props) => {
   const { icon, items, label, style } = props;
 
-  const { t } = useTranslation();
-  const textDirection = useTextDirection();
   const [visible, setVisible] = useState(false);
 
   const openMenu = () => setVisible(true);
@@ -53,19 +45,17 @@ export const MenuButton = (props) => {
           onPress,
           keepMenuOpenOnPress = false,
         }) => (
-          <Menu.Item
+          <MenuItem
             key={key}
             disabled={disabled}
-            leadingIcon={textDirection === ltr ? icon : undefined}
+            icon={icon}
             onPress={() => {
               if (!keepMenuOpenOnPress) {
                 closeMenu();
               }
               onPress();
             }}
-            style={itemStyleByTextDirection[textDirection]}
-            title={t(label)}
-            trailingIcon={textDirection === rtl ? icon : undefined}
+            title={label}
           />
         )
       )}
