@@ -32,9 +32,6 @@ export const MenuButton = (props) => {
           <Button
             avoidMultiplePress={false}
             icon={icon}
-            iconPosition={
-              textDirection === textDirections.ltr ? "left" : "right"
-            }
             onPress={openMenu}
             textKey={label}
           />

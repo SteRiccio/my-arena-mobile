@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import MenuDrawer from "react-native-side-drawer";
 
 import { HView, VView, View } from "components";
-import { textDirections, useTextDirection } from "localization";
+import { useIsTextDirectionRtl } from "localization";
 import { RecordEditViewMode } from "model";
 import { useBackHandler, useNavigationIsFocused } from "hooks";
 import {
@@ -34,7 +34,7 @@ export const RecordEditor = () => {
   const { showStatusBar } = SettingsSelectors.useSettings();
   const navigation = useNavigation();
   const isNavigationFocused = useNavigationIsFocused();
-  const textDirection = useTextDirection();
+  const isRtl = useIsTextDirectionRtl();
 
   const onBack = useCallback(() => {
     if (isNavigationFocused) {
@@ -93,7 +93,7 @@ export const RecordEditor = () => {
         opacity={0.4}
         open={pageSelectorOpen}
         overlay
-        position={textDirection === textDirections.ltr ? "left" : "right"}
+        position={isRtl ? "right" : "left"}
       >
         {internalContainer}
       </MenuDrawer>

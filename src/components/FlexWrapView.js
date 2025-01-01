@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 
-import { textDirections, useTextDirection } from "localization";
+import { useIsTextDirectionRtl } from "localization";
 import { BaseStyles } from "utils";
+
 import { View } from "./View";
 
 const baseStyle = {
@@ -16,16 +17,16 @@ const baseStyle = {
 export const FlexWrapView = (props) => {
   const { children, style: styleProp = {}, ...otherProps } = props;
 
-  const textDirection = useTextDirection();
+  const isRtl = useIsTextDirectionRtl();
 
   const style = useMemo(() => {
     const _style = [baseStyle];
-    if (textDirection === textDirections.rtl) {
+    if (isRtl) {
       _style.push(BaseStyles.flexDirectionRowReverse);
     }
     _style.push(styleProp);
     return _style;
-  }, [styleProp, textDirection]);
+  }, [isRtl]);
 
   return (
     <View style={style} {...otherProps}>

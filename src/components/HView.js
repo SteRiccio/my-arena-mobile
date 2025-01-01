@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import PropTypes from "prop-types";
 
-import { textDirections, useTextDirection } from "localization";
+import { useIsTextDirectionRtl } from "localization";
 
 import { View } from "./View";
 
@@ -22,15 +22,11 @@ export const HView = (props) => {
     ...otherProps
   } = props;
 
-  const textDirection = useTextDirection();
+  const isRtl = useIsTextDirectionRtl();
 
   const style = useMemo(
-    () => [
-      baseStyle,
-      textDirection === textDirections.rtl ? rtlStyle : undefined,
-      styleProp,
-    ],
-    [styleProp, textDirection]
+    () => [baseStyle, isRtl ? rtlStyle : undefined, styleProp],
+    [isRtl, styleProp]
   );
 
   return (
