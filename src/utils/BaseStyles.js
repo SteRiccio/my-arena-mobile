@@ -8,6 +8,8 @@ const fullWidth = { width: "100%" };
 
 const fullHeight = { height: "100%" };
 
+const mirrorX = { transform: [{ scaleX: -1 }] };
+
 export const BaseStyles = StyleSheet.create({
   flexDirectionRowReverse,
   flexOne,
@@ -17,4 +19,5 @@ export const BaseStyles = StyleSheet.create({
     ...fullWidth,
     fullHeight,
   },
+  mirrorX,
 });

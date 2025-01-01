@@ -8,7 +8,7 @@ import { Surveys } from "@openforis/arena-core";
 import { HView, Spacer, Text } from "components";
 import { useScreenKey } from "hooks";
 import { RecordEditViewMode, ScreenViewMode } from "model";
-import { useTranslation } from "localization";
+import { useIsTextDirectionRtl, useTranslation } from "localization";
 import {
   DataEntryActions,
   DataEntrySelectors,
@@ -24,6 +24,7 @@ import { Breadcrumbs } from "screens/RecordEditor/Breadcrumbs";
 import { OptionsMenu } from "./OptionsMenu";
 
 import styles from "./styles";
+import { BaseStyles } from "utils/BaseStyles";
 
 export const AppBar = (props) => {
   if (__DEV__) {
@@ -45,6 +46,7 @@ export const AppBar = (props) => {
   const screenViewMode = ScreenOptionsSelectors.useScreenViewMode(screenKey);
 
   const dispatch = useDispatch();
+  const isRtl = useIsTextDirectionRtl();
   const survey = SurveySelectors.useCurrentSurvey();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
   const editingRecord =
@@ -129,7 +131,11 @@ export const AppBar = (props) => {
         )}
 
         {hasBack && back && (
-          <RNPAppbar.BackAction onPress={navigation.goBack} size={36} />
+          <RNPAppbar.BackAction
+            onPress={navigation.goBack}
+            size={36}
+            style={isRtl ? BaseStyles.mirrorX : undefined}
+          />
         )}
 
         {(!editingRecord || isTablet) && (

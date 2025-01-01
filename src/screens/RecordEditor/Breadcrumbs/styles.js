@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { BaseStyles } from "utils/BaseStyles";
 
 export default StyleSheet.create({
   scrollView: {
@@ -6,14 +7,12 @@ export default StyleSheet.create({
     display: "flex",
     width: "100%",
   },
-  scrollViewRtl: {
-    transform: [{ scaleX: -1 }],
-  },
+  scrollViewRtl: BaseStyles.mirrorX,
   scrollViewContent: {
     flexDirection: "row",
   },
   item: { alignItems: "center", width: "auto" },
-  itemRtl: { transform: [{ scaleX: -1 }] },
+  itemRtl: BaseStyles.mirrorX,
   itemButton: {},
   itemButtonLabel: { fontSize: 20 },
 });
