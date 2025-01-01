@@ -4,9 +4,8 @@ import { NodeDefs, Objects } from "@openforis/arena-core";
 
 import { SurveySelectors } from "state/survey";
 
-import { HView } from "components/HView";
-import { Text } from "components/Text";
-import { ViewMoreText } from "components/ViewMoreText";
+import { useIsTextDirectionRtl } from "localization";
+import { HView, Text, ViewMoreText } from "components";
 
 import { NodeValidationIcon } from "../NodeValidationIcon";
 import { useStyles } from "./styles";
@@ -14,6 +13,7 @@ import { useStyles } from "./styles";
 export const NodeDefFormItemHeader = (props) => {
   const { nodeDef, parentNodeUuid } = props;
 
+  const isRtl = useIsTextDirectionRtl();
   const styles = useStyles();
   const lang = SurveySelectors.useCurrentSurveyPreferredLang();
 
@@ -29,7 +29,13 @@ export const NodeDefFormItemHeader = (props) => {
         <NodeValidationIcon nodeDef={nodeDef} parentNodeUuid={parentNodeUuid} />
       </HView>
       {!Objects.isEmpty(description) && (
-        <ViewMoreText textStyle={styles.nodeDefDescriptionViewMoreText}>
+        <ViewMoreText
+          textStyle={
+            isRtl
+              ? styles.nodeDefDescriptionViewMoreTextRtl
+              : styles.nodeDefDescriptionViewMoreText
+          }
+        >
           <Text style={styles.nodeDefDescriptionText}>{description}</Text>
         </ViewMoreText>
       )}

@@ -25,6 +25,9 @@ export const useStyles = () => {
     nodeDefDescriptionViewMoreText: {
       textAlign: "justify",
     },
+    nodeDefDescriptionViewMoreTextRtl: {
+      textAlign: "right",
+    },
     nodeDefDescriptionText: {
       fontStyle: "italic",
     },

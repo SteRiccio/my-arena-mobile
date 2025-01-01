@@ -1,9 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
-import { HView, SegmentedButtons } from "components";
+import { SegmentedButtons, View } from "components";
 
 import { useNodeComponentLocalState } from "../../useNodeComponentLocalState";
 import { NodeComponentPropTypes } from "./nodeComponentPropTypes";
+import { useIsTextDirectionRtl } from "localization/useTextDirection";
 
 const booleanValues = ["true", "false"];
 const yesNoValueByBooleanValue = {
@@ -11,12 +12,16 @@ const yesNoValueByBooleanValue = {
   false: "no",
 };
 
+const baseStyle = { width: 200 };
+const rtlStyle = { alignSelf: "flex-end" };
+
 export const NodeBooleanComponent = (props) => {
   const { nodeDef, nodeUuid } = props;
 
   if (__DEV__) {
     console.log(`rendering NodeBooleanComponent for ${nodeDef.props.name}`);
   }
+  const isRtl = useIsTextDirectionRtl();
   const { value, updateNodeValue } = useNodeComponentLocalState({
     nodeUuid,
   });
@@ -38,8 +43,16 @@ export const NodeBooleanComponent = (props) => {
     [labelValue]
   );
 
+  const style = useMemo(() => {
+    const _style = [baseStyle];
+    if (isRtl) {
+      _style.push(rtlStyle);
+    }
+    return _style;
+  }, [isRtl]);
+
   return (
-    <HView style={{ width: "100%" }}>
+    <View style={style}>
       <SegmentedButtons
         buttons={booleanValues.map((val) => ({
           value: val,
@@ -48,7 +61,7 @@ export const NodeBooleanComponent = (props) => {
         onChange={onChange}
         value={value}
       />
-    </HView>
+    </View>
   );
 };
 

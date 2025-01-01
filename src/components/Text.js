@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Text as RNText } from "react-native-paper";
 import PropTypes from "prop-types";
 
-import { textDirections, useTextDirection, useTranslation } from "localization";
+import { useIsTextDirectionRtl, useTranslation } from "localization";
 
 const styleToObject = (style) =>
   Array.isArray(style)
@@ -20,17 +20,17 @@ export const Text = (props) => {
     variant,
   } = props;
 
-  const textDirection = useTextDirection();
+  const isRtl = useIsTextDirectionRtl();
   const { t } = useTranslation();
 
   const style = useMemo(() => {
-    if (textDirection === textDirections.ltr) {
+    if (!isRtl) {
       return styleProp;
     }
     const _style = styleToObject(styleProp);
     const { textAlign } = _style;
     return !textAlign ? [_style, { textAlign: "right" }] : _style;
-  }, [styleProp, textDirection]);
+  }, [isRtl, styleProp]);
 
   return (
     <RNText
