@@ -7,8 +7,8 @@ import PropTypes from "prop-types";
 
 import { Surveys } from "@openforis/arena-core";
 
+import { MenuItem } from "components";
 import { useScreenKey } from "hooks";
-import { useTranslation } from "localization";
 import { screenKeys } from "screens";
 import {
   ConfirmActions,
@@ -25,7 +25,6 @@ export const OptionsMenu = (props) => {
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { t } = useTranslation();
   const screenKey = useScreenKey();
   const editingRecord =
     DataEntrySelectors.useIsEditingRecord() &&
@@ -52,70 +51,73 @@ export const OptionsMenu = (props) => {
       <Divider />
 
       {!editingRecord && (
-        <Menu.Item
-          leadingIcon="view-list"
+        <MenuItem
+          icon="view-list"
           onPress={() => {
-            toggleMenu();
             navigation.navigate(screenKeys.surveysListLocal);
           }}
-          title={t("surveys:title")}
+          title="surveys:title"
+          toggleMenu={toggleMenu}
         />
       )}
       {editingRecord && (
         <>
-          <Menu.Item
-            leadingIcon="view-list"
+          <MenuItem
+            icon="view-list"
             onPress={() => {
-              toggleMenu();
               dispatch(DataEntryActions.navigateToRecordsList({ navigation }));
             }}
-            title={t("dataEntry:listOfRecords")}
+            title="dataEntry:listOfRecords"
+            toggleMenu={toggleMenu}
           />
           {fieldManualUrl && (
-            <Menu.Item
-              leadingIcon="help"
+            <MenuItem
+              icon="help"
               onPress={() => {
-                toggleMenu();
                 WebBrowser.openBrowserAsync(fieldManualUrl);
               }}
-              title={t("surveys:fieldManual")}
+              title="surveys:fieldManual"
+              toggleMenu={toggleMenu}
             />
           )}
         </>
       )}
       <Divider />
-      <Menu.Item
-        leadingIcon="cog"
+      <MenuItem
+        icon="cog"
         onPress={() => {
-          toggleMenu();
           navigation.navigate(screenKeys.settings);
         }}
-        title={t("settings:title")}
+        title="settings:title"
+        toggleMenu={toggleMenu}
       />
-      <Menu.Item
-        leadingIcon="information-outline"
+      <MenuItem
+        icon="information-outline"
         onPress={() => {
-          toggleMenu();
           navigation.navigate(screenKeys.about);
         }}
-        title={t("common:about")}
+        title="common:about"
+        toggleMenu={toggleMenu}
       />
       {Environment.isAndroid && (
-        <Menu.Item
-          leadingIcon="exit-to-app"
-          onPress={() => {
-            toggleMenu();
-            dispatch(
-              ConfirmActions.show({
-                titleKey: "app:confirmExit.title",
-                confirmButtonTextKey: "common:exit",
-                messageKey: "app:confirmExit.message",
-                onConfirm: BackHandler.exitApp,
-              })
-            );
-          }}
-          title={t("common:exit")}
-        />
+        <>
+          <Divider />
+          <MenuItem
+            icon="exit-to-app"
+            onPress={() => {
+              dispatch(
+                ConfirmActions.show({
+                  titleKey: "app:confirmExit.title",
+                  confirmButtonTextKey: "common:exit",
+                  messageKey: "app:confirmExit.message",
+                  onConfirm: BackHandler.exitApp,
+                })
+              );
+            }}
+            title="common:exit"
+            toggleMenu={toggleMenu}
+          />
+        </>
       )}
     </Menu>
   );
