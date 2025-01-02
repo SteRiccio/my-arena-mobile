@@ -10,7 +10,7 @@ import { DataEntryActions, SurveySelectors } from "state";
 import buttonStyles from "./buttonStyles";
 
 export const NodePageNavigationButton = (props) => {
-  const { entityPointer, icon, mode, style: styleProp } = props;
+  const { entityPointer, icon, iconPosition, mode, style: styleProp } = props;
 
   const { parentEntityUuid, entityDef, entityUuid, index } = entityPointer;
 
@@ -34,6 +34,7 @@ export const NodePageNavigationButton = (props) => {
   return (
     <Button
       icon={icon}
+      iconPosition={iconPosition}
       mode={mode}
       style={style}
       textKey={
@@ -48,6 +49,7 @@ export const NodePageNavigationButton = (props) => {
 NodePageNavigationButton.propTypes = {
   entityPointer: PropTypes.object,
   icon: PropTypes.string,
+  iconPosition: PropTypes.string,
   mode: PropTypes.string,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };

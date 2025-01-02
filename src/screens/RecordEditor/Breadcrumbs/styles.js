@@ -1,17 +1,18 @@
 import { StyleSheet } from "react-native";
+import { BaseStyles } from "utils/BaseStyles";
 
 export default StyleSheet.create({
-  externalContainer: {
+  scrollView: {
     flex: 1,
-    alignItems: "center",
+    display: "flex",
     width: "100%",
   },
-  internalContainer: {
-    flex: 1,
-    alignItems: "center",
-    width: "100%",
+  scrollViewRtl: BaseStyles.mirrorX,
+  scrollViewContent: {
+    flexDirection: "row",
   },
   item: { alignItems: "center", width: "auto" },
+  itemRtl: BaseStyles.mirrorX,
   itemButton: {},
   itemButtonLabel: { fontSize: 20 },
 });
