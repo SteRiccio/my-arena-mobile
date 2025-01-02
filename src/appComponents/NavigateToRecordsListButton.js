@@ -2,13 +2,18 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 
 import { Button } from "components/Button";
+import { textDirections, useTextDirection } from "localization";
 import { DataEntryActions } from "state/dataEntry";
 
-const style = { alignSelf: "flex-start" };
+const styleByTextDirection = {
+  [textDirections.ltr]: { alignSelf: "flex-start" },
+  [textDirections.rtl]: { alignSelf: "flex-end" },
+};
 
 export const NavigateToRecordsListButton = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const textDirection = useTextDirection();
 
   return (
     <Button
@@ -17,7 +22,7 @@ export const NavigateToRecordsListButton = () => {
       onPress={() =>
         dispatch(DataEntryActions.navigateToRecordsList({ navigation }))
       }
-      style={style}
+      style={styleByTextDirection[textDirection]}
       textKey="dataEntry:listOfRecords"
     />
   );

@@ -1,4 +1,4 @@
-import { ValidationSeverity } from "@openforis/arena-core";
+import { Objects, ValidationSeverity } from "@openforis/arena-core";
 
 const customValidationKey = "record.attribute.customValidation";
 
@@ -63,6 +63,9 @@ const getJointWarningText = ({ validation, t, customMessageLang }) =>
     customMessageLang,
   });
 
+const isValid = (validation) => Objects.isEmpty(validation) || validation.valid;
+const isNotValid = (validation) => !isValid(validation);
+
 const isError = (validation) =>
   validation?.errors?.length > 0 ||
   Object.values(validation?.fields ?? {}).some(isError);
@@ -89,6 +92,8 @@ const hasNestedWarnings = findInnerValidation({ predicate: isWarning });
 export const ValidationUtils = {
   getJointErrorText,
   getJointWarningText,
+  isValid,
+  isNotValid,
   isError,
   isWarning,
   hasNestedErrors,

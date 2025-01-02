@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
-import { Button, Text, VView, View } from "components";
+import { Button, CloseIconButton, HView, Text, VView, View } from "components";
 import { RecordEditViewMode } from "model";
 import { SurveyOptionsSelectors } from "state";
 
@@ -30,7 +30,7 @@ export const NodeTaxonComponent = (props) => {
   const openEditDialog = () => setEditDialogOpen(true);
   const closeEditDialog = () => setEditDialogOpen(false);
 
-  const { value, updateNodeValue } = useNodeComponentLocalState({
+  const { value, updateNodeValue, onClearPress } = useNodeComponentLocalState({
     nodeUuid,
   });
 
@@ -38,15 +38,25 @@ export const NodeTaxonComponent = (props) => {
   const selectedTaxonVernacularName = selectedTaxon?.vernacularName;
 
   const selectedTaxonContainerStyle = useMemo(
-    () => ({ height: selectedTaxonVernacularName ? 60 : 30 }),
+    () => [
+      styles.selectedTaxonContainer,
+      { height: selectedTaxonVernacularName ? 70 : 40 },
+    ],
     [selectedTaxonVernacularName]
   );
 
   return (
     <VView>
-      <View style={selectedTaxonContainerStyle}>
+      <View style={styles.selectedTaxonWrapper}>
         {selectedTaxon ? (
-          <TaxonValuePreview nodeDef={nodeDef} value={value} />
+          <HView style={selectedTaxonContainerStyle}>
+            <TaxonValuePreview
+              nodeDef={nodeDef}
+              style={styles.selectedTaxonText}
+              value={value}
+            />
+            <CloseIconButton mode="text" onPress={onClearPress} />
+          </HView>
         ) : (
           <Text textKey="dataEntry:taxon.taxonNotSelected" />
         )}

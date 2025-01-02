@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Keyboard } from "react-native";
 
 const initialState = {
   isOpen: false,
@@ -31,10 +32,10 @@ const confirmSlice = createSlice({
   name: "confirm",
   initialState,
   reducers: {
-    show: (_state, action) => ({
-      ...action.payload,
-      isOpen: true,
-    }),
+    show: (_state, action) => {
+      Keyboard.dismiss();
+      return { ...action.payload, isOpen: true };
+    },
     dismiss: () => initialState,
   },
   extraReducers: (builder) => {

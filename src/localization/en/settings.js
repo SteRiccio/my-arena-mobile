@@ -5,6 +5,9 @@ export default {
   fontScale: "Font scale (BETA): {{value}}",
   keepScreenAwake: "Keep screen awake",
   fullScreen: "Full screen",
+  language: {
+    label: "Application language",
+  },
   locationAccuracyThreshold: "Location accuracy threshold (meters)",
   locationAccuracyWatchTimeout:
     "Location accuracy watch timeout: {{value}} seconds",

@@ -6,7 +6,7 @@ import { ConfirmUtils } from "state/confirm";
 import { SurveySelectors } from "state/survey";
 import { ToastActions } from "state/toast";
 
-const textKeyPrefix = "dataEntry:records.cloneRecords.";
+const textKeyPrefix = "recordsList:cloneRecords.";
 
 export const cloneRecordsIntoDefaultCycle =
   ({ recordSummaries, callback = null }) =>

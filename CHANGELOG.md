@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2025-01-02
+### Fixed
+- Support RTL text direction (Persian language);
+
+## [1.2.1] - 2024-12-28
+### Added
+- Persian translation;
+### Fixed
+- Validation report icon shown when validation is empty;
+
+## [1.2.0] - 2024-12-25
+### Added
+- Portuguese translation (thanks to Valter Chisingui);
+
 ## [1.1.27] - 2024-12-20
 ### Fixed
 - Fixed error showing records list when survey has a "text" key attribute;

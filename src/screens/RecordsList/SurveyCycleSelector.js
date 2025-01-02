@@ -20,7 +20,7 @@ export const SurveyCycleSelector = (props) => {
   const cycles = survey?.props?.cycles || {};
   const singleCycle = Object.entries(cycles).length === 1;
 
-  const items = Object.entries(cycles).map(([cycleKey, cycle]) => ({
+  const items = Object.keys(cycles).map((cycleKey) => ({
     value: cycleKey,
     label: Cycles.labelFunction(cycleKey),
   }));
@@ -40,7 +40,7 @@ export const SurveyCycleSelector = (props) => {
         <SegmentedButtons
           buttons={items}
           onChange={onChange}
-          style={{ width: items.length * 30 }}
+          style={{ width: items.length * 80 }}
           value={selectedValue}
         />
       ) : (

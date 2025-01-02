@@ -3,7 +3,7 @@
     "name": "Arena Mobile Experiments",
     "slug": "my-arena-mobile",
     "owner": "stericcio",
-    "version": "1.1.27",
+    "version": "1.2.2",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -21,10 +21,10 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "org.stericcio.myarenamobile",
-      "versionCode": 91
+      "versionCode": 94
     },
     "ios": {
-      "buildNumber": "91",
+      "buildNumber": "94",
       "bundleIdentifier": "org.stericcio.myarenamobile",
       "config": {
         "usesNonExemptEncryption": false

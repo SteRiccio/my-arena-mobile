@@ -10,7 +10,7 @@ import { ToastActions } from "../toast";
 
 const handleImportErrors = ({ dispatch, error = null, errors = null }) => {
   const details = error?.toString() ?? JSON.stringify(errors);
-  dispatch(ToastActions.show("dataEntry:records.importFailed", { details }));
+  dispatch(ToastActions.show("recordsList:importFailed", { details }));
 };
 
 export const importRecordsFromFile =
@@ -36,7 +36,7 @@ export const importRecordsFromFile =
         const { processedRecords, insertedRecords, updatedRecords } = result;
         dispatch(
           MessageActions.setMessage({
-            content: "dataEntry:records.importCompleteSuccessfully",
+            content: "recordsList:importCompleteSuccessfully",
             contentParams: {
               processedRecords,
               insertedRecords,
@@ -94,7 +94,7 @@ export const importRecordsFromServer =
       const jobComplete = await JobMonitorActions.startAsync({
         dispatch,
         jobUuid: job.uuid,
-        titleKey: "dataEntry:records.importRecords.title",
+        titleKey: "recordsList:importRecords.title",
       });
       await _onExportFromServerJobComplete({
         dispatch,
