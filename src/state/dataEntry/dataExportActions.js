@@ -120,7 +120,6 @@ const _onExportFileGenerationSucceeded = async ({
   dispatch,
 }) => {
   const { outputFileUri } = result || {};
-  // const { size: fileSize } = await Files.getInfo(outputFileUri);
   const availableExportTypes = [];
   if (!onlyLocally) {
     availableExportTypes.push(exportType.remote);
@@ -145,9 +144,6 @@ const _onExportFileGenerationSucceeded = async ({
       ConfirmActions.show({
         titleKey: "dataEntry:dataExport.selectTarget",
         messageKey: "dataEntry:dataExport.selectTargetMessage",
-        // messageParams: {
-        //   fileSize: Files.toHumanReadableFileSize(fileSize),
-        // },
         onConfirm,
         singleChoiceOptions: availableExportTypes.map((type) => ({
           value: type,
