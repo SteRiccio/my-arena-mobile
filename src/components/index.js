@@ -26,6 +26,7 @@ export { LocationWatchingMonitor } from "./LocationWatchingMonitor";
 export { Loader } from "./Loader";
 export { LoadingIcon } from "./LoadingIcon";
 export { MenuButton } from "./MenuButton";
+export { MenuItem } from "./MenuItem";
 export { MessageDialog } from "./MessageDialog";
 export { Modal } from "./Modal";
 export { ProgressBar } from "./ProgressBar";

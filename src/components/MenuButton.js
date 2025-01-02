@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Menu } from "react-native-paper";
 import PropTypes from "prop-types";
 
-import { useTranslation } from "localization";
 import { Button } from "./Button";
 import { IconButton } from "./IconButton";
+import { MenuItem } from "./MenuItem";
 
 export const MenuButton = (props) => {
   const { icon, items, label, style } = props;
 
-  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
   const openMenu = () => setVisible(true);
@@ -46,17 +45,17 @@ export const MenuButton = (props) => {
           onPress,
           keepMenuOpenOnPress = false,
         }) => (
-          <Menu.Item
+          <MenuItem
             key={key}
             disabled={disabled}
-            leadingIcon={icon}
+            icon={icon}
             onPress={() => {
               if (!keepMenuOpenOnPress) {
                 closeMenu();
               }
               onPress();
             }}
-            title={t(label)}
+            title={label}
           />
         )
       )}

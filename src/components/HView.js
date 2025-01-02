@@ -1,4 +1,8 @@
 import { useMemo } from "react";
+import PropTypes from "prop-types";
+
+import { useIsTextDirectionRtl } from "localization";
+
 import { View } from "./View";
 
 const baseStyle = {
@@ -7,15 +11,27 @@ const baseStyle = {
   gap: 4,
 };
 
+const rtlStyle = { flexDirection: "row-reverse" };
+
 export const HView = (props) => {
   const {
     children,
     fullWidth = false,
     style: styleProp,
+    textDirectionAware = true,
     ...otherProps
   } = props;
 
-  const style = useMemo(() => [baseStyle, styleProp], [styleProp]);
+  const isRtl = useIsTextDirectionRtl();
+
+  const style = useMemo(
+    () => [
+      baseStyle,
+      textDirectionAware && isRtl ? rtlStyle : undefined,
+      styleProp,
+    ],
+    [isRtl, styleProp, textDirectionAware]
+  );
 
   return (
     <View fullWidth={fullWidth} style={style} {...otherProps}>
@@ -24,4 +40,4 @@ export const HView = (props) => {
   );
 };
 
-HView.propTypes = View.propTypes;
+HView.propTypes = { ...View.propTypes, textDirectionAware: PropTypes.bool };

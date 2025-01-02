@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 
 import { NodeDefs } from "@openforis/arena-core";
 
+import { textDirections, useTextDirection } from "localization";
 import { SurveyDefs } from "model";
 import { SurveySelectors } from "state";
 import { Button } from "components/Button";
@@ -12,10 +13,13 @@ import styles from "./styles";
 const OpenDropdownButton = (props) => {
   const { onPress, textKey = "dataEntry:code.selectItem", textParams } = props;
 
+  const textDirection = useTextDirection();
+  const iconPosition = textDirection === textDirections.ltr ? "right" : "left";
+
   return (
     <Button
-      contentStyle={{ flexDirection: "row-reverse" }}
       icon="chevron-down"
+      iconPosition={iconPosition}
       mode="contained-tonal"
       textKey={textKey}
       textParams={textParams}
