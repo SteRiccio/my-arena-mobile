@@ -25,7 +25,6 @@ export const BreadcrumbItem = (props) => {
   return (
     <HView
       style={[styles.item, irRtl ? styles.itemRtl : undefined]}
-      textDirectionAware={false}
       transparent
     >
       <Button
