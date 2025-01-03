@@ -12,9 +12,9 @@ export default {
   errorFetchingSurveysWithDetails:
     "$t(surveys:errorFetchingSurveys): {{details}}",
   fieldManual: "Полевое руководство",
-  importFromCloud: "Импортировать из облака",
-  importSurvey: "Импортировать опрос",
-  importSurveyConfirmMessage: "Импортировать опрос «{{surveyName}}»?",
+  importFromCloud: "Загрузить из облака",
+  importSurvey: "Загрузить опрос",
+  importSurveyConfirmMessage: "Загрузить опрос «{{surveyName}}»?",
   loadStatus: {
     label: "Статус загрузки",
     notInDevice: "нет на устройстве",
@@ -25,7 +25,7 @@ export default {
     "Ошибка получения опросов с удаленного сервера.\n\nПользователь не вошел в систему или сеанс истек.\n\nВойти на сервер?",
   manageSurveys: "Управление опросами",
   noAvailableSurveysFound: "Доступные опросы не найдены",
-  noSurveysMatchingYourSearch: "Нет опросов, соответствующих вашему поиску",
+  noSurveysMatchingYourSearch: "По вашему поиску нет опросов",
   publishedOn: "Опубликовано",
   selectSurvey: "Выберите опрос",
   surveysInTheCloud: "Опросы в облаке",

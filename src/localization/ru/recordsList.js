@@ -6,10 +6,10 @@ export default {
         "Клонировать выбранные {{recordsCount}} записи в цикл {{cycle}}?",
     },
     onlyRecordsImportedInDeviceOrModifiedLocallyCanBeCloned:
-      "Только записи, импортированные на устройство или измененные локально, могут быть клонированы в следующий цикл",
+      "Только записи, загруженные на устройство или измененные локально, могут быть клонированы в следующий цикл",
     completeSuccessfully: "Записи успешно клонированы в цикл {{cycle}}!",
   },
-  confirmImportRecordFromServer: "Импортировать запись с сервера?",
+  confirmImportRecordFromServer: "Загрузать запись с сервера?",
   dateModifiedRemotely: "Дата изменения на удаленном сервере",
   deleteRecordsConfirm: {
     title: "Удалить записи",
@@ -22,20 +22,20 @@ export default {
   exportRecords: {
     title: "Экспорт",
   },
-  importRecord: "Импортировать запись",
+  importRecord: "Загрузить запись",
   importRecords: {
-    title: "Импорт с сервера",
+    title: "Загрузка с сервера",
   },
   importRecordsFromFile: {
-    title: "Импорт",
-    confirmMessage: "Импортировать записи из выбранного файла\n{{fileName}}?",
+    title: "Загрузка",
+    confirmMessage: "Загрузить записи из выбранного файла\n{{fileName}}?",
     invalidFileType: "Неверный тип файла (ожидается .zip)",
     overwriteExistingRecords: "Перезаписать существующие записи",
     selectFile: "Выберите файл",
   },
   importCompleteSuccessfully:
-    "Импорт записей успешно завершен!\n- Обработано {{processedRecords}} записей\n- Вставлено {{insertedRecords}} записей\n- Обновлено {{updatedRecords}} записей",
-  importFailed: "Ошибка импорта записей: {{details}}",
+    "Загрузка записей успешно завершена!\n- Обработано {{processedRecords}} записей\n- Добавлено {{insertedRecords}} записей\n- Обновлено {{updatedRecords}} записей",
+  importFailed: "Ошибка загрузки записей: {{details}}",
   loadStatus: {
     title: "Загружено",
     C: "Полностью",

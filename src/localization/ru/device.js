@@ -5,7 +5,7 @@ export default {
     statusLabel: "Состояние батареи",
     status: {
       charging: "Зарядка",
-      unplugged: "Отключена от сети",
+      unplugged: "Нет подключения к сети",
     },
     timeLeftToDischarge: "Время до разрядки",
     timeLeftToFullCharge: "Время до полной зарядки",

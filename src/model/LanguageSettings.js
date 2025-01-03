@@ -9,7 +9,7 @@ export const Languages = [
   { key: "fa", label: "Persian" },
   // { key: "fr", label: "French" },
   { key: "pt", label: "Portuguese" },
-  // { key: "ru", label: "Russian" },
+  { key: "ru", label: "Russian" },
 ];
 
 export const LanguagesSettings = [
