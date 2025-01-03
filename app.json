@@ -49,6 +49,12 @@
     },
     "plugins": [
       [
+        "expo-asset",
+        {
+          "assets": ["assets"]
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "ios": {
