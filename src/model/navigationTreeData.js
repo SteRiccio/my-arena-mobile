@@ -29,6 +29,17 @@ const isEntityDefIncluded =
     // is child of current entity def
     entityDef.parentUuid === currentEntityDef.uuid;
 
+const createTreeItem = ({ nodeDefUuid, parentEntityUuid, entityUuid }) => ({
+  nodeDefUuid,
+  isRoot: !parentEntityUuid,
+  children: [],
+  entityPointer: {
+    entityDefUuid: nodeDefUuid,
+    parentEntityUuid,
+    entityUuid,
+  },
+});
+
 const buildTreeData = ({
   survey,
   record,
@@ -37,17 +48,6 @@ const buildTreeData = ({
 }) => {
   const currentEntity = Records.getNodeByUuid(currentEntityUuid)(record);
   const { cycle } = record;
-
-  const createTreeItem = ({ nodeDefUuid, parentEntityUuid, entityUuid }) => ({
-    nodeDefUuid,
-    isRoot: !parentEntityUuid,
-    children: [],
-    entityPointer: {
-      entityDefUuid: nodeDefUuid,
-      parentEntityUuid,
-      entityUuid,
-    },
-  });
 
   const rootDef = Surveys.getNodeDefRoot({ survey });
   const rootNode = Records.getRoot(record);
@@ -103,6 +103,7 @@ const buildTreeData = ({
       }
     });
   }
+  return { rootTreeItem, treeItemsByNodeDefUuid };
 };
 
 export const NavigationTreeData = {
