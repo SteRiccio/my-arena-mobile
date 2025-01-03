@@ -1,9 +1,9 @@
 export default {
   backup: "Резервная копия",
-  changelog: "Журнал изменений",
+  changelog: "Журнал действий",
   confirmExit: {
     title: "Выход",
-    message: "Выйти из приложения?\nВсе изменения уже сохранены.",
+    message: "Выйти из приложения?\nВсе изменения сохранены.",
   },
   currentVersion: "Текущая версия",
   fullBackup: {
@@ -23,9 +23,9 @@ export default {
     settingKeepScreenAwake: "Установка режима «Не выключать экран»",
     startingGpsLocking: "Запуск блокировки GPS",
     initializingDb: "Инициализация БД",
-    startingDbMigrations: "Запуск миграций БД",
-    fetchingSurveys: "Получение опросов",
-    importingDemoSurvey: "Импорт демонстрационного опроса",
+    startingDbMigrations: "Запуск миграции БД",
+    fetchingSurveys: "Загрузка опросов",
+    importingDemoSurvey: "Загрузка демонстрационного опроса",
     fetchingAndSettingLocalSurveys: "Получение и установка локальных опросов",
     fetchingAndSettingSurvey: "Получение и установка опроса",
     checkingLoggedIn: "Проверка авторизации",

@@ -1,10 +1,10 @@
 export default {
   confirmGoToListOfRecords:
     "Перейти к списку записей?\n\n(все изменения уже сохранены)",
-  checkSyncStatus: "Проверить синхронизацию",
+  checkSyncStatus: "Проверить статус синхронизации",
   closestSamplingPoint: {
-    findClosestSamplingPoint: "Найти ближайшую точку отбора проб",
-    findingClosestSamplingPoint: "Поиск ближайшей точки отбора проб",
+    findClosestSamplingPoint: "Найти ближайшую точку сбора данных",
+    findingClosestSamplingPoint: "Поиск ближайшей точки сбора данных",
     minDistanceItemFound: "Элемент найден на расстоянии {{minDistance}} м",
     minDistanceItemFound_plural:
       "Элементы найдены на расстоянии {{minDistance}} м",
@@ -41,7 +41,7 @@ export default {
     mergeConflictingRecords:
       "Объединить конфликтующие записи (с одинаковыми ключами)",
     onlyRecordsInRemoteServerCanBeImported:
-      "Могут быть импортированы только записи, уже находящиеся на удаленном сервере, или записи, которые были обновлены удаленно",
+      "Могут быть импортированы только записи, находящиеся на удаленном сервере, или записи, обновленные удаленно",
   },
   exportNewOrUpdatedRecords: "Экспортировать новые или обновленные записи",
   formLanguage: "Язык формы:",
@@ -87,7 +87,7 @@ export default {
       "Больше не на этапе ввода (на этапе очистки или анализа)",
   },
   validationReport: {
-    title: "Отчет о валидации",
+    title: "Отчет о проверке правильности",
     noErrorsFound: "Отлично, ошибок не найдено!",
   },
   viewModeLabel: "Режим просмотра",

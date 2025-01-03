@@ -22,7 +22,6 @@ export const NodeEntityFormComponent = (props) => {
   const childrenDefs = DataEntrySelectors.useRecordEntityChildDefs({ nodeDef });
 
   useEffect(() => {
-    // listRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     listRef.current?.scrollToOffset?.({ offset: 0, animated: false });
   }, [nodeDef, parentNodeUuid]);
 

@@ -2,7 +2,7 @@ export default {
   status: {
     canceled: "Отменено!",
     failed: "Ошибка",
-    pending: "Инициализация...",
+    pending: "Ожидание…",
     running: "Выполняется...",
     succeeded: "Выполнено!",
   },

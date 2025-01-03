@@ -1,5 +1,3 @@
-// import { lazy } from "react";
-
 import HomeScreen from "./HomeScreen";
 
 import AboutScreen from "./AboutScreen";
