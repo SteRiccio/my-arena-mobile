@@ -163,7 +163,7 @@ const insertRecord = async ({
   const { uuid, dateCreated, dateModified, cycle, ownerUuid, ownerName } =
     record;
 
-  const { insertId } = await dbClient.executeSql(
+  const { insertId } = await dbClient.runSql(
     `INSERT INTO record (${insertColumnsJoint})
     VALUES (${getPlaceholders(insertColumns.length)})`,
     [
@@ -190,7 +190,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
   const loadStatus = RecordLoadStatus.summary;
   const origin = RecordOrigin.remote;
   const insertedIds = [];
-  await dbClient.transaction(async (tx) => {
+  await dbClient.transaction(async () => {
     for await (const recordSummary of recordSummaries) {
       const { dateCreated, dateModified, ownerUuid, ownerName, uuid } =
         recordSummary;
@@ -198,7 +198,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
         survey,
         recordSummary,
       });
-      await tx.executeSql(
+      const { insertId } = await dbClient.runSql(
         `INSERT INTO record (${insertColumnsJoint})
         VALUES (${getPlaceholders(insertColumns.length)})`,
         [
@@ -214,15 +214,9 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
           loadStatus,
           origin,
           ...keyColumnsValues,
-        ],
-        (t, results) => {
-          const { insertId } = results;
-          insertedIds.push(insertId);
-        },
-        (_, error) => {
-          throw error;
-        }
+        ]
       );
+      insertedIds.push(insertId);
     }
   });
   return insertedIds;
@@ -240,7 +234,7 @@ const updateRecordKeysAndDateModifiedWithSummaryFetchedRemotely = async ({
     survey,
     recordSummary,
   });
-  return dbClient.executeSql(
+  return dbClient.runSql(
     `UPDATE record SET 
       owner_uuid = ?,
       owner_name = ?,
@@ -273,7 +267,7 @@ const updateRecordKeysAndContent = async ({
   const dateModifiedColumn =
     origin === RecordOrigin.remote ? "date_modified_remote" : "date_modified";
 
-  return dbClient.executeSql(
+  return dbClient.runSql(
     `UPDATE record SET 
       content = ?, 
       ${dateModifiedColumn} = ?, 
@@ -318,28 +312,28 @@ const updateRecordsDateSync = async ({ surveyId, recordUuids }) => {
   SET date_synced = ?
   WHERE survey_id = ? 
     AND uuid IN (${DbUtils.quoteValues(recordUuids)})`;
-  return dbClient.executeSql(sql, [Dates.nowFormattedForStorage(), surveyId]);
+  return dbClient.runSql(sql, [Dates.nowFormattedForStorage(), surveyId]);
 };
 
 const updateRecordsMergedInto = async ({ surveyId, mergedRecordsMap }) => {
-  for await (const [uuid, mergedIntoRecordUuid] of Object.entries(
-    mergedRecordsMap
-  ))
-    await dbClient.transaction(async (tx) => {
-      await tx.executeSql(
+  await dbClient.transaction(async () => {
+    for await (const [uuid, mergedIntoRecordUuid] of Object.entries(
+      mergedRecordsMap
+    ))
+      await dbClient.runSql(
         `UPDATE record 
          SET merged_into_record_uuid = ? 
          WHERE survey_id =? 
            AND uuid = ?`,
         [mergedIntoRecordUuid, surveyId, uuid]
       );
-    });
+  });
 };
 
 const fixRecordCycle = async ({ survey, recordId }) => {
   const record = await fetchRecord({ survey, recordId });
   const { cycle = Surveys.getDefaultCycleKey(survey) } = record;
-  return dbClient.executeSql(`UPDATE record SET cycle = ? WHERE id = ?`, [
+  return dbClient.runSql(`UPDATE record SET cycle = ? WHERE id = ?`, [
     cycle,
     recordId,
   ]);
@@ -348,7 +342,7 @@ const fixRecordCycle = async ({ survey, recordId }) => {
 const deleteRecords = async ({ surveyId, recordUuids }) => {
   const sql = `DELETE FROM record 
     WHERE survey_id = ? AND uuid IN (${DbUtils.quoteValues(recordUuids)})`;
-  return dbClient.executeSql(sql, [surveyId]);
+  return dbClient.runSql(sql, [surveyId]);
 };
 
 const fixDatetime = (dateStringOrNumber) => {
