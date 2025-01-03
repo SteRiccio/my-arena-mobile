@@ -7,5 +7,5 @@ export default {
   email: "Электронная почта",
   serverUrl: "URL сервера",
   sessionExpired: "Время сессии истекло: пожалуйста, войдите снова.",
-  welcomeMessage: "Привет, {{name}}!",
+  welcomeMessage: "Добро пожаловать, {{name}}!",
 };

@@ -8,8 +8,9 @@ import { SystemUtils } from "utils/SystemUtils";
 import en from "./en";
 import fa from "./fa";
 import pt from "./pt";
+import ru from "./ru";
 
-const resources = { en, fa, pt };
+const resources = { en, fa, pt, ru };
 const supportedLngs = Object.keys(resources);
 const fallbackLng = "en";
 const sysLng = SystemUtils.getLanguageCode();

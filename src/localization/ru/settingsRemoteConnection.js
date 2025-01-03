@@ -13,7 +13,7 @@ export default {
   serverUrlNotValid: "Неверный URL сервера",
   serverUrlType: {
     default: "По умолчанию",
-    custom: "Пользовательский",
+    custom: "Пользователя",
   },
   testUrl: "Проверить URL",
   title: "Подключение к удаленному серверу",
