@@ -90,12 +90,16 @@ export const PageNodesList = () => {
   const renderItemRightIcon = useCallback(
     ({ item }) => {
       const nodeDefUuid = item.uuid;
-      const node = Records.getChild(parentEntity, nodeDefUuid)(record);
-      const fieldValidation = node
-        ? Validations.getFieldValidation(node.uuid)(validation)
-        : null;
-      if (ValidationUtils.isValid(fieldValidation)) return null;
-      const hasErrors = ValidationUtils.hasNestedErrors(fieldValidation);
+      const nodes = Records.getChildren(parentEntity, nodeDefUuid)(record);
+      const fieldValidations = nodes.map((node) =>
+        Validations.getFieldValidation(node.uuid)(validation)
+      );
+      if (
+        fieldValidations.length === 0 ||
+        fieldValidations.every(ValidationUtils.isValid)
+      )
+        return null;
+      const hasErrors = fieldValidations.some(ValidationUtils.hasNestedErrors);
       const hasWarnings = !hasErrors;
       return <AlertIcon hasErrors={hasErrors} hasWarnings={hasWarnings} />;
     },
@@ -127,7 +131,7 @@ export const PageNodesList = () => {
   );
 
   return (
-    <VView style={{ flex: 1, backgroundColor: "transparent" }}>
+    <VView fullFlex style={styles.container} transparent>
       {!NodeDefs.isRoot(entityDef) && prevEntityPointer && (
         <NodePageNavigationButton
           icon="chevron-left"

@@ -37,7 +37,7 @@ export const useStyles = () => {
 };
 const determineContainerFlex = ({ isPhone = true }) => {
   if (isPhone) {
-    return Environment.isIOS ? 0.8 : 0.85;
+    return Environment.isIOS ? 0.8 : 0.83;
   }
   return 1;
 };
