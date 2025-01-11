@@ -45,14 +45,15 @@ export const Dropdown = (props) => {
   return (
     <RNPDropdown
       disabled={disabled}
+      dropDownContainerMaxHeight={300}
+      dropDownItemStyle={{ backgroundColor: theme.colors.surfaceVariant }}
+      dropDownItemTextStyle={{ color: theme.colors.onSurfaceVariant }}
       label={label}
       list={options}
       mode="outlined"
       onDismiss={() => setOpen(false)}
       setValue={setValue}
       showDropDown={() => setOpen(true)}
-      dropDownItemStyle={{ backgroundColor: theme.colors.surfaceVariant }}
-      dropDownItemTextStyle={{ color: theme.colors.onSurfaceVariant }}
       value={value}
       visible={open}
     />
