@@ -131,7 +131,11 @@ export const AppInitializer = (props) => {
           err instanceof DowngradeError
             ? "Downgrade error"
             : "Unexpected error: " + err;
-        setState((statePrev) => ({ ...statePrev, errorMessage }));
+        setState((statePrev) => ({
+          ...statePrev,
+          loading: false,
+          errorMessage,
+        }));
       });
   }, [dispatch, initialize]);
 

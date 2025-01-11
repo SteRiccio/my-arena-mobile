@@ -8,7 +8,7 @@ const insertSurvey = async (survey) => {
   const name = Surveys.getName(survey);
   const defaultLang = Surveys.getDefaultLanguage(survey);
   const label = Surveys.getLabel(defaultLang)(survey);
-  const { insertId } = await dbClient.executeSql(
+  const { insertId } = await dbClient.runSql(
     `INSERT INTO survey (server_url, remote_id, uuid, name, label, content, date_created, date_modified)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
@@ -28,7 +28,7 @@ const insertSurvey = async (survey) => {
 };
 
 const updateSurvey = async ({ id, survey }) => {
-  await dbClient.executeSql(
+  await dbClient.runSql(
     `UPDATE survey SET name = ?, label = ?, content = ?, date_created = ?, date_modified = ?
      WHERE id = ?`,
     [
@@ -69,7 +69,7 @@ const fetchSurveySummaries = async () => {
 };
 
 const deleteSurveys = async (surveyIds) => {
-  await dbClient.executeSql(
+  await dbClient.runSql(
     `DELETE FROM survey WHERE id IN (${DbUtils.quoteValues(surveyIds)})`
   );
 };

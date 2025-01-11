@@ -23,36 +23,26 @@ export default class SQLiteClient {
     return this.privateDb;
   }
 
-  async executeSql(sql, args) {
-    return new Promise((resolve, reject) => {
-      this.privateDb.transaction(
-        (tx) =>
-          tx.executeSql(
-            sql,
-            args,
-            (_, { rows, insertId, rowsAffected }) =>
-              resolve({ rows, insertId, rowsAffected }),
-            (_, err) => reject(err)
-          ),
-        reject
-      );
-    });
+  async runSql(sql, params) {
+    const result = await this.privateDb.runAsync(sql, params);
+    const { lastInsertRowId: insertId, changes: rowsAffected } = result;
+    return { insertId, rowsAffected };
+  }
+
+  async executeSql(sql) {
+    await this.privateDb.execAsync(sql);
   }
 
   async transaction(callback) {
-    return new Promise((resolve, reject) => {
-      this.privateDb.transaction(callback, reject, resolve);
-    });
+    return this.privateDb.withTransactionAsync(callback);
   }
 
-  async one(sql, args) {
-    const { rows } = await this.executeSql(sql, args);
-    return rows.length === 1 ? rows.item(0) : null;
+  async one(sql, params) {
+    return this.privateDb.getFirstAsync(sql, params);
   }
 
-  async many(sql, args) {
-    const { rows } = await this.executeSql(sql, args);
-    return rows._array;
+  async many(sql, params) {
+    return this.privateDb.getAllAsync(sql, params);
   }
 
   async connect() {
@@ -62,38 +52,53 @@ export default class SQLiteClient {
     try {
       console.log("=== DB connection start ===");
 
-      this.privateDb = SQLite.openDatabase(this.name);
+      this.privateDb = await SQLite.openDatabaseAsync(this.name);
 
-      // MIGRATIONS
-      const { rows } = await this.executeSql("PRAGMA user_version");
-      const prevDbVersion = rows.item(0).user_version;
-      const nextDbVersion = this.migrations.length;
-      if (prevDbVersion > nextDbVersion) {
-        throw new DowngradeError();
-      }
-      console.log("==== DB migrations start ====");
-      for (let i = prevDbVersion; i < nextDbVersion; i += 1) {
-        const migration = this.migrations[i];
-        await migration(this);
-      }
-      console.log("==== DB migrations complete ====");
-
-      const dbMigrationsRun = prevDbVersion !== nextDbVersion;
-      if (dbMigrationsRun) {
-        await this.executeSql(`PRAGMA user_version = ${nextDbVersion}`);
-      }
+      const { dbMigrationsRun, prevDbVersion, nextDbVersion } =
+        await this.runMigrationsIfNecessary();
 
       this.privateConnected = true;
       console.log("=== DB connection complete ===");
       return { dbMigrationsRun, prevDbVersion, nextDbVersion };
-    } catch (err) {
-      console.log(err);
-      if (err instanceof DowngradeError) {
-        throw err;
+    } catch (error) {
+      console.log(error);
+      if (error instanceof DowngradeError) {
+        throw error;
       }
       throw new Error(
-        `SQLiteClient: failed to connect to database: ${this.name}`
+        `SQLiteClient: failed to connect to database: ${this.name} details: ${error}`
       );
     }
+  }
+
+  async runMigrationsIfNecessary() {
+    const dbUserVersionRow = await this.one("PRAGMA user_version");
+    const prevDbVersion = dbUserVersionRow.user_version;
+    console.log(`==== current DB version: ${prevDbVersion}`);
+    const nextDbVersion = this.migrations.length;
+    console.log(`==== next DB version: ${nextDbVersion}`);
+    if (prevDbVersion > nextDbVersion) {
+      throw new DowngradeError();
+    }
+    const dbMigrationsNecessary = prevDbVersion !== nextDbVersion;
+    if (dbMigrationsNecessary) {
+      const migrationsToRun = this.migrations.slice(
+        prevDbVersion,
+        nextDbVersion
+      );
+      let currentDbVersion = prevDbVersion;
+      console.log("==== DB migrations start ====");
+      for await (const migration of migrationsToRun) {
+        await migration(this);
+        currentDbVersion += 1;
+        await this.runSql(`PRAGMA user_version = ${currentDbVersion}`);
+      }
+      console.log("==== DB migrations complete ====");
+    }
+    return {
+      dbMigrationsRun: dbMigrationsNecessary,
+      prevDbVersion,
+      nextDbVersion,
+    };
   }
 }

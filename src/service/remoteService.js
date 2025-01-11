@@ -1,10 +1,13 @@
 import { API } from "./api";
+import { SecureStoreService } from "./SecureStoreService";
 import { SettingsService } from "./settingsService";
 
 const statusToErrorKey = {
   500: "internal_server_error",
   401: "invalid_credentials",
 };
+
+const multipartDataHeaders = { "Content-Type": "multipart/form-data" };
 
 const handleError = ({ error }) => {
   if (error.response) {
@@ -21,14 +24,19 @@ const getServerUrl = async () =>
 
 const get = async (uri, params) => API.get(await getServerUrl(), uri, params);
 
-const getFile = async (uri, params, callback) =>
-  API.getFile(await getServerUrl(), uri, params, callback);
+const getFile = async (uri, params, callback) => {
+  const serverUrl = await getServerUrl();
+  const authCookie =
+    "connect.sid=" + (await SecureStoreService.getConnectSIDCookie());
+  const options = { headers: { Cookie: authCookie } };
+  return API.getFile({ serverUrl, uri, params, callback, options });
+};
 
 const post = async (uri, data) => API.post(await getServerUrl(), uri, data);
 
 const postMultipartData = async (uri, data) =>
   API.post(await getServerUrl(), uri, data, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: multipartDataHeaders,
   });
 
 export const RemoteService = {

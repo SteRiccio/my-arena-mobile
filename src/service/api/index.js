@@ -1,5 +1,6 @@
 import { Strings, UUIDs } from "@openforis/arena-core";
-import { Files } from "utils/Files";
+
+import { Files } from "utils";
 
 const defaultOptions = {
   credentials: "include",
@@ -7,7 +8,7 @@ const defaultOptions = {
 
 const errorMessageByCode = {
   401: "User not authorized",
-  403: 'Forbidden',
+  403: "Forbidden",
   500: "Internal server error",
 };
 
@@ -60,28 +61,34 @@ const get = async (serverUrl, uri, params = {}, options = {}) => {
   }
 };
 
-const getFile = async (
+const getFileAsBlob = async (serverUrl, uri, params, options) => {
+  const response = await _sendGet(serverUrl, uri, params, options);
+  return response.blob();
+};
+
+const getFileAsText = async (serverUrl, uri, params, options) => {
+  const blob = await getFileAsBlob(serverUrl, uri, params, options);
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onError = () => reject(reader.error);
+    reader.readAsText(blob);
+  });
+};
+
+const getFile = async ({
   serverUrl,
   uri,
   params,
-  _callback,
+  callback: _callback,
   targetFileUri = null,
-  options = {}
-) => {
-  const url = getUrlWithParams({ serverUrl, uri, params });
+  options = {},
+}) => {
   const actualTargetFileUri =
-    targetFileUri ?? Files.cacheDirectory + UUIDs.v4() + ".tmp";
-  try {
-    const { uri: finalTargetUri } = await Files.download(
-      url,
-      actualTargetFileUri,
-      options
-    );
-    return finalTargetUri;
-  } catch (error) {
-    // ignore errors
-    return null;
-  }
+    targetFileUri ?? Files.path(Files.documentDirectory, UUIDs.v4() + ".zip");
+  const url = getUrlWithParams({ serverUrl, uri, params });
+  await Files.download(url, actualTargetFileUri, options);
+  return actualTargetFileUri;
 };
 
 const test = async (serverUrl, uri, params = {}) => {
@@ -93,8 +100,8 @@ const test = async (serverUrl, uri, params = {}) => {
   }
 };
 
-const post = async (serverUrl, uri, data, options = {}) => {
-  const formData = Object.entries(data).reduce((acc, [key, value]) => {
+const post = async (serverUrl, uri, params, options = {}) => {
+  const formData = Object.entries(params).reduce((acc, [key, value]) => {
     const formDataValue = Array.isArray(value) ? JSON.stringify(value) : value;
     acc.append(key, formDataValue);
     return acc;
@@ -105,12 +112,15 @@ const post = async (serverUrl, uri, data, options = {}) => {
     method: "POST",
     body: formData,
   });
+  const data = await response.json();
 
-  return { data: await response.json() };
+  return { data, response };
 };
 
 export const API = {
   get,
+  getFileAsBlob,
+  getFileAsText,
   getFile,
   post,
   test,

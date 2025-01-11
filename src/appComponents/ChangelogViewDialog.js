@@ -4,8 +4,6 @@ import { useTheme } from "react-native-paper";
 import Markdown from "react-native-markdown-display";
 import PropTypes from "prop-types";
 
-import { Files } from "utils";
-
 import { Dialog } from "components/Dialog";
 import { FormItem } from "components/FormItem";
 import { LoadingIcon } from "components/LoadingIcon";
@@ -52,10 +50,8 @@ export const ChangelogViewDialog = (props) => {
   );
 
   useEffect(() => {
-    API.getFile(changelogUrl, changelogUri).then((tempFileUri) => {
-      Files.readAsString(tempFileUri).then((contentRead) => {
-        setContent(contentRead);
-      });
+    API.getFileAsText(changelogUrl, changelogUri).then((text) => {
+      setContent(text);
     });
   }, []);
 
