@@ -14,13 +14,12 @@ export default {
       valueRequired: "Обязательное значение",
     },
     entity: {
-      keyDuplicate: "Дубликат ключа сущности",
-      keyValueNotSpecified:
-        "Значение ключа для атрибута {{keyDefName}} не указано",
+      keyDuplicate: "Дубликат ключа",
+      keyValueNotSpecified: "Значение ключа атрибута {{keyDefName}} не указано",
     },
     nodes: {
       count: {
-        invalid: "Должно быть ровно {{count}} элемент(ов)",
+        invalid: "Должно быть {{count}} элемент(ов)",
         maxExceeded: "Должно быть не более {{maxCount}} элемент(ов)",
         minNotReached: "Должно быть не менее {{minCount}} элемент(ов)",
       },
