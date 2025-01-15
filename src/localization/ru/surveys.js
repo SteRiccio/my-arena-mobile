@@ -11,7 +11,7 @@ export default {
   errorFetchingSurveys: "Ошибка получения опросов с удаленного сервера",
   errorFetchingSurveysWithDetails:
     "$t(surveys:errorFetchingSurveys): {{details}}",
-  fieldManual: "Полевое руководство",
+  fieldManual: "Руководство опроса",
   importFromCloud: "Загрузить из облака",
   importSurvey: "Загрузить опрос",
   importSurveyConfirmMessage: "Загрузить опрос «{{surveyName}}»?",

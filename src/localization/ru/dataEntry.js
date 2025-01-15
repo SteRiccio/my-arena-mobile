@@ -20,7 +20,7 @@ export default {
     message: "Перезаписать существующее значение?",
   },
   cycle: "Цикл",
-  cycleForNewRecords: "Цикл для новых записей:",
+  cycleForNewRecords: "Цикл новых записей:",
   options: "Параметры",
   editNodeDef: "Редактировать {{nodeDef}}",
   errorFetchingRecordsSyncStatus:
@@ -45,7 +45,7 @@ export default {
   },
   exportNewOrUpdatedRecords: "Экспортировать новые или обновленные записи",
   formLanguage: "Язык формы:",
-  noEntitiesDefined: "Сущности не определены",
+  noEntitiesDefined: "Элемент не определен",
   goToDataEntry: "Перейти к вводу данных",
   goToListOfRecords: "Перейти к списку записей",
   gpsLockingEnabledWarning: "Внимание: блокировка GPS включена!",
@@ -84,7 +84,7 @@ export default {
     modifiedLocally: "Изменена локально",
     modifiedRemotely: "Изменена на удаленном сервере",
     notInEntryStepAnymore:
-      "Больше не на этапе ввода (на этапе очистки или анализа)",
+      "Этап ввода завершен (запись на этапе очистки или анализа)",
   },
   validationReport: {
     title: "Отчет о проверке правильности",
@@ -105,7 +105,7 @@ export default {
     altitudeAccuracy: "Точность высоты (м)",
     angleToTargetLocation: "Угол до цели",
     confirmConvertCoordinate:
-      "Преобразовать координаты из СК {{srsFrom}} в СК {{srsTo}}?",
+      "Преобразовать координаты из SRS {{srsFrom}} в SRS {{srsTo}}?",
     convert: "Преобразовать",
     currentLocation: "Текущее местоположение",
     distance: "Расстояние (м)",
@@ -113,7 +113,7 @@ export default {
     heading: "Курс (град)",
     keepXAndY: "Сохранить X и Y",
     magnetometerNotAvailable: "Магнитометр недоступен!",
-    navigateToTarget: "Перейти к цели",
+    navigateToTarget: "Перейти к местоположению",
     srs: "$t(common:srs)",
     useCurrentLocation: "Использовать текущее местоположение",
     x: "X",
@@ -137,8 +137,8 @@ export default {
   },
   dataExport: {
     error: "Ошибка экспорта данных. Подробности: {{details}}",
-    selectTarget: "Выберите цель экспорта",
-    selectTargetMessage: "Выберите цель экспорта:",
+    selectTarget: "Выберите место назначения для экспорта",
+    selectTargetMessage: "Выберите место назначения для экспорта:",
     target: {
       remote: "Удаленный сервер",
       local: "Локальная папка (Загрузка)",
@@ -148,7 +148,7 @@ export default {
   },
   location: {
     gettingCurrentLocation: "Получение текущего местоположения",
-    usingCurrentLocation: "Использование текущего местоположения",
+    usingCurrentLocation: "Использовать текущее местоположение",
   },
   unlock: {
     label: "Разблокировать",
