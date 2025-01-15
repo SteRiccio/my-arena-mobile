@@ -1,6 +1,12 @@
 import { useSelector } from "react-redux";
 
-import { NodeDefs, Objects, Records, Surveys } from "@openforis/arena-core";
+import {
+  NodeDefs,
+  Nodes,
+  Objects,
+  Records,
+  Surveys,
+} from "@openforis/arena-core";
 
 import { RecordEditViewMode, RecordPageNavigator } from "model";
 import {
@@ -14,15 +20,18 @@ const calculateIsMaxCountReached = ({
   parentEntityUuid,
   record,
 }) => {
-  const maxCount = NodeDefs.getMaxCount(entityDef);
-  if (Objects.isEmpty(maxCount)) return false;
-
-  const parentEntity = parentEntityUuid
+  const parentNode = parentEntityUuid
     ? Records.getNodeByUuid(parentEntityUuid)(record)
     : null;
-  if (!parentEntity) return false;
+  if (!parentNode) return false;
 
-  const siblings = Records.getChildren(parentEntity, entityDef.uuid)(record);
+  const maxCount = Nodes.getChildrenMaxCount({
+    parentNode,
+    nodeDef: entityDef,
+  });
+  if (Objects.isEmpty(maxCount)) return false;
+
+  const siblings = Records.getChildren(parentNode, entityDef.uuid)(record);
   return siblings.length >= maxCount;
 };
 
@@ -67,13 +76,11 @@ export const useBottomNavigationBar = () =>
       record,
       currentEntityPointer,
     });
-
     const maxCountReached = calculateIsMaxCountReached({
       entityDef,
       parentEntityUuid,
       record,
     });
-
     const hasCurrentEntityKeysSpecified =
       calculateHasCurrentEntityKeysSpecified({
         survey,
