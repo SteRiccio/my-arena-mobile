@@ -3,8 +3,8 @@ export default {
     "¿Ir a la lista de registros?\n\n(todos los cambios ya están guardados)",
   checkSyncStatus: "Comprobar sincronización",
   closestSamplingPoint: {
-    findClosestSamplingPoint: "Buscar punto de muestreo más cercano",
-    findingClosestSamplingPoint: "Buscando punto de muestreo más cercano",
+    findClosestSamplingPoint: "Buscar el punto de muestreo más cercano",
+    findingClosestSamplingPoint: "Buscando el punto de muestreo más cercano",
     minDistanceItemFound:
       "Elemento encontrado a una distancia de {{minDistance}} m",
     minDistanceItemFound_plural:
@@ -48,7 +48,7 @@ export default {
   noEntitiesDefined: "No se han definido entidades",
   goToDataEntry: "Ir a la entrada de datos",
   goToListOfRecords: "Ir a la lista de registros",
-  gpsLockingEnabledWarning: "Advertencia: ¡Bloqueo de GPS activado!",
+  gpsLockingEnabledWarning: "Advertencia: ¡Bloqueo del GPS activado!",
   listOfRecords: "Lista de registros",
   localBackup: "Copia de seguridad local",
   newRecord: "Nuevo",
@@ -84,7 +84,7 @@ export default {
     modifiedLocally: "Modificado localmente",
     modifiedRemotely: "Modificado en el servidor remoto",
     notInEntryStepAnymore:
-      "Ya no está en el paso de entrada (en paso de limpieza o análisis)",
+      "Ya no está en la fase de entrada (la fase de limpieza o análisis)",
   },
   validationReport: {
     title: "Informe de validación",

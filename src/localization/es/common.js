@@ -61,8 +61,8 @@ export default {
   },
   remainingTime: {
     canLastHoursAndMinutes:
-      "Puede durar alrededor de {{hours}} h y {{minutes}} min",
-    canLastTimePart: "Puede durar alrededor de {{count}} {{timePart}}",
+      "Durará aproximadamente {{hours}} h y {{minutes}} min",
+    canLastTimePart: "Durará aproximadamente {{count}} {{timePart}}",
     hoursAndMinutesShort: "{{hours}} h y {{minutes}} min",
     lessThanOneTimePart: "queda menos de un {{timePart}}",
     timePartLeft: "quedan {{count}} {{timePart}}",

@@ -5,7 +5,7 @@ export default {
     invalidCredentials: "Correo electrónico o contraseña no válidos",
   },
   loginRequired: "Inicio de sesión requerido",
-  loginSuccessful: "¡Inicio de sesión exitoso!",
+  loginSuccessful: "¡Inicio de sesión completado!",
   logout: "Cerrar sesión",
   logoutConfirmMessage: "¿Está seguro de que desea cerrar sesión?",
   logoutOptions: {

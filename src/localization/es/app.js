@@ -8,7 +8,7 @@ export default {
   currentVersion: "Versión actual",
   fullBackup: {
     confirmMessage:
-      "¿Generar una copia de seguridad completa?\nEl tamaño será de alrededor de {{size}}.",
+      "¿Generar una copia de seguridad completa?\nEl tamaño aproximado será de {{size}}.",
     confirmTitle: "Generar copia de seguridad",
     error: "Error al generar la copia de seguridad completa: {{details}}",
     shareTitle: "Compartir copia de seguridad completa de AME",
@@ -22,8 +22,8 @@ export default {
     settingFullScreen: "Estableciendo pantalla completa",
     settingKeepScreenAwake: "Estableciendo mantener pantalla activa",
     startingGpsLocking: "Iniciando bloqueo de GPS",
-    initializingDb: "Inicializando BD",
-    startingDbMigrations: "Iniciando migraciones de BD",
+    initializingDb: "Inicializando la BD",
+    startingDbMigrations: "Iniciando migraciones de la BD",
     fetchingSurveys: "Obteniendo encuestas",
     importingDemoSurvey: "Importando encuesta de demostración",
     fetchingAndSettingLocalSurveys:
