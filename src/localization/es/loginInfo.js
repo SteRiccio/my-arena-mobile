@@ -6,6 +6,6 @@ export default {
   name: "Nombre",
   email: "Correo electrónico",
   serverUrl: "URL del servidor",
-  sessionExpired: "Sesión expirada: por favor, inicie sesión de nuevo.",
+  sessionExpired: "Sesión expirada: por favor, inicie la sesión de nuevo.",
   welcomeMessage: "¡Hola, {{name}}!",
 };
