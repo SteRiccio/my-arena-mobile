@@ -1,6 +1,6 @@
 import { DefaultTheme } from "react-native-paper";
 
-export const LightTheme = {
+export const OFLightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,

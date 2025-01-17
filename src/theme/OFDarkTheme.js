@@ -1,6 +1,6 @@
 import { MD3DarkTheme } from "react-native-paper";
 
-export const DarkTheme = {
+export const OFDarkTheme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,

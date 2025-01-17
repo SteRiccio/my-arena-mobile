@@ -2,9 +2,8 @@ import { useMemo } from "react";
 import { useColorScheme } from "react-native";
 
 import { Themes, ThemesSettings } from "model";
+import { OFDarkTheme, OFLightTheme } from "theme";
 import { SettingsSelectors } from "../state/settings/selectors";
-import { DarkTheme } from "theme/DarkTheme";
-import { LightTheme } from "theme/LightTheme";
 
 const defaultFontSize = 16;
 
@@ -34,7 +33,7 @@ export const useEffectiveTheme = () => {
       colorScheme === ColorSchemeName.dark ? Themes.dark : Themes.light;
   }
   return useMemo(() => {
-    const theme = themeSetting === Themes.dark ? DarkTheme : LightTheme;
+    const theme = themeSetting === Themes.dark ? OFDarkTheme : OFLightTheme;
     const { fonts } = theme;
     const fontsResized = resizeFonts(fontScale)(fonts);
     return { ...theme, fonts: fontsResized };

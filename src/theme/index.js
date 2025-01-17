@@ -1,2 +1,2 @@
-export { DarkTheme } from "./DarkTheme";
-export { LightTheme } from "./LightTheme";
+export { OFDarkTheme } from "./OFDarkTheme";
+export { OFLightTheme } from "./OFLightTheme";
