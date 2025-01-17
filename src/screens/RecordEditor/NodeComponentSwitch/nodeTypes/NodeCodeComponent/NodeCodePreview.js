@@ -20,7 +20,6 @@ const OpenDropdownButton = (props) => {
     <Button
       icon="chevron-down"
       iconPosition={iconPosition}
-      mode="contained-tonal"
       textKey={textKey}
       textParams={textParams}
       onPress={onPress}
@@ -58,7 +57,7 @@ export const NodeCodePreview = (props) => {
           {selectedItems.map((item) => (
             <Button
               key={item.uuid}
-              mode="outlined"
+              color="secondary"
               onPress={openEditDialog}
               style={styles.previewItem}
             >
@@ -82,7 +81,7 @@ export const NodeCodePreview = (props) => {
       )}
       {canFindClosestSamplingPointData && (
         <Button
-          mode="outlined"
+          color="secondary"
           textKey="dataEntry:closestSamplingPoint.findClosestSamplingPoint"
           onPress={openFindClosestSamplingPointDialog}
         />

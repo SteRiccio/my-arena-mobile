@@ -16,10 +16,11 @@ export const Button = (props) => {
   const {
     avoidMultiplePress = true,
     children,
+    color = "primary",
     iconPosition: iconPositionProp = undefined,
     labelVariant = undefined,
     loading,
-    mode = "contained",
+    mode: modeProp = "contained",
     onPress: onPressProp,
     textKey,
     textParams,
@@ -43,8 +44,13 @@ export const Button = (props) => {
     onPressProp,
   });
 
+  const mode = color === "secondary" ? "outlined" : modeProp;
+  const buttonColor =
+    mode !== "text" && color === "primary" ? theme.colors[color] : undefined;
+
   return (
     <RNPButton
+      buttonColor={buttonColor}
       contentStyle={contentStyle}
       labelStyle={labelStyle}
       loading={actualLoading}
@@ -61,6 +67,7 @@ export const Button = (props) => {
 Button.propTypes = {
   avoidMultiplePress: PropTypes.bool,
   children: PropTypes.node,
+  color: PropTypes.oneOf(["primary", "secondary", "tertiary"]),
   iconPosition: PropTypes.oneOf(["left", "right"]),
   labelVariant: PropTypes.string,
   loading: PropTypes.bool,

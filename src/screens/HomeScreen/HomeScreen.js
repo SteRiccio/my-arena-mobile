@@ -38,7 +38,7 @@ export const HomeScreen = () => {
         {surveySelected && <SelectedSurveyContainer />}
 
         <Button
-          mode={surveySelected ? "contained-tonal" : "contained"}
+          color={surveySelected ? "secondary" : "primary"}
           textKey={
             surveySelected ? "surveys:manageSurveys" : "surveys:selectSurvey"
           }

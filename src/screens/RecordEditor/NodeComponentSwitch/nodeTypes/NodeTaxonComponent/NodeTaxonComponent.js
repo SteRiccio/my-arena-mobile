@@ -7,6 +7,7 @@ import { Button, CloseIconButton, HView, Text, VView, View } from "components";
 import { RecordEditViewMode } from "model";
 import { SurveyOptionsSelectors } from "state";
 
+import { useEffectiveTheme } from "hooks";
 import { useNodeComponentLocalState } from "../../../useNodeComponentLocalState";
 import { NodeTaxonEditDialog } from "./NodeTaxonEditDialog";
 import { NodeTaxonAutocomplete } from "./NodeTaxonAutocomplete";
@@ -23,6 +24,7 @@ export const NodeTaxonComponent = (props) => {
       `rendering NodeTaxonComponent for ${NodeDefs.getName(nodeDef)}`
     );
   }
+  const theme = useEffectiveTheme();
   const viewMode = SurveyOptionsSelectors.useRecordEditViewMode();
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -40,13 +42,14 @@ export const NodeTaxonComponent = (props) => {
   const selectedTaxonContainerStyle = useMemo(
     () => [
       styles.selectedTaxonContainer,
+      { borderColor: theme.colors.onSurfaceVariant },
       { height: selectedTaxonVernacularName ? 70 : 40 },
     ],
-    [selectedTaxonVernacularName]
+    [selectedTaxonVernacularName, theme.colors.onSurfaceVariant]
   );
 
   return (
-    <VView>
+    <VView style={styles.container}>
       <View style={styles.selectedTaxonWrapper}>
         {selectedTaxon ? (
           <HView style={selectedTaxonContainerStyle}>
