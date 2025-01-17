@@ -5,7 +5,7 @@ export const LanguageConstants = {
 export const Languages = [
   // { key: "am", label: "Amharic" },
   { key: "en", label: "English" },
-  // { key: "es", label: "Spanish" },
+  { key: "es", label: "Spanish" },
   { key: "fa", label: "Persian" },
   // { key: "fr", label: "French" },
   { key: "pt", label: "Portuguese" },

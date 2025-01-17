@@ -6,11 +6,12 @@ import { SettingsService } from "service/settingsService";
 import { SystemUtils } from "utils/SystemUtils";
 
 import en from "./en";
+import es from "./es";
 import fa from "./fa";
 import pt from "./pt";
 import ru from "./ru";
 
-const resources = { en, fa, pt, ru };
+const resources = { en, es, fa, pt, ru };
 const supportedLngs = Object.keys(resources);
 const fallbackLng = "en";
 const sysLng = SystemUtils.getLanguageCode();
