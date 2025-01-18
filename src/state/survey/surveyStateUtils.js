@@ -1,10 +1,10 @@
 import { Surveys } from "@openforis/arena-core";
 
-import { SystemUtils } from "utils/SystemUtils";
+import { i18n } from "localization";
 
 export const determinePreferredSurveyLanguage = (survey) => {
   if (!survey) return null;
-  const systemLang = SystemUtils.getLanguageCode();
+  const lang = i18n.language;
   const surveyLanguages = Surveys.getLanguages(survey);
-  return surveyLanguages.includes(systemLang) ? systemLang : surveyLanguages[0];
+  return surveyLanguages.includes(lang) ? lang : surveyLanguages[0];
 };
