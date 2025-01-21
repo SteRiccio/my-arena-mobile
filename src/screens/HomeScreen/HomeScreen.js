@@ -23,6 +23,7 @@ export const HomeScreen = () => {
     <ScreenView>
       <VView style={styles.container}>
         <AppLogo />
+
         <Text
           style={styles.appTitle}
           variant="headlineSmall"

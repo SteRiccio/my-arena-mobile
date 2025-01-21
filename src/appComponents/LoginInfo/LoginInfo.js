@@ -8,8 +8,8 @@ import { ConnectionToRemoteServerButton } from "../ConnectionToRemoteServerButto
 import styles from "./styles";
 
 const determineErrorKey = ({ networkAvailable, credentialsSpecified }) => {
-  if (!credentialsSpecified) return null;
   if (!networkAvailable) return "common:networkNotAvailable";
+  if (!credentialsSpecified) return null;
   return "loginInfo:sessionExpired";
 };
 
