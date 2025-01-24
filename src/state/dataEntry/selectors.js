@@ -306,6 +306,16 @@ const selectPreviousCycleEntityWithSameKeys =
     });
   };
 
+const useIsNodeDefCurrentActiveChild = (nodeDef) =>
+  useSelector((state) => {
+    const activeChildDefIndex =
+      selectCurrentPageEntityActiveChildDefIndex(state);
+    const childDefs = selectCurrentPageEntityRelevantChildDefs(state);
+    const nodeDefIndex = childDefs.indexOf(nodeDef);
+    console.log("===nodeDefIndex", nodeDefIndex, activeChildDefIndex);
+    return nodeDefIndex === activeChildDefIndex;
+  });
+
 export const DataEntrySelectors = {
   selectRecord,
   selectCurrentPageEntity,
@@ -389,6 +399,8 @@ export const DataEntrySelectors = {
 
   useCurrentPageEntityActiveChildIndex: () =>
     useSelector(selectCurrentPageEntityActiveChildDefIndex),
+
+  useIsNodeDefCurrentActiveChild,
 
   // page selector
   selectRecordPageSelectorMenuOpen,

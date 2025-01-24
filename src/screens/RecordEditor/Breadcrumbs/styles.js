@@ -13,6 +13,6 @@ export default StyleSheet.create({
   },
   item: { alignItems: "center", width: "auto" },
   itemRtl: BaseStyles.mirrorX,
-  itemButton: {},
+  itemButton: { maxWidth: 230 },
   itemButtonLabel: { fontSize: 20 },
 });

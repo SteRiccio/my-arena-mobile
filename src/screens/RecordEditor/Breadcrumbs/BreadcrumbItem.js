@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 
 import { Button, HView, Icon } from "components";
@@ -22,11 +22,16 @@ export const BreadcrumbItem = (props) => {
     [item, onItemPressProp]
   );
 
+  const style = useMemo(() => {
+    const _style = [styles.item];
+    if (irRtl) {
+      _style.push(styles.itemRtl);
+    }
+    return _style;
+  }, [irRtl]);
+
   return (
-    <HView
-      style={[styles.item, irRtl ? styles.itemRtl : undefined]}
-      transparent
-    >
+    <HView style={style} transparent>
       <Button
         compact
         labelStyle={styles.itemButtonLabel}
