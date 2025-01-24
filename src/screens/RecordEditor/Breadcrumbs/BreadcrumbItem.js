@@ -27,7 +27,7 @@ export const BreadcrumbItem = (props) => {
     if (irRtl) {
       _style.push(styles.itemRtl);
     }
-    return style;
+    return _style;
   }, [irRtl]);
 
   return (

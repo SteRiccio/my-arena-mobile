@@ -26,7 +26,7 @@ export const FlexWrapView = (props) => {
     }
     _style.push(styleProp);
     return _style;
-  }, [isRtl]);
+  }, [isRtl, styleProp]);
 
   return (
     <View style={style} {...otherProps}>
