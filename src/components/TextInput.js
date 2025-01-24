@@ -1,10 +1,10 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import PropTypes from "prop-types";
 import { TextInput as RNPTextInput, useTheme } from "react-native-paper";
 
 import { useTranslation } from "localization";
 
-export const TextInput = (props) => {
+export const TextInput = forwardRef(function TextInput(props, ref) {
   const {
     autoCapitalize,
     disabled = false,
@@ -50,6 +50,7 @@ export const TextInput = (props) => {
       onChangeText={onChange}
       onPressIn={onPressIn}
       placeholder={placeholder}
+      ref={ref}
       secureTextEntry={secureTextEntry}
       style={style}
       theme={theme}
@@ -57,7 +58,7 @@ export const TextInput = (props) => {
       {...otherProps}
     />
   );
-};
+});
 
 TextInput.propTypes = {
   autoCapitalize: PropTypes.string,
