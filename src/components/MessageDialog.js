@@ -1,5 +1,6 @@
-import * as React from "react";
+import { useMemo } from "react";
 import { Dialog, Portal } from "react-native-paper";
+import Markdown from "react-native-markdown-display";
 import PropTypes from "prop-types";
 
 import { useTranslation } from "localization";
@@ -8,6 +9,7 @@ import { Button } from "./Button";
 import { CollapsiblePanel } from "./CollapsiblePanel";
 import { ScrollView } from "./ScrollView";
 import { Text } from "./Text";
+import { useEffectiveTheme } from "hooks/useEffectiveTheme";
 
 export const MessageDialog = (props) => {
   const {
@@ -22,6 +24,18 @@ export const MessageDialog = (props) => {
   } = props;
 
   const { t } = useTranslation();
+  const theme = useEffectiveTheme();
+
+  const styles = useMemo(() => {
+    return {
+      markdown: {
+        // body: {
+        //   color: theme.colors.onBackground,
+        //   backgroundColor: theme.colors.surfaceVariant,
+        // },
+      },
+    };
+  }, [theme.colors.onBackground, theme.colors.surfaceVariant]);
 
   return (
     <Portal>
@@ -36,9 +50,9 @@ export const MessageDialog = (props) => {
                 transparent
                 style={{ maxHeight: 200 }}
               >
-                <Text selectable variant="bodyMedium">
+                <Markdown style={styles.markdown}>
                   {t(details, detailsParams)}
-                </Text>
+                </Markdown>
               </ScrollView>
             </CollapsiblePanel>
           )}

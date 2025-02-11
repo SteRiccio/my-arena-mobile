@@ -7,6 +7,17 @@ export default {
 All changes are already saved.`,
   },
   currentVersion: "Current version",
+  deprecationMessage: {
+    content: `Arena Mobile Experiments is no longer supported.`,
+    details: `Open Foris Arena Mobile 2 has been relased.  
+The new app is essentially the same as your current one.  
+Please:  
+- **upload all your records** to the Arena server;  
+- double check that the records are in the server;  
+- install [Open Foris Arena Mobile 2]({{link}})  
+- uninstall AME  
+Enjoy the new Arena Mobile!`,
+  },
   fullBackup: {
     confirmMessage: `Generate a full backup? 
 The size will be around {{size}}.`,
