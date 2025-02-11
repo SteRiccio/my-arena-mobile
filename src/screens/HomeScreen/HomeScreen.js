@@ -25,7 +25,6 @@ export const HomeScreen = () => {
       Environment.isAndroid || Environment.isExpoGo
         ? "https://play.google.com/store/apps/details?id=org.openforis.arena_mobile"
         : "https://apps.apple.com/app/open-foris-arena-mobile-2/id6741569376";
-    console.log("===link", link);
     dispatch(
       MessageActions.setMessage({
         content: "app:deprecationMessage.content",
