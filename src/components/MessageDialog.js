@@ -29,13 +29,13 @@ export const MessageDialog = (props) => {
   const styles = useMemo(() => {
     return {
       markdown: {
-        // body: {
-        //   color: theme.colors.onBackground,
-        //   backgroundColor: theme.colors.surfaceVariant,
-        // },
+        body: {
+          color: theme.colors.onBackground,
+          backgroundColor: theme.colors.surface,
+        },
       },
     };
-  }, [theme.colors.onBackground, theme.colors.surfaceVariant]);
+  }, [theme.colors.onBackground, theme.colors.surface]);
 
   return (
     <Portal>
