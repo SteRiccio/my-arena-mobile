@@ -204,7 +204,7 @@ const insertRecordSummaries = async ({ survey, cycle, recordSummaries }) => {
         [
           uuid,
           surveyId,
-          {}, // empty content
+          "{}", // empty content
           fixDatetime(dateCreated),
           fixDatetime(dateModified),
           fixDatetime(dateModified),
